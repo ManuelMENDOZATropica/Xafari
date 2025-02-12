@@ -1,9 +1,9 @@
 const { Sequelize } = require("sequelize");
-const logger = require("../config/logger");
+const logger = require("../utils/logger");
 
 require("dotenv").config();
 
-const database = new Sequelize(
+/*const database = new Sequelize(
   process.env.POSTGRES_DB,
   process.env.POSTGRES_USER,
   process.env.POSTGRES_PASSWORD,
@@ -15,4 +15,9 @@ const database = new Sequelize(
   }
 );
 
+*/
+
+const database = new Sequelize("sqlite:memory", {
+  logging: (msg) => logger.info(msg),
+});
 module.exports = database;

@@ -1,6 +1,18 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
+const Xecreto = require("./xecreto");
+const UserXecreto = require("./userXecreto");
+
+const Xelfie = require("./xelfie");
+const UserXelfie = require("./userXelfie");
+
+const Xperiencia = require("./xperiencia");
+const UserXperiencia = require("./userXperiencia");
+
+const Casa = require("./casa");
+const UserCasa = require("./userCasa");
+
 const user = database.define("user", {
   id: {
     type: DataTypes.UUID,
@@ -9,21 +21,42 @@ const user = database.define("user", {
   },
   name: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   age: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     validate: {
       min: 0,
       isInt: true,
     },
   },
-  suiteNumber: {
+  num_brazalete: {
     type: DataTypes.INTEGER,
-    validate: {
-      min: 0,
-      isInt: true,
-    },
+    allowNull: false,
+  },
+  qr_iptv: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
-exports.default = user;
+user.belongsToMany(Xecreto, {
+  through: UserXecreto,
+  foreignKey: "user_id",
+  otherKey: "xecreto_id",
+});
+
+user.belongsToMany(Xelfie, {
+  through: UserXelfie,
+  foreignKey: "user_id",
+  otherKey: "xecreto_id",
+});
+
+user.belongsToMany(Xperiencia, {
+  through: UserXperiencia,
+  foreignKey: "user_id",
+  otherKey: "xecreto_id",
+});
+
+module.exports = user;

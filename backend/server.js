@@ -1,8 +1,13 @@
 const app = require("./app");
-const logger = require("./config/logger");
+const logger = require("./utils/logger");
+const database = require("./config/database");
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
+database.sync().then(() => {
+  logger.info("Database connected...");
+
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
 });

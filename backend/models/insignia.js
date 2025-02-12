@@ -1,7 +1,9 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
-const guardian = database.define("guardian", {
+const Casa = require("./casa");
+
+const insignia = database.define("insignia", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -9,11 +11,14 @@ const guardian = database.define("guardian", {
   },
   name: {
     type: DataTypes.STRING,
-    unique: true,
   },
   description: {
     type: DataTypes.TEXT,
   },
 });
 
-exports.default = guardian;
+insignia.belongsTo(Casa, {
+  foreignKey: "casa_id",
+});
+
+module.exports = insignia;
