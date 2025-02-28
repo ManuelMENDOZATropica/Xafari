@@ -27,7 +27,7 @@ exports.getAllXecretos = async (req, res) => {
   const xecretos = await casaService.getAllXecretos();
 
   res.json({
-    user: {
+    casa: {
       id: id,
       xecretos: xecretos.map((xecreto) => xecreto.id),
     },

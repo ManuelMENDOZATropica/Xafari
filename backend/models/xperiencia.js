@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, STRING } = require("sequelize");
 const database = require("../config/database");
 
 const Casa = require("./casa");
@@ -8,6 +8,11 @@ const xperiencia = database.define("xperiencia", {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
+  },
+  qr: {
+    type: STRING,
+    unique: true,
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,

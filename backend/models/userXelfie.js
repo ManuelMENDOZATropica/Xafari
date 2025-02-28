@@ -21,6 +21,12 @@ const userXelfie = database.define("userXelfie", {
   },
   xelfie_url: {
     type: STRING,
+    unique: true,
+    allowNull: false,
+  },
+  completed_at: {
+    type: DATE,
+    allowNull: false,
   },
 });
 

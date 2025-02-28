@@ -1,4 +1,4 @@
-const { DataTypes, STRING } = require("sequelize");
+const { DataTypes, STRING, DATE } = require("sequelize");
 const database = require("../config/database");
 
 const User = require("./user");
@@ -21,8 +21,13 @@ const userXecreto = database.define("userXecreto", {
   },
   xecreto_url: {
     type: STRING,
+    unique: true,
+    allowNull: false,
+  },
+  completed_at: {
+    type: DATE,
+    allowNull: false,
   },
 });
-
 
 module.exports = userXecreto;

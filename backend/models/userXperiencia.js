@@ -21,6 +21,12 @@ const userXperiencia = database.define("userXperiencia", {
   },
   xperiencia_url: {
     type: STRING,
+    unique: true,
+    allowNull: false,
+  },
+  completed_at: {
+    type: DATE,
+    allowNull: false,
   },
 });
 

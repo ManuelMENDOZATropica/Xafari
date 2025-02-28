@@ -1,0 +1,734 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Xafari API
+paths:
+  /user:
+    post:
+      summary: add a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserAdded"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+      
+  /user/{user_id}:
+    get:
+      summary: get user information
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserFound"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+    delete:
+      summary: delete an user
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserDeleted"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+  /user/{user_id}/casas:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200": 
+          $ref: "#/components/responses/UserCasas"
+          
+  /user/{user_id}/xecretos:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200": 
+          $ref: "#/components/responses/UserXecretos"
+    post: 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: user id
+                  type: string
+                url: 
+                  description: url of image
+                  type: string
+
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200":
+          $ref: "#/components/responses/UserXecreto"
+          
+  
+  /user/{user_id}/xelfies:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200": 
+          $ref: "#/components/responses/UserXelfies"
+          
+    post: 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: user id
+                  type: string
+                url: 
+                  description: url of image
+                  type: string
+
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200":
+          $ref: "#/components/responses/UserXelfie"
+
+  /user/{user_id}/xperiencias:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200": 
+          $ref: "#/components/responses/UserXperiencias"
+          
+    post: 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: user id
+                  type: string
+                url: 
+                  description: url of image
+                  type: string
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "200":
+          $ref: "#/components/responses/UserXperiencia"
+
+  /casas:
+    get:
+      summary: get all casas
+      responses:
+        "200":
+          $ref: "#/components/responses/Casas"
+          
+  /casa:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/casa"
+      responses:
+        "404":
+          $ref: "#/components/responses/CasaNotFound"
+        "200":
+          $ref: "#/components/responses/CasaAdded"
+          
+  /casa/{casa_id}:
+    get:
+      summary: get casa information
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaFound"
+        "404":
+          $ref: "#/components/responses/CasaNotFound"
+    delete:
+      summary: delete a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaDeleted"
+        "404":
+          $ref: "#/components/responses/CasaNotFound"  
+
+  /casa/{casa_id}/xecretos:
+    get:
+      summary: get all xecretos belonging to a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXecretos"
+        "404":
+          $ref: "#/components/responses/CasaNotFound"
+
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      summary: put a xecreto into a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXecreto"
+        "404":
+            $ref: "#/components/responses/CasaXecretoNotFound"
+
+  /casa/{casa_id}/xelfies:
+    get:
+      summary: get all xelfies belonging to a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXelfies"
+        "404":
+          $ref: "#/components/responses/CasaNotFound"
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      summary: put a xelfie into a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXelfie"
+        "404":
+            $ref: "#/components/responses/CasaXelfieNotFound"
+
+
+  /casa/{casa_id}/xperiencias:
+    get:
+      summary: get all xperiencias belonging to a casa
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXperiencias"
+        "404":
+          $ref: "#/components/responses/CasaNotFound"
+          
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          description: age is required for age restricted activities
+          type: number
+        num_brazalete:
+          type: string
+        qr_iptv:
+          type: string
+    casa:
+      type: object
+      properties:
+        name:
+          type: string
+        elemento:
+          type: string
+        animal:
+          type: string
+
+  responses: 
+    UserAdded:
+      description: User added 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                  name: 
+                    type: string
+                  age: 
+                    type: number
+                  num_brazalete:
+                    type: number
+                  qr_iptv: 
+                    type: number
+    UserFound:
+      description: User found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user: 
+                type: object
+                properties:
+                  name:
+                    type: string
+                  age:
+                    description: age is required for age restricted activities
+                    type: number
+                  num_brazalete:
+                    type: string
+                  qr_iptv:
+                    type: string
+                
+            
+    UserDeleted:
+      description: User deleted 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                    
+    UserCasas:
+      description: array of casas ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  casas:
+                    type: array
+                    items:
+                      type: string
+                      
+    UserXecreto:
+      description: xecreto from a user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xecreto:
+                      type: string
+
+    UserXecretos:
+      description: array of xecretos ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xecretos:
+                    type: array
+                    items:
+                      type: string
+                      
+    UserXelfie:
+      description: xelfie from a user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xelfie:
+                      type: string
+
+    UserXelfies:
+      description: array of xelfies ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xelfies:
+                    type: array
+                    items:
+                      type: string
+
+
+    UserXperiencia:
+      description: xperiencia from a user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xperiencia:
+                      type: string
+
+    UserXperiencias:
+      description: array of xperiencias ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xperiencias:
+                    type: array
+                    items:
+                      type: string
+                      
+    UserNotFound:
+      description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - User not found
+    CasaAdded:
+      description: Casa added 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                  name: 
+                    type: string
+                  elemento: 
+                    type: string
+                  animal:
+                    type: string
+
+                    
+    CasaFound:
+      description: Casa found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa: 
+                type: object
+                properties:
+                  name:
+                    type: string
+                  elemento:
+                    type: string
+                  animal:
+                    type: string
+                    
+    CasaDeleted:
+      description: Casa deleted 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+
+
+    CasaNotFound:
+      description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Casa not found
+    Casas:
+      description: list of casas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casas:
+                type: array
+                items:
+                  type: string
+                 
+                  
+    CasaXecretos:
+      description: array of xecretos ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xecretos:
+                    type: array
+                    items:
+                      type: string
+    CasaXecreto:
+      description: xecreto from a casa
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xecreto:
+                      type: string
+                      
+    CasaXecretoNotFound:
+      description: Casa or Xecreto not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Casa not found
+                  - Xecreto not found
+    CasaXelfies:
+      description: array of xelfies ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xelfies:
+                    type: array
+                    items:
+                      type: string
+                      
+    CasaXelfie:
+      description: xelfie from a casa
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xelfie:
+                      type: string
+
+    CasaXelfieNotFound:
+      description: Casa or Xelfie not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Casa not found
+                  - Xelfie not found              
+                  
+    CasaXperiencias:
+      description: array of xperiencia ids
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xpexiencias:
+                    type: array
+                    items:
+                      type: string
+            
+    CasaXperiencia:
+      description: xperiencia from a casa
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              casa:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  xperiencia:
+                      type: string
+                      
+    CasaXperienciaNotFound:
+      description: Casa or Xperiencia not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Casa not found
+                  - Xperiencia not found
+                  
+    XecreotNotFound:
+      description: Xecreto not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Xecreto not found
+                  
+    BadRequestError:
+      description: Bad parameters or not enought params
+      content:
+        application/josn:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  parameters:
+    user_id:
+      name: user_id
+      description: user uuid
+      in: path 
+      schema:
+        type: string 
+        format: uuid
+      required: true
+    casa_id:
+      name: casa_id
+      in: path 
+      schema:
+        type: string 
+        format: uuid
+      required: true
+    xecreto_id:
+      name: xecreto_id
+      in: path 
+      schema:
+        type: string 
+        format: uuid
+      required: true
+    xelfie_id:
+      name: xecreto_id
+      in: path 
+      schema:
+        type: string 
+        format: uuid
+      required: true
+    xperiencia_id:
+      name: xecreto_id
+      in: path 
+      schema:
+        type: string 
+        format: uuid
+      required: true
