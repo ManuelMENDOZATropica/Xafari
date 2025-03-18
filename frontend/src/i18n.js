@@ -28,6 +28,10 @@ i18n
             password: "Contraseña",
             confirmPassword: "Confirmar contraseña",
             passwordsDoNotMatch: "Las contraseñas no coinciden",
+            passwordWeak: "Contraseña débil",
+passwordMedium: "Contraseña aceptable",
+passwordStrong: "Contraseña fuerte",
+
       
             // Registro - Paso 2
             registerStep2: "Ingresa tu número de reserva y selecciona cómo prefieres que te llamen.",
@@ -60,6 +64,11 @@ i18n
             password: "Password",
             confirmPassword: "Confirm password",
             passwordsDoNotMatch: "Passwords do not match",
+
+            passwordWeak: "Weak password",
+passwordMedium: "Acceptable password",
+passwordStrong: "Strong password",
+
       
             // Register - Step 2
             registerStep2: "Enter your reservation number and select how you prefer to be called.",

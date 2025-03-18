@@ -18,6 +18,16 @@ export default function RegisterStep1() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Evaluar la fortaleza de la contraseña
+  const getPasswordStrength = (password) => {
+    if (password.length < 6) return "weak";
+    if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)) return "medium";
+    if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) return "strong";
+    return "weak";
+  };
+
+  const passwordStrength = getPasswordStrength(formData.password);
+
   const passwordsMatch = formData.password === formData.confirmPassword && formData.password.length > 0;
   const isFormValid = formData.firstName && formData.lastName && formData.email && passwordsMatch;
 
@@ -25,7 +35,7 @@ export default function RegisterStep1() {
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white px-6">
       {/* Barra superior con Volver y Language */}
       <div className="flex justify-between w-full max-w-md absolute top-4 px-4">
-        <button onClick={() => navigate("/")} className="border border-gray-500 bg-white text-black px-3 py-1 rounded-lg shadow-md hover:bg-gray-200">
+        <button onClick={() => navigate("/")} className="text-black border border-gray-500 px-3 py-1 rounded-lg hover:bg-gray-200">
           ← {t("back")}
         </button>
         <button
@@ -78,10 +88,38 @@ export default function RegisterStep1() {
           placeholder={t("password")}
           value={formData.password}
           onChange={handleChange}
-          className="w-full p-2 border border-gray-500 rounded bg-white text-black mb-4"
+          className="w-full p-2 border border-gray-500 rounded bg-white text-black mb-2"
         />
 
-        <label className="block text-black mb-1">{t("confirmPassword")}</label>
+        {/* Indicador de fortaleza de la contraseña */}
+        <div className="w-full h-2 rounded mb-4">
+          <div
+            className={`h-full ${
+              passwordStrength === "weak"
+                ? "bg-red-500 w-1/3"
+                : passwordStrength === "medium"
+                ? "bg-yellow-500 w-2/3"
+                : "bg-green-500 w-full"
+            }`}
+          ></div>
+        </div>
+        <p
+          className={`text-sm ${
+            passwordStrength === "weak"
+              ? "text-red-500"
+              : passwordStrength === "medium"
+              ? "text-yellow-500"
+              : "text-green-500"
+          }`}
+        >
+          {passwordStrength === "weak"
+            ? t("passwordWeak")
+            : passwordStrength === "medium"
+            ? t("passwordMedium")
+            : t("passwordStrong")}
+        </p>
+
+        <label className="block text-black mt-4 mb-1">{t("confirmPassword")}</label>
         <input
           type="password"
           name="confirmPassword"
