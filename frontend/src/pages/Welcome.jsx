@@ -40,7 +40,7 @@ export default function Welcome() {
       {/* Botones principales */}
       <div className="flex flex-col gap-4 mt-10">
         <button
-          onClick={() => navigate("/register")}
+          onClick={() => navigate("/register-step1")}
           className="px-4 py-2 border border-gray-500 bg-white text-black rounded-lg shadow-md hover:bg-gray-200"
         >
           {t("newAdventure")}
