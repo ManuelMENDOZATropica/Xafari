@@ -48,6 +48,12 @@ i18n
           //Animación Welcome
 
           welcomeApprentice: "Bienvenido/a, aprendiz",
+
+          //Selección de avatar
+          chooseYourStyle: "Elige tu estilo",
+          skinTone: "Tono de piel",
+          hair: "Cabello",
+          clothing: "Ropa",
         },
       },
       en: {
@@ -90,6 +96,14 @@ i18n
           registerComplete: "Registration complete. Welcome to Xafari!",
           //Welcome animation
           welcomeApprentice: "Welcome, apprentice",
+
+          //Avatar
+
+          chooseYourStyle: "Choose your style",
+skinTone: "Skin Tone",
+hair: "Hair",
+clothing: "Clothing"
+
         },
       },
     },
