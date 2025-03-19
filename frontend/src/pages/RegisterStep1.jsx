@@ -35,7 +35,7 @@ export default function RegisterStep1() {
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white px-6">
       {/* Barra superior con Volver y Language */}
       <div className="flex justify-between w-full max-w-md absolute top-4 px-4">
-        <button onClick={() => navigate("/")} className="text-black border border-gray-500 px-3 py-1 rounded-lg hover:bg-gray-200">
+        <button onClick={() => navigate("/")} className="border border-gray-500 bg-white text-black px-3 py-1 rounded-lg shadow-md hover:bg-gray-200">
           ← {t("back")}
         </button>
         <button
@@ -96,10 +96,10 @@ export default function RegisterStep1() {
           <div
             className={`h-full ${
               passwordStrength === "weak"
-                ? "bg-red-500 w-1/3"
+                ? "bg-red-500 w-1/12"
                 : passwordStrength === "medium"
-                ? "bg-yellow-500 w-2/3"
-                : "bg-green-500 w-full"
+                ? "bg-yellow-500 w-2/12"
+                : "bg-green-500 w-3/12"
             }`}
           ></div>
         </div>

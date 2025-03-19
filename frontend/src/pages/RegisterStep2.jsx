@@ -72,12 +72,13 @@ export default function RegisterStep2() {
 
         {/* Botón de Finalizar */}
         <button
-          disabled={!isFormValid}
-          onClick={() => navigate("/welcome")}
-          className="mt-6 w-full p-2 border border-gray-500 rounded bg-gray-200 hover:bg-gray-300 text-black"
-        >
-          {t("finish")}
-        </button>
+  disabled={!isFormValid}
+  onClick={() => navigate("/welcome-animation", { state: formData })}
+  className="mt-6 w-full p-2 border border-gray-500 rounded bg-gray-200 hover:bg-gray-300 text-black"
+>
+  {t("finish")}
+</button>
+
       </div>
     </div>
   );
