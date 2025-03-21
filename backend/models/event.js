@@ -1,40 +1,36 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
-const user = database.define("user", {
+const event = database.define("event", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
+  eventName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false,
-    validate: {
-      isEmail: true,
-    },
-  },
-  password: {
-    type: DataTypes.STRING,
+  eventDescription: {
+    type: DataTypes.TEXT,
     allowNull: false,
   },
-  age: {
-    type: DataTypes.INTEGER,
+  startDate: {
+    type: DataTypes.DATE,
     allowNull: false,
-    validate: {
-      min: 0,
-      isInt: true,
-    },
   },
-  reservationNumber: {
+  endDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  eventLocation: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  isEventActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
 });
 
-module.exports = user;
+module.exports = event;

@@ -6,6 +6,8 @@ paths:
   /user:
     post:
       summary: add a new user
+      tags:
+        - users
       requestBody:
         required: true
         content:
@@ -17,10 +19,12 @@ paths:
           $ref: "#/components/responses/UserAdded"
         "400":
           $ref: "#/components/responses/BadRequestError"
-      
+
   /user/{user_id}:
     get:
       summary: get user information
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -30,6 +34,8 @@ paths:
           $ref: "#/components/responses/UserNotFound"
     delete:
       summary: delete an user
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -39,6 +45,9 @@ paths:
           $ref: "#/components/responses/UserNotFound"
   /user/{user_id}/casas:
     get:
+      summary: get casas achieved by user
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -49,6 +58,9 @@ paths:
           
   /user/{user_id}/xecretos:
     get:
+      summary: get xecretos achieved by user
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -56,7 +68,10 @@ paths:
           $ref: "#/components/responses/UserNotFound"
         "200": 
           $ref: "#/components/responses/UserXecretos"
-    post: 
+    post:
+      summary: add a xecreto achieved by user
+      tags:
+        - users
       requestBody:
         required: true
         content:
@@ -82,6 +97,9 @@ paths:
   
   /user/{user_id}/xelfies:
     get:
+      summary: get xelfies achieved by user
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -91,6 +109,9 @@ paths:
           $ref: "#/components/responses/UserXelfies"
           
     post: 
+      summary: add a xelfie achieved by user
+      tags:
+        - users
       requestBody:
         required: true
         content:
@@ -115,6 +136,9 @@ paths:
 
   /user/{user_id}/xperiencias:
     get:
+      summary: get xperiencias achieved by user
+      tags:
+        - users
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -124,6 +148,9 @@ paths:
           $ref: "#/components/responses/UserXperiencias"
           
     post: 
+      summary: add a xperiencia achieved by user
+      tags:
+        - users
       requestBody:
         required: true
         content:
@@ -148,12 +175,17 @@ paths:
   /casas:
     get:
       summary: get all casas
+      tags:
+        - casas
       responses:
         "200":
           $ref: "#/components/responses/Casas"
           
   /casa:
     post:
+      summary: add a new casa
+      tags:
+        - casas
       requestBody:
         required: true
         content:
@@ -169,6 +201,8 @@ paths:
   /casa/{casa_id}:
     get:
       summary: get casa information
+      tags:
+        - casas
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -178,6 +212,8 @@ paths:
           $ref: "#/components/responses/CasaNotFound"
     delete:
       summary: delete a casa
+      tags:
+        - casas
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -189,6 +225,8 @@ paths:
   /casa/{casa_id}/xecretos:
     get:
       summary: get all xecretos belonging to a casa
+      tags:
+        - casas
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -198,6 +236,9 @@ paths:
           $ref: "#/components/responses/CasaNotFound"
 
     post:
+      summary: put a xecreto to a casa
+      tags:
+        - casas
       requestBody:
         required: true
         content:
@@ -207,7 +248,6 @@ paths:
               properties:
                 id:
                   type: string
-      summary: put a xecreto into a casa
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -219,6 +259,8 @@ paths:
   /casa/{casa_id}/xelfies:
     get:
       summary: get all xelfies belonging to a casa
+      tags:
+        - casas
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -227,6 +269,9 @@ paths:
         "404":
           $ref: "#/components/responses/CasaNotFound"
     post:
+      summary: put a xelfie into a casa
+      tags:
+        - casas
       requestBody:
         required: true
         content:
@@ -236,7 +281,6 @@ paths:
               properties:
                 id:
                   type: string
-      summary: put a xelfie into a casa
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -249,6 +293,8 @@ paths:
   /casa/{casa_id}/xperiencias:
     get:
       summary: get all xperiencias belonging to a casa
+      tags:
+        - casas
       parameters:
         - $ref: "#/components/parameters/casa_id"
       responses:
@@ -256,7 +302,174 @@ paths:
           $ref: "#/components/responses/CasaXperiencias"
         "404":
           $ref: "#/components/responses/CasaNotFound"
-          
+    post:
+      summary: put a xperiencia to a casa
+      tags:
+        - casas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      parameters:
+        - $ref: "#/components/parameters/casa_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/CasaXperiencia"
+        "404":
+            $ref: "#/components/responses/CasaXperienciaNotFound"
+
+  /xecreto:
+    post:
+      summary: add a new xecreto
+      tags:
+        - xecretos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/xecreto"
+      responses:
+        "200":
+          $ref: "#/components/responses/XecretoAdded"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+  /xecretos:
+    get:
+      summary: get all xecretos 
+      tags:
+        - xecretos
+      responses:
+        "200":
+          $ref: "#/components/responses/Xecretos"
+
+  /xecreto/{xecreto_id}:
+    get:
+      summary: get xecreto information
+      tags:
+        - xecretos
+      parameters:
+        - $ref: "#/components/parameters/xecreto_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XecretoFound"
+        "404":
+          $ref: "#/components/responses/XecretoNotFound"
+    delete:
+      summary: delete a xecreto
+      tags:
+        - xecretos
+      parameters:
+        - $ref: "#/components/parameters/xecreto_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XecretoDeleted"
+        "404":
+          $ref: "#/components/responses/XecretoNotFound"  
+
+  /xelfie:
+    post:
+      summary: add a new xelfie
+      tags:
+        - xelfies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/xelfie"
+      responses:
+        "200":
+          $ref: "#/components/responses/XelfieAdded"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+  /xelfies:
+    get:
+      summary: get all xelfies 
+      tags:
+        - xelfies
+      responses:
+        "200":
+          $ref: "#/components/responses/Xelfies"
+
+  /xelfie/{xelfie_id}:
+    get:
+      summary: get xelfie information
+      tags:
+        - xelfies
+      parameters:
+        - $ref: "#/components/parameters/xelfie_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XelfieFound"
+        "404":
+          $ref: "#/components/responses/XelfieNotFound"
+    delete:
+      summary: delete a xelfie
+      tags:
+        - xelfies
+      parameters:
+        - $ref: "#/components/parameters/xelfie_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XelfieDeleted"
+        "404":
+          $ref: "#/components/responses/XelfieNotFound"  
+
+  /xperiencia:
+    post:
+      summary: add a new xperiencia
+      tags:
+        - xperiencias
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/xperiencia"
+      responses:
+        "200":
+          $ref: "#/components/responses/XperienciaAdded"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+  /xperiencias:
+    get:
+      summary: get all xperiencias 
+      tags:
+        - xelfies
+      responses:
+        "200":
+          $ref: "#/components/responses/Xperiencias"
+
+  /xperiencia/{xperiencia_id}:
+    get:
+      summary: get xperiencia information
+      tags:
+        - xperiencias
+      parameters:
+        - $ref: "#/components/parameters/xperiencia_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XperienciaFound"
+        "404":
+          $ref: "#/components/responses/XperienciaNotFound"
+    delete:
+      summary: delete a xperiencia
+      tags:
+        - xperiencias
+      parameters:
+        - $ref: "#/components/parameters/xperiencia_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/XperienciaDeleted"
+        "404":
+          $ref: "#/components/responses/XperienciaNotFound"  
+
 components:
   schemas:
     user:
@@ -280,7 +493,45 @@ components:
           type: string
         animal:
           type: string
-
+    xecreto:
+      type: object
+      properties:
+        name: 
+          type: string
+        description:
+          type: string
+        familiar:
+          type: boolean
+        min_age: 
+          type: number
+        max_age: 
+          type: number
+    xelfie:
+      type: object
+      properties:
+        name: 
+          type: string
+        description:
+          type: string
+        familiar:
+          type: boolean
+        min_age: 
+          type: number
+        max_age: 
+          type: number
+    xperiencia:
+      type: object
+      properties:
+        name: 
+          type: string
+        description:
+          type: string
+        familiar:
+          type: boolean
+        min_age: 
+          type: number
+        max_age: 
+          type: number
   responses: 
     UserAdded:
       description: User added 
@@ -517,7 +768,7 @@ components:
 
 
     CasaNotFound:
-      description: User not found
+      description: Casa not found
       content:
         application/json:
           schema:
@@ -672,8 +923,69 @@ components:
                 enum:
                   - Casa not found
                   - Xperiencia not found
-                  
-    XecreotNotFound:
+
+    XecretoAdded:
+      description: Xecreto added 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xecreto:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                  name: 
+                    type: string
+                  description: 
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+
+
+    XecretoFound:
+      description: Xecreto found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xecreto: 
+                type: object
+                properties:
+                  name: 
+                    type: string
+                  description:
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+                
+            
+    XecretoDeleted:
+      description: Xecreto deleted 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xecreto:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+
+    XecretoNotFound:
       description: Xecreto not found
       content:
         application/json:
@@ -684,7 +996,188 @@ components:
                 type: string
                 enum:
                   - Xecreto not found
+    Xecretos:
+      description: list of xecretos
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xecretos:
+                type: array
+                items:
+                  type: string
+
+
+    XelfieAdded:
+      description: Xelfie added 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xelfie:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                  name: 
+                    type: string
+                  description: 
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+
+
+    XelfieFound:
+      description: Xelfie found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xelfie: 
+                type: object
+                properties:
+                  name: 
+                    type: string
+                  description:
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+                
+            
+    XelfieDeleted:
+      description: Xelfie deleted 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xelfie:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+
+    XelfieNotFound:
+      description: Xelfie not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Xelfie not found
+    Xelfies:
+      description: list of xelfies
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xelfies:
+                type: array
+                items:
+                  type: string
                   
+    XperienciaAdded:
+      description: Xperiencia added 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xperiencia:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+                  name: 
+                    type: string
+                  description: 
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+
+
+    Xperienciaound:
+      description: Xperiencia found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xperiencia: 
+                type: object
+                properties:
+                  name: 
+                    type: string
+                  description:
+                    type: string
+                  familiar:
+                    type: boolean
+                  min_age: 
+                    type: number
+                  max_age: 
+                    type: number
+                
+            
+    XperienciaDeleted:
+      description: Xperiencia deleted 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xperiencia:
+                type: object
+                properties:
+                  id: 
+                    type: string 
+                    format: uuid
+
+    XperienciaNotFound:
+      description: Xperiencia not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                enum:
+                  - Xperiencia not found
+    Xperiencias:
+      description: list of xperiencias
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              xperiencias:
+                type: array
+                items:
+                  type: string   
+                  
+    
     BadRequestError:
       description: Bad parameters or not enought params
       content:

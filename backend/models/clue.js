@@ -1,21 +1,24 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
-const xperiencia = database.define("xperiencia", {
+const clue = database.define("clue", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  qrCode: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: true,
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
-  isValidable: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+  correctAnswer: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  order: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
 });
 
-module.exports = xperiencia;
+module.exports = clue;

@@ -1,48 +1,52 @@
 {
-  "name": "xafari-backend",
-  "version": "1.0.0",
-  "description": "> npm install",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node server.js ",
-    "test": "npx jest"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "sequelize-mock": "^0.10.2",
-    "sqlite3": "^5.1.7",
-    "supertest": "^7.0.0"
-  },
-  "dependencies": {
-    "@sequelize/postgres": "^7.0.0-alpha.44",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "openapi-to-md": "^1.0.25",
-    "sequelize": "^6.37.5",
-    "winston": "^3.17.0"
-  },
-  "jest": {
-    "verbose": true,
-    "roots": [
-      "./tests"
+	"name": "xafari-backend",
+	"version": "1.0.0",
+	"description": "> npm install",
+	"main": "index.js",
+	"scripts": {
+		"dev": "node server.js ",
+		"test": "npx jest --runInBand"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"jest": "^29.7.0",
+		"sequelize-cli": "^6.6.2",
+		"sequelize-mock": "^0.10.2",
+		"sqlite3": "^5.1.7",
+		"supertest": "^7.0.0"
+	},
+	"dependencies": {
+		"@sequelize/postgres": "^7.0.0-alpha.44",
+		"dotenv": "^16.4.7",
+		"express": "^4.21.2",
+		"express-validator": "^7.2.1",
+		"openapi-to-md": "^1.0.25",
+		"sequelize": "^6.37.5",
+		"sequelize-erd": "^1.3.1",
+		"winston": "^3.17.0"
+	},
+	"jest": {
+		"verbose": true,
+		"roots": [
+			"./tests"
     ],
     "testMatch": [
-      "**/*.js"
+	    "**/*.js"
     ],
     "collectCoverageFrom": [
-      "controllers/**/*.js",
-      "services/**/*.js",
-      "middleware/**/*.js",
-      "utils/**/*.js"
+	    "controllers/**/*.js",
+	    "services/**/*.js",
+	    "middleware/**/*.js",
+	    "utils/**/*.js"
     ],
     "transform": {
-      "^.+\\.js$": "babel-jest"
+	    "^.+\\.js$": "babel-jest"
     },
     "testPathIgnorePatterns": [
-      "/node_modules/"
-    ]
-  }
+	    "/node_modules/"
+    ],
+    "setupFilesAfterEnv": ["./jest.setup.js"]
+	}
 }

@@ -17,7 +17,7 @@ require("dotenv").config();
 
 */
 
-const database = new Sequelize("sqlite:memory", {
-  logging: (msg) => logger.info(msg),
+const database = new Sequelize("sqlite:./test.sqlite", {
+  logging: (msg) => logger.debug(msg),
 });
 module.exports = database;
