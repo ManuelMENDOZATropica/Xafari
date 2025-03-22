@@ -1,109 +1,90 @@
-const activityService = require("../services/activityService");
+const xelfieService = require("../services/xelfieService");
+const {
+  handleSequelizeError,
+  ResourceNotFoundError,
+  ValidationError,
+} = require("../utils/errors");
 
-exports.createXelfie = async (req, res) => {
-  const { name, description, location, isActive, isFamiliar, minAge, maxAge } =
-    req.body;
+exports.createXelfie = async (req, res, next) => {
+  const { minAge, maxAge, ...activityParams } = req.body;
 
-  const xelfie = await activityService.createActivity({
-    name,
-    description,
-    location,
-    type: "Xecreto",
-    isActive,
-    isFamiliar,
-    minAge,
-    maxAge,
-  });
+  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
+    return next(new ValidationError("Age limits are not valid"));
+  }
 
-  res.json({
-    xelfie,
-  });
+  try {
+    const xelfie = await xelfieService.createXelfie({
+      type: "Xelfie",
+      ...activityParams,
+    });
+    res.json({
+      xelfie: xelfie.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
 };
 
-exports.getXelfie = async (req, res) => {
+exports.getXelfie = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xelfie = await xelfieService.getXelfie(id);
+
+    if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
+
+    res.json({
+      xelfie: xelfie.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
+};
+
+exports.deleteXelfie = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xelfie = await xelfieService.deleteXelfie(id);
+
+    if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
+
+    res.json({
+      xelfie: xelfie.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
+};
+
+exports.updateXelfie = async (req, res, next) => {
   const id = req.params.id;
 
-  const xelfie = await activityService.getActivity(id);
+  try {
+    const newXelfieData = {
+      ...(req.body.name ? { name: req.body.name } : {}),
+      ...(req.body.description ? { description: req.body.description } : {}),
+      ...(req.body.location ? { location: req.body.location } : {}),
+      ...(req.body.type ? { type: req.body.type } : {}),
+      ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
+      ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
+      ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
+    };
 
-  res.json({
-    xelfie,
-  });
+    if (
+      !isNaN(newXelfieData.minAge) &&
+      !isNaN(newXelfieData.maxAge) &&
+      newXelfieData.minAge >= newXelfieData.maxAge
+    ) {
+      return next(new ValidationError("Age limits are not valid"));
+    }
+
+    const newXelfie = await xelfieService.updateXelfie(id, newXelfieData);
+
+    if (!newXelfie) return next(new ResourceNotFoundError("Xelfie not found"));
+
+    res.json({
+      xelfie: newXelfie.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
 };
-
-exports.deleteXelfie = async (req, res) => {
-  const id = req.params.id;
-
-  await activityService.deleteActivity(id);
-
-  res.json({
-    xelfie: {
-      id,
-    },
-  });
-};
-
-exports.updateXelfie = async (req, res) => {
-  const id = req.params.id;
-  const newXecretoData = req.body;
-
-  await activityService.updateActivity(id, newXecretoData);
-
-  res.json({
-    xelfie: { id },
-  });
-};
-
-// const xelfieService = require("../services/xelfieService");
-
-// exports.getXelfie = async (req, res) => {
-//   const id = req.params.id;
-//   const xelfie = await xelfieService.getXelfieById(id);
-
-//   res.json({
-//     xelfie: {
-//       name: xelfie.name,
-//       description: xelfie.description,
-//       familiar: xelfie.familiar,
-//       min_age: xelfie.min_age,
-//       max_age: xelfie.max_age,
-//     },
-//   });
-// };
-
-// exports.getAllXelfies = async (req, res) => {
-//   const xelfies = await xelfieService.getAllXelfies();
-//   res.json({
-//     xelfies: xelfies.map((xelfie) => xelfie.id),
-//   });
-// };
-
-// exports.deleteXelfie = async (req, res) => {
-//   const id = req.params.id;
-
-//   await xelfieService.deleteXelfie(id);
-
-//   res.json({
-//     xelfie: {
-//       id,
-//     },
-//   });
-// };
-
-// exports.addXelfie = async (req, res) => {
-//   const { name, description, familiar, min_age, max_age, casa_id } = req.body;
-
-//   const xelfie = await casaService.addXelfie(
-//     casa_id,
-//     name,
-//     description,
-//     familiar,
-//     min_age,
-//     max_age
-//   );
-
-//   res.json({
-//     xelfie: {
-//       id: xelfie.id,
-//     },
-//   });
-// };

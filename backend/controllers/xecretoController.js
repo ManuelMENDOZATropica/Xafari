@@ -71,7 +71,14 @@ exports.updateXecreto = async (req, res, next) => {
       ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
       ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
       ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
-      ...(req.body.clues ? { qrCode: req.body.clues } : {}),
+      ...(req.body.clues
+        ? {
+            clues: req.body.clues.map((clue, index) => ({
+              ...clue,
+              order: index,
+            })),
+          }
+        : {}),
     };
 
     if (

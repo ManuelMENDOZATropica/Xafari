@@ -53,10 +53,19 @@ exports.updateXecreto = async (id, newData) => {
   const xecreto = await this.getXecreto(id);
 
   if (xecreto == null) return null;
-  const updated = await xecreto.update(newData);
-  if (updated != null) {
-    await xecreto.activity.update(newData);
-    await xecreto.clues.update(newData);
+
+  if (newData.clues) {
+    console.debug("REMOVING CLUES", xecreto.clues);
+
+    for (const clue of xecreto.clues) {
+      console.debug("CLUE", clue);
+      await clue.destroy();
+    }
   }
+
+  const updated = await xecreto.update(newData);
+
+  await xecreto.activity.update(newData);
+
   return updated;
 };

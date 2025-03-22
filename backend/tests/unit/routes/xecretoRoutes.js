@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../../../app");
 
 const Activity = require("../../../models/activity");
+const { Clue } = require("../../../models");
 
 describe("Xecreto route", () => {
   describe("GET xecreto", () => {
@@ -59,39 +60,83 @@ describe("Xecreto route", () => {
       });
     });
 
-    // it("Should return xperience after delete, activity should also be deleted", async () => {
-    //   const xperiencia = {
-    //     name: `activity ${Math.floor(Math.random() * 20)}`,
-    //     description: `description ${Math.floor(Math.random() * 20)}`,
-    //     location: `location ${Math.floor(Math.random() * 20)}`,
-    //     isValidable: true,
-    //     qrCode: `qrCode ${Math.floor(Math.random() * 20)}`,
-    //   };
+    it("Should return xecreto after delete, activity should also be deleted", async () => {
+      const xecreto = {
+        name: `xecreto ${Math.floor(Math.random() * 20)}`,
+        description: `description ${Math.floor(Math.random() * 20)}`,
+        location: `location ${Math.floor(Math.random() * 20)}`,
+      };
 
-    //   const responsePost = await request(app)
-    //     .post("/xperiencia")
-    //     .send(xperiencia);
+      const responsePost = await request(app).post("/xecreto").send(xecreto);
 
-    //   const response = await request(app).delete(
-    //     `/xperiencia/${responsePost.body.xperiencia.id}`
-    //   );
+      const response = await request(app).delete(
+        `/xecreto/${responsePost.body.xecreto.id}`
+      );
 
-    //   expect(response.status).toBe(200);
-    //   expect(response.body.xperiencia).toMatchObject({
-    //     qrCode: xperiencia.qrCode,
-    //     isValidable: xperiencia.isValidable,
-    //   });
+      expect(response.status).toBe(200);
+      expect(response.body.xecreto).toMatchObject({
+        clues: [],
+      });
 
-    //   expect(response.body.xperiencia.activity).toMatchObject({
-    //     id: responsePost.body.xperiencia.activity.id,
-    //   });
+      expect(response.body.xecreto.activity).toMatchObject({
+        id: responsePost.body.xecreto.activity.id,
+      });
 
-    //   const activity = await Activity.findByPk(
-    //     responsePost.body.xperiencia.activity.id
-    //   );
+      const activity = await Activity.findByPk(
+        responsePost.body.xecreto.activity.id
+      );
 
-    //   expect(activity).toBe(null);
-    // });
+      expect(activity).toBe(null);
+    });
+    it("Should return xecreto after delete, clues should also be deleted", async () => {
+      const xecreto = {
+        name: `xecreto ${Math.floor(Math.random() * 20)}`,
+        description: `description ${Math.floor(Math.random() * 20)}`,
+        location: `location ${Math.floor(Math.random() * 20)}`,
+        clues: [
+          {
+            text: "Clue 1 (delete)",
+            correctAnswer: "answer 1",
+          },
+          {
+            text: "Clue 2 (delete)",
+            correctAnswer: "answer 2",
+          },
+        ],
+      };
+
+      const responsePost = await request(app).post("/xecreto").send(xecreto);
+
+      const response = await request(app).delete(
+        `/xecreto/${responsePost.body.xecreto.id}`
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.xecreto).toMatchObject({
+        clues: [
+          {
+            text: "Clue 1 (delete)",
+            correctAnswer: "answer 1",
+          },
+          {
+            text: "Clue 2 (delete)",
+            correctAnswer: "answer 2",
+          },
+        ],
+      });
+
+      expect(response.body.xecreto.activity).toMatchObject({
+        id: responsePost.body.xecreto.activity.id,
+      });
+
+      const clue1 = await Clue.findByPk(responsePost.body.xecreto.clues[0].id);
+
+      expect(clue1).toBe(null);
+
+      const clue2 = await Clue.findByPk(responsePost.body.xecreto.clues[0].id);
+
+      expect(clue2).toBe(null);
+    });
   });
   describe("POST xecreto create", () => {
     it("Should create a new xecreto", async () => {
@@ -142,13 +187,11 @@ describe("Xecreto route", () => {
         description: `description ${Math.floor(Math.random() * 20)}`,
         location: `location ${Math.floor(Math.random() * 20)}`,
         isValidable: false,
-        minAge: 5,
-        maxAge: 0,
+        minAge: 0,
+        maxAge: 5,
       };
 
-      const response = await request(app)
-        .post("/xecreto/666")
-        .send(xecreto);
+      const response = await request(app).post("/xecreto/666").send(xecreto);
 
       expect(response.status).toBe(404);
       expect(response.body).toMatchObject({
@@ -156,58 +199,105 @@ describe("Xecreto route", () => {
       });
     });
 
-    // it("Should modify a xecreto", async () => {
-    //   const xperiencia = {
-    //     name: `activity ${Math.floor(Math.random() * 20)}`,
-    //     description: `description ${Math.floor(Math.random() * 20)}`,
-    //     location: `location ${Math.floor(Math.random() * 20)}`,
-    //     isValidable: false,
-    //   };
+    it("Should modify a xecreto activity", async () => {
+      const xecreto = {
+        name: `activity 666`,
+        description: `description ${Math.floor(Math.random() * 20)}`,
+        location: `location ${Math.floor(Math.random() * 20)}`,
+        isValidable: false,
+        minAge: 0,
+        maxAge: 5,
+      };
 
-    //   const responsePost = await request(app)
-    //     .post("/xperiencia")
-    //     .send(xperiencia);
-    //   const newName = Math.random().toString(16).substring(2);
-    //   const newDescription = Math.random().toString(16).substring(2);
+      const responsePost = await request(app).post("/xecreto").send(xecreto);
 
-    //   const response = await request(app)
-    //     .post(`/xperiencia/${responsePost.body.xperiencia.id}`)
-    //     .send({
-    //       name: newName,
-    //       description: newDescription,
-    //     });
+      const newName = Math.random().toString(16).substring(2);
+      const newDescription = Math.random().toString(16).substring(2);
 
-    //   expect(response.status).toBe(200);
-    //   expect(response.body.xperiencia.activity.name).toBe(newName);
-    //   expect(response.body.xperiencia.activity.description).toBe(
-    //     newDescription
-    //   );
+      const response = await request(app)
+        .post(`/xecreto/${responsePost.body.xecreto.id}`)
+        .send({
+          name: newName,
+          description: newDescription,
+        });
 
-    //   const responseGet = await request(app).post(
-    //     `/xperiencia/${responsePost.body.xperiencia.id}`
-    //   );
-    //   console.debug(responseGet.body, "GET");
-    //   expect(response.body).toMatchObject(responseGet.body);
-    // });
+      expect(response.status).toBe(200);
+      expect(response.body.xecreto.activity.name).toBe(newName);
+      expect(response.body.xecreto.activity.description).toBe(newDescription);
+    });
 
-    // it("Should return same object when no new values sent", async () => {
-    //   const xperiencia = {
-    //     name: `activity ${Math.floor(Math.random() * 20)}`,
-    //     description: `description ${Math.floor(Math.random() * 20)}`,
-    //     location: `location ${Math.floor(Math.random() * 20)}`,
-    //     isValidable: false,
-    //   };
+    it("Should modify a xecreto clues", async () => {
+      const xecreto = {
+        name: `activity 666`,
+        description: `description ${Math.floor(Math.random() * 20)}`,
+        location: `location ${Math.floor(Math.random() * 20)}`,
+        isValidable: false,
+        minAge: 0,
+        maxAge: 5,
+        clues: [
+          {
+            text: "clue 1",
+            correctAnswer: "answer 1",
+          },
+          {
+            text: "clue 2",
+            correctAnswer: "answer 2",
+          },
+        ],
+      };
 
-    //   const responsePost = await request(app)
-    //     .post("/xperiencia")
-    //     .send(xperiencia);
+      const responsePost = await request(app).post("/xecreto").send(xecreto);
 
-    //   const response = await request(app)
-    //     .post(`/xperiencia/${responsePost.body.xperiencia.id}`)
-    //     .send(xperiencia);
+      const response = await request(app)
+        .post(`/xecreto/${responsePost.body.xecreto.id}`)
+        .send({
+          clues: [
+            {
+              text: "clue A",
+              correctAnswer: "answer A",
+            },
+          ],
+        });
 
-    //   expect(response.status).toBe(200);
-    //   expect(response.body).toMatchObject(responsePost.body);
-    // });
+      expect(response.status).toBe(200);
+      expect(response.body.xecreto.clues[0].text).toBe("clue A");
+      expect(response.body.xecreto.clues[0].correctAnswer).toBe("answer A");
+
+      const clue1 = await Clue.findByPk(responsePost.body.xecreto.clues[0].id);
+      const clue2 = await Clue.findByPk(responsePost.body.xecreto.clues[1].id);
+      expect(clue1).toBe(null);
+      expect(clue2).toBe(null);
+    });
+
+    it("Should not fail if no changes when updatign", async () => {
+      const xecreto = {
+        name: `activity 666`,
+        description: `description ${Math.floor(Math.random() * 20)}`,
+        location: `location ${Math.floor(Math.random() * 20)}`,
+        isValidable: false,
+        minAge: 0,
+        maxAge: 5,
+        clues: [
+          {
+            text: "clue 1",
+            correctAnswer: "answer 1",
+          },
+          {
+            text: "clue 2",
+            correctAnswer: "answer 2",
+          },
+        ],
+      };
+
+      const responsePost = await request(app).post("/xecreto").send(xecreto);
+
+      const response = await request(app)
+        .post(`/xecreto/${responsePost.body.xecreto.id}`)
+        .send(xecreto);
+
+      expect(responsePost.body.xecreto.clues).toMatchObject(
+        response.body.xecreto.clues
+      );
+    });
   });
 });
