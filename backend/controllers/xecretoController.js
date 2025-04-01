@@ -1,54 +1,156 @@
 const xecretoService = require("../services/xecretoService");
+const {
+  handleSequelizeError,
+  ResourceNotFoundError,
+  ValidationError,
+} = require("../utils/errors");
 
-exports.getXecreto = async (req, res) => {
+exports.createXecreto = async (req, res, next) => {
+  const { clues, minAge, maxAge, ...activityParams } = req.body;
+
+  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
+    return next(new ValidationError("Age limits are not valid"));
+  }
+
+  try {
+    const xecreto = await xecretoService.createXecreto({
+      clues: clues
+        ? clues.map((clue, index) => ({ ...clue, order: index }))
+        : [],
+      type: "Xecreto",
+      ...activityParams,
+    });
+
+    res.json({
+      xecreto: xecreto.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
+};
+
+exports.getXecreto = async (req, res, next) => {
   const id = req.params.id;
-  const xecreto = await xecretoService.getXecretoById(id);
+  try {
+    const xecreto = await xecretoService.getXecreto(id);
 
-  res.json({
-    xecreto: {
-      name: xecreto.name,
-      description: xecreto.description,
-      familiar: xecreto.familiar,
-      min_age: xecreto.min_age,
-      max_age: xecreto.max_age,
-    },
-  });
+    if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
+
+    res.json({
+      xecreto: xecreto.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };
 
-exports.getAllXecretos = async (req, res) => {
-  const xecretos = await xecretoService.getAllXecretos();
-  res.json({
-    xecretos: xecretos.map((xecreto) => xecreto.id),
-  });
+exports.deleteXecreto = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xecreto = await xecretoService.deleteXecreto(id);
+
+    if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
+
+    res.json({
+      xecreto: xecreto.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };
 
-exports.deleteXecreto = async (req, res) => {
+exports.updateXecreto = async (req, res, next) => {
   const id = req.params.id;
 
-  await xecretoService.deleteXecreto(id);
+  try {
+    const newXecretoData = {
+      ...(req.body.name ? { name: req.body.name } : {}),
+      ...(req.body.description ? { description: req.body.description } : {}),
+      ...(req.body.location ? { location: req.body.location } : {}),
+      ...(req.body.type ? { type: req.body.type } : {}),
+      ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
+      ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
+      ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
+      ...(req.body.clues
+        ? {
+            clues: req.body.clues.map((clue, index) => ({
+              ...clue,
+              order: index,
+            })),
+          }
+        : {}),
+    };
 
-  res.json({
-    xecreto: {
-      id: id,
-    },
-  });
+    if (
+      !isNaN(newXecretoData.minAge) &&
+      !isNaN(newXecretoData.maxAge) &&
+      newXecretoData.minAge >= newXecretoData.maxAge
+    ) {
+      return next(new ValidationError("Age limits are not valid"));
+    }
+
+    const newXecreto = await xecretoService.updateXecreto(id, newXecretoData);
+
+    if (!newXecreto)
+      return next(new ResourceNotFoundError("Xecreto not found"));
+
+    res.json({
+      xecreto: newXecreto.toJSON(),
+    });
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };
 
-exports.addXecreto = async (req, res) => {
-  const { name, description, familiar, min_age, max_age, casa_id } = req.body;
+// exports.getXperiencia = async (req, res) => {
+//   const id = req.params.id;
+//   const xperiencia = await xperienciaService.getXperienciaById(id);
 
-  const xecreto = await casaService.addXecreto(
-    casa_id,
-    name,
-    description,
-    familiar,
-    min_age,
-    max_age
-  );
+//   res.json({
+//     xperiencia: {
+//       name: xperiencia.name,
+//       description: xperiencia.description,
+//       familiar: xperiencia.familiar,
+//       min_age: xperiencia.min_age,
+//       max_age: xperiencia.max_age,
+//     },
+//   });
+// };
 
-  res.json({
-    xecreto: {
-      id: xecreto.id,
-    },
-  });
-};
+// exports.getAllXperiencias = async (req, res) => {
+//   const xperiencias = await xperienciaService.getAllXperiencias();
+//   res.json({
+//     xperiencias: xperiencias.map((xperiencia) => xperiencia.id),
+//   });
+// };
+
+// exports.deleteXperiencia = async (req, res) => {
+//   const id = req.params.id;
+
+//   await xperienciaService.deleteXperiencia(id);
+
+//   res.json({
+//     xperiencia: {
+//       id: id,
+//     },
+//   });
+// };
+
+// exports.addXperiencia = async (req, res) => {
+//   const { name, description, familiar, min_age, max_age, casa_id } = req.body;
+
+//   const xperiencia = await casaService.addXperiencia(
+//     casa_id,
+//     name,
+//     description,
+//     familiar,
+//     min_age,
+//     max_age
+//   );
+
+//   res.json({
+//     xperiencia: {
+//       id: xperiencia.id,
+//     },
+//   });
+// };

@@ -1,58 +1,54 @@
+const Activity = require("../models/xelfie");
 const Xelfie = require("../models/xelfie");
-const { NotFoundError } = require("../utils/errors");
-const { ForeignKeyConstraintError } = require("sequelize");
-const casaService = require("../services/casaService");
+const xperiencia = require("../models/xperiencia");
 
-exports.getXelfieById = async (id) => {
-  if (!id) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
+exports.createXelfie = async ({ ...activityParams }) => {
+  const xelfie = await Xelfie.create(
+    {
+      activity: activityParams,
+    },
+    {
+      include: [
+        {
+          association: Xelfie.Activity,
+        },
+      ],
+    }
+  );
 
-  const xelfie = await Xelfie.findByPk(id);
-  if (!xelfie) {
-    throw new NotFoundError("Xelfie not found");
-  }
   return xelfie;
 };
 
-exports.addXelfie = async (
-  casa_id,
-  name,
-  description,
-  familiar,
-  min_age,
-  max_age
-) => {
-  if (
-    !name ||
-    !description ||
-    typeof familiar != "boolean" ||
-    isNaN(min_age) ||
-    isNaN(max_age)
-  ) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
+exports.getXelfie = async (id) => {
+  let xelfie = await Xelfie.findByPk(id, {
+    include: [
+      {
+        model: Activity,
+        as: "activity",
+      },
+    ],
+  });
 
-  try {
-    const xelfie = await Xelfie.create({
-      casa_id,
-      name,
-      description,
-      familiar,
-      min_age,
-      max_age,
-    });
-    return xelfie;
-  } catch (err) {
-    if (err instanceof ForeignKeyConstraintError) {
-      throw new NotFoundError("Casa not found");
-    } else {
-      throw err;
-    }
-  }
+  return xelfie;
 };
 
 exports.deleteXelfie = async (id) => {
-  const xelfie = await this.getXelfieById(id);
-  return await xelfie.destroy();
+  const xelfie = await this.getXelfie(id);
+
+  if (xelfie == null) return null;
+
+  const destroyed = await xelfie.destroy();
+  return destroyed;
+};
+
+exports.updateXelfie = async (id, newData) => {
+  const xelfie = await this.getXelfie(id);
+
+  if (xelfie == null) return null;
+
+  const updated = await xelfie.update(newData);
+  if (updated != null) {
+    await xelfie.activity.update(newData);
+  }
+  return updated;
 };

@@ -1,58 +1,59 @@
+const Activity = require("../models/activity");
 const Xperiencia = require("../models/xperiencia");
-const { NotFoundError } = require("../utils/errors");
+const House = require("../models/house");
 
-const casaService = require("../services/casaService");
+exports.createXperiencia = async ({
+  qrCode,
+  isValidable,
+  ...activityParams
+}) => {
+  const xperiencia = await Xperiencia.create(
+    {
+      qrCode,
+      isValidable,
+      activity: activityParams,
+    },
+    {
+      include: [
+        {
+          association: Xperiencia.Activity,
+        },
+      ],
+    }
+  );
 
-exports.getXperienciaById = async (id) => {
-  if (!id) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
-
-  const xperiencia = await Xperiencia.findByPk(id);
-  if (!xperiencia) {
-    throw new NotFoundError("Xperiencia not found");
-  }
   return xperiencia;
 };
 
-exports.addXperiencia = async (
-  casa_id,
-  name,
-  description,
-  familiar,
-  min_age,
-  max_age
-) => {
-  if (
-    !name ||
-    !description ||
-    typeof familiar != "boolean" ||
-    isNaN(min_age) ||
-    isNaN(max_age)
-  ) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
+exports.getXperiencia = async (id) => {
+  let xperiencia = await Xperiencia.findByPk(id, {
+    include: [
+      {
+        model: Activity,
+        as: "activity",
+      },
+    ],
+  });
 
-  try {
-    const xperiencia = await Xperiencia.create({
-      casa_id,
-      name,
-      description,
-      familiar,
-      min_age,
-      max_age,
-    });
-    return xperiencia;
-  } catch (err) {
-    if (err instanceof ForeignKeyConstraintError) {
-      throw new NotFoundError("Casa not found");
-    } else {
-      throw err;
-    }
-  }
+  return xperiencia;
 };
 
 exports.deleteXperiencia = async (id) => {
-  const xperiencia = await this.getXperienciaById(id);
-  return await xperiencia.destroy();
+  const xperiencia = await this.getXperiencia(id);
+
+  if (xperiencia == null) return null;
+
+  const destroyed = await xperiencia.destroy();
+  return destroyed;
+};
+
+exports.updateXperiencia = async (id, newData) => {
+  const xperiencia = await this.getXperiencia(id);
+
+  if (xperiencia == null) return null;
+  const updated = await xperiencia.update(newData);
+  if (updated != null) {
+    await xperiencia.activity.update(newData);
+  }
+  return updated;
 };

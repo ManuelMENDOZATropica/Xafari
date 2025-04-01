@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { checkSchema } = require("express-validator");
 
-// const xelfieController = require("../controllers/xelfieController");
+// const eventController = require("../controllers/eventController");
 
-// function validateXelfieCreation() {
+// function validateEventCreation() {
 //   return checkSchema(
 //     {
 //       name: {
@@ -28,12 +28,30 @@ const { checkSchema } = require("express-validator");
 //       maxAge: {
 //         isInt: true,
 //       },
+//       eventName: {
+//         notEmpty: true,
+//       },
+//       eventDescription: {
+//         notEmpty: true,
+//       },
+//       startDate: {
+//         isDate: true,
+//       },
+//       endDate: {
+//         isDate: true,
+//       },
+//       eventLocation: {
+//         notEmpty: true,
+//       },
+//       isEventActive: {
+//         isBoolean: true,
+//       },
 //     },
 //     ["body"]
 //   );
 // }
 
-// function validateXelfieId() {
+// function validateEventId() {
 //   return checkSchema(
 //     {
 //       id: {
@@ -44,7 +62,7 @@ const { checkSchema } = require("express-validator");
 //   );
 // }
 
-// function validateXelfieUpdate() {
+// function validateEventUpdate() {
 //   return checkSchema(
 //     {
 //       id: {
@@ -71,20 +89,33 @@ const { checkSchema } = require("express-validator");
 //       maxAge: {
 //         isInt: true,
 //       },
+//       eventName: {
+//         notEmpty: true,
+//       },
+//       eventDescription: {
+//         notEmpty: true,
+//       },
+//       startDate: {
+//         isDate: true,
+//       },
+//       endDate: {
+//         isDate: true,
+//       },
+//       eventLocation: {
+//         notEmpty: true,
+//       },
+//       isEventActive: {
+//         isBoolean: true,
+//       },
 //     },
 //     ["params", "body"]
 //   );
 // }
 
-// router.post("/xelfie", validateXelfieCreation(), xelfieController.createXelfie);
-// router.get("/xelfie/:id", validateXelfieId(), xelfieController.getXelfie);
-// router.delete("/xelfie/:id", validateXelfieId(), xelfieController.deleteXelfie);
-// router.post(
-//   "/xelfie/:id",
-//   validateXelfieUpdate(),
-//   xelfieController.updateXelfie
-// );
+// router.post("/event", validateEventCreation(), eventController.createEvent);
+// router.get("/event/:id", validateEventId(), eventController.getEvent);
+// router.delete("/event/:id", validateEventId(), eventController.deleteEvent);
+// router.post("/event/:id", validateEventUpdate(), eventController.updateEvent);
 
-// // router.get("/xelfies", xelfieController.getAllXelfies);
-
+// // router.get("/xecretos", xecretoController.getAllXecretos);
 module.exports = router;

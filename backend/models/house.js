@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
-const casa = database.define("casa", {
+const house = database.define("house", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -12,7 +12,7 @@ const casa = database.define("casa", {
     unique: true,
     allowNull: false,
   },
-  elemento: {
+  element: {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
@@ -24,4 +24,4 @@ const casa = database.define("casa", {
   },
 });
 
-module.exports = casa;
+module.exports = house;
