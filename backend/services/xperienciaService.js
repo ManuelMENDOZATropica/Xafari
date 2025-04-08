@@ -15,9 +15,7 @@ exports.createXperiencia = async ({
     },
     {
       include: [
-        {
-          association: Xperiencia.Activity,
-        },
+        Activity
       ],
     }
   );
@@ -28,10 +26,7 @@ exports.createXperiencia = async ({
 exports.getXperiencia = async (id) => {
   let xperiencia = await Xperiencia.findByPk(id, {
     include: [
-      {
-        model: Activity,
-        as: "activity",
-      },
+      Activity
     ],
   });
 

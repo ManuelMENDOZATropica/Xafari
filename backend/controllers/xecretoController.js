@@ -1,3 +1,4 @@
+const { toXecretoDTO } = require("../dto/xecreto..dto");
 const xecretoService = require("../services/xecretoService");
 const {
   handleSequelizeError,
@@ -6,11 +7,7 @@ const {
 } = require("../utils/errors");
 
 exports.createXecreto = async (req, res, next) => {
-  const { clues, minAge, maxAge, ...activityParams } = req.body;
-
-  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
-    return next(new ValidationError("Age limits are not valid"));
-  }
+  const { clues, ...activityParams } = req.body;
 
   try {
     const xecreto = await xecretoService.createXecreto({
@@ -21,9 +18,7 @@ exports.createXecreto = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.json({
-      xecreto: xecreto.toJSON(),
-    });
+    res.json(toXecretoDTO(xecreto));
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -36,9 +31,7 @@ exports.getXecreto = async (req, res, next) => {
 
     if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.json({
-      xecreto: xecreto.toJSON(),
-    });
+    res.json(toXecretoDTO(xecreto));
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -51,9 +44,7 @@ exports.deleteXecreto = async (req, res, next) => {
 
     if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.json({
-      xecreto: xecreto.toJSON(),
-    });
+    res.json(toXecretoDTO(xecreto));
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -81,76 +72,13 @@ exports.updateXecreto = async (req, res, next) => {
         : {}),
     };
 
-    if (
-      !isNaN(newXecretoData.minAge) &&
-      !isNaN(newXecretoData.maxAge) &&
-      newXecretoData.minAge >= newXecretoData.maxAge
-    ) {
-      return next(new ValidationError("Age limits are not valid"));
-    }
-
     const newXecreto = await xecretoService.updateXecreto(id, newXecretoData);
 
     if (!newXecreto)
       return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.json({
-      xecreto: newXecreto.toJSON(),
-    });
+    res.json(toXecretoDTO(newXecreto));
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
 };
-
-// exports.getXperiencia = async (req, res) => {
-//   const id = req.params.id;
-//   const xperiencia = await xperienciaService.getXperienciaById(id);
-
-//   res.json({
-//     xperiencia: {
-//       name: xperiencia.name,
-//       description: xperiencia.description,
-//       familiar: xperiencia.familiar,
-//       min_age: xperiencia.min_age,
-//       max_age: xperiencia.max_age,
-//     },
-//   });
-// };
-
-// exports.getAllXperiencias = async (req, res) => {
-//   const xperiencias = await xperienciaService.getAllXperiencias();
-//   res.json({
-//     xperiencias: xperiencias.map((xperiencia) => xperiencia.id),
-//   });
-// };
-
-// exports.deleteXperiencia = async (req, res) => {
-//   const id = req.params.id;
-
-//   await xperienciaService.deleteXperiencia(id);
-
-//   res.json({
-//     xperiencia: {
-//       id: id,
-//     },
-//   });
-// };
-
-// exports.addXperiencia = async (req, res) => {
-//   const { name, description, familiar, min_age, max_age, casa_id } = req.body;
-
-//   const xperiencia = await casaService.addXperiencia(
-//     casa_id,
-//     name,
-//     description,
-//     familiar,
-//     min_age,
-//     max_age
-//   );
-
-//   res.json({
-//     xperiencia: {
-//       id: xperiencia.id,
-//     },
-//   });
-// };

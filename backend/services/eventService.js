@@ -1,4 +1,4 @@
-const Activity = require("../models/xelfie");
+const Activity = require("../models/activity");
 const EventModel = require("../models/event");
 
 exports.createEvent = async ({ startDate, endDate, ...activityParams }) => {
@@ -9,11 +9,7 @@ exports.createEvent = async ({ startDate, endDate, ...activityParams }) => {
       activity: activityParams,
     },
     {
-      include: [
-        {
-          association: EventModel.Activity,
-        },
-      ],
+      include: [Activity],
     }
   );
 
@@ -22,12 +18,7 @@ exports.createEvent = async ({ startDate, endDate, ...activityParams }) => {
 
 exports.getEvent = async (id) => {
   let event = await EventModel.findByPk(id, {
-    include: [
-      {
-        model: Activity,
-        as: "activity",
-      },
-    ],
+    include: [Activity],
   });
 
   return event;

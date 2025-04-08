@@ -1,25 +1,20 @@
+const { toXelfieDTO } = require("../dto/xelfie.dto");
 const xelfieService = require("../services/xelfieService");
 const {
   handleSequelizeError,
   ResourceNotFoundError,
-  ValidationError,
 } = require("../utils/errors");
 
 exports.createXelfie = async (req, res, next) => {
-  const { minAge, maxAge, ...activityParams } = req.body;
-
-  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
-    return next(new ValidationError("Age limits are not valid"));
-  }
+  const { ...activityParams } = req.body;
 
   try {
     const xelfie = await xelfieService.createXelfie({
       type: "Xelfie",
       ...activityParams,
     });
-    res.json({
-      xelfie: xelfie.toJSON(),
-    });
+
+    res.json(toXelfieDTO(xelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }
@@ -32,9 +27,7 @@ exports.getXelfie = async (req, res, next) => {
 
     if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json({
-      xelfie: xelfie.toJSON(),
-    });
+    res.json(toXelfieDTO(xelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }
@@ -47,9 +40,7 @@ exports.deleteXelfie = async (req, res, next) => {
 
     if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json({
-      xelfie: xelfie.toJSON(),
-    });
+    res.json(toXelfieDTO(xelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }
@@ -69,21 +60,11 @@ exports.updateXelfie = async (req, res, next) => {
       ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
     };
 
-    if (
-      !isNaN(newXelfieData.minAge) &&
-      !isNaN(newXelfieData.maxAge) &&
-      newXelfieData.minAge >= newXelfieData.maxAge
-    ) {
-      return next(new ValidationError("Age limits are not valid"));
-    }
-
     const newXelfie = await xelfieService.updateXelfie(id, newXelfieData);
 
     if (!newXelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json({
-      xelfie: newXelfie.toJSON(),
-    });
+    res.json(toXelfieDTO(newXelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }

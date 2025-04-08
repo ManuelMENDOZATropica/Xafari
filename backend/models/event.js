@@ -7,14 +7,6 @@ const event = database.define("event", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  eventName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  eventDescription: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
   startDate: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -22,14 +14,6 @@ const event = database.define("event", {
   endDate: {
     type: DataTypes.DATE,
     allowNull: false,
-  },
-  eventLocation: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  isEventActive: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
   },
 });
 

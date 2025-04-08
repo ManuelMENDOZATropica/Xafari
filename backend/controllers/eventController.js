@@ -5,12 +5,10 @@ const {
   ValidationError,
 } = require("../utils/errors");
 
-exports.createEvent = async (req, res, next) => {
-  const { startDate, endDate, minAge, maxAge, ...activityParams } = req.body;
+const { toEventDTO } = require("../dto/event.dto");
 
-  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
-    return next(new ValidationError("Age limits are not valid"));
-  }
+exports.createEvent = async (req, res, next) => {
+  const { startDate, endDate, ...activityParams } = req.body;
 
   try {
     const event = await eventService.createEvent({
@@ -20,9 +18,7 @@ exports.createEvent = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.json({
-      event: event.toJSON(),
-    });
+    res.json(toEventDTO(event));
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -35,9 +31,7 @@ exports.getEvent = async (req, res, next) => {
 
     if (!event) return next(new ResourceNotFoundError("Event not found"));
 
-    res.json({
-      event: event.toJSON(),
-    });
+    res.json(toEventDTO(event));
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -50,9 +44,7 @@ exports.deleteEvent = async (req, res, next) => {
 
     if (!event) return next(new ResourceNotFoundError("Event not found"));
 
-    res.json({
-      event: event.toJSON(),
-    });
+    res.json(toEventDTO(event));
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -74,21 +66,11 @@ exports.updateEvent = async (req, res, next) => {
       ...(req.body.endDate ? { endDate: req.body.endDate } : {}),
     };
 
-    if (
-      !isNaN(newEventData.minAge) &&
-      !isNaN(newEventData.maxAge) &&
-      newEventData.minAge >= newEventData.maxAge
-    ) {
-      return next(new ValidationError("Age limits are not valid"));
-    }
-
     const newEvent = await eventService.updateEvent(id, newEventData);
 
     if (!newEvent) return next(new ResourceNotFoundError("Event not found"));
 
-    res.json({
-      event: newEvent.toJSON(),
-    });
+    res.json(toEventDTO(newEvent));
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }

@@ -18,7 +18,7 @@ describe("User route", () => {
         name: "John foe1",
         email: "mail2@gmail.com",
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "12342",
       };
 
@@ -29,7 +29,11 @@ describe("User route", () => {
       );
 
       expect(responseGet.status).toBe(200);
-      expect(responseGet.body.user).toMatchObject(user);
+      expect(responseGet.body.user).toMatchObject(
+        Object.fromEntries(
+          Object.entries(user).filter(([k, v]) => k != "password")
+        )
+      );
       expect(responseGet.body.user.achievements.length).toBe(0);
       expect(responseGet.body.user.activities.length).toBe(0);
       expect(responseGet.body.user.familyTreeId).toBe(null);
@@ -50,7 +54,7 @@ describe("User route", () => {
         name: Math.random().toString(16).substring(2),
         email: `${Math.random().toString(16).substring(2)}@gmail.com`,
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -78,14 +82,18 @@ describe("User route", () => {
         name: `Name ${Math.floor(Math.random() * 200)}`,
         email: `${Math.random().toString(16).substring(2)}@gmail.com`,
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
       const response = await request(app).post("/user").send(user);
 
       expect(response.status).toBe(200);
-      expect(response.body.user).toMatchObject(user);
+      expect(response.body.user).toMatchObject(
+        Object.fromEntries(
+          Object.entries(user).filter(([k, v]) => k != "password")
+        )
+      );
     });
 
     it("should return error when name is empty", async () => {
@@ -93,7 +101,7 @@ describe("User route", () => {
         name: "        ",
         email: "mail@gmail.com",
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -110,7 +118,7 @@ describe("User route", () => {
         name: "John Doe",
         email: "mail",
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -127,7 +135,7 @@ describe("User route", () => {
         name: "John doe",
         email: "mail@gmail.com",
         password: "",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -139,12 +147,12 @@ describe("User route", () => {
       });
     });
 
-    it("should return error when Age is not a number", async () => {
+    it("should return error when birthdate is not a date", async () => {
       const user = {
         name: "John doe",
         email: "mail@gmail.com",
         password: "1234",
-        age: "twenty",
+        birthdate: "twenty",
         reservationNumber: "1234",
       };
 
@@ -152,7 +160,7 @@ describe("User route", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject({
-        error: "Age is not valid",
+        error: "Birthdate must be a valid ISO 8601 date",
       });
     });
 
@@ -161,7 +169,7 @@ describe("User route", () => {
         name: "John doe",
         email: "mail@gmail.com",
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "   ",
       };
 
@@ -178,7 +186,7 @@ describe("User route", () => {
         name: "John doe",
         email: "mail@gmail.com",
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -210,7 +218,7 @@ describe("User route", () => {
         name: Math.random().toString(16).substring(2),
         email: `${Math.random().toString(16).substring(2)}@gmail.com`,
         password: "1234",
-        age: 20,
+        birthdate: "2025-03-22T22:52:46.816Z",
         reservationNumber: "1234",
       };
 
@@ -230,4 +238,5 @@ describe("User route", () => {
       expect(response.body.user.email).toBe(newMail);
     });
   });
+
 });

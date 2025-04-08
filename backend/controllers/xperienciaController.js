@@ -1,3 +1,4 @@
+const { toXperienciaDTO } = require("../dto/xperiencia.dto");
 const xperienciaService = require("../services/xperienciaService");
 const {
   handleSequelizeError,
@@ -6,11 +7,7 @@ const {
 } = require("../utils/errors");
 
 exports.createXperiencia = async (req, res, next) => {
-  const { qrCode, isValidable, minAge, maxAge, ...activityParams } = req.body;
-
-  if (!isNaN(minAge) && !isNaN(maxAge) && minAge >= maxAge) {
-    return next(new ValidationError("Age limits are not valid"));
-  }
+  const { qrCode, isValidable, ...activityParams } = req.body;
 
   try {
     const xperiencia = await xperienciaService.createXperiencia({
@@ -20,10 +17,9 @@ exports.createXperiencia = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.json({
-      xperiencia: xperiencia.toJSON(),
-    });
+    res.json(toXperienciaDTO(xperiencia));
   } catch (err) {
+    console.debug("AAAAAAAAAAAa", err);
     next(handleSequelizeError(err, "Xperiencia"));
   }
 };
@@ -36,9 +32,7 @@ exports.getXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json({
-      xperiencia: xperiencia.toJSON(),
-    });
+    res.json(toXperienciaDTO(xperiencia));
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -52,9 +46,7 @@ exports.deleteXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json({
-      xperiencia: xperiencia.toJSON(),
-    });
+    res.json(toXperienciaDTO(xperiencia));
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -76,14 +68,6 @@ exports.updateXperiencia = async (req, res, next) => {
       ...(req.body.isValidable ? { isValidable: req.body.isValidable } : {}),
     };
 
-    if (
-      !isNaN(newXperienciaData.minAge) &&
-      !isNaN(newXperienciaData.maxAge) &&
-      newXperienciaData.minAge >= newXperienciaData.maxAge
-    ) {
-      return next(new ValidationError("Age limits are not valid"));
-    }
-
     const newXperiencia = await xperienciaService.updateXperiencia(
       id,
       newXperienciaData
@@ -92,9 +76,7 @@ exports.updateXperiencia = async (req, res, next) => {
     if (!newXperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json({
-      xperiencia: newXperiencia.toJSON(),
-    });
+    res.json(toXperienciaDTO(newXperiencia));
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }

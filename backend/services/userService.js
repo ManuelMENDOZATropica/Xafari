@@ -8,35 +8,49 @@ const {
   Xelfie,
   Xperiencia,
   Event,
+  FamilyTree,
+  UserXelfie,
 } = require("../models");
 
 exports.createUser = async ({
   name,
   email,
   password,
-  age,
+  birthdate,
   reservationNumber,
 }) => {
   const user = await User.create({
     name,
     email,
     password,
-    age,
+    birthdate,
     reservationNumber,
   });
 
   return user;
 };
 
-exports.getUser = async (id) => {
+exports.getUser = async (id, transaction) => {
   let user = await User.findByPk(id, {
     include: [
       Achievement,
+      FamilyTree,
+
       {
         model: Activity,
-        include: [House, Xecreto, Xelfie, Xperiencia, Event],
+        include: [
+          House,
+          Xecreto,
+          {
+            model: Xelfie,
+            include: [UserXelfie],
+          },
+          Xperiencia,
+          Event,
+        ],
       },
     ],
+    transaction,
   });
 
   return user;
@@ -44,7 +58,7 @@ exports.getUser = async (id) => {
 
 exports.deleteUser = async (id) => {
   const user = await this.getUser(id);
-  
+
   if (user == null) return null;
   const destroyed = await user.destroy();
   return destroyed;

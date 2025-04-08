@@ -7,21 +7,18 @@ const userActivity = database.define("userActivity", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  userId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-  },
-  activityId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-  },
   startedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
   completedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+    allowNull: true,
+    defaultValue: null,
+  },
+  rating: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
 });
 

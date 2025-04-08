@@ -1,6 +1,5 @@
-const Activity = require("../models/xelfie");
+const Activity = require("../models/activity");
 const Xelfie = require("../models/xelfie");
-const xperiencia = require("../models/xperiencia");
 
 exports.createXelfie = async ({ ...activityParams }) => {
   const xelfie = await Xelfie.create(
@@ -8,25 +7,17 @@ exports.createXelfie = async ({ ...activityParams }) => {
       activity: activityParams,
     },
     {
-      include: [
-        {
-          association: Xelfie.Activity,
-        },
-      ],
+      include: [Activity],
     }
   );
 
   return xelfie;
 };
 
-exports.getXelfie = async (id) => {
+exports.getXelfie = async (id, transaction) => {
   let xelfie = await Xelfie.findByPk(id, {
-    include: [
-      {
-        model: Activity,
-        as: "activity",
-      },
-    ],
+    include: [Activity],
+    transaction,
   });
 
   return xelfie;
@@ -47,6 +38,7 @@ exports.updateXelfie = async (id, newData) => {
   if (xelfie == null) return null;
 
   const updated = await xelfie.update(newData);
+
   if (updated != null) {
     await xelfie.activity.update(newData);
   }

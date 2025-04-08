@@ -258,8 +258,8 @@ describe("Xperiencia route", () => {
         description: `description ${Math.floor(Math.random() * 20)}`,
         location: `location ${Math.floor(Math.random() * 20)}`,
         isValidable: false,
-        minAge: 5,
-        maxAge: 0,
+        minAge: 0,
+        maxAge: 5,
       };
 
       const response = await request(app)
@@ -302,7 +302,6 @@ describe("Xperiencia route", () => {
       const responseGet = await request(app).post(
         `/xperiencia/${responsePost.body.xperiencia.id}`
       );
-      console.debug(responseGet.body, "GET");
       expect(response.body).toMatchObject(responseGet.body);
     });
 

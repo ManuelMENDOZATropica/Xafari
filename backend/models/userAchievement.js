@@ -7,14 +7,6 @@ const userAchievement = database.define("userAchievement", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  userId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-  },
-  achievementId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-  },
   amount: {
     type: DataTypes.INTEGER,
     defaultValue: 1,

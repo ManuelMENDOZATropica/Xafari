@@ -14,6 +14,8 @@ const House = require("./house");
 
 const Clue = require("./clue");
 
+const UserXelfie = require("./userXelfie");
+
 // user can have many activities and one activity can be done by many users
 
 User.belongsToMany(Activity, {
@@ -22,6 +24,16 @@ User.belongsToMany(Activity, {
 Activity.belongsToMany(User, {
   through: UserActivity,
 });
+
+User.belongsToMany(Xelfie, {
+  through: UserXelfie,
+});
+Xelfie.belongsToMany(User, {
+  through: UserXelfie,
+});
+
+Xelfie.hasMany(UserXelfie, { foreignKey: 'xelfieId' });
+UserXelfie.belongsTo(Xelfie, { foreignKey: 'xelfieId' });
 
 // user can have many achievement and one achievement can be done by many users
 
@@ -35,16 +47,24 @@ Achievement.belongsToMany(User, {
 //one family tree can have plenty users, but one user cant share family tree
 
 FamilyTree.hasMany(User);
-User.belongsTo(FamilyTree);
+User.belongsTo(FamilyTree, {
+  foreignKey: {
+    name: "familyTreeId",
+    allowNull: false, // Si quieres que todos los usuarios tengan familia
+  },
+});
 
 // one xelfie belongs to one activity only
 
-Xelfie.Activity = Xelfie.belongsTo(Activity);
+Xelfie.belongsTo(Activity, {
+  onDelete: "CASCADE",
+  hooks: true,
+});
 Activity.hasOne(Xelfie);
 
 // one xecreto belongs to one activity only
 
-Xecreto.Activity = Xecreto.belongsTo(Activity, {
+Xecreto.belongsTo(Activity, {
   onDelete: "CASCADE",
   hooks: true,
 });
@@ -52,14 +72,14 @@ Activity.hasOne(Xecreto);
 
 // a xecreto has plenty clues
 
-Xecreto.Clues = Xecreto.hasMany(Clue, {
+Xecreto.hasMany(Clue, {
   onDelete: "CASCADE",
   hooks: true,
 });
 Clue.belongsTo(Xecreto);
 
 // one xperiencia belongs to one activity only
-Xperiencia.Activity = Xperiencia.belongsTo(Activity, {
+Xperiencia.belongsTo(Activity, {
   onDelete: "CASCADE",
   hooks: true,
 });
@@ -67,7 +87,10 @@ Activity.hasOne(Xperiencia);
 
 // one Event belongs to one activity only
 
-Event.Activity = Event.belongsTo(Activity);
+Event.belongsTo(Activity, {
+  onDelete: "CASCADE",
+  hooks: true,
+});
 Activity.hasOne(Event);
 
 // plenty achievement belongs to one activity only
@@ -95,4 +118,8 @@ module.exports = {
   Event,
   Clue,
   House,
+  FamilyTree,
+  UserAchievement,
+  UserActivity,
+  UserXelfie
 };

@@ -1,90 +1,47 @@
 const express = require("express");
 const router = express.Router();
-const { checkSchema } = require("express-validator");
+const { checkSchema, matchedData } = require("express-validator");
 
-// const xelfieController = require("../controllers/xelfieController");
+const activitySchema = require("./activitySchema");
 
-// function validateXelfieCreation() {
-//   return checkSchema(
-//     {
-//       name: {
-//         notEmpty: true,
-//       },
-//       description: {
-//         notEmpty: true,
-//       },
-//       location: {
-//         notEmpty: true,
-//       },
-//       isActive: {
-//         isBoolean: true,
-//       },
-//       isFamiliar: {
-//         isBoolean: true,
-//       },
-//       minAge: {
-//         isInt: true,
-//       },
-//       maxAge: {
-//         isInt: true,
-//       },
-//     },
-//     ["body"]
-//   );
-// }
+const xelfieController = require("../controllers/xelfieController");
+const { ValidationError } = require("../utils/errors");
 
-// function validateXelfieId() {
-//   return checkSchema(
-//     {
-//       id: {
-//         notEmpty: true,
-//       },
-//     },
-//     ["params"]
-//   );
-// }
+const XelfieSchema = {
+  ...activitySchema,
+};
 
-// function validateXelfieUpdate() {
-//   return checkSchema(
-//     {
-//       id: {
-//         notEmpty: true,
-//       },
-//       name: {
-//         notEmpty: true,
-//       },
-//       description: {
-//         notEmpty: true,
-//       },
-//       location: {
-//         notEmpty: true,
-//       },
-//       isActive: {
-//         isBoolean: true,
-//       },
-//       isFamiliar: {
-//         isBoolean: true,
-//       },
-//       minAge: {
-//         isInt: true,
-//       },
-//       maxAge: {
-//         isInt: true,
-//       },
-//     },
-//     ["params", "body"]
-//   );
-// }
+const validateXelfieData = async (req, res, next) => {
+  const result = (
+    await checkSchema(
+      req.method == "POST" && req.params.id
+        ? Object.fromEntries(
+            Object.entries(XelfieSchema).map(([field, value]) => [
+              field,
+              {
+                ...value,
+                optional: true,
+              },
+            ])
+          )
+        : XelfieSchema,
+      ["body"]
+    ).run(req)
+  )
+    .map((res) => res.array())
+    .flat();
+  if (result.length) {
+    return next(new ValidationError(result[0].msg));
+  }
+  req.body = matchedData(req);
 
-// router.post("/xelfie", validateXelfieCreation(), xelfieController.createXelfie);
-// router.get("/xelfie/:id", validateXelfieId(), xelfieController.getXelfie);
-// router.delete("/xelfie/:id", validateXelfieId(), xelfieController.deleteXelfie);
-// router.post(
-//   "/xelfie/:id",
-//   validateXelfieUpdate(),
-//   xelfieController.updateXelfie
-// );
+  next();
+};
 
-// // router.get("/xelfies", xelfieController.getAllXelfies);
+router.post("/xelfie", validateXelfieData, xelfieController.createXelfie);
+router.get("/xelfie/:id", xelfieController.getXelfie);
+router.delete("/xelfie/:id", xelfieController.deleteXelfie);
+
+router.post("/xelfie/:id", validateXelfieData, xelfieController.updateXelfie);
 
 module.exports = router;

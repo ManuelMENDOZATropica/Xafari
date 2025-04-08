@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const database = require("../config/database");
-const { BadRequestError, ValidationError } = require("../utils/errors");
 
 const activity = database.define("activity", {
   id: {
