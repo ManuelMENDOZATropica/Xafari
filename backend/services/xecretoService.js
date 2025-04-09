@@ -9,14 +9,7 @@ exports.createXecreto = async ({ clues, ...activityParams }) => {
       activity: activityParams,
     },
     {
-      include: [
-        {
-          association: Xecreto.Activity,
-        },
-        {
-          association: Xecreto.Clues,
-        },
-      ],
+      include: [Activity, Clue],
     }
   );
 
@@ -25,16 +18,7 @@ exports.createXecreto = async ({ clues, ...activityParams }) => {
 
 exports.getXecreto = async (id) => {
   let xecreto = await Xecreto.findByPk(id, {
-    include: [
-      {
-        model: Activity,
-        as: "activity",
-      },
-      {
-        model: Clue,
-        as: "clues",
-      },
-    ],
+    include: [Activity, Clue],
   });
 
   return xecreto;
@@ -55,10 +39,7 @@ exports.updateXecreto = async (id, newData) => {
   if (xecreto == null) return null;
 
   if (newData.clues) {
-    console.debug("REMOVING CLUES", xecreto.clues);
-
     for (const clue of xecreto.clues) {
-      console.debug("CLUE", clue);
       await clue.destroy();
     }
   }

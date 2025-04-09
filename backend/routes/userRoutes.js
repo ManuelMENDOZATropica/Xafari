@@ -12,7 +12,7 @@ const UserSchemas = {
       errorMessage: "Name cannot be empty",
     },
     isString: {
-      errorMessage: "Name must be a string",
+      errorMessage: "Name cannot be empty",
     },
   },
   email: {
@@ -36,9 +36,22 @@ const UserSchemas = {
       errorMessage: "Password must be a string",
     },
   },
-  age: {
-    isInt: {
-      errorMessage: "Age is not valid",
+  birthdate: {
+    trim: true,
+    notEmpty: {
+      errorMessage: "Birthdate cannot be empty",
+    },
+    isISO8601: {
+      errorMessage: "Birthdate must be a valid ISO 8601 date",
+    },
+    custom: {
+      errorMessage: "Birthdate value is invalid",
+      options: (value, { req }) => {
+        if (new Date(value) == "Invalid Date") return false;
+
+        req.body.birthday = new Date(value);
+        return true;
+      },
     },
   },
   reservationNumber: {
@@ -85,16 +98,5 @@ router.get("/user/:id", userController.getUser);
 router.delete("/user/:id", userController.deleteUser);
 router.post("/user/:id", validateUserData, userController.updateUser);
 
-// router.get("/user/:id/casas", userController.getAllCasas);  // done
-// router.get("/user/:id/xecretos", userController.getAllXecretos); // done
-// router.get("/user/:id/xelfies", userController.getAllXelfies); // done
-// router.get("/user/:id/xperiencias", userController.getAllXperiencias); // done
-
-// router.delete("/user/:id", userController.deleteUser); // done
-
-// router.post("/user", userController.addUser); // done
-// router.post("/user/:id/xecretos", userController.addXecreto);
-// router.post("/user/:id/xelfies", userController.addXelfie);
-// router.post("/user/:id/xperiencias", userController.addXperiencia);
 
 module.exports = router;

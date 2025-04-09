@@ -65,7 +65,7 @@ function handleSequelizeError(error, resource) {
     return new ValidationError("Invalid reference on database");
   } else if (error instanceof SequelizeDatabaseError) {
     // Errores de base de datos
-    return new DatabaseError("Databse Error");
+    return new DatabaseError("Database Error");
   } else if (error instanceof ConnectionError) {
     // Errores de conexión
     return new DatabaseError("Database Connection error");
