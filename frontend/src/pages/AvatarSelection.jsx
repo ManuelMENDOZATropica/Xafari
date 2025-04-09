@@ -1,89 +1,127 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
-const skinTones = ["#F3D5B5", "#E3B582", "#C78E6C", "#8B5A2B"];
-const hairOptions = ["/cabello1.png", "/cabello2.png", "/cabello3.png", "/cabello4.png"];
-const clothingOptions = ["/ropa1.png", "/ropa2.png", "/ropa3.png", "/ropa4.png"];
-const bodyBase = "/baseAvatar.png"; // Imagen del cuerpo base
+const skinColors = ["#F3D5B5", "#E3B582", "#C78E6C", "#8B5A2B"];
+const skinTones = ["/avatares/base-1.png", "/avatares/base-2.png", "/avatares/base-3.png", "/avatares/base-4.png"];
+const hairOptions = ["/avatares/cabello-1.png", "/avatares/cabello-2.png", "/avatares/cabello-3.png", "/avatares/cabello-4.png"];
+const clothingOptions = ["/avatares/ropa-1.png", "/avatares/ropa-2.png", "/avatares/ropa-3.png", "/avatares/ropa-4.png"];
 
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
-  const [selectedSkin, setSelectedSkin] = useState(skinTones[0]);
-  const [selectedHair, setSelectedHair] = useState(hairOptions[0]);
-  const [selectedClothing, setSelectedClothing] = useState(clothingOptions[0]);
+  const [skinIndex, setSkinIndex] = useState(0);
+  const [hairIndex, setHairIndex] = useState(0);
+  const [clothingIndex, setClothingIndex] = useState(0);
+  const navigate = useNavigate();
+
+  const handleSaveAvatar = () => {
+    const avatarData = {
+      skinIndex,
+      hairIndex,
+      clothingIndex
+    };
+
+    localStorage.setItem("avatarData", JSON.stringify(avatarData));
+    navigate("/treeoflife");
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-screen bg-white px-6 relative">
-      {/* Botón de idioma en la parte superior derecha */}
-      <button
-        onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-        className="absolute top-4 right-4 px-3 py-1 border border-gray-500 bg-white text-black rounded-lg shadow-md hover:bg-gray-200"
-      >
-        {t("language")}
-      </button>
+    <div className="relative h-screen w-screen overflow-hidden font-lufga">
+      {/* Fondo */}
+      <img
+        src="/img/fondo-avatar.png"
+        alt="Fondo Avatar"
+        className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
+      />
 
-      <h1 className="text-xl font-bold text-black mb-4">{t("chooseYourStyle")}</h1>
-
-      {/* Contenedor del avatar */}
-      <div className="relative w-40 h-72 flex items-center justify-center">
-        {/* Rectángulo de color (tono de piel) */}
-        <div
-          className="absolute w-40 h-72 rounded-lg"
-          style={{ backgroundColor: selectedSkin }}
-        />
-
-        {/* Cuerpo base */}
-        <img src={bodyBase} alt="Cuerpo Base" className="absolute w-40 h-72" />
-
-        {/* Cabello */}
-        <img src={selectedHair} alt="Cabello" className="absolute w-40 h-72" />
-
-        {/* Ropa */}
-        <img src={selectedClothing} alt="Ropa" className="absolute w-40 h-72" />
-      </div>
-
-      {/* Controles de personalización */}
-      <div className="w-full max-w-md bg-white p-4 mt-6 rounded-lg shadow-md border border-gray-500">
-        {/* Opciones de Piel */}
-        <h2 className="text-center text-black mb-2">{t("skinTone")}</h2>
-        <div className="flex justify-center gap-2">
-          {skinTones.map((color) => (
-            <button
-              key={color}
-              className="w-10 h-10 rounded-full border border-gray-500"
-              style={{ backgroundColor: color }}
-              onClick={() => setSelectedSkin(color)}
-            />
-          ))}
+      <div className="relative z-10 flex flex-col items-center justify-between h-full px-6 py-4">
+        {/* Botón idioma */}
+        <div className="w-full flex justify-end">
+          <button
+            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          >
+            {t("language")}
+          </button>
         </div>
 
-        {/* Opciones de Cabello */}
-        <h2 className="text-center text-black mt-4 mb-2">{t("hair")}</h2>
-        <div className="grid grid-cols-4 gap-2 justify-center">
-          {hairOptions.map((hair) => (
-            <button
-              key={hair}
-              onClick={() => setSelectedHair(hair)}
-              className="p-1 border border-gray-500 rounded-lg bg-white"
-            >
-              <img src={hair} alt="Cabello" className="w-12 h-12 object-contain" />
-            </button>
-          ))}
+        {/* Título */}
+        <div className="bg-white/70 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md">
+          <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
+            {t("chooseYourStyle")}
+          </h1>
         </div>
 
-        {/* Opciones de Ropa */}
-        <h2 className="text-center text-black mt-4 mb-2">{t("clothing")}</h2>
-        <div className="grid grid-cols-4 gap-2 justify-center">
-          {clothingOptions.map((clothes) => (
-            <button
-              key={clothes}
-              onClick={() => setSelectedClothing(clothes)}
-              className="p-1 border border-gray-500 rounded-lg bg-white"
-            >
-              <img src={clothes} alt="Ropa" className="w-12 h-12 object-contain" />
-            </button>
-          ))}
+        {/* Avatar */}
+        <div className="relative w-40 h-72 flex items-center justify-center">
+          <img src={skinTones[skinIndex]} alt="Cuerpo Base" className="absolute w-40 h-72" />
+          <img src={hairOptions[hairIndex]} alt="Cabello" className="absolute w-40 h-72" />
+          <img src={clothingOptions[clothingIndex]} alt="Ropa" className="absolute w-40 h-72" />
         </div>
+
+        {/* Controles */}
+        <div className="w-full max-w-md bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-md flex flex-col gap-6 overflow-y-auto">
+          {/* Piel */}
+          <div>
+            <h2 className="text-center text-black mb-2">{t("skinTone")}</h2>
+            <div className="flex justify-center gap-3">
+              {skinColors.map((color, index) => (
+                <button
+                  key={color}
+                  className={`w-10 h-10 rounded-full border-2 ${
+                    skinIndex === index ? "border-black" : "border-gray-300"
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setSkinIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Cabello */}
+          <div>
+            <h2 className="text-center text-black mb-2">{t("hair")}</h2>
+            <div className="grid grid-cols-4 gap-3 justify-center">
+              {hairOptions.map((hair, index) => (
+                <button
+                  key={index}
+                  onClick={() => setHairIndex(index)}
+                  className={`p-1 border rounded-lg bg-white ${
+                    hairIndex === index ? "border-black" : "border-gray-300"
+                  }`}
+                >
+                  <img src={hair} alt={`Cabello ${index + 1}`} className="w-10 h-10 object-contain" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ropa */}
+          <div>
+            <h2 className="text-center text-black mb-2">{t("clothing")}</h2>
+            <div className="grid grid-cols-4 gap-3 justify-center">
+              {clothingOptions.map((clothes, index) => (
+                <button
+                  key={index}
+                  onClick={() => setClothingIndex(index)}
+                  className={`p-1 border rounded-lg bg-white ${
+                    clothingIndex === index ? "border-black" : "border-gray-300"
+                  }`}
+                >
+                  <img src={clothes} alt={`Ropa ${index + 1}`} className="w-10 h-16 object-contain" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Botón guardar */}
+        <button
+          onClick={handleSaveAvatar}
+          className="bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow hover:bg-green-700 w-full max-w-md mt-4"
+        >
+          {t("saveAvatarAndContinue")}
+        </button>
       </div>
     </div>
   );

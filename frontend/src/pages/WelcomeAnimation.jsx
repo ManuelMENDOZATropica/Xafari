@@ -1,49 +1,72 @@
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
+import AvatarSelection from "./AvatarSelection";
 
-export default function WelcomeAnimation() {
-  const navigate = useNavigate();
-  const location = useLocation();
+export default function WelcomeToAvatarTransition() {
   const { t } = useTranslation();
-
-  // Recibir el nombre del usuario correctamente
+  const location = useLocation();
   const userData = location.state || { firstName: "Explorador", lastName: "" };
+
   const fullName = `${userData.firstName} ${userData.lastName}`.trim();
 
-  console.log("Datos recibidos en WelcomeAnimation:", userData); // 👀 Debug para verificar datos
+  const [showAvatar, setShowAvatar] = useState(false);
+  const [animateWing, setAnimateWing] = useState(false);
 
   useEffect(() => {
-    // Espera 4 segundos y redirige a la pantalla de creación de avatar
-    const timer = setTimeout(() => {
-      navigate("/create-avatar", { state: userData });
+    const showWingTimeout = setTimeout(() => {
+      setAnimateWing(true); // Inicia animación del ala a los 4s
+    }, 4000);
+
+    const showAvatarTimeout = setTimeout(() => {
+      setShowAvatar(true); // Muestra avatar a los 6s
     }, 6000);
 
-    return () => clearTimeout(timer);
-  }, [navigate, userData]);
+    return () => {
+      clearTimeout(showWingTimeout);
+      clearTimeout(showAvatarTimeout);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen bg-white">
-      {/* Animación de la Guacamaya */}
-      <motion.div
-        initial={{ opacity: 0, y: -100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        exit={{ opacity: 0, y: 100 }}
-      >
-        <motion.img
-          src="/guacamaya.webp" // Asegúrate de que el archivo está en /public/
-          alt="Guacamaya en vuelo"
-          className="w-40 h-40"
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
+    <div className="relative w-screen h-screen overflow-hidden bg-white font-lufga">
+      {/* Fondo de bienvenida */}
+      {!showAvatar && (
+        <img
+          src="/img/fondo-bienvenida.png"
+          alt="Fondo Bienvenida"
+          className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
         />
-      </motion.div>
+      )}
 
-      {/* Texto de Bienvenida */}
-      <p className="mt-6 text-gray-700 text-sm">{t("welcomeApprentice")}</p>
-      <h1 className="text-xl font-bold text-black">{fullName}</h1>
+      {/* Texto de bienvenida */}
+      {!showAvatar && (
+        <div className="absolute z-10 inset-0 flex flex-col items-center justify-center px-6 text-center">
+          <div className="max-w-md space-y-2">
+            <p className="text-lg md:text-xl text-white font-medium drop-shadow-md">
+              {t("welcomeApprentice")}
+            </p>
+            <p className="text-white text-3xl md:text-4xl font-bold drop-shadow-lg">
+              {fullName}
+            </p>
+            <p className="text-white text-base mt-2 drop-shadow-sm">
+              {t("welcomeToAdventure")}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Ala animada */}
+      {animateWing && (
+        <img
+          src="/img/ala-maya.png"
+          alt="Ala Maya"
+          className="absolute bottom-0 left-0 w-full h-full object-cover z-50 animate-slide-wing-up-exit"
+        />
+      )}
+
+      {/* Pantalla de avatar */}
+      {showAvatar && <AvatarSelection />}
     </div>
   );
 }

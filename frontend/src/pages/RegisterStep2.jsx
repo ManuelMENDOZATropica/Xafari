@@ -11,7 +11,7 @@ export default function RegisterStep2() {
   const [formData, setFormData] = useState({
     roomNumber: "",
     gender: "",
-    ...userData, // Mantener datos de la primera pantalla
+    ...userData,
   });
 
   const handleChange = (e) => {
@@ -21,64 +21,92 @@ export default function RegisterStep2() {
   const isFormValid = formData.roomNumber && formData.gender;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white px-6">
-      {/* Barra superior con Volver y Language */}
-      <div className="flex justify-between w-full max-w-md absolute top-4 px-4">
-        <button onClick={() => navigate("/register-step1")} className="border border-gray-500 bg-white text-black px-3 py-1 rounded-lg shadow-md hover:bg-gray-200">
+    <div className="relative flex flex-col items-center justify-start h-screen w-full overflow-hidden px-[6%] pt-[30%] pb-[10%] font-lufga">
+      {/* Fondo */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/img/fondo-registro.png"
+          alt="Fondo Registro"
+          className="w-full h-full object-cover object-bottom md:object-center"
+        />
+      </div>
+
+      {/* Botones superiores */}
+      <div className="absolute top-4 left-4 z-10">
+        <button
+          onClick={() => navigate("/register-step1")}
+          className="bg-white/50 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
           ← {t("back")}
         </button>
+      </div>
+
+      <div className="absolute top-4 right-4 z-10">
         <button
           onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-          className="border border-gray-500 bg-white text-black px-3 py-1 rounded-lg shadow-md hover:bg-gray-200"
+          className="bg-white/50 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
         >
           {t("language")}
         </button>
       </div>
 
-      {/* Texto principal */}
-      <p className="mt-16 mb-6 text-center text-black font-semibold">{t("registerStep2")}</p>
+      {/* Encabezado */}
+      <div className="z-20 w-full mb-12">
+        <div className="bg-white/50 backdrop-blur-sm rounded-xl px-6 py-4 shadow-md">
+          <p className="text-center text-base md:text-lg font-bold text-gray-800">
+            {t("registerStep2")}
+          </p>
+        </div>
+      </div>
 
       {/* Formulario */}
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md border border-gray-500">
-        <label className="block text-black mb-1">{t("roomNumber")}</label>
+      <div className="z-10 w-full mt-4 bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-xl">
+        <label className="block text-black text-sm md:text-base mb-1 font-semibold">
+          {t("roomNumber")}
+        </label>
         <input
           type="text"
           name="roomNumber"
           placeholder={t("roomNumber")}
           value={formData.roomNumber}
           onChange={handleChange}
-          className="w-full p-2 border border-gray-500 rounded bg-white text-black mb-4"
+          className="w-full p-3 border border-gray-300 rounded-lg bg-white text-black text-base mb-4 shadow-inner"
         />
 
-        <label className="block text-black mb-2">{t("selectGender")}</label>
+        <label className="block text-black text-sm md:text-base mb-2 font-semibold">
+          {t("selectGender")}
+        </label>
         <div className="flex gap-2">
           <button
             onClick={() => setFormData({ ...formData, gender: "buxcadora" })}
-            className={`p-2 border border-gray-500 rounded w-full ${
-              formData.gender === "buxcadora" ? "bg-gray-200" : "bg-white"
-            } text-black`}
+            className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
+              formData.gender === "buxcadora" ? "bg-orange-200" : "bg-white/50"
+            }`}
           >
             {t("buxcadora")}
           </button>
           <button
             onClick={() => setFormData({ ...formData, gender: "buxcador" })}
-            className={`p-2 border border-gray-500 rounded w-full ${
-              formData.gender === "buxcador" ? "bg-gray-200" : "bg-white"
-            } text-black`}
+            className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
+              formData.gender === "buxcador" ? "bg-orange-200" : "bg-white/50"
+            }`}
           >
             {t("buxcador")}
           </button>
         </div>
 
-        {/* Botón de Finalizar */}
+        {/* Botón finalizar */}
         <button
-  disabled={!isFormValid}
-  onClick={() => navigate("/welcome-animation", { state: formData })}
-  className="mt-6 w-full p-2 border border-gray-500 rounded bg-gray-200 hover:bg-gray-300 text-black"
->
-  {t("finish")}
-</button>
-
+          disabled={!isFormValid}
+          onClick={() => navigate("/welcome-animation", { state: formData })}
+          className={`mt-6 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
+            isFormValid
+              ? "bg-gradient-to-r from-orange-500 to-red-500 hover:brightness-110"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
+        >
+          {t("finish")}
+        </button>
       </div>
     </div>
   );
