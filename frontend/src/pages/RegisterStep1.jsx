@@ -123,10 +123,10 @@ export default function RegisterStep1() {
             <div
               className={`h-full rounded transition-all duration-300 ${
                 passwordStrength === "weak"
-                  ? "bg-red-500 w-1/12"
+                  ? "bg-red-400 w-1/12"
                   : passwordStrength === "medium"
-                  ? "bg-yellow-500 w-2/12"
-                  : "bg-green-500 w-3/12"
+                  ? "bg-amber-400 w-2/12"
+                  : "bg-emerald-600 w-3/12"
               }`}
             ></div>
           </div>
@@ -136,8 +136,8 @@ export default function RegisterStep1() {
               passwordStrength === "weak"
                 ? "text-red-600"
                 : passwordStrength === "medium"
-                ? "text-yellow-600"
-                : "text-green-600"
+                ? "text-amber-600"
+                : "text-emerald-600"
             }`}
           >
             {passwordStrength === "weak"
@@ -158,18 +158,22 @@ export default function RegisterStep1() {
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
           />
-          {!passwordsMatch && (
-            <p className="text-red-600 font-medium">
-              {t("passwordsDoNotMatch")}
-            </p>
-          )}
+
+          {/* Mantiene el espacio para el mensaje de error */}
+          <div className="min-h-[1.25rem]">
+            {!passwordsMatch && (
+              <p className="text-red-600 font-medium">
+                {t("passwordsDoNotMatch")}
+              </p>
+            )}
+          </div>
 
           <button
             disabled={!isFormValid}
             onClick={() => navigate("/register-step2", { state: formData })}
             className={`mt-2 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
               isFormValid
-                ? "bg-gradient-to-r from-orange-500 to-red-500 hover:brightness-110"
+                ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >

@@ -54,8 +54,8 @@ export default function Welcome() {
         <div className="flex flex-col gap-4 w-full max-w-xs mt-8 z-10">
           <button
             onClick={() => navigate("/register-step1")}
-            className="bg-gradient-to-r from-green-500 to-lime-500 text-white text-base font-semibold py-3 rounded-full shadow-lg hover:brightness-105 active:scale-95 transition-all"
-          >
+            className="bg-gradient-to-r from-emerald-600 to-lime-500 text-white text-base font-semibold py-3 rounded-full shadow-md hover:brightness-105 active:scale-95 transition-all"
+            >
             {t("newAdventure")}
           </button>
           <button

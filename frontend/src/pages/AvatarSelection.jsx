@@ -29,7 +29,7 @@ export default function AvatarSelection() {
     <div className="relative h-screen w-screen overflow-hidden font-lufga">
       {/* Fondo */}
       <img
-        src="/img/fondo-avatar.png"
+        src="/img/fondo-bienvenida.png"
         alt="Fondo Avatar"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />

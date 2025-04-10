@@ -43,13 +43,13 @@ export default function WelcomeToAvatarTransition() {
       {!showAvatar && (
         <div className="absolute z-10 inset-0 flex flex-col items-center justify-center px-6 text-center">
           <div className="max-w-md space-y-2">
-            <p className="text-lg md:text-xl text-white font-medium drop-shadow-md">
+            <p className="text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
               {t("welcomeApprentice")}
             </p>
-            <p className="text-white text-3xl md:text-4xl font-bold drop-shadow-lg">
+            <p className="text-4xl md:text-5xl text-emerald-700 font-bold drop-shadow">
               {fullName}
             </p>
-            <p className="text-white text-base mt-2 drop-shadow-sm">
+            <p className="text-base mt-2 text-gray-700 drop-shadow-sm">
               {t("welcomeToAdventure")}
             </p>
           </div>

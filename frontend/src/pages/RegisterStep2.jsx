@@ -80,7 +80,9 @@ export default function RegisterStep2() {
           <button
             onClick={() => setFormData({ ...formData, gender: "buxcadora" })}
             className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
-              formData.gender === "buxcadora" ? "bg-orange-200" : "bg-white/50"
+              formData.gender === "buxcadora"
+                ? "bg-emerald-600 text-white"
+                : "bg-white/50 text-black"
             }`}
           >
             {t("buxcadora")}
@@ -88,7 +90,9 @@ export default function RegisterStep2() {
           <button
             onClick={() => setFormData({ ...formData, gender: "buxcador" })}
             className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
-              formData.gender === "buxcador" ? "bg-orange-200" : "bg-white/50"
+              formData.gender === "buxcador"
+                ? "bg-emerald-600 text-white"
+                : "bg-white/50 text-black"
             }`}
           >
             {t("buxcador")}
@@ -101,7 +105,7 @@ export default function RegisterStep2() {
           onClick={() => navigate("/welcome-animation", { state: formData })}
           className={`mt-6 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
             isFormValid
-              ? "bg-gradient-to-r from-orange-500 to-red-500 hover:brightness-110"
+              ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >
