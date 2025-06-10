@@ -5,6 +5,7 @@ const errorMiddleware = async (err, req, res, next) => {
 
   res.status(err.statusCode || 500).json({
     error: err.message || "Internal server error",
+    ...(err.details ? { details: err.details.map(i=> i.issue) } : {}),
   });
 };
 

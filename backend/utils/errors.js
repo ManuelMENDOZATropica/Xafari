@@ -8,10 +8,11 @@ const {
 const logger = require("./logger");
 
 class ValidationError extends Error {
-  constructor(message) {
+  constructor(message = "Validation failed", details = []) {
     super(message);
     this.name = "ValidationError";
-    this.statusCode = 400;
+    this.statusCode = 422;
+    this.details = details;
   }
 }
 
@@ -24,10 +25,18 @@ class AuthenticationError extends Error {
 }
 
 class ResourceNotFoundError extends Error {
-  constructor(message) {
+  constructor(message = "Not Found") {
     super(message);
     this.name = "ResourceNotFoundError";
-    this.statusCode = 404;
+    this.status = 404;
+  }
+}
+
+class BadRequestError extends Error {
+  constructor(message = "Bad Request") {
+    super(message);
+    this.name = "BadRequestError";
+    this.status = 400;
   }
 }
 
@@ -36,14 +45,6 @@ class ResourceConflictError extends Error {
     super(message);
     this.name = "ResourceConflictError";
     this.statusCode = 409;
-  }
-}
-
-class BadRequestError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "BadRequestError";
-    this.statusCode = 400;
   }
 }
 
@@ -56,6 +57,7 @@ class DatabaseError extends Error {
 }
 
 function handleSequelizeError(error, resource) {
+  console.log("AAAA", error)
   logger.error(error);
   if (error instanceof UniqueConstraintError) {
     // Violación de restricción única
@@ -75,11 +77,10 @@ function handleSequelizeError(error, resource) {
 }
 
 module.exports = {
-  handleSequelizeError,
   ValidationError,
   AuthenticationError,
   ResourceNotFoundError,
   ResourceConflictError,
   BadRequestError,
-  DatabaseError,
+  handleSequelizeError,
 };

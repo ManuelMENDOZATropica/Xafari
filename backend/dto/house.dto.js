@@ -5,5 +5,6 @@ exports.toHouseDTO = (house) => {
     animal: house.animal,
     element: house.element,
     description: house.description,
+    activities: house.activities,
   };
 };

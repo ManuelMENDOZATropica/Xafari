@@ -1,64 +1,49 @@
 const express = require("express");
+const {
+  xperienciaIdParam,
+  createXperienciaValidation,
+  updateXperienciaValidation,
+} = require("../validation/xperiencia.validation");
+const {
+  createActivityValidation,
+  updateActivityValidation,
+} = require("../validation/activity.validation");
+const { validateRequest } = require("../middleware/validateRequest");
 const router = express.Router();
-const { checkSchema, matchedData } = require("express-validator");
-
-const activitySchema = require("./activitySchema");
 
 const xperienciaController = require("../controllers/xperienciaController");
-const { ValidationError } = require("../utils/errors");
 
-const XperienciaSchema = {
-  ...activitySchema,
-  qrCode: {
-    notEmpty: true,
-    optional: true,
-  },
-  isValidable: {
-    isBoolean: true,
-  },
-};
+router.get("/", xperienciaController.getAllXperiencias);
 
-const validateXperienciaData = async (req, res, next) => {
-  const result = (
-    await checkSchema(
-      req.method == "POST" && req.params.id
-        ? Object.fromEntries(
-            Object.entries(XperienciaSchema).map(([field, value]) => [
-              field,
-              {
-                ...value,
-                optional: true,
-              },
-            ])
-          )
-        : XperienciaSchema,
-      ["body"]
-    ).run(req)
-  )
-    .map((res) => res.array())
-    .flat();
-  if (result.length) {
-    return next(new ValidationError(result[0].msg));
-  }
-  req.body = matchedData(req);
-
-  next();
-};
+router.get(
+  "/:id",
+  xperienciaIdParam,
+  validateRequest,
+  xperienciaController.getXperiencia
+);
 
 router.post(
-  "/xperiencia",
-  validateXperienciaData,
+  "/",
+  createXperienciaValidation,
+  createActivityValidation,
+  validateRequest,
   xperienciaController.createXperiencia
 );
-router.get("/xperiencia/:id", xperienciaController.getXperiencia);
-router.delete("/xperiencia/:id", xperienciaController.deleteXperiencia);
 
-router.post(
-  "/xperiencia/:id",
-  validateXperienciaData,
+router.put(
+  "/:id",
+  xperienciaIdParam,
+  updateActivityValidation,
+  updateXperienciaValidation,
+  validateRequest,
   xperienciaController.updateXperiencia
 );
 
-// router.get("/xperiencias", xperienciaController.getAllXperiencias)
+router.delete(
+  "/:id",
+  xperienciaIdParam,
+  validateRequest,
+  xperienciaController.deleteXperiencia
+);
 
 module.exports = router;

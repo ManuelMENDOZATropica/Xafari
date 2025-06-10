@@ -4,43 +4,45 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const { DataTypes } = Sequelize;
-
-    await queryInterface.createTable("clues", {
+    await queryInterface.createTable("achievements", {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      text: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      correctAnswer: {
+      name: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
       },
-      order: {
-        type: DataTypes.INTEGER,
+      description: {
+        type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
+      },
+      type: {
+        type: DataTypes.ENUM("Amuleto", "Follaje"),
+        allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
-      xecretoId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        unique: true,
-        references: {
-          model: "xecretos",
-        },
-        onDelete: "CASCADE",
-      },
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("clues");
+    await queryInterface.dropTable("achievements");
   },
 };

@@ -13,6 +13,10 @@ const user = database.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    lastname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     email: {
       type: DataTypes.STRING,
       unique: true,
@@ -32,6 +36,14 @@ const user = database.define(
     reservationNumber: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    pronouns: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

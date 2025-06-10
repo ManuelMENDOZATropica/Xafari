@@ -6,18 +6,30 @@ const {
 const { toUserDTO } = require("../dto/user.dto");
 
 exports.createUser = async (req, res, next) => {
-  const { name, email, password, birthdate, reservationNumber } = req.body;
+  const {
+    name,
+    lastname,
+    email,
+    password,
+    birthdate,
+    reservationNumber,
+    pronouns,
+    avatar,
+  } = req.body;
 
   try {
     const user = await userService.createUser({
       name,
+      lastname,
       email,
       password,
       birthdate,
       reservationNumber,
+      pronouns,
+      avatar: JSON.stringify(avatar),
     });
 
-    res.json(toUserDTO(user));
+    res.status(200).json(toUserDTO(user));
   } catch (err) {
     next(handleSequelizeError(err, "User"));
   }
@@ -30,7 +42,7 @@ exports.getUser = async (req, res, next) => {
 
     if (!user) return next(new ResourceNotFoundError("User not found"));
 
-    res.json(toUserDTO(user));
+    res.status(200).json(toUserDTO(user));
   } catch (err) {
     next(handleSequelizeError(err, "User"));
   }
@@ -43,7 +55,7 @@ exports.deleteUser = async (req, res, next) => {
 
     if (!user) return next(new ResourceNotFoundError("User not found"));
 
-    res.json(toUserDTO(user));
+    res.status(200).json(toUserDTO(user));
   } catch (err) {
     next(handleSequelizeError(err, "User"));
   }
@@ -66,7 +78,7 @@ exports.updateUser = async (req, res, next) => {
 
     if (!newUser) return next(new ResourceNotFoundError("User not found"));
 
-    res.json(toUserDTO(newUser));
+    res.status(200).json(toUserDTO(newUser));
   } catch (err) {
     next(handleSequelizeError(err, "User"));
   }

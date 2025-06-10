@@ -1,10 +1,8 @@
 exports.toFamilyTreeDTO = (tree) => {
   return {
     id: tree.id,
-    adminId: tree.adminId.toString(),
-    members: tree.members.map((m) => ({
-      userId: m.userId.toString(),
-      progress: m.progress,
-    })),
+    adminId: tree.adminId,
+    name: tree.name,
+    members: tree.users.map((m) => m.id),
   };
 };

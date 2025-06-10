@@ -23,10 +23,18 @@ exports.getXelfie = async (id, transaction) => {
   return xelfie;
 };
 
+exports.getAllXelfies = async () => {
+  const xelfies = await Xelfie.findAll({
+    include: [Activity],
+  });
+
+  return xelfies;
+};
+
 exports.deleteXelfie = async (id) => {
   const xelfie = await this.getXelfie(id);
 
-  if (xelfie == null) return null;
+  if (xelfie == null) throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await xelfie.destroy();
   return destroyed;
@@ -35,7 +43,7 @@ exports.deleteXelfie = async (id) => {
 exports.updateXelfie = async (id, newData) => {
   const xelfie = await this.getXelfie(id);
 
-  if (xelfie == null) return null;
+  if (xelfie == null) throw new ResourceNotFoundError("Resource not found");
 
   const updated = await xelfie.update(newData);
 

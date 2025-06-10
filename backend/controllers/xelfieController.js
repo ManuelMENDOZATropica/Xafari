@@ -14,7 +14,7 @@ exports.createXelfie = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.json(toXelfieDTO(xelfie));
+    res.status(200).json(toXelfieDTO(xelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }
@@ -27,8 +27,19 @@ exports.getXelfie = async (req, res, next) => {
 
     if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json(toXelfieDTO(xelfie));
+    res.status(200).json(toXelfieDTO(xelfie));
   } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
+};
+
+exports.getAllXelfies = async (req, res, next) => {
+  try {
+    const xelfies = await xelfieService.getAllXelfies();
+
+    res.status(200).json(xelfies.map((xelfie) => toXelfieDTO(xelfie)));
+  } catch (err) {
+    logger.error(err);
     next(handleSequelizeError(err, "Xelfie"));
   }
 };
@@ -40,7 +51,7 @@ exports.deleteXelfie = async (req, res, next) => {
 
     if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json(toXelfieDTO(xelfie));
+    res.status(200).json(toXelfieDTO(xelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }
@@ -64,7 +75,7 @@ exports.updateXelfie = async (req, res, next) => {
 
     if (!newXelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-    res.json(toXelfieDTO(newXelfie));
+    res.status(200).json(toXelfieDTO(newXelfie));
   } catch (err) {
     next(handleSequelizeError(err, "Xelfie"));
   }

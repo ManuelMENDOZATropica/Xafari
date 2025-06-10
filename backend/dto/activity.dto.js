@@ -1,8 +1,9 @@
 exports.toUserActivityDTO = (act) => {
   return {
-    activityId: act.activityId,
-    type: act.type,
-    metadata: act.metadata,
-    timestamp: act.timestamp,
+    id: act.id,
+    startedAt: act.startedAt,
+    completedAt: act.completedAt,
+    userId: act.user.id,
+    activityId: act.activity.id,
   };
 };

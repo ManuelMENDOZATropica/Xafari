@@ -1,30 +1,24 @@
 const User = require("../models/user");
 
-const {
-  Activity,
-  House,
-  Achievement,
-  Xecreto,
-  Xelfie,
-  Xperiencia,
-  Event,
-  FamilyTree,
-  UserXelfie,
-} = require("../models");
-
 exports.createUser = async ({
   name,
+  lastname,
   email,
   password,
   birthdate,
   reservationNumber,
+  pronouns,
+  avatar
 }) => {
   const user = await User.create({
     name,
+    lastname,
     email,
     password,
     birthdate,
     reservationNumber,
+    pronouns,
+    avatar,
   });
 
   return user;
@@ -32,24 +26,6 @@ exports.createUser = async ({
 
 exports.getUser = async (id, transaction) => {
   let user = await User.findByPk(id, {
-    include: [
-      Achievement,
-      FamilyTree,
-
-      {
-        model: Activity,
-        include: [
-          House,
-          Xecreto,
-          {
-            model: Xelfie,
-            include: [UserXelfie],
-          },
-          Xperiencia,
-          Event,
-        ],
-      },
-    ],
     transaction,
   });
 
@@ -57,17 +33,17 @@ exports.getUser = async (id, transaction) => {
 };
 
 exports.deleteUser = async (id) => {
-  const user = await this.getUser(id);
+  const user = await exports.getUser(id);
 
-  if (user == null) return null;
+  if (user == null) throw new ResourceNotFoundError("Resource not found");
   const destroyed = await user.destroy();
   return destroyed;
 };
 
 exports.updateUser = async (id, newData) => {
-  const user = await this.getUser(id);
+  const user = await exports.getUser(id);
 
-  if (user == null) return null;
+  if (user == null) throw new ResourceNotFoundError("Resource not found");
   const updated = await user.update(newData);
   return updated;
 };

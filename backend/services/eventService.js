@@ -24,10 +24,18 @@ exports.getEvent = async (id) => {
   return event;
 };
 
+exports.getAllEvents = async () => {
+  const events = await EventModel.findAll({
+    include: [Activity],
+  });
+
+  return events;
+};
+
 exports.deleteEvent = async (id) => {
   const event = await this.getEvent(id);
 
-  if (event == null) return null;
+  if (event == null) throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await event.destroy();
   return destroyed;
@@ -36,7 +44,7 @@ exports.deleteEvent = async (id) => {
 exports.updateEvent = async (id, newData) => {
   const event = await this.getEvent(id);
 
-  if (event == null) return null;
+  if (event == null) throw new ResourceNotFoundError("Resource not found");
 
   const updated = await event.update(newData);
   if (updated != null) {

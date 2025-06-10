@@ -24,10 +24,18 @@ exports.getXecreto = async (id) => {
   return xecreto;
 };
 
+exports.getAllXecretos = async () => {
+  const xecretos = await Xecreto.findAll({
+    include: [Activity, Clue],
+  });
+
+  return xecretos;
+};
+
 exports.deleteXecreto = async (id) => {
   const xecreto = await this.getXecreto(id);
 
-  if (xecreto == null) return null;
+  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await xecreto.destroy();
   return destroyed;
@@ -36,7 +44,7 @@ exports.deleteXecreto = async (id) => {
 exports.updateXecreto = async (id, newData) => {
   const xecreto = await this.getXecreto(id);
 
-  if (xecreto == null) return null;
+  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
 
   if (newData.clues) {
     for (const clue of xecreto.clues) {
