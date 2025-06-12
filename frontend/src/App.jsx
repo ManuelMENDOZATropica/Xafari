@@ -19,7 +19,7 @@ function App() {
       <Route path="/create-avatar" element={<AvatarSelection />} />
       <Route path="/treeoflife" element={<TreeOfLife />} />
     </Routes>
-  );
+  ); 
 }
 
 export default App;
