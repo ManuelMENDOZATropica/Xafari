@@ -2,43 +2,172 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-const skinColors = ["#F3D5B5", "#E3B582", "#C78E6C", "#8B5A2B"];
-const skinTones = ["/avatares/base-1.png", "/avatares/base-2.png", "/avatares/base-3.png", "/avatares/base-4.png"];
-const hairOptions = ["/avatares/cabello-1.png", "/avatares/cabello-2.png", "/avatares/cabello-3.png", "/avatares/cabello-4.png"];
-const clothingOptions = ["/avatares/ropa-1.png", "/avatares/ropa-2.png", "/avatares/ropa-3.png", "/avatares/ropa-4.png"];
+// Opciones
+const bodyOptions = Array.from(
+  { length: 10 },
+  (_, i) => `/avatares/CUERPO_${i + 1}.png`
+);
+const hairOptions = Array.from(
+  { length: 21 },
+  (_, i) => `/avatares/PELO_${i + 1}.png`
+);
+const clothingOptions = Array.from(
+  { length: 13 },
+  (_, i) => `/avatares/VESTUARIO_${i + 1}.png`
+);
+const eyesOptions = Array.from(
+  { length: 4 },
+  (_, i) => `/avatares/OJOS_${i + 1}.png`
+);
+
+const shoeOptions = Array.from({ length: 12 }, (_, i) => ({
+  src: `/avatares/ZAPATOS_${i + 1}.png`,
+  thumb: `/avatares/ZAPATOS_ICONO_${i + 1}.png`,
+}));
+
+const hairAccessoryOptions = [
+  null,
+  "/avatares/ACCESORIOS_CABELLO_1.png",
+  "/avatares/ACCESORIOS_CABELLO_2.png",
+];
+
+const bodyAccessoryOptions = [
+  null,
+  "/avatares/ACCESORIOS_CUERPOS_1.png",
+  "/avatares/ACCESORIOS_CUERPOS_2.png",
+];
+
+function useSelection(options, isObject = false) {
+  const [index, setIndex] = useState(0);
+  const set = (i) => setIndex(i);
+  const value = isObject ? options[index]?.src : options[index];
+  return [index, value, set, options];
+}
 
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
-  const [skinIndex, setSkinIndex] = useState(0);
-  const [hairIndex, setHairIndex] = useState(0);
-  const [clothingIndex, setClothingIndex] = useState(0);
   const navigate = useNavigate();
 
-  const handleSaveAvatar = () => {
-    const avatarData = {
-      skinIndex,
-      hairIndex,
-      clothingIndex
-    };
+  const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions);
+  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions);
+  const [clothingIndex, clothingImg, setClothing, clothingList] =
+    useSelection(clothingOptions);
+  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions);
+  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(
+    shoeOptions,
+    true
+  );
+  const [hairAccessoryIndex, hairAccImg, setHairAcc, hairAccList] =
+    useSelection(hairAccessoryOptions);
+  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] =
+    useSelection(bodyAccessoryOptions);
 
-    localStorage.setItem("avatarData", JSON.stringify(avatarData));
+  const [activeTab, setActiveTab] = useState("body");
+
+  const handleSaveAvatar = () => {
+    localStorage.setItem(
+      "avatarData",
+      JSON.stringify({
+        bodyIndex,
+        hairIndex,
+        clothingIndex,
+        shoeIndex,
+        eyesIndex,
+        hairAccessoryIndex,
+        bodyAccessoryIndex,
+      })
+    );
     navigate("/treeoflife");
   };
 
+  const handleRandomize = () => {
+    setBody(Math.floor(Math.random() * bodyList.length));
+    setHair(Math.floor(Math.random() * hairList.length));
+    setClothing(Math.floor(Math.random() * clothingList.length));
+    setShoe(Math.floor(Math.random() * shoeList.length));
+    setEyes(Math.floor(Math.random() * eyesList.length));
+    setHairAcc(Math.floor(Math.random() * hairAccList.length));
+    setBodyAcc(Math.floor(Math.random() * bodyAccList.length));
+  };
+
+  const handleReset = () => {
+    setBody(0);
+    setHair(0);
+    setClothing(0);
+    setShoe(0);
+    setEyes(0);
+    setHairAcc(0);
+    setBodyAcc(0);
+  };
+
+  const tabs = [
+    {
+      key: "body",
+      label: t("body"),
+      set: setBody,
+      list: bodyList,
+      current: bodyIndex,
+    },
+    {
+      key: "eyes",
+      label: t("eyes"),
+      set: setEyes,
+      list: eyesList,
+      current: eyesIndex,
+    },
+    {
+      key: "hair",
+      label: t("hair"),
+      set: setHair,
+      list: hairList,
+      current: hairIndex,
+    },
+    {
+      key: "clothing",
+      label: t("clothing"),
+      set: setClothing,
+      list: clothingList,
+      current: clothingIndex,
+    },
+    {
+      key: "shoes",
+      label: t("shoes"),
+      set: setShoe,
+      list: shoeList,
+      current: shoeIndex,
+      isObject: true,
+    },
+    {
+      key: "bodyAccessory",
+      label: t("bodyAccessory"),
+      set: setBodyAcc,
+      list: bodyAccList,
+      current: bodyAccessoryIndex,
+    },
+    {
+      key: "hairAccessory",
+      label: t("hairAccessory"),
+      set: setHairAcc,
+      list: hairAccList,
+      current: hairAccessoryIndex,
+    },
+  ];
+
   return (
-    <div className="relative h-screen w-screen overflow-hidden font-lufga">
-      {/* Fondo */}
+    <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
       <img
-        src="/img/fondo-bienvenida.png"
+        src="/img/V03-CERRITOS.jpg"
         alt="Fondo Avatar"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-      <div className="relative z-10 flex flex-col items-center justify-between h-full px-6 py-4">
-        {/* Botón idioma */}
-        <div className="w-full flex justify-end">
+      <div className="relative z-10 flex flex-col items-center h-full w-full px-4 py-4 overflow-y-auto">
+        {/* Idioma */}
+        <div className="w-full flex justify-end mb-2">
           <button
-            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+            onClick={() =>
+              i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
+            }
             className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
           >
             {t("language")}
@@ -46,79 +175,138 @@ export default function AvatarSelection() {
         </div>
 
         {/* Título */}
-        <div className="bg-white/70 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md">
+        <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md mb-2 w-full max-w-sm">
           <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
             {t("chooseYourStyle")}
           </h1>
         </div>
 
         {/* Avatar */}
-        <div className="relative w-40 h-72 flex items-center justify-center">
-          <img src={skinTones[skinIndex]} alt="Cuerpo Base" className="absolute w-40 h-72" />
-          <img src={hairOptions[hairIndex]} alt="Cabello" className="absolute w-40 h-72" />
-          <img src={clothingOptions[clothingIndex]} alt="Ropa" className="absolute w-40 h-72" />
+        <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
+          {bodyAccImg && (
+            <img
+              src={bodyAccImg}
+              alt="Acc. cuerpo"
+              className="absolute w-full h-full object-contain"
+            />
+          )}
+          <img
+            src={bodyImg}
+            alt="Cuerpo"
+            className="absolute w-full h-full object-contain"
+          />
+          <img
+            src={eyesImg}
+            alt="Ojos"
+            className="absolute w-full h-full object-contain"
+          />
+          <img
+            src={hairImg}
+            alt="Cabello"
+            className="absolute w-full h-full object-contain"
+          />
+          <img
+            src={clothingImg}
+            alt="Ropa"
+            className="absolute w-full h-full object-contain"
+          />
+          <img
+            src={shoeImg}
+            alt="Zapatos"
+            className="absolute w-full h-full object-contain"
+          />
+          {hairAccImg && (
+            <img
+              src={hairAccImg}
+              alt="Acc. cabello"
+              className="absolute w-full h-full object-contain"
+            />
+          )}
         </div>
 
-        {/* Controles */}
-        <div className="w-full max-w-md bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-md flex flex-col gap-6 overflow-y-auto">
-          {/* Piel */}
-          <div>
-            <h2 className="text-center text-black mb-2">{t("skinTone")}</h2>
-            <div className="flex justify-center gap-3">
-              {skinColors.map((color, index) => (
-                <button
-                  key={color}
-                  className={`w-10 h-10 rounded-full border-2 ${
-                    skinIndex === index ? "border-black" : "border-gray-300"
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setSkinIndex(index)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Cabello */}
-          <div>
-            <h2 className="text-center text-black mb-2">{t("hair")}</h2>
-            <div className="grid grid-cols-4 gap-3 justify-center">
-              {hairOptions.map((hair, index) => (
-                <button
-                  key={index}
-                  onClick={() => setHairIndex(index)}
-                  className={`p-1 border rounded-lg bg-white ${
-                    hairIndex === index ? "border-black" : "border-gray-300"
-                  }`}
-                >
-                  <img src={hair} alt={`Cabello ${index + 1}`} className="w-10 h-10 object-contain" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Ropa */}
-          <div>
-            <h2 className="text-center text-black mb-2">{t("clothing")}</h2>
-            <div className="grid grid-cols-4 gap-3 justify-center">
-              {clothingOptions.map((clothes, index) => (
-                <button
-                  key={index}
-                  onClick={() => setClothingIndex(index)}
-                  className={`p-1 border rounded-lg bg-white ${
-                    clothingIndex === index ? "border-black" : "border-gray-300"
-                  }`}
-                >
-                  <img src={clothes} alt={`Ropa ${index + 1}`} className="w-10 h-16 object-contain" />
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                activeTab === tab.key
+                  ? "bg-green-600 text-white"
+                  : "bg-white/80 text-black border border-gray-300"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Botón guardar */}
+        {/* Carrusel visual */}
+        <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
+          {tabs
+            .filter((tab) => tab.key === activeTab)
+            .map((tab) => (
+              <div key={tab.key} className="flex flex-col items-center">
+                <h2 className="text-black font-medium mb-2">{tab.label}</h2>
+                <div className="flex overflow-x-auto gap-2 w-full px-2">
+                  {tab.list.map((opt, i) => {
+                    const isCurrent = i === tab.current;
+                    const isShoes = tab.key === "shoes";
+                    const isNull = opt === null;
+                    const thumbSrc = isShoes ? opt.thumb : opt;
+
+                    return (
+                      <div key={i} className="flex-shrink-0">
+                        <div
+                          onClick={() => tab.set(i)}
+                          className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
+                            isCurrent
+                              ? "border-green-600"
+                              : "border-transparent"
+                          } bg-white`}
+                        >
+                          {isNull ? (
+                            <span className="text-xs text-gray-500 text-center px-1">
+                              Sin accesorio
+                            </span>
+                          ) : (
+                            <img
+                              src={thumbSrc}
+                              alt={`${tab.key}_${i}`}
+                              className="w-full h-full object-contain"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+        </div>
+
+        {/* Acciones */}
+       {/* Acciones */}
+<div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
+  <button
+    onClick={handleRandomize}
+    className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
+  >
+    {t("randomize") || "Aleatorio"}
+  </button>
+  <button
+    onClick={handleReset}
+    className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
+  >
+    {t("reset") || "Reiniciar"}
+  </button>
+</div>
+
+
+        {/* Guardar */}
         <button
           onClick={handleSaveAvatar}
-          className="bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow hover:bg-green-700 w-full max-w-md mt-4"
+          className="bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow hover:bg-green-700 w-full max-w-sm"
         >
           {t("saveAvatarAndContinue")}
         </button>

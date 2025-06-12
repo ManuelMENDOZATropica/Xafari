@@ -54,6 +54,14 @@ i18n
           skinTone: "Tono de piel",
           hair: "Cabello",
           clothing: "Ropa",
+          body: "Cuerpo",
+          eyes: "Ojos",
+          shoes: "Zapatos",
+          hairAccessory: "Acc. Cabello",
+          bodyAccessory: "Acc. Cuerpo",
+          saveAvatarAndContinue: "Guardar y continuar",
+          randomize: "Aleatorio",
+          reset: "Reiniciar"
         },
       },
       en: {
@@ -102,7 +110,15 @@ i18n
           chooseYourStyle: "Choose your style",
           skinTone: "Skin Tone",
           hair: "Hair",
-          clothing: "Clothing"
+          clothing: "Clothing",
+          body: "Body",
+          eyes: "Eyes",
+          shoes: "Shoes",
+          hairAccessory: "Hair accessory",
+          bodyAccessory: "Body accessory",
+          saveAvatarAndContinue: "Save avatar and continue",
+          randomize: "Randomize",
+          reset: "Reset"
         },
       },
     },

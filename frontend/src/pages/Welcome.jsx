@@ -13,7 +13,7 @@ export default function Welcome() {
       {/* Imagen de fondo responsive */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/img/fondo-xafari.png"
+          src="/img/fondoPrincipal.jpg"
           alt="Fondo Xafari"
           className="w-full h-full object-cover object-bottom md:object-center"
         />
