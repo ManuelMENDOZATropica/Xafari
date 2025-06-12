@@ -11,7 +11,7 @@ import Intro from './pages/Intro';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Intro />} />
+      <Route path="/" element={<AvatarSelection />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/welcome-animation" element={<WelcomeAnimation />} />
       <Route path="/register-step1" element={<RegisterStep1 />} />
