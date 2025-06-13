@@ -97,8 +97,7 @@ export default function AvatarSelection() {
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-     <div className="relative z-10 flex flex-col items-center h-full w-full overflow-y-auto px-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-
+      <div className="relative z-10 flex flex-col items-center h-full w-full overflow-y-auto px-4 pt-safe-top pb-safe-bottom">
         <div className="w-full flex justify-end mb-2">
           <button
             onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
