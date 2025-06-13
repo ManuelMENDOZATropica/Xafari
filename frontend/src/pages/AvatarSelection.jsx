@@ -90,14 +90,14 @@ export default function AvatarSelection() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
+    <div className="relative h-[100dvh] w-screen overflow-hidden font-lufga">
       <img
         src="/img/V03-CERRITOS.jpg"
         alt="Fondo Avatar"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-      <div className="relative z-10 flex flex-col items-center min-h-[100dvh] w-full px-4 py-4 overflow-y-auto">
+      <div className="relative z-10 flex flex-col items-center h-full w-full px-4 py-4 overflow-y-auto">
         <div className="w-full flex justify-end mb-2">
           <button
             onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
@@ -143,11 +143,9 @@ export default function AvatarSelection() {
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
           {tabs.filter((tab) => tab.key === activeTab).map((tab) => (
             <div key={tab.key} className="flex flex-col items-center">
-              <h2 className="text-black font-medium mb-2">{tab.label}</h2>
               <div className="flex overflow-x-auto gap-2 w-full px-2">
                 {tab.list.map((opt, i) => {
                   const isCurrent = i === tab.current;
-                  const isNull = opt === null;
                   const zoom = zoomedKeys[tab.key] || {};
 
                   return (
@@ -158,9 +156,7 @@ export default function AvatarSelection() {
                           isCurrent ? "border-green-600" : "border-transparent"
                         } bg-white overflow-hidden`}
                       >
-                        {isNull ? (
-                          <span className="text-xs text-gray-500 text-center px-1">{t("none")}</span>
-                        ) : (
+                        {opt && (
                           <img
                             src={opt}
                             alt={`${tab.key}_${i}`}
