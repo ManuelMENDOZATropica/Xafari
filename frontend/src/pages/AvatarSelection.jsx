@@ -10,7 +10,7 @@ const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARI
 const glassesAccessoryOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
 const headAccessoryOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
 const bodyAccessoryOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
-const shoeOptions = [null, ...Array.from({ length: 16 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
+const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
 function useSelection(options, isObject = false, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex);
@@ -86,7 +86,7 @@ export default function AvatarSelection() {
     glasses: { scale: "scale-[2.5]", translateY: "-translate-y-[-60%]" },
     headAccessory: { scale: "scale-[2.3]", translateY: "-translate-y-[-80%]" },
     shoes: { scale: "scale-[2.5]", translateY: "translate-y-[-85%]" },
-    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-10%]" }
+    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-18%]" }
   };
 
   return (
@@ -97,8 +97,7 @@ export default function AvatarSelection() {
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-      <div className="relative z-10 flex flex-col items-center h-full w-full px-4 py-4 overflow-y-auto">
-        {/* Idioma */}
+      <div className="relative z-10 flex flex-col items-center min-h-[100dvh] w-full px-4 py-4 overflow-y-auto">
         <div className="w-full flex justify-end mb-2">
           <button
             onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
@@ -108,26 +107,23 @@ export default function AvatarSelection() {
           </button>
         </div>
 
-        {/* Título */}
         <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md mb-2 w-full max-w-sm">
           <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
             {t("chooseYourStyle")}
           </h1>
         </div>
 
-        {/* Avatar */}
         <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
-          {bodyAccImg && <img src={bodyAccImg} alt="Acc. cuerpo" className="absolute w-full h-full object-contain" />}
-          {bodyImg && <img src={bodyImg} alt="Cuerpo" className="absolute w-full h-full object-contain" />}
-          {eyesImg && <img src={eyesImg} alt="Ojos" className="absolute w-full h-full object-contain" />}
-          {hairImg && <img src={hairImg} alt="Cabello" className="absolute w-full h-full object-contain" />}
-          {clothingImg && <img src={clothingImg} alt="Ropa" className="absolute w-full h-full object-contain" />}
-          {shoeImg && <img src={shoeImg} alt="Zapatos" className="absolute w-full h-full object-contain" />}
-          {headAccImg && <img src={headAccImg} alt="Acc. cabeza" className="absolute w-full h-full object-contain" />}
-          {glassesImg && <img src={glassesImg} alt="Lentes" className="absolute w-full h-full object-contain" />}
+          {bodyAccImg && <img src={bodyAccImg} alt="bodyAccessory" className="absolute w-full h-full object-contain" />}
+          {bodyImg && <img src={bodyImg} alt="body" className="absolute w-full h-full object-contain" />}
+          {eyesImg && <img src={eyesImg} alt="eyes" className="absolute w-full h-full object-contain" />}
+          {hairImg && <img src={hairImg} alt="hair" className="absolute w-full h-full object-contain" />}
+          {shoeImg && <img src={shoeImg} alt="shoes" className="absolute w-full h-full object-contain" />}
+          {clothingImg && <img src={clothingImg} alt="clothing" className="absolute w-full h-full object-contain" />}
+          {headAccImg && <img src={headAccImg} alt="headAccessory" className="absolute w-full h-full object-contain" />}
+          {glassesImg && <img src={glassesImg} alt="glasses" className="absolute w-full h-full object-contain" />}
         </div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {tabs.map((tab) => (
             <button
@@ -144,62 +140,57 @@ export default function AvatarSelection() {
           ))}
         </div>
 
-        {/* Carrusel visual */}
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
-          {tabs
-            .filter((tab) => tab.key === activeTab)
-            .map((tab) => (
-              <div key={tab.key} className="flex flex-col items-center">
-                <h2 className="text-black font-medium mb-2">{tab.label}</h2>
-                <div className="flex overflow-x-auto gap-2 w-full px-2">
-                  {tab.list.map((opt, i) => {
-                    const isCurrent = i === tab.current;
-                    const isNull = opt === null;
-                    const zoom = zoomedKeys[tab.key] || {};
+          {tabs.filter((tab) => tab.key === activeTab).map((tab) => (
+            <div key={tab.key} className="flex flex-col items-center">
+              <h2 className="text-black font-medium mb-2">{tab.label}</h2>
+              <div className="flex overflow-x-auto gap-2 w-full px-2">
+                {tab.list.map((opt, i) => {
+                  const isCurrent = i === tab.current;
+                  const isNull = opt === null;
+                  const zoom = zoomedKeys[tab.key] || {};
 
-                    return (
-                      <div key={i} className="flex-shrink-0">
-                        <div
-                          onClick={() => tab.set(i)}
-                          className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                            isCurrent ? "border-green-600" : "border-transparent"
-                          } bg-white overflow-hidden`}
-                        >
-                          {isNull ? (
-                            <span className="text-xs text-gray-500 text-center px-1">Sin accesorio</span>
-                          ) : (
-                            <img
-                              src={opt}
-                              alt={`${tab.key}_${i}`}
-                              className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
-                            />
-                          )}
-                        </div>
+                  return (
+                    <div key={i} className="flex-shrink-0">
+                      <div
+                        onClick={() => tab.set(i)}
+                        className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
+                          isCurrent ? "border-green-600" : "border-transparent"
+                        } bg-white overflow-hidden`}
+                      >
+                        {isNull ? (
+                          <span className="text-xs text-gray-500 text-center px-1">{t("none")}</span>
+                        ) : (
+                          <img
+                            src={opt}
+                            alt={`${tab.key}_${i}`}
+                            className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
+                          />
+                        )}
                       </div>
-                    );
-                  })}
-                </div>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
 
-        {/* Acciones */}
         <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
           <button
             onClick={handleRandomize}
             className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
           >
-            {t("randomize") || "Aleatorio"}
+            {t("randomize")}
           </button>
           <button
             onClick={handleReset}
             className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
           >
-            {t("reset") || "Reiniciar"}
+            {t("reset")}
           </button>
         </div>
 
-        {/* Guardar */}
         <button
           onClick={handleSaveAvatar}
           className="bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow hover:bg-green-700 w-full max-w-sm"

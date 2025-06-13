@@ -59,6 +59,8 @@ i18n
           shoes: "Zapatos",
           hairAccessory: "Acc. Cabello",
           bodyAccessory: "Acc. Cuerpo",
+          glasses: "Lentes",
+          headAccessory: "Acc. Cabeza",
           saveAvatarAndContinue: "Guardar y continuar",
           randomize: "Aleatorio",
           reset: "Reiniciar"
@@ -116,6 +118,8 @@ i18n
           shoes: "Shoes",
           hairAccessory: "Hair accessory",
           bodyAccessory: "Body accessory",
+          glasses: "Glasses",
+          headAccessory: "Head accessory",
           saveAvatarAndContinue: "Save avatar and continue",
           randomize: "Randomize",
           reset: "Reset"
