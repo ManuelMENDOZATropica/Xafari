@@ -90,14 +90,14 @@ export default function AvatarSelection() {
   };
 
   return (
-    <div className="relative h-[100dvh] w-screen overflow-hidden font-lufga">
-      <img
-        src="/img/V03-CERRITOS.jpg"
-        alt="Fondo Avatar"
-        className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
-      />
+  <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
+  <img
+    src="/img/V03-CERRITOS.jpg"
+    alt="Fondo Avatar"
+    className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
+  />
 
-      <div className="relative z-10 flex flex-col items-center h-full w-full overflow-y-auto px-4 pt-safe-top pb-safe-bottom">
+  <div className="relative z-10 flex flex-col items-center w-full px-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] overflow-y-auto">
         <div className="w-full flex justify-end mb-2">
           <button
             onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
