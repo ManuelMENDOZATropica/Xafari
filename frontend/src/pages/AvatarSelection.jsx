@@ -3,44 +3,19 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 // Opciones
-const bodyOptions = Array.from(
-  { length: 10 },
-  (_, i) => `/avatares/CUERPO_${i + 1}.png`
-);
-const hairOptions = Array.from(
-  { length: 21 },
-  (_, i) => `/avatares/PELO_${i + 1}.png`
-);
-const clothingOptions = Array.from(
-  { length: 13 },
-  (_, i) => `/avatares/VESTUARIO_${i + 1}.png`
-);
-const eyesOptions = Array.from(
-  { length: 4 },
-  (_, i) => `/avatares/OJOS_${i + 1}.png`
-);
+const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
+const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
+const hairOptions = [null, ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
+const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
+const glassesAccessoryOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
+const headAccessoryOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
+const bodyAccessoryOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
+const shoeOptions = [null, ...Array.from({ length: 16 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
-const shoeOptions = Array.from({ length: 12 }, (_, i) => ({
-  src: `/avatares/ZAPATOS_${i + 1}.png`,
-  thumb: `/avatares/ZAPATOS_ICONO_${i + 1}.png`,
-}));
-
-const hairAccessoryOptions = [
-  null,
-  "/avatares/ACCESORIOS_CABELLO_1.png",
-  "/avatares/ACCESORIOS_CABELLO_2.png",
-];
-
-const bodyAccessoryOptions = [
-  null,
-  "/avatares/ACCESORIOS_CUERPOS_1.png",
-  "/avatares/ACCESORIOS_CUERPOS_2.png",
-];
-
-function useSelection(options, isObject = false) {
-  const [index, setIndex] = useState(0);
+function useSelection(options, isObject = false, initialIndex = 0) {
+  const [index, setIndex] = useState(initialIndex);
   const set = (i) => setIndex(i);
-  const value = isObject ? options[index]?.src : options[index];
+  const value = isObject ? options[index] : options[index];
   return [index, value, set, options];
 }
 
@@ -49,18 +24,13 @@ export default function AvatarSelection() {
   const navigate = useNavigate();
 
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions);
-  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions);
-  const [clothingIndex, clothingImg, setClothing, clothingList] =
-    useSelection(clothingOptions);
-  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions);
-  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(
-    shoeOptions,
-    true
-  );
-  const [hairAccessoryIndex, hairAccImg, setHairAcc, hairAccList] =
-    useSelection(hairAccessoryOptions);
-  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] =
-    useSelection(bodyAccessoryOptions);
+  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, Math.floor(Math.random() * hairOptions.length));
+  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, Math.floor(Math.random() * clothingOptions.length));
+  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, false, Math.floor(Math.random() * eyesOptions.length));
+  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, false, Math.floor(Math.random() * shoeOptions.length));
+  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesAccessoryOptions);
+  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headAccessoryOptions);
+  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccessoryOptions);
 
   const [activeTab, setActiveTab] = useState("body");
 
@@ -73,7 +43,8 @@ export default function AvatarSelection() {
         clothingIndex,
         shoeIndex,
         eyesIndex,
-        hairAccessoryIndex,
+        glassesIndex,
+        headAccessoryIndex,
         bodyAccessoryIndex,
       })
     );
@@ -81,13 +52,10 @@ export default function AvatarSelection() {
   };
 
   const handleRandomize = () => {
-    setBody(Math.floor(Math.random() * bodyList.length));
+    setEyes(Math.floor(Math.random() * eyesList.length));
     setHair(Math.floor(Math.random() * hairList.length));
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
-    setEyes(Math.floor(Math.random() * eyesList.length));
-    setHairAcc(Math.floor(Math.random() * hairAccList.length));
-    setBodyAcc(Math.floor(Math.random() * bodyAccList.length));
   };
 
   const handleReset = () => {
@@ -96,62 +64,30 @@ export default function AvatarSelection() {
     setClothing(0);
     setShoe(0);
     setEyes(0);
-    setHairAcc(0);
+    setGlasses(0);
+    setHeadAcc(0);
     setBodyAcc(0);
   };
 
   const tabs = [
-    {
-      key: "body",
-      label: t("body"),
-      set: setBody,
-      list: bodyList,
-      current: bodyIndex,
-    },
-    {
-      key: "eyes",
-      label: t("eyes"),
-      set: setEyes,
-      list: eyesList,
-      current: eyesIndex,
-    },
-    {
-      key: "hair",
-      label: t("hair"),
-      set: setHair,
-      list: hairList,
-      current: hairIndex,
-    },
-    {
-      key: "clothing",
-      label: t("clothing"),
-      set: setClothing,
-      list: clothingList,
-      current: clothingIndex,
-    },
-    {
-      key: "shoes",
-      label: t("shoes"),
-      set: setShoe,
-      list: shoeList,
-      current: shoeIndex,
-      isObject: true,
-    },
-    {
-      key: "bodyAccessory",
-      label: t("bodyAccessory"),
-      set: setBodyAcc,
-      list: bodyAccList,
-      current: bodyAccessoryIndex,
-    },
-    {
-      key: "hairAccessory",
-      label: t("hairAccessory"),
-      set: setHairAcc,
-      list: hairAccList,
-      current: hairAccessoryIndex,
-    },
+    { key: "body", label: t("body"), set: setBody, list: bodyList, current: bodyIndex },
+    { key: "eyes", label: t("eyes"), set: setEyes, list: eyesList, current: eyesIndex },
+    { key: "hair", label: t("hair"), set: setHair, list: hairList, current: hairIndex },
+    { key: "clothing", label: t("clothing"), set: setClothing, list: clothingList, current: clothingIndex },
+    { key: "shoes", label: t("shoes"), set: setShoe, list: shoeList, current: shoeIndex },
+    { key: "glasses", label: t("glasses"), set: setGlasses, list: glassesList, current: glassesIndex },
+    { key: "headAccessory", label: t("headAccessory"), set: setHeadAcc, list: headAccList, current: headAccessoryIndex },
+    { key: "bodyAccessory", label: t("bodyAccessory"), set: setBodyAcc, list: bodyAccList, current: bodyAccessoryIndex },
   ];
+
+  const zoomedKeys = {
+    eyes: { scale: "scale-[4]", translateY: "-translate-y-[-85%]" },
+    hair: { scale: "scale-[1.5]", translateY: "-translate-y-[-35%]" },
+    glasses: { scale: "scale-[2.5]", translateY: "-translate-y-[-60%]" },
+    headAccessory: { scale: "scale-[2.3]", translateY: "-translate-y-[-80%]" },
+    shoes: { scale: "scale-[2.5]", translateY: "translate-y-[-85%]" },
+    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-10%]" }
+  };
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
@@ -165,9 +101,7 @@ export default function AvatarSelection() {
         {/* Idioma */}
         <div className="w-full flex justify-end mb-2">
           <button
-            onClick={() =>
-              i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-            }
+            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
             className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
           >
             {t("language")}
@@ -183,45 +117,14 @@ export default function AvatarSelection() {
 
         {/* Avatar */}
         <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
-          {bodyAccImg && (
-            <img
-              src={bodyAccImg}
-              alt="Acc. cuerpo"
-              className="absolute w-full h-full object-contain"
-            />
-          )}
-          <img
-            src={bodyImg}
-            alt="Cuerpo"
-            className="absolute w-full h-full object-contain"
-          />
-          <img
-            src={eyesImg}
-            alt="Ojos"
-            className="absolute w-full h-full object-contain"
-          />
-          <img
-            src={hairImg}
-            alt="Cabello"
-            className="absolute w-full h-full object-contain"
-          />
-          <img
-            src={clothingImg}
-            alt="Ropa"
-            className="absolute w-full h-full object-contain"
-          />
-          <img
-            src={shoeImg}
-            alt="Zapatos"
-            className="absolute w-full h-full object-contain"
-          />
-          {hairAccImg && (
-            <img
-              src={hairAccImg}
-              alt="Acc. cabello"
-              className="absolute w-full h-full object-contain"
-            />
-          )}
+          {bodyAccImg && <img src={bodyAccImg} alt="Acc. cuerpo" className="absolute w-full h-full object-contain" />}
+          {bodyImg && <img src={bodyImg} alt="Cuerpo" className="absolute w-full h-full object-contain" />}
+          {eyesImg && <img src={eyesImg} alt="Ojos" className="absolute w-full h-full object-contain" />}
+          {hairImg && <img src={hairImg} alt="Cabello" className="absolute w-full h-full object-contain" />}
+          {clothingImg && <img src={clothingImg} alt="Ropa" className="absolute w-full h-full object-contain" />}
+          {shoeImg && <img src={shoeImg} alt="Zapatos" className="absolute w-full h-full object-contain" />}
+          {headAccImg && <img src={headAccImg} alt="Acc. cabeza" className="absolute w-full h-full object-contain" />}
+          {glassesImg && <img src={glassesImg} alt="Lentes" className="absolute w-full h-full object-contain" />}
         </div>
 
         {/* Tabs */}
@@ -251,29 +154,24 @@ export default function AvatarSelection() {
                 <div className="flex overflow-x-auto gap-2 w-full px-2">
                   {tab.list.map((opt, i) => {
                     const isCurrent = i === tab.current;
-                    const isShoes = tab.key === "shoes";
                     const isNull = opt === null;
-                    const thumbSrc = isShoes ? opt.thumb : opt;
+                    const zoom = zoomedKeys[tab.key] || {};
 
                     return (
                       <div key={i} className="flex-shrink-0">
                         <div
                           onClick={() => tab.set(i)}
                           className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                            isCurrent
-                              ? "border-green-600"
-                              : "border-transparent"
-                          } bg-white`}
+                            isCurrent ? "border-green-600" : "border-transparent"
+                          } bg-white overflow-hidden`}
                         >
                           {isNull ? (
-                            <span className="text-xs text-gray-500 text-center px-1">
-                              Sin accesorio
-                            </span>
+                            <span className="text-xs text-gray-500 text-center px-1">Sin accesorio</span>
                           ) : (
                             <img
-                              src={thumbSrc}
+                              src={opt}
                               alt={`${tab.key}_${i}`}
-                              className="w-full h-full object-contain"
+                              className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
                             />
                           )}
                         </div>
@@ -286,22 +184,20 @@ export default function AvatarSelection() {
         </div>
 
         {/* Acciones */}
-       {/* Acciones */}
-<div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
-  <button
-    onClick={handleRandomize}
-    className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
-  >
-    {t("randomize") || "Aleatorio"}
-  </button>
-  <button
-    onClick={handleReset}
-    className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
-  >
-    {t("reset") || "Reiniciar"}
-  </button>
-</div>
-
+        <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
+          <button
+            onClick={handleRandomize}
+            className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
+          >
+            {t("randomize") || "Aleatorio"}
+          </button>
+          <button
+            onClick={handleReset}
+            className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
+          >
+            {t("reset") || "Reiniciar"}
+          </button>
+        </div>
 
         {/* Guardar */}
         <button
