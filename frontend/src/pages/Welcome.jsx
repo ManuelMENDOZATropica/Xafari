@@ -53,7 +53,7 @@ export default function Welcome() {
         {/* Botones */}
         <div className="flex flex-col gap-4 w-full max-w-xs mt-8 z-10">
           <button
-            onClick={() => navigate("/create-avatar")}
+            onClick={() => navigate("/intro")}
             className="bg-gradient-to-r from-emerald-600 to-lime-500 text-white text-base font-semibold py-3 rounded-full shadow-md hover:brightness-105 active:scale-95 transition-all"
             >
             {t("newAdventure")}

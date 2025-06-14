@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const baseNames = ["a", "b", "c", "d", "e"];
+const baseNames = ["1", "2", "3", "4", "5","6"];
 
 const Intro = () => {
   const [index, setIndex] = useState(0);
@@ -13,15 +13,15 @@ const Intro = () => {
 
   const getImageSrc = (name) => {
     return i18n.language === "en"
-      ? `/intro/${name}_ingles.png`
-      : `/intro/${name}.png`;
+      ? `/intro/${name}.jpg`
+      : `/intro/${name}.jpg`;
   };
 
   useEffect(() => {
     if (index >= baseNames.length) {
       setExitFade(true);
       setTimeout(() => {
-        navigate("/welcome");
+        navigate("/create-avatar");
       }, 500);
       return;
     }
