@@ -98,7 +98,7 @@ export default function Login() {
             <p className="text-center text-sm text-black">
               {t("noAccount")}&nbsp;
               <button
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/register-step1")}
                 className="underline text-emerald-600 hover:text-emerald-800 transition"
               >
                 {t("registerHere")}

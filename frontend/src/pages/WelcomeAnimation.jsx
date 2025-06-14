@@ -33,7 +33,7 @@ export default function WelcomeToAvatarTransition() {
       {/* Fondo de bienvenida */}
       {!showAvatar && (
         <img
-          src="/img/fondo-bienvenida.png"
+          src="/img/V03-CERRITOS.jpg"
           alt="Fondo Bienvenida"
           className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
         />

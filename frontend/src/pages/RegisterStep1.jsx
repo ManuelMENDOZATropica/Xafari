@@ -34,7 +34,7 @@ export default function RegisterStep1() {
       {/* Imagen de fondo */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/img/fondo-registro.png"
+          src="/img/V03-CERRITOS.jpg"
           alt="Fondo Registro"
           className="w-full h-full object-cover object-bottom md:object-center"
         />

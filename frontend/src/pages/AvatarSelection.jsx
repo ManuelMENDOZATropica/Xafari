@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -23,13 +24,11 @@ export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  // Índices iniciales (evita ReferenceError)
   const initialHairIndex = Math.floor(Math.random() * hairOptions.length);
   const initialClothingIndex = Math.floor(Math.random() * clothingOptions.length);
   const initialEyesIndex = Math.floor(Math.random() * eyesOptions.length);
   const initialShoeIndex = Math.floor(Math.random() * shoeOptions.length);
 
-  // Selección
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions);
   const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, initialHairIndex);
   const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, initialClothingIndex);
@@ -63,7 +62,6 @@ export default function AvatarSelection() {
     setHair(Math.floor(Math.random() * hairList.length));
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
-    setBody(Math.floor(Math.random() * bodyList.length));
   };
 
   const handleReset = () => {
@@ -106,7 +104,7 @@ export default function AvatarSelection() {
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-      {/* Botones arriba */}
+      {/* Botones superiores */}
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
         <button
           onClick={() => navigate("/")}
@@ -132,14 +130,12 @@ export default function AvatarSelection() {
 
         {/* Avatar */}
         <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
-          {bodyAccImg && <img src={bodyAccImg} alt="bodyAccessory" className="absolute w-full h-full object-contain" />}
-          {bodyImg && <img src={bodyImg} alt="body" className="absolute w-full h-full object-contain" />}
-          {eyesImg && <img src={eyesImg} alt="eyes" className="absolute w-full h-full object-contain" />}
-          {hairImg && <img src={hairImg} alt="hair" className="absolute w-full h-full object-contain" />}
-          {shoeImg && <img src={shoeImg} alt="shoes" className="absolute w-full h-full object-contain" />}
-          {clothingImg && <img src={clothingImg} alt="clothing" className="absolute w-full h-full object-contain" />}
-          {headAccImg && <img src={headAccImg} alt="headAccessory" className="absolute w-full h-full object-contain" />}
-          {glassesImg && <img src={glassesImg} alt="glasses" className="absolute w-full h-full object-contain" />}
+          {[bodyAccImg, bodyImg, eyesImg, hairImg, shoeImg, clothingImg, headAccImg, glassesImg].map(
+            (img, idx) =>
+              img && (
+                <img key={idx} src={img} alt={`layer-${idx}`} className="absolute w-full h-full object-contain" />
+              )
+          )}
         </div>
 
         {/* Tabs */}
@@ -159,40 +155,65 @@ export default function AvatarSelection() {
           ))}
         </div>
 
-        {/* Lista de opciones */}
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
-          {tabs.filter((tab) => tab.key === activeTab).map((tab) => (
-            <div key={tab.key} className="flex flex-col items-center">
-              <div className="flex overflow-x-auto gap-2 w-full px-2">
-                {tab.list.map((opt, i) => {
-                  const isCurrent = i === tab.current;
-                  const zoom = zoomedKeys[tab.key] || {};
+  {tabs
+    .filter((tab) => tab.key === activeTab)
+    .map((tab) => {
+      const scrollRef = useRef();
+      const [showArrow, setShowArrow] = useState(false);
+      const zoom = zoomedKeys[tab.key] || {};
 
-                  return (
-                    <div key={i} className="flex-shrink-0">
-                      <div
-                        onClick={() => tab.set(i)}
-                        className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                          isCurrent ? "border-green-600" : "border-transparent"
-                        } bg-white overflow-hidden`}
-                      >
-                        {opt && (
-                          <img
-                            src={opt}
-                            alt={`${tab.key}_${i}`}
-                            className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      useEffect(() => {
+        const el = scrollRef.current;
+        const checkScroll = () => {
+          if (!el) return;
+          setShowArrow(el.scrollWidth > el.clientWidth && el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+        };
+        checkScroll();
+        el?.addEventListener("scroll", checkScroll);
+        return () => el?.removeEventListener("scroll", checkScroll);
+      }, [tab.list]);
+
+      return (
+        <div key={tab.key} className="relative w-full px-2">
+          <div ref={scrollRef} className="flex overflow-x-auto gap-2 pr-6 scroll-smooth">
+            {tab.list.map((opt, i) => {
+              const isCurrent = i === tab.current;
+              return (
+                <div key={i} className="flex-shrink-0">
+                  <div
+                    onClick={() => tab.set(i)}
+                    className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
+                      isCurrent ? "border-green-600" : "border-transparent"
+                    } bg-white overflow-hidden`}
+                  >
+                    {opt ? (
+                      <img
+                        src={opt}
+                        alt={`${tab.key}_${i}`}
+                        className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
+                      />
+                    ) : (
+                      <span className="text-xl font-bold text-gray-400">×</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Flecha indicadora con animación */}
+          {showArrow && (
+            <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-green-600 text-2xl animate-bounce-right">
+              →
             </div>
-          ))}
+          )}
         </div>
+      );
+    })}
+</div>
 
-        {/* Botones de acción */}
+        {/* Botones */}
         <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
           <button
             onClick={handleRandomize}
