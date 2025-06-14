@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-// Opciones
+// Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
 const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
 const hairOptions = [null, ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
@@ -23,11 +23,18 @@ export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
+  // Índices iniciales (evita ReferenceError)
+  const initialHairIndex = Math.floor(Math.random() * hairOptions.length);
+  const initialClothingIndex = Math.floor(Math.random() * clothingOptions.length);
+  const initialEyesIndex = Math.floor(Math.random() * eyesOptions.length);
+  const initialShoeIndex = Math.floor(Math.random() * shoeOptions.length);
+
+  // Selección
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions);
-  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, Math.floor(Math.random() * hairOptions.length));
-  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, Math.floor(Math.random() * clothingOptions.length));
-  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, false, Math.floor(Math.random() * eyesOptions.length));
-  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, false, Math.floor(Math.random() * shoeOptions.length));
+  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, initialHairIndex);
+  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, initialClothingIndex);
+  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, false, initialEyesIndex);
+  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, false, initialShoeIndex);
   const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesAccessoryOptions);
   const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headAccessoryOptions);
   const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccessoryOptions);
@@ -56,6 +63,7 @@ export default function AvatarSelection() {
     setHair(Math.floor(Math.random() * hairList.length));
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
+    setBody(Math.floor(Math.random() * bodyList.length));
   };
 
   const handleReset = () => {
@@ -90,29 +98,39 @@ export default function AvatarSelection() {
   };
 
   return (
-  <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
-  <img
-    src="/img/V03-CERRITOS.jpg"
-    alt="Fondo Avatar"
-    className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
-  />
+    <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
+      {/* Fondo */}
+      <img
+        src="/img/V03-CERRITOS.jpg"
+        alt="Fondo Avatar"
+        className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
+      />
 
-  <div className="relative z-10 flex flex-col items-center w-full px-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] overflow-y-auto">
-        <div className="w-full flex justify-end mb-2">
-          <button
-            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-          >
-            {t("language")}
-          </button>
-        </div>
+      {/* Botones arriba */}
+      <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          ← {t("back")}
+        </button>
+        <button
+          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          {t("language")}
+        </button>
+      </div>
 
+      {/* Contenido principal */}
+      <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-[env(safe-area-inset-bottom)] overflow-y-auto">
         <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md mb-2 w-full max-w-sm">
           <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
             {t("chooseYourStyle")}
           </h1>
         </div>
 
+        {/* Avatar */}
         <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
           {bodyAccImg && <img src={bodyAccImg} alt="bodyAccessory" className="absolute w-full h-full object-contain" />}
           {bodyImg && <img src={bodyImg} alt="body" className="absolute w-full h-full object-contain" />}
@@ -124,6 +142,7 @@ export default function AvatarSelection() {
           {glassesImg && <img src={glassesImg} alt="glasses" className="absolute w-full h-full object-contain" />}
         </div>
 
+        {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {tabs.map((tab) => (
             <button
@@ -140,6 +159,7 @@ export default function AvatarSelection() {
           ))}
         </div>
 
+        {/* Lista de opciones */}
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
           {tabs.filter((tab) => tab.key === activeTab).map((tab) => (
             <div key={tab.key} className="flex flex-col items-center">
@@ -172,6 +192,7 @@ export default function AvatarSelection() {
           ))}
         </div>
 
+        {/* Botones de acción */}
         <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
           <button
             onClick={handleRandomize}

@@ -16,6 +16,11 @@ i18n
           close: "Cerrar",
           language: "Idioma",
 
+          // Login
+          login: "Iniciar sesión",
+          noAccount: "¿No tienes cuenta?",
+          registerHere: "Regístrate aquí",
+
           // Home
           welcome: "Descubre todas las sorpresas y aventuras que Xcaret México tiene para ti y tu familia.",
           newAdventure: "Empieza nueva aventura",
@@ -57,10 +62,10 @@ i18n
           body: "Cuerpo",
           eyes: "Ojos",
           shoes: "Zapatos",
-          hairAccessory: "Acc. Cabello",
-          bodyAccessory: "Acc. Cuerpo",
+          hairAccessory: "Accesorios cabello",
+          bodyAccessory: "Accesorios cuerpo",
           glasses: "Lentes",
-          headAccessory: "Acc. Cabeza",
+          headAccessory: "Accesorios cabeza",
           saveAvatarAndContinue: "Guardar y continuar",
           randomize: "Aleatorio",
           reset: "Reiniciar"
@@ -74,6 +79,11 @@ i18n
           finish: "Finish",
           close: "Close",
           language: "Language",
+
+          // Login
+          login: "Login",
+          noAccount: "Don't have an account?",
+          registerHere: "Register here",
 
           // Home
           welcome: "Discover all the surprises and adventures that Xcaret México has for you and your family.",
