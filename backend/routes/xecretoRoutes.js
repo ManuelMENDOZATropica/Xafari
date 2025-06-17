@@ -3,11 +3,39 @@ const router = express.Router();
 
 const xecretoController = require("../controllers/xecretoController");
 
-router.get("/xecreto/:id", xecretoController.getXecreto);
-router.get("/xecretos", xecretoController.getAllXecretos);
+const { validateRequest } = require("../middleware/validateRequest");
+const {
+  xecretoIdParam,
+  createXecretoValidation,
+  updateXecretoValidation,
+} = require("../validation/xecreto.validation");
 
-router.delete("/xecreto/:id", xecretoController.deleteXecreto);
-
-router.post("/xecreto", xecretoController.addXecreto);
+router.get("/", xecretoController.getAllXecretos);
+router.get(
+  "/:id",
+  xecretoIdParam,
+  validateRequest,
+  xecretoController.getXecreto
+);
+router.post(
+  "/",
+  xecretoIdParam,
+  createXecretoValidation,
+  validateRequest,
+  xecretoController.createXecreto
+);
+router.put(
+  "/:id",
+  xecretoIdParam,
+  updateXecretoValidation,
+  validateRequest,
+  xecretoController.updateXecreto
+);
+router.delete(
+  "/:id",
+  xecretoIdParam,
+  validateRequest,
+  xecretoController.deleteXecreto
+);
 
 module.exports = router;

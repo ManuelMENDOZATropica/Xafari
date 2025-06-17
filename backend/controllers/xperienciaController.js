@@ -1,54 +1,94 @@
-const xperienciaService = require("../services/xperienciaService")
+const { toXperienciaDTO } = require("../dto/xperiencia.dto");
+const xperienciaService = require("../services/xperienciaService");
+const {
+  handleSequelizeError,
+  ResourceNotFoundError,
+} = require("../utils/errors");
 
-exports.getXperiencia = async (req, res) => {
+exports.createXperiencia = async (req, res, next) => {
+  const { qrCode, isValidable, ...activityParams } = req.body;
+
+  try {
+    const xperiencia = await xperienciaService.createXperiencia({
+      qrCode,
+      isValidable,
+      type: "Xperiencia",
+      ...activityParams,
+    });
+
+    res.status(200).json(toXperienciaDTO(xperiencia));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
+};
+
+exports.getXperiencia = async (req, res, next) => {
   const id = req.params.id;
-  const xperiencia = await xperienciaService.getXperienciaById(id);
+  try {
+    const xperiencia = await xperienciaService.getXperiencia(id);
 
-  res.json({
-    xperiencia: {
-      name: xperiencia.name,
-      description: xperiencia.description,
-      familiar: xperiencia.familiar,
-      min_age: xperiencia.min_age,
-      max_age: xperiencia.max_age,
-    },
-  });
+    if (!xperiencia)
+      return next(new ResourceNotFoundError("Xperiencia not found"));
+
+    res.status(200).json(toXperienciaDTO(xperiencia));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
 };
 
-exports.getAllXperiencias = async (req, res) => {
-  const xperiencias = await xperienciaService.getAllXperiencias();
-  res.json({
-    xperiencias: xperiencias.map((xperiencia) => xperiencia.id),
-  });
+exports.getAllXperiencias = async (req, res, next) => {
+  try {
+    const xperiencias = await xperienciaService.getAllXperiencias();
+
+    res
+      .status(200)
+      .json(xperiencias.map((xperiencia) => toXperienciaDTO(xperiencia)));
+  } catch (err) {
+    logger.error(err);
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
 };
 
-exports.deleteXperiencia = async (req, res) => {
+exports.deleteXperiencia = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xperiencia = await xperienciaService.deleteXperiencia(id);
+
+    if (!xperiencia)
+      return next(new ResourceNotFoundError("Xperiencia not found"));
+
+    res.status(200).json(toXperienciaDTO(xperiencia));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
+};
+
+exports.updateXperiencia = async (req, res, next) => {
   const id = req.params.id;
 
-  await xperienciaService.deleteXperiencia(id);
+  try {
+    const newXperienciaData = {
+      ...(req.body.name ? { name: req.body.name } : {}),
+      ...(req.body.description ? { description: req.body.description } : {}),
+      ...(req.body.location ? { location: req.body.location } : {}),
+      ...(req.body.type ? { type: req.body.type } : {}),
+      ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
+      ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
+      ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
+      ...(req.body.qrCode ? { qrCode: req.body.qrCode } : {}),
+      ...(req.body.isValidable ? { isValidable: req.body.isValidable } : {}),
+    };
 
-  res.json({
-    xperiencia: {
-      id: id,
-    },
-  });
-};
+    const newXperiencia = await xperienciaService.updateXperiencia(
+      id,
+      newXperienciaData
+    );
 
-exports.addXperiencia = async (req, res) => {
-  const { name, description, familiar, min_age, max_age, casa_id } = req.body;
+    if (!newXperiencia)
+      return next(new ResourceNotFoundError("Xperiencia not found"));
 
-  const xperiencia = await casaService.addXperiencia(
-    casa_id,
-    name,
-    description,
-    familiar,
-    min_age,
-    max_age
-  );
-
-  res.json({
-    xperiencia: {
-      id: xperiencia.id,
-    },
-  });
+    res.status(200).json(toXperienciaDTO(newXperiencia));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
 };
