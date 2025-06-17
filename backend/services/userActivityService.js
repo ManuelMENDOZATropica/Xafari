@@ -3,7 +3,7 @@ const { Activity, UserActivity } = require("../models");
 const { ResourceNotFoundError } = require("../utils/errors");
 const userService = require("./userService");
 
-exports.addActivity = async (userId, activityId, trans) => {
+exports.addUserActivity = async (userId, activityId, trans) => {
   const transaction = trans || (await database.transaction());
 
   try {
@@ -37,26 +37,14 @@ exports.addActivity = async (userId, activityId, trans) => {
   }
 };
 
-exports.deleteActivity = async (id, activityId) => {
+exports.deleteUserActivity = async (id) => {
   const transaction = await database.transaction();
 
   try {
-    const user = await userService.getUser(id);
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    const activity = await Activity.findByPk(activityId, {
-      transaction,
-    });
-
-    if (!activity) {
-      throw new ResourceNotFoundError("Activity not found");
-    }
-
     const userActivity = await UserActivity.findOne(
       {
         where: {
-          userId: user.id,
-          activityId: activity.id,
+          id,
         },
       },
       {
@@ -79,27 +67,24 @@ exports.deleteActivity = async (id, activityId) => {
   }
 };
 
-exports.updateUserActivity = async (userId, activityId, newData) => {
+exports.getUserActivity = async (id) => {
+  const userActivity = await UserActivity.findOne({
+    where: {
+      id,
+    },
+  });
+
+  return userActivity;
+};
+
+exports.updateUserActivity = async (id, newData) => {
   const transaction = await database.transaction();
 
   try {
-    const user = await userService.getUser(userId, transaction);
-
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    const activity = await Activity.findByPk(activityId, {
-      transaction,
-    });
-
-    if (!activity) {
-      throw new ResourceNotFoundError("Activity not found");
-    }
-
     const userActivity = await UserActivity.findOne(
       {
         where: {
-          userId: user.id,
-          activityId: activity.id,
+          id,
         },
       },
       {

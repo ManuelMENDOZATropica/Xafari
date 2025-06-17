@@ -16,7 +16,7 @@ exports.createHouse = async (req, res, next) => {
       animal,
     });
 
-    res.json(toHouseDTO(house));
+    res.status(200).json(toHouseDTO(house));
   } catch (err) {
     next(handleSequelizeError(err, "House"));
   }
@@ -29,7 +29,18 @@ exports.getHouse = async (req, res, next) => {
 
     if (!house) return next(new ResourceNotFoundError("House not found"));
 
-    res.json(toHouseDTO(house));
+    res.status(200).json(toHouseDTO(house));
+  } catch (err) {
+    logger.error(err);
+    next(handleSequelizeError(err, "House"));
+  }
+};
+
+exports.getAllHouses = async (req, res, next) => {
+  try {
+    const houses = await houseService.getAllHouses();
+
+    res.status(200).json(houses.map((house) => toHouseDTO(house)));
   } catch (err) {
     logger.error(err);
     next(handleSequelizeError(err, "House"));
@@ -43,7 +54,7 @@ exports.deleteHouse = async (req, res, next) => {
 
     if (!house) return next(new ResourceNotFoundError("House not found"));
 
-    res.json(toHouseDTO(house));
+    res.status(200).json(toHouseDTO(house));
   } catch (err) {
     next(handleSequelizeError(err, "House"));
   }
@@ -62,7 +73,7 @@ exports.updateHouse = async (req, res, next) => {
 
     if (!newHouse) return next(new ResourceNotFoundError("House not found"));
 
-    res.json(toHouseDTO(newHouse));
+    res.status(200).json(toHouseDTO(newHouse));
   } catch (err) {
     logger.error(err);
     next(handleSequelizeError(err, "House"));

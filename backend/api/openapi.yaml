@@ -11,12 +11,15 @@ paths:
   /users/{id}:
     get:
       summary: Get user profile
+      tags:
+        - users
       parameters:
         - in: path
           name: id
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Basic user info
@@ -29,9 +32,49 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /users:
+    post:
+      summary: Create a new user
+      tags:
+        - users
+      requestBody:
+        description: New user payload
+        required: true
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/UserCreation"
+      responses:
+        '200':
+          description: Basic user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /houses:
+    get:
+      summary: retrieve a list of /houses
+      tags: 
+        - houses
+      responses:
+        "200":
+          description: House information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+
+
   /xelfies:
     get:
       summary: List available Xelfie points
+      tags:
+        - xelfies
       responses:
         '200':
           description: List of Xelfies
@@ -44,9 +87,37 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+    post:
+      summary: add a new xelfie activity 
+      tags:
+        - xelfies 
+      requestBody:
+        description:  new xelfie payload
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                description:
+                  type: string  
+                location:
+                  type: string
+                isActive:
+                  type: boolean
+                minAge:
+                  type: integer
+                maxAge:
+                  type: integer
+  
+
   /user-xelfies/{userId}:
     get:
       summary: Get user's Xelfies
+      tags:
+        - users
       parameters:
         - in: path
           name: userId
@@ -70,6 +141,8 @@ paths:
   /xperiencias:
     get:
       summary: List available Xperiencias
+      tags:
+        - xperiencias
       responses:
         '200':
           description: List of Xperiencias
@@ -85,6 +158,8 @@ paths:
   /user-activities/{userId}:
     get:
       summary: Get activity log for user
+      tags:
+        - users
       parameters:
         - in: path
           name: userId
@@ -108,6 +183,8 @@ paths:
   /achievements:
     get:
       summary: List achievements
+      tags:
+        - achievements
       parameters:
         - in: query
           name: type
@@ -129,6 +206,8 @@ paths:
   /user-achievements/{userId}:
     get:
       summary: Get user achievements
+      tags:
+        - achievements
       parameters:
         - in: path
           name: userId
@@ -152,6 +231,8 @@ paths:
   /xecretos:
     get:
       summary: List Xecreto clues
+      tags:
+        - xecretos
       responses:
         '200':
           description: All Xecretos with status info
@@ -167,6 +248,8 @@ paths:
   /events:
     get:
       summary: List active events
+      tags:
+        - events
       responses:
         '200':
           description: Events currently happening or upcoming
@@ -182,6 +265,8 @@ paths:
   /family-trees/{familyId}:
     get:
       summary: Get family tree info and member progress
+      tags:
+        - users
       parameters:
         - in: path
           name: familyId
@@ -210,6 +295,36 @@ components:
         avatarUrl: { type: string }
         roomNumber: { type: string }
 
+    UserCreation:
+      type: object
+      properties:
+        name:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string  
+          format: password
+        birthdate:
+          type: string
+          format: Date
+        reservationNumber:
+          type: string     
+        pronouns: 
+          type: string
+        avatar:
+          type: object
+    House:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        animal: {type: string}
+        element: {type: string}
+        
     Xelfie:
       type: object
       properties:

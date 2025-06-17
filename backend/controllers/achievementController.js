@@ -18,7 +18,7 @@ exports.createAchievement = async (req, res, next) => {
       houseId,
     });
 
-    res.json(toAchievementDTO(achievement));
+    res.status(200).json(toAchievementDTO(achievement));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -36,8 +36,21 @@ exports.getAchievement = async (req, res, next) => {
     if (!achievement)
       return next(new ResourceNotFoundError("Achievement not found"));
 
-    res.json(toAchievementDTO(achievement));
+    res.status(200).json(toAchievementDTO(achievement));
   } catch (err) {
+    next(handleSequelizeError(err, "Achievement"));
+  }
+};
+
+exports.getAllAchievements = async (req, res, next) => {
+  try {
+    const achievements = await achievementService.getAllAchievements();
+
+    res
+      .status(200)
+      .json(achievements.map((achievement) => toAchievementDTO(achievement)));
+  } catch (err) {
+    logger.error(err);
     next(handleSequelizeError(err, "Achievement"));
   }
 };
@@ -50,7 +63,7 @@ exports.deleteAchievement = async (req, res, next) => {
     if (!achievement)
       return next(new ResourceNotFoundError("Achievement not found"));
 
-    res.json(toAchievementDTO(achievement));
+    res.status(200).json(toAchievementDTO(achievement));
   } catch (err) {
     next(handleSequelizeError(err, "Achievement"));
   }
@@ -77,7 +90,7 @@ exports.updateAchievement = async (req, res, next) => {
     if (!newAchievement)
       return next(new ResourceNotFoundError("Achievement not found"));
 
-    res.json(toAchievementDTO(newAchievement));
+    res.status(200).json(toAchievementDTO(newAchievement));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);

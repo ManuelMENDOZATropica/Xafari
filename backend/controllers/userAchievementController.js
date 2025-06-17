@@ -20,7 +20,7 @@ exports.addAchievement = async (req, res, next) => {
       return next(BadRequestError("Error adding achievement"));
     }
 
-    res.json(toUserAchievementDTO(userAchievement));
+    res.status(200).json(toUserAchievementDTO(userAchievement));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -43,7 +43,7 @@ exports.deleteAchievement = async (req, res, next) => {
       return next(BadRequestError("Error adding achievement"));
     }
 
-    res.json(toUserAchievementDTO(userAchievement));
+    res.status(200).json(toUserAchievementDTO(userAchievement));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -72,7 +72,7 @@ exports.updateAchievement = async (req, res, next) => {
       return next(new ResourceNotFoundError("UserAchievement not found"));
     }
 
-    res.json(toUserAchievementDTO(newUserAchievement));
+    res.status(200).json(toUserAchievementDTO(newUserAchievement));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);

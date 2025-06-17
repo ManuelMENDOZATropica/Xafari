@@ -14,9 +14,7 @@ exports.createXperiencia = async ({
       activity: activityParams,
     },
     {
-      include: [
-        Activity
-      ],
+      include: [Activity],
     }
   );
 
@@ -25,18 +23,24 @@ exports.createXperiencia = async ({
 
 exports.getXperiencia = async (id) => {
   let xperiencia = await Xperiencia.findByPk(id, {
-    include: [
-      Activity
-    ],
+    include: [Activity],
   });
 
   return xperiencia;
 };
 
+exports.getAllXperiencias = async () => {
+  const xperiencias = await Xperiencia.findAll({
+    include: [Activity],
+  });
+
+  return xperiencias;
+};
+
 exports.deleteXperiencia = async (id) => {
   const xperiencia = await this.getXperiencia(id);
 
-  if (xperiencia == null) return null;
+  if (xperiencia == null) throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await xperiencia.destroy();
   return destroyed;
@@ -45,7 +49,7 @@ exports.deleteXperiencia = async (id) => {
 exports.updateXperiencia = async (id, newData) => {
   const xperiencia = await this.getXperiencia(id);
 
-  if (xperiencia == null) return null;
+  if (xperiencia == null) throw new ResourceNotFoundError("Resource not found");
   const updated = await xperiencia.update(newData);
   if (updated != null) {
     await xperiencia.activity.update(newData);

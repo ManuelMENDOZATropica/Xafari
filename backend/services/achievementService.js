@@ -60,10 +60,19 @@ exports.getAchievement = async (id, transaction) => {
   return achievement;
 };
 
+exports.getAllAchievements = async () => {
+  const achievements = await Achievement.findAll({
+    include: [Activity, House],
+  });
+
+  return achievements;
+};
+
 exports.deleteAchievement = async (id) => {
   const achievement = await this.getAchievement(id);
 
-  if (achievement == null) return null;
+  if (achievement == null)
+    throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await achievement.destroy();
   return destroyed;

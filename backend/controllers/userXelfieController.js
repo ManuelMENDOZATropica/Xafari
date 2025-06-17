@@ -21,7 +21,7 @@ exports.addXelfie = async (req, res, next) => {
       return next(BadRequestError("Error adding xelfie"));
     }
 
-    res.json(toUserXelfieDTO(userXelfie));
+    res.status(200).json(toUserXelfieDTO(userXelfie));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -40,7 +40,7 @@ exports.deleteXelfie = async (req, res, next) => {
       return next(BadRequestError("Error adding xelfie"));
     }
 
-    res.json(toUserXelfieDTO(userXelfie));
+    res.status(200).json(toUserXelfieDTO(userXelfie));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -68,7 +68,7 @@ exports.updateXelfie = async (req, res, next) => {
       return next(new ResourceNotFoundError("UserXelfie not found"));
     }
 
-    res.json(toUserXelfieDTO(newUserXelfie));
+    res.status(200).json(toUserXelfieDTO(newUserXelfie));
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);

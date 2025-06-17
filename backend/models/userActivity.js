@@ -16,10 +16,6 @@ const userActivity = database.define("userActivity", {
     allowNull: true,
     defaultValue: null,
   },
-  rating: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
 });
 
 module.exports = userActivity;

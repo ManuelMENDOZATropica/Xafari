@@ -20,10 +20,18 @@ exports.getHouse = async (id) => {
   return house;
 };
 
+exports.getAllHouses = async () => {
+  const houses = await House.findAll({
+    include: [Activity, Achievement],
+  });
+
+  return houses;
+};
+
 exports.deleteHouse = async (id) => {
   const house = await this.getHouse(id);
-  
-  if (house == null) return null;
+
+  if (house == null) throw new ResourceNotFoundError("Resource not found");
 
   const destroyed = await house.destroy();
 
@@ -33,7 +41,7 @@ exports.deleteHouse = async (id) => {
 exports.updateHouse = async (id, newData) => {
   const house = await this.getHouse(id);
 
-  if (house == null) return null;
+  if (house == null) throw new ResourceNotFoundError("Resource not found");
   const updated = await house.update(newData);
 
   return updated;

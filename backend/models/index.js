@@ -16,6 +16,7 @@ const Clue = require("./clue");
 
 const UserXelfie = require("./userXelfie");
 
+const UserPreference = require("./userPreference");
 // user can have many activities and one activity can be done by many users
 
 User.belongsToMany(Activity, {
@@ -25,6 +26,13 @@ Activity.belongsToMany(User, {
   through: UserActivity,
 });
 
+User.belongsToMany(Activity, {
+  through: UserPreference,
+});
+Activity.belongsToMany(User, {
+  through: UserPreference,
+});
+
 User.belongsToMany(Xelfie, {
   through: UserXelfie,
 });
@@ -32,8 +40,8 @@ Xelfie.belongsToMany(User, {
   through: UserXelfie,
 });
 
-Xelfie.hasMany(UserXelfie, { foreignKey: 'xelfieId' });
-UserXelfie.belongsTo(Xelfie, { foreignKey: 'xelfieId' });
+Xelfie.hasMany(UserXelfie, { foreignKey: "xelfieId" });
+UserXelfie.belongsTo(Xelfie, { foreignKey: "xelfieId" });
 
 // user can have many achievement and one achievement can be done by many users
 
@@ -50,7 +58,7 @@ FamilyTree.hasMany(User);
 User.belongsTo(FamilyTree, {
   foreignKey: {
     name: "familyTreeId",
-    allowNull: false, // Si quieres que todos los usuarios tengan familia
+    allowNull: false,
   },
 });
 
@@ -101,12 +109,22 @@ Achievement.belongsTo(Activity);
 // one house have plenty achievements and one achievement belongs to a single house
 
 House.hasMany(Achievement);
-Achievement.belongsTo(House);
+Achievement.belongsTo(House, {
+  foreignKey: {
+    name: "houseId",
+    allowNull: false,
+  },
+});
 
 // one house have plenty activities and one achievement belongs to a single house
 
 House.hasMany(Activity);
-Activity.belongsTo(House);
+Activity.belongsTo(House, {
+  foreignKey: {
+    name: "houseId",
+    allowNull: false,
+  },
+});
 
 module.exports = {
   User,
@@ -121,5 +139,6 @@ module.exports = {
   FamilyTree,
   UserAchievement,
   UserActivity,
-  UserXelfie
+  UserXelfie,
+  UserPreference,
 };

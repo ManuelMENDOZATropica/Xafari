@@ -3,7 +3,6 @@ const xperienciaService = require("../services/xperienciaService");
 const {
   handleSequelizeError,
   ResourceNotFoundError,
-  ValidationError,
 } = require("../utils/errors");
 
 exports.createXperiencia = async (req, res, next) => {
@@ -17,9 +16,8 @@ exports.createXperiencia = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.json(toXperienciaDTO(xperiencia));
+    res.status(200).json(toXperienciaDTO(xperiencia));
   } catch (err) {
-    console.debug("AAAAAAAAAAAa", err);
     next(handleSequelizeError(err, "Xperiencia"));
   }
 };
@@ -32,8 +30,21 @@ exports.getXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json(toXperienciaDTO(xperiencia));
+    res.status(200).json(toXperienciaDTO(xperiencia));
   } catch (err) {
+    next(handleSequelizeError(err, "Xperiencia"));
+  }
+};
+
+exports.getAllXperiencias = async (req, res, next) => {
+  try {
+    const xperiencias = await xperienciaService.getAllXperiencias();
+
+    res
+      .status(200)
+      .json(xperiencias.map((xperiencia) => toXperienciaDTO(xperiencia)));
+  } catch (err) {
+    logger.error(err);
     next(handleSequelizeError(err, "Xperiencia"));
   }
 };
@@ -46,7 +57,7 @@ exports.deleteXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json(toXperienciaDTO(xperiencia));
+    res.status(200).json(toXperienciaDTO(xperiencia));
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -76,7 +87,7 @@ exports.updateXperiencia = async (req, res, next) => {
     if (!newXperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.json(toXperienciaDTO(newXperiencia));
+    res.status(200).json(toXperienciaDTO(newXperiencia));
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
