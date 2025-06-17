@@ -6,8 +6,8 @@ import WelcomeAnimation from "./pages/WelcomeAnimation";
 import AvatarSelection from "./pages/AvatarSelection";
 import TreeOfLife from './pages/TreeOfLife';
 import Intro from './pages/Intro';
-import LogIn from './pages/LogIn'
-
+import LogIn from './pages/LogIn';
+import XecretosXptop from './pages/XecretosXptop'; // nueva página
 
 function App() {
   return (
@@ -19,10 +19,11 @@ function App() {
       <Route path="/register-step2" element={<RegisterStep2 />} />
       <Route path="/create-avatar" element={<AvatarSelection />} />
       <Route path="/treeoflife" element={<TreeOfLife />} />
-      <Route path="/intro" element={<Intro />}/> 
-      <Route path="/login" element={<LogIn />}/> 
+      <Route path="/intro" element={<Intro />} />
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/xecretosxptop" element={<XecretosXptop />} /> {/* nueva ruta */}
     </Routes>
-  ); 
+  );
 }
 
 export default App;

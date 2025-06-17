@@ -30,12 +30,16 @@ a:hover {
 body {
   width: 100%;
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
+  font-family: "Lufga", sans-serif;
   min-width: 320px;
   min-height: 100vh;
-  overflow: hidden;
+  background-color: #ffffff;
+  color: #213547;
+  overflow-x: hidden;
+  display: block;
 }
+
 
 h1 {
   font-size: 3.2em;
