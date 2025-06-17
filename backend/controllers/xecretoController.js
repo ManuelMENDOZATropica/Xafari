@@ -1,54 +1,94 @@
+const { toXecretoDTO } = require("../dto/xecreto.dto");
 const xecretoService = require("../services/xecretoService");
+const {
+  handleSequelizeError,
+  ResourceNotFoundError,
+} = require("../utils/errors");
 
-exports.getXecreto = async (req, res) => {
+exports.createXecreto = async (req, res, next) => {
+  const { clues, ...activityParams } = req.body;
+
+  try {
+    const xecreto = await xecretoService.createXecreto({
+      clues: clues
+        ? clues.map((clue, index) => ({ ...clue, order: index }))
+        : [],
+      type: "Xecreto",
+      ...activityParams,
+    });
+
+    res.status(200).json(toXecretoDTO(xecreto));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
+};
+
+exports.getXecreto = async (req, res, next) => {
   const id = req.params.id;
-  const xecreto = await xecretoService.getXecretoById(id);
+  try {
+    const xecreto = await xecretoService.getXecreto(id);
 
-  res.json({
-    xecreto: {
-      name: xecreto.name,
-      description: xecreto.description,
-      familiar: xecreto.familiar,
-      min_age: xecreto.min_age,
-      max_age: xecreto.max_age,
-    },
-  });
+    if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
+
+    res.status(200).json(toXecretoDTO(xecreto));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };
 
-exports.getAllXecretos = async (req, res) => {
-  const xecretos = await xecretoService.getAllXecretos();
-  res.json({
-    xecretos: xecretos.map((xecreto) => xecreto.id),
-  });
+exports.getAllXecretos = async (req, res, next) => {
+  try {
+    const xecretos = await xecretoService.getAllXecretos();
+
+    res.status(200).json(xecretos.map((xecreto) => toXecretoDTO(xecreto)));
+  } catch (err) {
+    logger.error(err);
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };
 
-exports.deleteXecreto = async (req, res) => {
+exports.deleteXecreto = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xecreto = await xecretoService.deleteXecreto(id);
+
+    if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
+
+    res.status(200).json(toXecretoDTO(xecreto));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
+};
+
+exports.updateXecreto = async (req, res, next) => {
   const id = req.params.id;
 
-  await xecretoService.deleteXecreto(id);
+  try {
+    const newXecretoData = {
+      ...(req.body.name ? { name: req.body.name } : {}),
+      ...(req.body.description ? { description: req.body.description } : {}),
+      ...(req.body.location ? { location: req.body.location } : {}),
+      ...(req.body.type ? { type: req.body.type } : {}),
+      ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
+      ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
+      ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
+      ...(req.body.clues
+        ? {
+            clues: req.body.clues.map((clue, index) => ({
+              ...clue,
+              order: index,
+            })),
+          }
+        : {}),
+    };
 
-  res.json({
-    xecreto: {
-      id: id,
-    },
-  });
-};
+    const newXecreto = await xecretoService.updateXecreto(id, newXecretoData);
 
-exports.addXecreto = async (req, res) => {
-  const { name, description, familiar, min_age, max_age, casa_id } = req.body;
+    if (!newXecreto)
+      return next(new ResourceNotFoundError("Xecreto not found"));
 
-  const xecreto = await casaService.addXecreto(
-    casa_id,
-    name,
-    description,
-    familiar,
-    min_age,
-    max_age
-  );
-
-  res.json({
-    xecreto: {
-      id: xecreto.id,
-    },
-  });
+    res.status(200).json(toXecretoDTO(newXecreto));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xecreto"));
+  }
 };

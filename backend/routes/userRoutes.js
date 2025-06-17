@@ -1,19 +1,33 @@
 const express = require("express");
 const router = express.Router();
 
+const {
+  createUserValidation,
+  updateUserValidation,
+  userIdParam,
+} = require("../validation/user.validation");
+
 const userController = require("../controllers/userController");
 
-router.get("/user/:id", userController.getUser);  // done
-router.get("/user/:id/casas", userController.getAllCasas);
-router.get("/user/:id/xecretos", userController.getAllXecretos);
-router.get("/user/:id/xelfies", userController.getAllXelfies);
-router.get("/user/:id/xperiencias", userController.getAllXperiencias);
+const { validateRequest } = require("../middleware/validateRequest");
 
-router.delete("/user/:id", userController.deleteUser); // done
+router.get("/:id", userController.getUser);
 
-router.post("/user", userController.addUser); // done
-router.post("/user/:id/xecretos", userController.addXecreto);
-router.post("/user/:id/xelfies", userController.addXelfie);
-router.post("/user/:id/xperiencias", userController.addXperiencia);
+console.debug(validateRequest);
+
+router.post(
+  "/",
+  createUserValidation,
+  validateRequest,
+  userController.createUser
+);
+
+router.put(
+  "/:id",
+  ...updateUserValidation,
+  validateRequest,
+  userController.updateUser
+);
+router.delete("/:id", userIdParam, userController.deleteUser);
 
 module.exports = router;
