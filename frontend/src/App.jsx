@@ -8,6 +8,8 @@ import TreeOfLife from './pages/TreeOfLife';
 import Intro from './pages/Intro';
 import LogIn from './pages/LogIn';
 import XecretosXptop from './pages/XecretosXptop'; // nueva página
+import EditAvatar from "./pages/EditAvatar";
+
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
       <Route path="/intro" element={<Intro />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/xecretosxptop" element={<XecretosXptop />} /> {/* nueva ruta */}
+      <Route path="/edit-avatar" element={<EditAvatar />} />
+
     </Routes>
   );
 }

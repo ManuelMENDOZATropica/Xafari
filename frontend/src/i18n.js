@@ -39,6 +39,8 @@ i18n
           passwordWeak: "Contraseña débil",
           passwordMedium: "Contraseña aceptable",
           passwordStrong: "Contraseña fuerte",
+///
+editAvatar: "Editar avatar",
 
           // Registro - Paso 2
           registerStep2: "Ingresa tu número de reserva y selecciona cómo prefieres que te llamen.",
@@ -225,6 +227,7 @@ i18n
           saveAvatarAndContinue: "Save avatar and continue",
           randomize: "Randomize",
           reset: "Reset",
+editAvatar: "Edit avatar",
 
           correct: "✔ Correct answer.",
           next_unlocked: "You’ve unlocked the next one.",
