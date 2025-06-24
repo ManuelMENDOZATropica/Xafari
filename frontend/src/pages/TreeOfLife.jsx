@@ -45,7 +45,6 @@ export default function TreeOfLife() {
               >
                 {t("editAvatar") || "Editar avatar"}
               </button>
-              {/* Futuro: agregar aquí cerrar sesión u otros */}
             </div>
           )}
         </div>
@@ -62,18 +61,6 @@ export default function TreeOfLife() {
         </button>
       </div>
 
-      {/* Iconos superiores derecho (idioma / acción) */}
-      <div className="absolute top-[2vh] right-[4vw] z-10 flex items-center gap-4">
-        <button
-          className="w-8 h-8 bg-white rounded-full shadow border border-gray-300"
-          title="Idioma"
-        />
-        <button
-          className="w-8 h-8 bg-white rounded-full shadow border border-gray-300"
-          title="Acción"
-        />
-      </div>
-
       {/* Árbol centrado con avatar */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center justify-center w-[80vw]">
         <div className="relative">
@@ -86,42 +73,6 @@ export default function TreeOfLife() {
             <AvatarRender className="w-[33px] h-[60px]" />
           </div>
         </div>
-
-        {/* Próximos logros */}
-        <div className="mt-6 flex gap-6 items-center">
-          <div className="flex flex-col items-center text-xs">
-            <div className="w-8 h-8 rounded-full bg-blue-100 border border-black" />
-            <span>0/1</span>
-          </div>
-          <div className="flex flex-col items-center text-xs">
-            <div className="w-8 h-8 rounded-full bg-yellow-100 border border-black" />
-            <span>0/1</span>
-          </div>
-          <div className="flex flex-col items-center text-xs">
-            <div className="w-8 h-8 rounded-full border border-black" />
-            <span>5/10</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Barra inferior de navegación */}
-      <div className="absolute bottom-0 left-0 w-full h-[10vh] bg-white border-t border-gray-300 z-20 flex justify-around items-center px-4">
-        <button className="flex flex-col items-center text-xs">
-          <div className="w-6 h-6 rounded bg-gray-400 mb-1" />
-          Logros
-        </button>
-        <button className="flex flex-col items-center text-xs text-green-700 font-bold">
-          <div className="w-6 h-6 rounded bg-green-500 mb-1" />
-          Árbol
-        </button>
-        <button className="flex flex-col items-center text-xs">
-          <div className="w-6 h-6 rounded bg-gray-400 mb-1" />
-          Mapa
-        </button>
-        <button className="flex flex-col items-center text-xs">
-          <div className="w-6 h-6 rounded bg-gray-400 mb-1" />
-          Perfil
-        </button>
       </div>
     </div>
   );
