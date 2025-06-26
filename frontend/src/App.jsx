@@ -14,7 +14,7 @@ import EditAvatar from "./pages/EditAvatar";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Welcome />} />
+      <Route path="/" element={<TreeOfLife />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/welcome-animation" element={<WelcomeAnimation />} />
       <Route path="/register-step1" element={<RegisterStep1 />} />
