@@ -17,6 +17,34 @@ export default function Login() {
 
   const isFormValid = formData.email && formData.password;
 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:5173/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Login failed");
+      }
+
+      const token = data.token;
+      console.log("Token recibido:", token);
+
+      // Aquí puedes guardarlo si quieres
+      localStorage.setItem("token", token);
+
+      navigate("/welcome-animation");
+    } catch (error) {
+      console.error("Error en login:", error.message);
+      alert("Error al iniciar sesión");
+    }
+  };
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
       {/* Fondo visual */}
@@ -85,7 +113,7 @@ export default function Login() {
 
             <button
               disabled={!isFormValid}
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/welcome-animation")}
               className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
                 isFormValid
                   ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterStep1() {
   const { t, i18n } = useTranslation();
@@ -13,6 +14,9 @@ export default function RegisterStep1() {
     password: "",
     confirmPassword: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,11 +31,15 @@ export default function RegisterStep1() {
 
   const passwordStrength = getPasswordStrength(formData.password);
   const passwordsMatch = formData.password === formData.confirmPassword && formData.password.length > 0;
-  const isFormValid = formData.firstName && formData.lastName && formData.email && passwordsMatch;
+  const isFormValid =
+    formData.firstName &&
+    formData.lastName &&
+    formData.email &&
+    passwordsMatch &&
+    passwordStrength !== "weak";
 
   return (
     <div className="relative h-screen w-full overflow-hidden font-lufga">
-      {/* Imagen de fondo */}
       <div className="absolute inset-0 z-0">
         <img
           src="/img/V03-CERRITOS.jpg"
@@ -41,7 +49,6 @@ export default function RegisterStep1() {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen px-[6%] pt-20 pb-10 overflow-y-auto">
-        {/* Encabezado fijo */}
         <div className="absolute top-4 left-4">
           <button
             onClick={() => navigate("/")}
@@ -60,8 +67,7 @@ export default function RegisterStep1() {
           </button>
         </div>
 
-        {/* Texto principal */}
-        <div className="w-full mb-4 p2">
+        <div className="w-full mb-4">
           <div className="bg-white/50 backdrop-blur-sm rounded-xl px-6 py-3 shadow-md">
             <p className="text-center text-base md:text-lg font-bold text-gray-800">
               {t("registerStep1")}
@@ -69,7 +75,6 @@ export default function RegisterStep1() {
           </div>
         </div>
 
-        {/* Formulario */}
         <div className="w-full h-[72vh] min-h-0 bg-white/50 backdrop-blur-sm p-4 rounded-xl shadow-xl overflow-y-auto flex flex-col gap-3">
           <label className="block text-black text-sm md:text-base font-semibold">
             {t("firstName")}
@@ -110,14 +115,24 @@ export default function RegisterStep1() {
           <label className="block text-black text-sm md:text-base font-semibold">
             {t("password")}
           </label>
-          <input
-            type="password"
-            name="password"
-            placeholder={t("password")}
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder={t("password")}
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
           <div className="w-full h-2 rounded">
             <div
@@ -150,16 +165,25 @@ export default function RegisterStep1() {
           <label className="block text-black text-sm md:text-base font-semibold">
             {t("confirmPassword")}
           </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder={t("confirmPassword")}
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
-          />
+          <div className="relative">
+            <input
+              type={showConfirm ? "text" : "password"}
+              name="confirmPassword"
+              placeholder={t("confirmPassword")}
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+              aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"}
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
-          {/* Mantiene el espacio para el mensaje de error */}
           <div className="min-h-[1.25rem]">
             {!passwordsMatch && (
               <p className="text-red-600 font-medium">
@@ -170,7 +194,10 @@ export default function RegisterStep1() {
 
           <button
             disabled={!isFormValid}
-            onClick={() => navigate("/register-step2", { state: formData })}
+            onClick={() => {
+              sessionStorage.setItem("registerData", JSON.stringify(formData));
+              navigate("/register-step2");
+            }}
             className={`mt-2 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
               isFormValid
                 ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"

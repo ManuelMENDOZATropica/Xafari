@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -97,8 +99,7 @@ const xperiencias = [
     actividad: "t_experiencia_fuego_piscina",
     lugar: "Fuego",
     edad: "+18 años",
-    amuleto:
-      "Amuleto de la famosa alberca transparente con una personita nadando",
+    amuleto: "Amuleto de la famosa alberca transparente con una personita nadando",
     pregunta: "q_fuego_piscina",
     opciones: ["a", "b", "c"],
     respuestaCorrecta: "b",
@@ -110,7 +111,7 @@ export default function XecretosXptop() {
   const navigate = useNavigate();
 
   const [respuestas, setRespuestas] = useState({});
-  const [abiertos, setAbiertos] = useState({ 0: true });
+  const [abiertos] = useState(Object.fromEntries(xperiencias.map((_, i) => [i, true])));
   const [bloqueados, setBloqueados] = useState({});
   const [tiempos, setTiempos] = useState({});
 
@@ -132,9 +133,7 @@ export default function XecretosXptop() {
     const esCorrecta = opcion === xperiencias[idx].respuestaCorrecta;
     setRespuestas((prev) => ({ ...prev, [idx]: opcion }));
 
-    if (esCorrecta && idx + 1 < xperiencias.length) {
-      setAbiertos((prev) => ({ ...prev, [idx + 1]: true }));
-    } else if (!esCorrecta) {
+    if (!esCorrecta) {
       setBloqueados((prev) => ({ ...prev, [idx]: true }));
       setTiempos((prev) => ({ ...prev, [idx]: 180 }));
       setTimeout(() => {
@@ -157,9 +156,11 @@ export default function XecretosXptop() {
     }
   };
 
-  const toggleTarjeta = (idx) => {
-    setAbiertos((prev) => ({ ...prev, [idx]: true }));
-  };
+  const total = xperiencias.length;
+  const respondidas = Object.keys(respuestas).filter(
+    (k) => respuestas[k] === xperiencias[k].respuestaCorrecta
+  ).length;
+  const progreso = Math.round((respondidas / total) * 100);
 
   return (
     <div className="relative min-h-screen w-full font-lufga bg-white overflow-hidden">
@@ -178,9 +179,7 @@ export default function XecretosXptop() {
             ← {t("back")}
           </button>
           <button
-            onClick={() =>
-              i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-            }
+            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
             className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
           >
             {t("language")}
@@ -192,9 +191,19 @@ export default function XecretosXptop() {
             Xecretos Xptop
           </h1>
         </div>
+
+        {/* Progreso */}
+        <div className="w-full max-w-md mt-4 bg-white/80 rounded-full overflow-hidden shadow border border-gray-300">
+          <div
+            className="bg-green-500 text-white text-xs font-semibold text-center py-1 transition-all"
+            style={{ width: `${progreso}%` }}
+          >
+            {progreso}%
+          </div>
+        </div>
       </div>
 
-      <div className="h-[calc(100vh-160px)] overflow-y-auto px-4 pb-16 pt-6 z-10 relative max-w-4xl mx-auto">
+      <div className="h-[calc(100vh-200px)] overflow-y-auto px-4 pb-16 pt-6 z-10 relative max-w-4xl mx-auto">
         <div className="grid gap-6">
           {xperiencias.map((xp, idx) => {
             const yaRespondida = respuestas[idx] === xp.respuestaCorrecta;
@@ -213,19 +222,13 @@ export default function XecretosXptop() {
                     : haRespondido
                     ? "border-red-400"
                     : "border-gray-300"
-                } transition-all ${
-                  !estaAbierta
-                    ? "opacity-30 pointer-events-none select-none"
-                    : ""
-                }`}
+                } transition-all`}
               >
                 <button
-                  onClick={() => toggleTarjeta(idx)}
                   className="w-full text-left bg-white rounded-lg border border-gray-300 p-4 hover:bg-gray-50 transition"
                 >
                   <h2 className="text-xl font-semibold text-gray-800 mb-1">
-                    {xp.lugar}{" "}
-                   
+                    {xp.lugar}
                   </h2>
                   <p className="text-sm text-gray-700 leading-snug">
                     {t(xp.actividad)}
@@ -234,7 +237,6 @@ export default function XecretosXptop() {
 
                 {estaAbierta && (
                   <div className="mt-4">
-                   
                     <p className="font-medium text-gray-800 mb-2">
                       {t(xp.pregunta)}
                     </p>
