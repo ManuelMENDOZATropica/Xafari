@@ -9,6 +9,12 @@ i18n
     resources: {
       es: {
         translation: {
+          //
+          back: "Volver",
+language: "Idioma",
+scan_title: "Escanea un Xecreto",
+how_scan: "¿Cómo escanear Xecretos?",
+understood: "Entendido",
           // Global
           back: "Volver",
           continue: "Continuar",
@@ -174,6 +180,13 @@ editAvatar: "Editar avatar",
 
       en: {
         translation: {
+
+    back: "Back",
+    language: "Language",
+    scan_title: "Scan a Xecreto",
+    how_scan: "How to scan Xecretos?",
+    understood: "Got it",
+
           back: "Back",
           continue: "Continue",
           finish: "Finish",

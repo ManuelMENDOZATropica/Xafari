@@ -11,50 +11,57 @@ export default function Login() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const isFormValid = formData.email && formData.password;
 
-  const handleLogin = async () => {
-    try {
-      const response = await fetch("http://localhost:5173/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+const handleLogin = async () => {
+  setLoading(true);
+  try {
+    const response = await fetch("https://xafari.rexmalebka.com/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data?.error || "Login failed");
-      }
+    console.log("Respuesta del servidor:", data); // 👈 Aquí imprimimos todo
 
-      const token = data.token;
-      console.log("Token recibido:", token);
-
-      // Aquí puedes guardarlo si quieres
-      localStorage.setItem("token", token);
-
-      navigate("/welcome-animation");
-    } catch (error) {
-      console.error("Error en login:", error.message);
-      alert("Error al iniciar sesión");
+    if (!response.ok) {
+      throw new Error(data || "Login failed");
     }
-  };
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    
+
+    navigate("/welcome-animation-login", { state: data.user });
+
+  } catch (error) {
+    console.error("Error en login:", error.message);
+    alert("Error al iniciar sesión: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
-      {/* Fondo visual */}
       <img
         src="/img/V03-CERRITOS.jpg"
         alt="Fondo Login"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
-      {/* Header fijo */}
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
         <button
           onClick={() => navigate("/")}
@@ -70,18 +77,14 @@ export default function Login() {
         </button>
       </div>
 
-      {/* Contenido scrollable y centrado */}
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-10 min-h-screen overflow-y-auto">
         <div className="flex flex-col items-center justify-center flex-grow w-full gap-y-6 min-h-[calc(100vh-100px)]">
-
-          {/* Título */}
           <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md w-full max-w-sm">
             <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
               {t("login")}
             </h1>
           </div>
 
-          {/* Formulario */}
           <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md flex flex-col gap-4">
             <div>
               <label className="block text-black text-sm font-semibold mb-1">
@@ -112,15 +115,15 @@ export default function Login() {
             </div>
 
             <button
-              disabled={!isFormValid}
-              onClick={() => navigate("/welcome-animation")}
+              disabled={!isFormValid || loading}
+              onClick={handleLogin}
               className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
-                isFormValid
+                isFormValid && !loading
                   ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              {t("login")}
+              {loading ? t("loading") : t("login")}
             </button>
 
             <p className="text-center text-sm text-black">

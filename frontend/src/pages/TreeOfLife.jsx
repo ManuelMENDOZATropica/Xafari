@@ -103,14 +103,9 @@ export default function TreeOfLife() {
         exit={{ scale: 0.7, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <XecretoRegister />
-        <button
-          onClick={() => setShowXecretoModal(false)}
-          className="absolute top-4 right-4 z-50 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow"
-          title="Cerrar"
-        >
-          ✖
-        </button>
+        <XecretoRegister onClose={() => setShowXecretoModal(false)} />
+
+        
       </motion.div>
     </motion.div>
   )}

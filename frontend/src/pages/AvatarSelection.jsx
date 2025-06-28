@@ -3,44 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 // Opciones de avatar
-const bodyOptions = Array.from(
-  { length: 10 },
-  (_, i) => `/avatares/CUERPO_${i + 1}.png`
-);
-const eyesOptions = Array.from(
-  { length: 5 },
-  (_, i) => `/avatares/OJOS_${i + 1}.png`
-);
-const hairOptions = [
-  null,
-  ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`),
-];
-const clothingOptions = Array.from(
-  { length: 16 },
-  (_, i) => `/avatares/VESTUARIO_${i + 1}.png`
-);
-const glassesAccessoryOptions = [
-  null,
-  ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`),
-];
-const headAccessoryOptions = [
-  null,
-  ...Array.from(
-    { length: 4 },
-    (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`
-  ),
-];
-const bodyAccessoryOptions = [
-  null,
-  ...Array.from(
-    { length: 2 },
-    (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`
-  ),
-];
-const shoeOptions = [
-  null,
-  ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`),
-];
+const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
+const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
+const hairOptions = [null, ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
+const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
+const glassesAccessoryOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
+const headAccessoryOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
+const bodyAccessoryOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
+const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
 function useSelection(options, isObject = false, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex);
@@ -55,78 +25,120 @@ export default function AvatarSelection() {
 
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions);
   const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions);
-  const [clothingIndex, clothingImg, setClothing, clothingList] =
-    useSelection(clothingOptions);
+  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions);
   const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions);
   const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions);
-  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(
-    glassesAccessoryOptions
-  );
-  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] =
-    useSelection(headAccessoryOptions);
-  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] =
-    useSelection(bodyAccessoryOptions);
+  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesAccessoryOptions);
+  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headAccessoryOptions);
+  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccessoryOptions);
 
   const [activeTab, setActiveTab] = useState("body");
 
-  // ⬇️ RECUPERA el avatar del usuario desde la API
   useEffect(() => {
-    const fetchUserAvatar = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    const rawUser = localStorage.getItem("user");
+    if (!rawUser) {
+      console.warn("⚠️ Usuario no encontrado en localStorage. Redirigiendo a login.");
+      navigate("/login");
+      return;
+    }
 
-      try {
-        console.log("Token:", token);
+    let user;
+    try {
+      user = JSON.parse(rawUser);
+    } catch (e) {
+      console.error("❌ Error al parsear JSON del usuario:", e);
+      navigate("/login");
+      return;
+    }
 
-        const response = await fetch("/api/user", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // debe verse como: Bearer miaumiau
-          },
-        });
+    const avatar = user?.avatar;
+    if (avatar) {
+      console.log("Avatar local:", avatar);
+      if (avatar.bodyOptions !== undefined) setBody(avatar.bodyOptions);
+      if (avatar.hairOptions !== undefined) setHair(avatar.hairOptions);
+      if (avatar.clothingOptions !== undefined) setClothing(avatar.clothingOptions);
+      if (avatar.shoeOptions !== undefined) setShoe(avatar.shoeOptions);
+      if (avatar.eyesOptions !== undefined) setEyes(avatar.eyesOptions);
+      if (avatar.glassesAccessoryOptions !== undefined) setGlasses(avatar.glassesAccessoryOptions);
+      if (avatar.headAccessoryOptions !== undefined) setHeadAcc(avatar.headAccessoryOptions);
+      if (avatar.bodyAccessoryOptions !== undefined) setBodyAcc(avatar.bodyAccessoryOptions);
+    }
+  }, [navigate]);
 
-        if (!response.ok) throw new Error("Error al obtener usuario");
-        const data = await response.json();
-        const avatar = data.user.avatar;
+  const handleSaveAvatar = async () => {
+    const token = localStorage.getItem("token");
+    const rawUser = localStorage.getItem("user");
 
-        if (avatar) {
-          if (avatar.bodyOptions !== undefined) setBody(avatar.bodyOptions);
-          if (avatar.hairOptions !== undefined) setHair(avatar.hairOptions);
-          if (avatar.clothingOptions !== undefined)
-            setClothing(avatar.clothingOptions);
-          if (avatar.shoeOptions !== undefined) setShoe(avatar.shoeOptions);
-          if (avatar.eyesOptions !== undefined) setEyes(avatar.eyesOptions);
-          if (avatar.glassesAccessoryOptions !== undefined)
-            setGlasses(avatar.glassesAccessoryOptions);
-          if (avatar.headAccessoryOptions !== undefined)
-            setHeadAcc(avatar.headAccessoryOptions);
-          if (avatar.bodyAccessoryOptions !== undefined)
-            setBodyAcc(avatar.bodyAccessoryOptions);
-        }
-      } catch (err) {
-        console.error("Error recuperando avatar:", err);
-      }
+    if (!token || !rawUser) return;
+
+    let user;
+    try {
+      user = JSON.parse(rawUser);
+    } catch (e) {
+      console.error("❌ Error al parsear usuario en handleSaveAvatar:", e);
+      return;
+    }
+
+    const updatedAvatar = {
+      bodyOptions: bodyIndex,
+      hairOptions: hairIndex,
+      clothingOptions: clothingIndex,
+      shoeOptions: shoeIndex,
+      eyesOptions: eyesIndex,
+      glassesAccessoryOptions: glassesIndex,
+      headAccessoryOptions: headAccessoryIndex,
+      bodyAccessoryOptions: bodyAccessoryIndex,
     };
 
-    fetchUserAvatar();
-  }, []);
+    const updatedUser = {
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      birthdate: user.birthdate,
+      reservationNumber: user.reservationNumber,
+      pronouns: user.pronouns,
+      avatar: updatedAvatar,
+    };
 
-  const handleSaveAvatar = () => {
-    localStorage.setItem(
-      "avatarData",
-      JSON.stringify({
-        bodyOptions: bodyIndex,
-        hairOptions: hairIndex,
-        clothingOptions: clothingIndex,
-        shoeOptions: shoeIndex,
-        eyesOptions: eyesIndex,
-        glassesAccessoryOptions: glassesIndex,
-        headAccessoryOptions: headAccessoryIndex,
-        bodyAccessoryOptions: bodyAccessoryIndex,
-      })
-    );
-    navigate("/treeoflife");
+    try {
+  const response = await fetch("https://xafari.rexmalebka.com/user", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updatedUser),
+  });
+
+  let data = {};
+  try {
+    const text = await response.text(); // intenta leer texto
+    data = text ? JSON.parse(text) : {}; // parsea si hay texto
+  } catch (parseErr) {
+    console.warn("⚠️ Respuesta sin JSON, probablemente vacía");
+  }
+
+  if (!response.ok) {
+    console.error("❌ Error al actualizar usuario (status):", response.status);
+    console.error("❌ Respuesta del servidor:", data);
+    alert("No se pudo guardar el avatar.");
+    return;
+  }
+
+  if (data.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+    console.log("✅ Avatar actualizado correctamente:", data.user.avatar);
+  } else {
+    console.log("✅ Avatar actualizado sin contenido de respuesta.");
+  }
+
+  navigate("/treeoflife");
+} catch (err) {
+  console.error("🔥 Error en el PUT (fallo de red o JSON):", err);
+  alert("Error al guardar el avatar.");
+}
+
   };
 
   const handleRandomize = () => {

@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
 import AvatarSelection from "./AvatarSelection";
 
 export default function WelcomeToAvatarTransition() {
   const { t } = useTranslation();
-  const location = useLocation();
-  const userData = location.state || { firstName: "Explorador", lastName: "" };
-
-  const fullName = `${userData.firstName} ${userData.lastName}`.trim();
-
   const [showAvatar, setShowAvatar] = useState(false);
   const [animateWing, setAnimateWing] = useState(false);
 
+  // Leer datos del usuario desde localStorage
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const fullName = `${user.name || "Explorador"} ${user.lastname || ""}`.trim();
+
   useEffect(() => {
     const showWingTimeout = setTimeout(() => {
-      setAnimateWing(true); // Inicia animación del ala a los 4s
+      setAnimateWing(true);
     }, 4000);
 
     const showAvatarTimeout = setTimeout(() => {
-      setShowAvatar(true); // Muestra avatar a los 6s
+      setShowAvatar(true);
     }, 6000);
 
     return () => {

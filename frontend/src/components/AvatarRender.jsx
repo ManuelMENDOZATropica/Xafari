@@ -1,5 +1,6 @@
 export default function AvatarRender({ className = "" }) {
-  const avatarData = JSON.parse(localStorage.getItem("avatarData"));
+  const user = JSON.parse(localStorage.getItem("user"));
+  const avatarData = user?.avatar;
 
   if (!avatarData) return null;
 
@@ -13,14 +14,14 @@ export default function AvatarRender({ className = "" }) {
   const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
   const layers = [
-    bodyAccOptions[avatarData.bodyAccessoryIndex],
-    bodyOptions[avatarData.bodyIndex],
-    eyesOptions[avatarData.eyesIndex],
-    hairOptions[avatarData.hairIndex],
-    shoeOptions[avatarData.shoeIndex],
-    clothingOptions[avatarData.clothingIndex],
-    headOptions[avatarData.headAccessoryIndex],
-    glassesOptions[avatarData.glassesIndex],
+    bodyAccOptions[avatarData.bodyAccessoryOptions],
+    bodyOptions[avatarData.bodyOptions],
+    eyesOptions[avatarData.eyesOptions],
+    hairOptions[avatarData.hairOptions],
+    shoeOptions[avatarData.shoeOptions],
+    clothingOptions[avatarData.clothingOptions],
+    headOptions[avatarData.headAccessoryOptions],
+    glassesOptions[avatarData.glassesAccessoryOptions],
   ];
 
   return (

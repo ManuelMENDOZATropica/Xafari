@@ -5,8 +5,9 @@ import { useTranslation } from "react-i18next";
 export default function RegisterStep2() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
-  const userData = location.state || {};
+ const storedData = sessionStorage.getItem("registerData");
+const userData = storedData ? JSON.parse(storedData) : {};
+
   const [serverError, setServerError] = useState("");
 
 

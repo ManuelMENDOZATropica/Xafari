@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -8,62 +7,68 @@ const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i +
 const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
 const hairOptions = [null, ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
 const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
-const glassesAccessoryOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
-const headAccessoryOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
-const bodyAccessoryOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
+const glassesOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
+const headOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
+const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
 const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
-function useSelection(options, isObject = false, initialIndex = 0) {
+function useSelection(options, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex);
-  const set = (i) => setIndex(i);
-  const value = isObject ? options[index] : options[index];
-  return [index, value, set, options];
+  return [index, options[index], setIndex, options];
 }
 
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const savedAvatar = JSON.parse(localStorage.getItem("avatarData")) || {};
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
 
-const initialBodyIndex = savedAvatar.bodyIndex ?? 0;
-const initialHairIndex = savedAvatar.hairIndex ?? 0;
-const initialClothingIndex = savedAvatar.clothingIndex ?? 0;
-const initialEyesIndex = savedAvatar.eyesIndex ?? 0;
-const initialShoeIndex = savedAvatar.shoeIndex ?? 0;
-const initialGlassesIndex = savedAvatar.glassesIndex ?? 0;
-const initialHeadAccessoryIndex = savedAvatar.headAccessoryIndex ?? 0;
-const initialBodyAccessoryIndex = savedAvatar.bodyAccessoryIndex ?? 0;
+  const avatar = user?.avatar || {};
 
-
-
-const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, false, initialBodyIndex);
-const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, initialHairIndex);
-const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, initialClothingIndex);
-const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, false, initialEyesIndex);
-const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, false, initialShoeIndex);
-const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesAccessoryOptions, false, initialGlassesIndex);
-const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headAccessoryOptions, false, initialHeadAccessoryIndex);
-const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccessoryOptions, false, initialBodyAccessoryIndex);
-
+  // Cargar índices iniciales desde el avatar guardado
+  const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, avatar.bodyOptions ?? 0);
+  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, avatar.eyesOptions ?? 0);
+  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, avatar.hairOptions ?? 0);
+  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, avatar.clothingOptions ?? 0);
+  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, avatar.shoeOptions ?? 0);
+  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesOptions, avatar.glassesAccessoryOptions ?? 0);
+  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headOptions, avatar.headAccessoryOptions ?? 0);
+  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccOptions, avatar.bodyAccessoryOptions ?? 0);
 
   const [activeTab, setActiveTab] = useState("body");
 
-  const handleSaveAvatar = () => {
-    localStorage.setItem(
-      "avatarData",
-      JSON.stringify({
-        bodyIndex,
-        hairIndex,
-        clothingIndex,
-        shoeIndex,
-        eyesIndex,
-        glassesIndex,
-        headAccessoryIndex,
-        bodyAccessoryIndex,
-      })
-    );
-    navigate("/treeoflife");
+  const handleSaveAvatar = async () => {
+    const newAvatar = {
+      bodyOptions: bodyIndex,
+      eyesOptions: eyesIndex,
+      hairOptions: hairIndex,
+      clothingOptions: clothingIndex,
+      shoeOptions: shoeIndex,
+      glassesAccessoryOptions: glassesIndex,
+      headAccessoryOptions: headAccessoryIndex,
+      bodyAccessoryOptions: bodyAccessoryIndex,
+    };
+
+    try {
+      const response = await fetch("https://xafari.rexmalebka.com/user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...user, avatar: newAvatar }),
+      });
+
+      if (!response.ok) throw new Error("Fallo al guardar el avatar");
+
+      const updatedUser = await response.json();
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      navigate("/treeoflife");
+    } catch (err) {
+      alert("Error al guardar el avatar.");
+      console.error("Error en el PUT:", err);
+    }
   };
 
   const handleRandomize = () => {
@@ -71,6 +76,7 @@ const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(b
     setHair(Math.floor(Math.random() * hairList.length));
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
+    setBody(Math.floor(Math.random() * bodyList.length));
   };
 
   const handleReset = () => {

@@ -9,13 +9,15 @@ import Intro from './pages/Intro';
 import LogIn from './pages/LogIn';
 import XecretosXptop from './pages/XecretosXptop'; // nueva página
 import EditAvatar from "./pages/EditAvatar";
+import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<TreeOfLife />} />
+      <Route path="/" element={<Welcome/>} />
       <Route path="/welcome" element={<Welcome />} />
+      <Route path="/welcome-animation-login" element={<WelcomeAnimationLogin />} />
       <Route path="/welcome-animation" element={<WelcomeAnimation />} />
       <Route path="/register-step1" element={<RegisterStep1 />} />
       <Route path="/register-step2" element={<RegisterStep2 />} />
