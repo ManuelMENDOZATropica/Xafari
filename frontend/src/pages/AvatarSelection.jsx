@@ -34,42 +34,45 @@ export default function AvatarSelection() {
 
   const [activeTab, setActiveTab] = useState("body");
 
-  useEffect(() => {
-    const rawUser = localStorage.getItem("user");
-    if (!rawUser) {
-      console.warn("⚠️ Usuario no encontrado en localStorage. Redirigiendo a login.");
-      navigate("/login");
-      return;
-    }
+useEffect(() => {
+  const rawUser = localStorage.getItem("user");
 
-    let user;
-    try {
-      user = JSON.parse(rawUser);
-    } catch (e) {
-      console.error("❌ Error al parsear JSON del usuario:", e);
-      navigate("/login");
-      return;
-    }
+  if (!rawUser) {
+    console.warn("⚠️ Usuario no encontrado. Usando modo invitado.");
+    return; // No redirige, solo salta la carga del avatar.
+  }
 
-    const avatar = user?.avatar;
-    if (avatar) {
-      console.log("Avatar local:", avatar);
-      if (avatar.bodyOptions !== undefined) setBody(avatar.bodyOptions);
-      if (avatar.hairOptions !== undefined) setHair(avatar.hairOptions);
-      if (avatar.clothingOptions !== undefined) setClothing(avatar.clothingOptions);
-      if (avatar.shoeOptions !== undefined) setShoe(avatar.shoeOptions);
-      if (avatar.eyesOptions !== undefined) setEyes(avatar.eyesOptions);
-      if (avatar.glassesAccessoryOptions !== undefined) setGlasses(avatar.glassesAccessoryOptions);
-      if (avatar.headAccessoryOptions !== undefined) setHeadAcc(avatar.headAccessoryOptions);
-      if (avatar.bodyAccessoryOptions !== undefined) setBodyAcc(avatar.bodyAccessoryOptions);
-    }
-  }, [navigate]);
+  let user;
+  try {
+    user = JSON.parse(rawUser);
+  } catch (e) {
+    console.error("❌ Error al parsear JSON del usuario:", e);
+    return; // También evita redirigir
+  }
+
+  const avatar = user?.avatar;
+  if (avatar) {
+    console.log("Avatar local:", avatar);
+    if (avatar.bodyOptions !== undefined) setBody(avatar.bodyOptions);
+    if (avatar.hairOptions !== undefined) setHair(avatar.hairOptions);
+    if (avatar.clothingOptions !== undefined) setClothing(avatar.clothingOptions);
+    if (avatar.shoeOptions !== undefined) setShoe(avatar.shoeOptions);
+    if (avatar.eyesOptions !== undefined) setEyes(avatar.eyesOptions);
+    if (avatar.glassesAccessoryOptions !== undefined) setGlasses(avatar.glassesAccessoryOptions);
+    if (avatar.headAccessoryOptions !== undefined) setHeadAcc(avatar.headAccessoryOptions);
+    if (avatar.bodyAccessoryOptions !== undefined) setBodyAcc(avatar.bodyAccessoryOptions);
+  }
+}, []);
 
   const handleSaveAvatar = async () => {
     const token = localStorage.getItem("token");
     const rawUser = localStorage.getItem("user");
 
-    if (!token || !rawUser) return;
+    if (!token || !rawUser) {
+    console.warn("🔒 No hay usuario autenticado. Continuando sin guardar.");
+    navigate("/treeoflife");
+    return;
+  }
 
     let user;
     try {
