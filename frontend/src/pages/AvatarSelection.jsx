@@ -146,6 +146,7 @@ export default function AvatarSelection() {
     setHair(Math.floor(Math.random() * hairList.length));
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
+    setBody(Math.floor(Math.random() * bodyList.length));
   };
 
   const handleReset = () => {

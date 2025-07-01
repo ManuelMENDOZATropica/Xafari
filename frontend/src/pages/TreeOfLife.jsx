@@ -5,6 +5,8 @@ import AvatarRender from "@/components/AvatarRender";
 import XecretoRegister from "@/components/XecretoRegister";
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { User, Sparkles, Camera } from "lucide-react";
+
 
 const guardianes = [
   "buho",
@@ -17,6 +19,9 @@ const guardianes = [
   "serpiente",
   "venado",
 ];
+
+const insignias = Array.from({ length: 15 }, (_, i) => `INXIGNIAS_${i + 1}`);
+const flores = Array.from({ length: 10 }, (_, i) => `FLORES_${i + 1}`);
 
 export default function TreeOfLife() {
   const { t } = useTranslation();
@@ -33,25 +38,22 @@ export default function TreeOfLife() {
     if (saved) setAvatarData(JSON.parse(saved));
   }, []);
 
-  // Calcular desplazamiento para centrar el avatar en pantalla
- useEffect(() => {
-  const viewport = wrapperRef.current?.getBoundingClientRect();
-  const canvasWidth = 1200;
-  const canvasHeight = 1200;
-  const scale = 1.2; // mismo valor que initialScale
+  useEffect(() => {
+    const viewport = wrapperRef.current?.getBoundingClientRect();
+    const canvasWidth = 1200;
+    const canvasHeight = 1200;
+    const scale = 1.2;
 
-  // Coordenadas relativas del avatar
-  const avatarX = 560 / canvasWidth;
-  const avatarY = 750 / canvasHeight;
+    const avatarX = 560 / canvasWidth;
+    const avatarY = 750 / canvasHeight;
 
-  if (viewport) {
-    const offsetX = viewport.width / 2 - avatarX * canvasWidth * scale;
-    const offsetY = viewport.height / 2 - avatarY * canvasHeight * scale;
-    setInitialX(offsetX);
-    setInitialY(offsetY);
-  }
-}, []);
-
+    if (viewport) {
+      const offsetX = viewport.width / 2 - avatarX * canvasWidth * scale;
+      const offsetY = viewport.height / 2 - avatarY * canvasHeight * scale;
+      setInitialX(offsetX);
+      setInitialY(offsetY);
+    }
+  }, []);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden font-lufga text-black">
@@ -64,29 +66,28 @@ export default function TreeOfLife() {
 
       {/* Botón de perfil */}
       <div className="absolute top-4 left-4 z-30">
-        <div className="relative">
-          <button
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow flex items-center justify-center hover:bg-white"
-            title="Perfil"
-          >
-            👤
-          </button>
-          {showProfileMenu && (
-            <div className="absolute mt-3 left-0 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                Mi perfil
-              </h3>
-              <button
-                onClick={() => navigate("/edit-avatar")}
-                className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-800 bg-white hover:bg-gray-100 transition"
-              >
-                {t("editAvatar") || "Editar avatar"}
-              </button>
-            </div>
-          )}
-        </div>
+  <div className="relative">
+    <button
+      onClick={() => setShowProfileMenu(!showProfileMenu)}
+      className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-300 hover:bg-white transition flex items-center justify-center"
+      title="Perfil"
+    >
+      <User className="w-6 h-6 text-emerald-800" />
+    </button>
+    {showProfileMenu && (
+      <div className="absolute mt-3 left-0 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Mi perfil</h3>
+        <button
+          onClick={() => navigate("/edit-avatar")}
+          className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-800 bg-white hover:bg-gray-100 transition"
+        >
+          {t("editAvatar") || "Editar avatar"}
+        </button>
       </div>
+    )}
+  </div>
+</div>
+
 
       {/* Botón a Xecretos Xptop */}
       <div className="absolute left-4 bottom-[15vh] z-30">
@@ -143,6 +144,24 @@ export default function TreeOfLife() {
                     <img
                       key={nombre}
                       src={`/arbol/guardianesÁrbol/${nombre}.png`}
+                      alt={nombre}
+                      className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                    />
+                  ))}
+
+                  {insignias.map((nombre) => (
+                    <img
+                      key={nombre}
+                      src={`/arbol/xtopÁrbol/${nombre}.png`}
+                      alt={nombre}
+                      className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                    />
+                  ))}
+
+                  {flores.map((nombre) => (
+                    <img
+                      key={nombre}
+                      src={`/arbol/floresÁrbol/${nombre}.png`}
                       alt={nombre}
                       className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
                     />
