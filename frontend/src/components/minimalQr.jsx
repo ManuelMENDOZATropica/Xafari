@@ -66,7 +66,7 @@ export default function MinimalQR() {
       <div className="mt-4 text-center">
         {lastCode ? (
           <p className="text-green-700 font-semibold">
-            QR Detectado: {lastCode}
+            QR Detqqqectado: {lastCode}
           </p>
         ) : scannerReady ? (
           <p className="text-gray-500">Escaneando...</p>
