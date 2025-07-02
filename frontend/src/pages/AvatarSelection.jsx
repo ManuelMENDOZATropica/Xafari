@@ -64,85 +64,96 @@ useEffect(() => {
   }
 }, []);
 
-  const handleSaveAvatar = async () => {
-    const token = localStorage.getItem("token");
-    const rawUser = localStorage.getItem("user");
+ const handleSaveAvatar = async () => {
+  const rawUser = localStorage.getItem("user");
 
-    if (!token || !rawUser) {
-    console.warn("🔒 No hay usuario autenticado. Continuando sin guardar.");
+  const updatedAvatar = {
+    bodyOptions: bodyIndex,
+    hairOptions: hairIndex,
+    clothingOptions: clothingIndex,
+    shoeOptions: shoeIndex,
+    eyesOptions: eyesIndex,
+    glassesAccessoryOptions: glassesIndex,
+    headAccessoryOptions: headAccessoryIndex,
+    bodyAccessoryOptions: bodyAccessoryIndex,
+  };
+
+  // Si no hay usuario autenticado, guarda localmente en modo invitado
+  if (!rawUser) {
+    const guestUser = {
+      name: "Invitado",
+      lastname: "",
+      email: "",
+      avatar: updatedAvatar,
+    };
+    localStorage.setItem("user", JSON.stringify(guestUser));
+    console.warn("👤 Avatar guardado en modo invitado:", guestUser.avatar);
     navigate("/treeoflife");
     return;
   }
 
-    let user;
-    try {
-      user = JSON.parse(rawUser);
-    } catch (e) {
-      console.error("❌ Error al parsear usuario en handleSaveAvatar:", e);
-      return;
-    }
+  const token = localStorage.getItem("token");
 
-    const updatedAvatar = {
-      bodyOptions: bodyIndex,
-      hairOptions: hairIndex,
-      clothingOptions: clothingIndex,
-      shoeOptions: shoeIndex,
-      eyesOptions: eyesIndex,
-      glassesAccessoryOptions: glassesIndex,
-      headAccessoryOptions: headAccessoryIndex,
-      bodyAccessoryOptions: bodyAccessoryIndex,
-    };
-
-    const updatedUser = {
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
-      birthdate: user.birthdate,
-      reservationNumber: user.reservationNumber,
-      pronouns: user.pronouns,
-      avatar: updatedAvatar,
-    };
-
-    try {
-  const response = await fetch("https://xafari.rexmalebka.com/user", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(updatedUser),
-  });
-
-  let data = {};
+  let user;
   try {
-    const text = await response.text(); // intenta leer texto
-    data = text ? JSON.parse(text) : {}; // parsea si hay texto
-  } catch (parseErr) {
-    console.warn("⚠️ Respuesta sin JSON, probablemente vacía");
-  }
-
-  if (!response.ok) {
-    console.error("❌ Error al actualizar usuario (status):", response.status);
-    console.error("❌ Respuesta del servidor:", data);
-    alert("No se pudo guardar el avatar.");
+    user = JSON.parse(rawUser);
+  } catch (e) {
+    console.error("❌ Error al parsear usuario:", e);
     return;
   }
 
-  if (data.user) {
-    localStorage.setItem("user", JSON.stringify(data.user));
-    console.log("✅ Avatar actualizado correctamente:", data.user.avatar);
-  } else {
-    console.log("✅ Avatar actualizado sin contenido de respuesta.");
+  const updatedUser = {
+    ...user,
+    avatar: updatedAvatar,
+  };
+
+  if (!token) {
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    console.warn("👤 Avatar guardado localmente sin token:", updatedUser.avatar);
+    navigate("/treeoflife");
+    return;
   }
 
-  navigate("/treeoflife");
-} catch (err) {
-  console.error("🔥 Error en el PUT (fallo de red o JSON):", err);
-  alert("Error al guardar el avatar.");
-}
+  // Si hay token, intenta guardar en backend
+  try {
+    const response = await fetch("https://xafari.rexmalebka.com/user", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedUser),
+    });
 
-  };
+    let data = {};
+    try {
+      const text = await response.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (parseErr) {
+      console.warn("⚠️ Respuesta sin JSON");
+    }
+
+    if (!response.ok) {
+      console.error("❌ Error al actualizar en backend:", response.status);
+      alert("No se pudo guardar el avatar.");
+      return;
+    }
+
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+      console.log("✅ Avatar actualizado en backend:", data.user.avatar);
+    } else {
+      console.log("✅ Avatar actualizado sin respuesta específica.");
+    }
+
+    navigate("/treeoflife");
+  } catch (err) {
+    console.error("🔥 Error al guardar en backend:", err);
+    alert("Error al guardar el avatar.");
+  }
+};
+
 
   const handleRandomize = () => {
     setEyes(Math.floor(Math.random() * eyesList.length));

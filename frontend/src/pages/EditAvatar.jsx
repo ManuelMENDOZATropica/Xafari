@@ -38,38 +38,64 @@ export default function AvatarSelection() {
 
   const [activeTab, setActiveTab] = useState("body");
 
-  const handleSaveAvatar = async () => {
-    const newAvatar = {
-      bodyOptions: bodyIndex,
-      eyesOptions: eyesIndex,
-      hairOptions: hairIndex,
-      clothingOptions: clothingIndex,
-      shoeOptions: shoeIndex,
-      glassesAccessoryOptions: glassesIndex,
-      headAccessoryOptions: headAccessoryIndex,
-      bodyAccessoryOptions: bodyAccessoryIndex,
-    };
-
-    try {
-      const response = await fetch("https://xafari.rexmalebka.com/user", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ ...user, avatar: newAvatar }),
-      });
-
-      if (!response.ok) throw new Error("Fallo al guardar el avatar");
-
-      const updatedUser = await response.json();
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      navigate("/treeoflife");
-    } catch (err) {
-      alert("Error al guardar el avatar.");
-      console.error("Error en el PUT:", err);
-    }
+ const handleSaveAvatar = async () => {
+  const newAvatar = {
+    bodyOptions: bodyIndex,
+    eyesOptions: eyesIndex,
+    hairOptions: hairIndex,
+    clothingOptions: clothingIndex,
+    shoeOptions: shoeIndex,
+    glassesAccessoryOptions: glassesIndex,
+    headAccessoryOptions: headAccessoryIndex,
+    bodyAccessoryOptions: bodyAccessoryIndex,
   };
+
+  // Si no hay usuario guardado, crea un modo invitado
+  if (!user) {
+    const guestUser = {
+      name: "Invitado",
+      lastname: "",
+      email: "",
+      avatar: newAvatar,
+    };
+    localStorage.setItem("user", JSON.stringify(guestUser));
+    console.warn("👤 Avatar guardado como invitado:", guestUser.avatar);
+    navigate("/treeoflife");
+    return;
+  }
+
+  // Si no hay token, guarda en localStorage sin intentar backend
+  if (!token) {
+    const updatedUser = { ...user, avatar: newAvatar };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    console.warn("👤 Avatar actualizado localmente sin token:", updatedUser.avatar);
+    navigate("/treeoflife");
+    return;
+  }
+
+  // Si hay token, intenta guardar en backend
+  try {
+    const response = await fetch("https://xafari.rexmalebka.com/user", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...user, avatar: newAvatar }),
+    });
+
+    if (!response.ok) throw new Error("Fallo al guardar el avatar");
+
+    const updatedUser = await response.json();
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    console.log("✅ Avatar guardado correctamente en backend");
+    navigate("/treeoflife");
+  } catch (err) {
+    alert("Error al guardar el avatar.");
+    console.error("❌ Error al guardar en backend:", err);
+  }
+};
+
 
   const handleRandomize = () => {
     setEyes(Math.floor(Math.random() * eyesList.length));

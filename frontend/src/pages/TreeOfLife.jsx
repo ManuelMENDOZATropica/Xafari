@@ -151,35 +151,41 @@ export default function TreeOfLife() {
                   />
 
                   {/* Guardianes */}
-                  {Object.entries(xecretos).map(([clave, valor]) => {
-                    if (!valor) return null;
+                 {Object.entries(xecretos).map(([clave, valor]) => {
+  if (!valor) return null;
 
-                    const mapa = {
-                      xecreto1: "mono",
-                      xecreto2: "rana",
-                      xecreto3: "jaguar",
-                      xecreto4: "guacamaya",
-                      xecreto5: "serpiente",
-                      xecreto6: "venado",
-                      xecreto7: "buho",
-                      xecreto8: "mariposa",
-                      xecreto9: "flamenco",
-                      xecreto10: "coati",
-                    };
+  const mapa = {
+    xecreto1: "mono",
+    xecreto2: "rana",
+    xecreto3: "jaguar",
+    xecreto4: "guacamaya",
+    xecreto5: "serpiente",
+    xecreto6: "venado",
+    xecreto7: "buho",
+    xecreto8: "mariposa",
+    xecreto9: "flamenco",
+    xecreto10: "coati",
+  };
 
-                    const guardian = mapa[clave];
-                    if (!guardian) return null;
+  const guardian = mapa[clave];
+  if (!guardian) return null;
 
-                    return (
-                      <img
-                        key={clave}
-                        src={`/arbol/guardianesÁrbol/${guardian}.png`}
-                        alt={guardian}
-                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
-                      />
-                    );
-                  })}
-{/** 
+  return (
+    <motion.img
+      key={clave}
+      src={`/arbol/guardianesÁrbol/${guardian}.png`}
+      alt={guardian}
+      className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+      initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
+      animate={{ opacity: 1, scale: [1.1, 0.95, 1], rotate: [2, -2, 0] }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+    />
+  );
+})}
+
+
+
+                  {/** 
                   {insignias.map((nombre) => (
                     <img
                       key={nombre}
@@ -199,8 +205,8 @@ export default function TreeOfLife() {
                   ))}
 */}
                   {/* Avatar en posición relativa al árbol */}
-                  <div className="absolute top-[750px] left-[560px] z-50">
-                    <AvatarRender className="w-[66px] h-[120px]" />
+                  <div className="absolute top-[700px] left-[565px] z-50">
+                    <AvatarRender className="w-[90px] h-[130px]" />
                   </div>
                 </div>
               </TransformComponent>
