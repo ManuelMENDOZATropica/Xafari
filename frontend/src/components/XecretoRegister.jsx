@@ -49,7 +49,7 @@ export default function XecretoRegister({ onClose }) {
         setScannerReady(true);
 
         await codeReader.decodeFromVideoDevice(
-          undefined,
+          { facingMode: "environment" },
           videoRef.current,
           (result) => {
             if (!isMounted || !result) return;
@@ -63,6 +63,11 @@ export default function XecretoRegister({ onClose }) {
               localStorage.setItem("xecretos", JSON.stringify(updated));
             }
 
+            // Vibración
+            if ("vibrate" in navigator) {
+              navigator.vibrate(200);
+            }
+
             setLastScanned(code);
             setInsigniaKey((prev) => prev + 1);
             setShowInsignia(false);
@@ -72,6 +77,13 @@ export default function XecretoRegister({ onClose }) {
               setShowInsignia(false);
               onClose();
             }, 6000);
+          },
+          {
+            video: {
+              facingMode: "environment",
+              width: { ideal: 640 },
+              height: { ideal: 360 },
+            },
           }
         );
       } catch (err) {
@@ -96,7 +108,6 @@ export default function XecretoRegister({ onClose }) {
     <div className="relative w-screen h-screen font-lufga text-black">
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 
-      {/* Encabezado */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
         <button onClick={onClose} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
           ← {t("back")}
@@ -106,7 +117,6 @@ export default function XecretoRegister({ onClose }) {
         </button>
       </div>
 
-      {/* Título */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-6 py-3 w-[300px] text-center">
           <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
@@ -115,7 +125,6 @@ export default function XecretoRegister({ onClose }) {
         </div>
       </div>
 
-      {/* Video + Error */}
       {cameraError && (
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
           {cameraError}
@@ -129,7 +138,6 @@ export default function XecretoRegister({ onClose }) {
         </div>
       </div>
 
-      {/* Insignia animada */}
       {lastScanned && qrData[lastScanned] && (
         <>
           <AnimatePresence>
