@@ -161,7 +161,7 @@ export default function XecretoRegister({ onClose }) {
             transition={{ duration: 0.5 }}
           >
             <p className="text-lg font-bold text-emerald-800">
-              ¡Encontraste al guardián {qrData[lastScanned].guardian}!
+              ¡Encontraste  al guardián {qrData[lastScanned].guardian}!
             </p>
           </motion.div>
 
