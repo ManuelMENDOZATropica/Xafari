@@ -10,7 +10,7 @@ import LogIn from './pages/LogIn';
 import XecretosXptop from './pages/XecretosXptop'; // nueva página
 import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
-
+import MinimalQr from "./components/minimalQr"
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
       <Route path="/login" element={<LogIn />} />
       <Route path="/xecretosxptop" element={<XecretosXptop />} /> {/* nueva ruta */}
       <Route path="/edit-avatar" element={<EditAvatar />} />
-
+      <Route path="/minimalqr" element={<MinimalQr/>} />
     </Routes>
   );
 }
