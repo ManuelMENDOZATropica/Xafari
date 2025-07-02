@@ -188,7 +188,7 @@ export default function XecretosXptop() {
 
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-4 py-2 mt-2 text-center w-fit">
           <h1 className="text-xl md:text-2xl font-bold text-emerald-800 drop-shadow">
-            Xecretos Xptop
+            Xperiencias Xtop
           </h1>
         </div>
 
