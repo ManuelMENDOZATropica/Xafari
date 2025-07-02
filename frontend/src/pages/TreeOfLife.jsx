@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { User, Sparkles, Camera } from "lucide-react";
 
-
 const guardianes = [
   "buho",
   "flamenco",
@@ -27,6 +26,8 @@ export default function TreeOfLife() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [avatarData, setAvatarData] = useState(null);
+  const [xecretos, setXecretos] = useState({});
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showXecretoModal, setShowXecretoModal] = useState(false);
   const [initialX, setInitialX] = useState(null);
@@ -36,6 +37,15 @@ export default function TreeOfLife() {
   useEffect(() => {
     const saved = localStorage.getItem("avatarData");
     if (saved) setAvatarData(JSON.parse(saved));
+  }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("xecretos");
+    const parsed = saved ? JSON.parse(saved) : {};
+    setXecretos(parsed);
+
+    // Mostrar contenido en consola
+    console.log("Xecretos guardados en localStorage:", parsed);
   }, []);
 
   useEffect(() => {
@@ -66,28 +76,29 @@ export default function TreeOfLife() {
 
       {/* Botón de perfil */}
       <div className="absolute top-4 left-4 z-30">
-  <div className="relative">
-    <button
-      onClick={() => setShowProfileMenu(!showProfileMenu)}
-      className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-300 hover:bg-white transition flex items-center justify-center"
-      title="Perfil"
-    >
-      <User className="w-6 h-6 text-emerald-800" />
-    </button>
-    {showProfileMenu && (
-      <div className="absolute mt-3 left-0 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">Mi perfil</h3>
-        <button
-          onClick={() => navigate("/edit-avatar")}
-          className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-800 bg-white hover:bg-gray-100 transition"
-        >
-          {t("editAvatar") || "Editar avatar"}
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-300 hover:bg-white transition flex items-center justify-center"
+            title="Perfil"
+          >
+            <User className="w-6 h-6 text-emerald-800" />
+          </button>
+          {showProfileMenu && (
+            <div className="absolute mt-3 left-0 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                Mi perfil
+              </h3>
+              <button
+                onClick={() => navigate("/edit-avatar")}
+                className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-800 bg-white hover:bg-gray-100 transition"
+              >
+                {t("editAvatar") || "Editar avatar"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
-
 
       {/* Botón a Xecretos Xptop */}
       <div className="absolute left-4 bottom-[15vh] z-30">
@@ -140,15 +151,35 @@ export default function TreeOfLife() {
                   />
 
                   {/* Guardianes */}
-                  {guardianes.map((nombre) => (
-                    <img
-                      key={nombre}
-                      src={`/arbol/guardianesÁrbol/${nombre}.png`}
-                      alt={nombre}
-                      className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
-                    />
-                  ))}
+                  {Object.entries(xecretos).map(([clave, valor]) => {
+                    if (!valor) return null;
 
+                    const mapa = {
+                      xecreto1: "mono",
+                      xecreto2: "rana",
+                      xecreto3: "jaguar",
+                      xecreto4: "guacamaya",
+                      xecreto5: "serpiente",
+                      xecreto6: "venado",
+                      xecreto7: "buho",
+                      xecreto8: "mariposa",
+                      xecreto9: "flamenco",
+                      xecreto10: "coati",
+                    };
+
+                    const guardian = mapa[clave];
+                    if (!guardian) return null;
+
+                    return (
+                      <img
+                        key={clave}
+                        src={`/arbol/guardianesÁrbol/${guardian}.png`}
+                        alt={guardian}
+                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                      />
+                    );
+                  })}
+{/** 
                   {insignias.map((nombre) => (
                     <img
                       key={nombre}
@@ -166,7 +197,7 @@ export default function TreeOfLife() {
                       className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
                     />
                   ))}
-
+*/}
                   {/* Avatar en posición relativa al árbol */}
                   <div className="absolute top-[750px] left-[560px] z-50">
                     <AvatarRender className="w-[66px] h-[120px]" />
@@ -194,7 +225,13 @@ export default function TreeOfLife() {
               exit={{ scale: 0.7, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <XecretoRegister onClose={() => setShowXecretoModal(false)} />
+              <XecretoRegister
+                onClose={() => {
+                  setShowXecretoModal(false);
+                  const saved = localStorage.getItem("xecretos");
+                  setXecretos(saved ? JSON.parse(saved) : {});
+                }}
+              />
             </motion.div>
           </motion.div>
         )}
