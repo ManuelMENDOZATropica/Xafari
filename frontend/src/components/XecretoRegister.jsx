@@ -32,64 +32,55 @@ export default function XecretoRegister({ onClose }) {
   const [lastScanned, setLastScanned] = useState(null);
   const [insigniaKey, setInsigniaKey] = useState(0);
   const [showInsignia, setShowInsignia] = useState(false);
-  const [showHelpModal, setShowHelpModal] = useState(false);
-  const [scannerActive, setScannerActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
+  const [scannerReady, setScannerReady] = useState(false);
 
   useEffect(() => {
-    if (!scannerActive) return;
-
     const codeReader = new BrowserQRCodeReader();
     let isMounted = true;
 
-    const startScanner = async () => {
+    const startScan = async () => {
       try {
         if (!videoRef.current) {
-          setTimeout(startScanner, 200);
+          setTimeout(startScan, 200);
           return;
         }
 
+        setScannerReady(true);
+
         await codeReader.decodeFromVideoDevice(
-          { facingMode: "environment" },
+          undefined,
           videoRef.current,
           (result) => {
             if (!isMounted || !result) return;
 
             const code = result.getText();
-            if (code === lastScanned) return;
+            if (!qrData[code]) return;
 
-            if (qrData[code]) {
-              if (!scannedCodes[code]) {
-                const updated = { ...scannedCodes, [code]: true };
-                setScannedCodes(updated);
-                localStorage.setItem("xecretos", JSON.stringify(updated));
-              }
-
-              setLastScanned(code);
-              setInsigniaKey((prev) => prev + 1);
-              setShowInsignia(false);
-              setTimeout(() => setShowInsignia(true), 50);
-              setTimeout(() => {
-                setShowInsignia(false);
-                setScannerActive(false);
-                onClose();
-              }, 6000);
+            if (!scannedCodes[code]) {
+              const updated = { ...scannedCodes, [code]: true };
+              setScannedCodes(updated);
+              localStorage.setItem("xecretos", JSON.stringify(updated));
             }
+
+            setLastScanned(code);
+            setInsigniaKey((prev) => prev + 1);
+            setShowInsignia(false);
+            setTimeout(() => setShowInsignia(true), 50);
+
+            setTimeout(() => {
+              setShowInsignia(false);
+              onClose();
+            }, 6000);
           }
         );
       } catch (err) {
-        console.error("Error al iniciar cámara:", err);
-        if (err.name === "NotAllowedError") {
-          setCameraError("Permiso denegado. Por favor, permite el acceso a la cámara.");
-        } else if (err.name === "NotFoundError") {
-          setCameraError("No se encontró una cámara disponible.");
-        } else {
-          setCameraError("No se pudo acceder a la cámara.");
-        }
+        console.error("Error al acceder a la cámara:", err);
+        setCameraError(`${err.name}: ${err.message}`);
       }
     };
 
-    startScanner();
+    startScan();
 
     return () => {
       isMounted = false;
@@ -99,31 +90,23 @@ export default function XecretoRegister({ onClose }) {
         console.warn("No se pudo resetear el lector:", e.message);
       }
     };
-  }, [scannerActive]);
+  }, []);
 
   return (
     <div className="relative w-screen h-screen font-lufga text-black">
-      <img
-        src="/img/V03-CERRITOS.jpg"
-        alt="Fondo"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      />
+      <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 
+      {/* Encabezado */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
-        <button
-          onClick={onClose}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-        >
+        <button onClick={onClose} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
           ← {t("back")}
         </button>
-        <button
-          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-        >
+        <button onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
           {t("language")}
         </button>
       </div>
 
+      {/* Título */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-6 py-3 w-[300px] text-center">
           <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
@@ -132,80 +115,21 @@ export default function XecretoRegister({ onClose }) {
         </div>
       </div>
 
-      <div className="absolute left-4 bottom-4 z-30">
-        <button
-          onClick={() => setShowHelpModal(true)}
-          className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow flex items-center justify-center text-xl border border-gray-300 hover:bg-white"
-          title="Ayuda"
-        >
-          ?
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {showHelpModal && (
-          <motion.div
-            className="absolute inset-0 z-40 bg-black/60 flex items-center justify-center px-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl text-center"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-            >
-              <h2 className="text-lg font-bold mb-4 text-emerald-800">
-                {t("how_scan") || "¿Cómo escanear Xecretos?"}
-              </h2>
-              <p className="text-gray-700 mb-4">
-                Explora el espacio y escanea los códigos QR ocultos para desbloquear Xecretos. Cuando encuentres uno válido, se activará la insignia correspondiente en tu Árbol de la Vida.
-              </p>
-              <button
-                onClick={() => setShowHelpModal(false)}
-                className="mt-2 bg-emerald-600 text-white px-4 py-2 rounded-full shadow hover:bg-emerald-700"
-              >
-                {t("understood") || "Entendido"}
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {!scannerActive && (
-        <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur flex justify-center items-center">
-          <button
-            onClick={() => {
-              setCameraError(null);
-              setScannerActive(true);
-            }}
-            className="bg-emerald-600 text-white px-6 py-3 rounded-full text-lg shadow"
-          >
-            Activar cámara
-          </button>
-        </div>
-      )}
-
+      {/* Video + Error */}
       {cameraError && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
+        <div className="absolute top-[60%] left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
           {cameraError}
         </div>
       )}
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-video bg-white/80 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden z-10">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className="w-full h-full object-cover rounded-2xl"
-        />
+        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-2xl" />
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute w-full h-0.5 bg-green-500 animate-scan" />
         </div>
       </div>
 
+      {/* Insignia animada */}
       {lastScanned && qrData[lastScanned] && (
         <>
           <AnimatePresence>
@@ -214,13 +138,7 @@ export default function XecretoRegister({ onClose }) {
                 key={insigniaKey}
                 src={qrData[lastScanned].arbol}
                 alt="Insignia"
-                initial={{
-                  scale: 0,
-                  opacity: 0,
-                  x: "-50%",
-                  y: "-50%",
-                  rotate: -10,
-                }}
+                initial={{ scale: 0, opacity: 0, x: "-50%", y: "-50%", rotate: -10 }}
                 animate={{
                   scale: [0, 1.2, 1, 1.1, 1],
                   y: ["-50%", "-52%", "-48%", "-50%", "-50%"],
@@ -228,11 +146,7 @@ export default function XecretoRegister({ onClose }) {
                   opacity: [0, 1, 1, 1, 0],
                   x: ["-50%", "-50%", "-50%", "-70%", "-200%"],
                 }}
-                transition={{
-                  duration: 6,
-                  times: [0, 0.2, 0.4, 0.7, 1],
-                  ease: "easeInOut",
-                }}
+                transition={{ duration: 6, times: [0, 0.2, 0.4, 0.7, 1], ease: "easeInOut" }}
                 exit={{ opacity: 0 }}
                 className="absolute z-[9999] top-[35%] left-1/2 w-64 aspect-square pointer-events-none"
               />
