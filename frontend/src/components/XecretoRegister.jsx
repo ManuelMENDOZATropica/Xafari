@@ -8,16 +8,56 @@ export default function XecretoRegister({ onClose }) {
   const { t, i18n } = useTranslation();
 
   const qrData = {
-    xecreto1: { guardian: "Mono", maya: "/maya/GuardianMono.png", arbol: "/guardianes/Mono Casa Vida.png" },
-    xecreto2: { guardian: "Rana", maya: "/maya/GuardianRana.png", arbol: "/guardianes/Rana Casa Agua.png" },
-    xecreto3: { guardian: "Jaguar", maya: "/maya/GuardianJaguar.png", arbol: "/guardianes/Jaguar Casa Sol.png" },
-    xecreto4: { guardian: "Guacamaya", maya: "/maya/GuardianGuacamaya.png", arbol: "/guardianes/Guacamaya Casa Fuego.png" },
-    xecreto5: { guardian: "Serpiente", maya: "/maya/GuardianSerpiente.png", arbol: "/guardianes/Serpiente Casa Espiral.png" },
-    xecreto6: { guardian: "Venado", maya: "/maya/GuardianVenado.png", arbol: "/guardianes/Venado Casa Tierra.png" },
-    xecreto7: { guardian: "Búho", maya: "/maya/GuardianBuho.png", arbol: "/guardianes/Búho Casa Eclipse.png" },
-    xecreto8: { guardian: "Mariposa", maya: "/maya/GuardianMariposa.png", arbol: "/guardianes/Mariposa Casa Viento.png" },
-    xecreto9: { guardian: "Flamenco", maya: "/maya/GuardianFlamenco.png", arbol: "/guardianes/Flamenco Casa Sol.png" },
-    xecreto10: { guardian: "Coatí", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
+    xecreto1: {
+      guardian: "Mono",
+      maya: "/maya/GuardianMono.png",
+      arbol: "/guardianes/Mono Casa Vida.png",
+    },
+    xecreto2: {
+      guardian: "Rana",
+      maya: "/maya/GuardianRana.png",
+      arbol: "/guardianes/Rana Casa Agua.png",
+    },
+    xecreto3: {
+      guardian: "Jaguar",
+      maya: "/maya/GuardianJaguar.png",
+      arbol: "/guardianes/Jaguar Casa Sol.png",
+    },
+    xecreto4: {
+      guardian: "Guacamaya",
+      maya: "/maya/GuardianGuacamaya.png",
+      arbol: "/guardianes/Guacamaya Casa Fuego.png",
+    },
+    xecreto5: {
+      guardian: "Serpiente",
+      maya: "/maya/GuardianSerpiente.png",
+      arbol: "/guardianes/Serpiente Casa Espiral.png",
+    },
+    xecreto6: {
+      guardian: "Venado",
+      maya: "/maya/GuardianVenado.png",
+      arbol: "/guardianes/Venado Casa Tierra.png",
+    },
+    xecreto7: {
+      guardian: "Búho",
+      maya: "/maya/GuardianBuho.png",
+      arbol: "/guardianes/Búho Casa Eclipse.png",
+    },
+    xecreto8: {
+      guardian: "Mariposa",
+      maya: "/maya/GuardianMariposa.png",
+      arbol: "/guardianes/Mariposa Casa Viento.png",
+    },
+    xecreto9: {
+      guardian: "Flamenco",
+      maya: "/maya/GuardianFlamenco.png",
+      arbol: "/guardianes/Flamenco Casa Sol.png",
+    },
+    xecreto10: {
+      guardian: "Coatí",
+      maya: "/maya/GuardianCoati.png",
+      arbol: "/guardianes/Coati.png",
+    },
   };
 
   const [scannedCodes, setScannedCodes] = useState(() => {
@@ -33,50 +73,43 @@ export default function XecretoRegister({ onClose }) {
   const [insigniaKey, setInsigniaKey] = useState(0);
   const [showInsignia, setShowInsignia] = useState(false);
   const [cameraError, setCameraError] = useState(null);
-  const [scannerReady, setScannerReady] = useState(false);
 
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
     let isMounted = true;
 
+    const handleQR = (code) => {
+      if (!qrData[code]) return;
+
+      if (!scannedCodes[code]) {
+        const updated = { ...scannedCodes, [code]: true };
+        setScannedCodes(updated);
+        localStorage.setItem("xecretos", JSON.stringify(updated));
+      }
+
+      if ("vibrate" in navigator) {
+        navigator.vibrate(200);
+      }
+
+      setLastScanned(code);
+      setInsigniaKey((prev) => prev + 1);
+      setShowInsignia(false);
+      setTimeout(() => setShowInsignia(true), 50);
+
+      setTimeout(() => {
+        setShowInsignia(false);
+        onClose();
+      }, 6000);
+    };
+
     const startScan = async () => {
       try {
-        if (!videoRef.current) {
-          setTimeout(startScan, 200);
-          return;
-        }
-
-        setScannerReady(true);
-
         await codeReader.decodeFromVideoDevice(
           { facingMode: "environment" },
           videoRef.current,
           (result) => {
             if (!isMounted || !result) return;
-
-            const code = result.getText();
-            if (!qrData[code]) return;
-
-            if (!scannedCodes[code]) {
-              const updated = { ...scannedCodes, [code]: true };
-              setScannedCodes(updated);
-              localStorage.setItem("xecretos", JSON.stringify(updated));
-            }
-
-            // Vibración
-            if ("vibrate" in navigator) {
-              navigator.vibrate(200);
-            }
-
-            setLastScanned(code);
-            setInsigniaKey((prev) => prev + 1);
-            setShowInsignia(false);
-            setTimeout(() => setShowInsignia(true), 50);
-
-            setTimeout(() => {
-              setShowInsignia(false);
-              onClose();
-            }, 6000);
+            handleQR(result.getText());
           },
           {
             video: {
@@ -87,8 +120,24 @@ export default function XecretoRegister({ onClose }) {
           }
         );
       } catch (err) {
-        console.error("Error al acceder a la cámara:", err);
-        setCameraError(`${err.name}: ${err.message}`);
+        if (err.name === "OverconstrainedError") {
+          try {
+            await codeReader.decodeFromVideoDevice(
+              undefined,
+              videoRef.current,
+              (result) => {
+                if (!isMounted || !result) return;
+                handleQR(result.getText());
+              }
+            );
+          } catch (fallbackError) {
+            console.error("Fallback error:", fallbackError);
+            setCameraError(`${fallbackError.name}: ${fallbackError.message}`);
+          }
+        } else {
+          console.error("Camera error:", err);
+          setCameraError(`${err.name}: ${err.message}`);
+        }
       }
     };
 
@@ -105,38 +154,20 @@ export default function XecretoRegister({ onClose }) {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen font-lufga text-black">
-      <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
-
-      <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
-        <button onClick={onClose} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
-          ← {t("back")}
-        </button>
-        <button onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
-          {t("language")}
-        </button>
-      </div>
-
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-6 py-3 w-[300px] text-center">
-          <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
-            {t("scan_title") || "Escanea un Xecreto"}
-          </h1>
-        </div>
-      </div>
-
+    <div className="relative w-screen h-screen font-lufga text-black bg-black">
       {cameraError && (
-        <div className="absolute top-[60%] left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
           {cameraError}
         </div>
       )}
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-video bg-white/80 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden z-10">
-        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-2xl" />
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-          <div className="absolute w-full h-0.5 bg-green-500 animate-scan" />
-        </div>
-      </div>
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
 
       {lastScanned && qrData[lastScanned] && (
         <>
@@ -146,7 +177,13 @@ export default function XecretoRegister({ onClose }) {
                 key={insigniaKey}
                 src={qrData[lastScanned].arbol}
                 alt="Insignia"
-                initial={{ scale: 0, opacity: 0, x: "-50%", y: "-50%", rotate: -10 }}
+                initial={{
+                  scale: 0,
+                  opacity: 0,
+                  x: "-50%",
+                  y: "-50%",
+                  rotate: -10,
+                }}
                 animate={{
                   scale: [0, 1.2, 1, 1.1, 1],
                   y: ["-50%", "-52%", "-48%", "-50%", "-50%"],
@@ -154,7 +191,11 @@ export default function XecretoRegister({ onClose }) {
                   opacity: [0, 1, 1, 1, 0],
                   x: ["-50%", "-50%", "-50%", "-70%", "-200%"],
                 }}
-                transition={{ duration: 6, times: [0, 0.2, 0.4, 0.7, 1], ease: "easeInOut" }}
+                transition={{
+                  duration: 6,
+                  times: [0, 0.2, 0.4, 0.7, 1],
+                  ease: "easeInOut",
+                }}
                 exit={{ opacity: 0 }}
                 className="absolute z-[9999] top-[35%] left-1/2 w-64 aspect-square pointer-events-none"
               />
@@ -182,17 +223,6 @@ export default function XecretoRegister({ onClose }) {
           </div>
         </>
       )}
-
-      <style>{`
-        @keyframes scan {
-          0% { top: 0%; }
-          50% { top: 90%; }
-          100% { top: 0%; }
-        }
-        .animate-scan {
-          animation: scan 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }
