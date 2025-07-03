@@ -7,7 +7,6 @@ import AvatarSelection from "./pages/AvatarSelection";
 import TreeOfLife from './pages/TreeOfLife';
 import Intro from './pages/Intro';
 import LogIn from './pages/LogIn';
-import XecretosXptop from './pages/XecretosXptop'; // nueva página
 import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr"
@@ -25,7 +24,6 @@ function App() {
       <Route path="/treeoflife" element={<TreeOfLife />} />
       <Route path="/intro" element={<Intro />} />
       <Route path="/login" element={<LogIn />} />
-      <Route path="/xecretosxptop" element={<XecretosXptop />} /> {/* nueva ruta */}
       <Route path="/edit-avatar" element={<EditAvatar />} />
       <Route path="/minimalqr" element={<MinimalQr/>} />
     </Routes>
