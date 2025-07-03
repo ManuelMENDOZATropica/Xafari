@@ -9,14 +9,8 @@ i18n
     resources: {
       es: {
         translation: {
-          //
-          back: "Volver",
-language: "Idioma",
-scan_title: "Escanea un Xecreto",
-how_scan: "¿Cómo escanear Xecretos?",
-understood: "Entendido",
           // Global
-          back: "Volver",
+          back: "Regresar",
           continue: "Continuar",
           finish: "Finalizar",
           close: "Cerrar",
@@ -45,8 +39,6 @@ understood: "Entendido",
           passwordWeak: "Contraseña débil",
           passwordMedium: "Contraseña aceptable",
           passwordStrong: "Contraseña fuerte",
-///
-editAvatar: "Editar avatar",
 
           // Registro - Paso 2
           registerStep2: "Ingresa tu número de reserva y selecciona cómo prefieres que te llamen.",
@@ -58,11 +50,8 @@ editAvatar: "Editar avatar",
           explorerFemale: "Exploradora",
           registerComplete: "Registro completado. ¡Bienvenido a Xafari!",
 
-          // Animación de bienvenida
-          welcomeApprentice: "¡Qué alegría tenerte aquí!",
-          welcomeToAdventure: "Has llegado al lugar donde comienzan las aventuras",
-
-          // Selección de avatar
+          // Avatar
+          editAvatar: "Editar avatar",
           chooseYourStyle: "Elige tu estilo",
           skinTone: "Tono de piel",
           hair: "Cabello",
@@ -78,15 +67,50 @@ editAvatar: "Editar avatar",
           randomize: "Aleatorio",
           reset: "Reiniciar",
 
-          // Xecretos Xptop
+          // Xecretos
+          scan_title: "Escanea un Xecreto",
+          how_scan: "¿Cómo escanear?",
+          see_clues: "Ver pistas",
+          found_guardian: "¡Encontraste al guardián {{guardian}}!",
+
+          // Instrucciones Escaneo
+          understood: "Entendido",
+          scan_step1: "Ubica las placas escondidas en el hotel.",
+          scan_step2: "Acércate con tu dispositivo móvil y abre la cámara desde esta app.",
+          scan_step3: "Escanea el código QR visible en la placa.",
+          scan_step4: "Descubre qué guardián has desbloqueado y mira cómo se agrega al Árbol de la Vida.",
+
+          // Animaciones y bienvenida
+          welcomeApprentice: "¡Qué alegría tenerte aquí!",
+          welcomeToAdventure: "Has llegado al lugar donde comienzan las aventuras",
+
+          // Feedback preguntas
           correct: "✔ Respuesta correcta.",
           next_unlocked: "Has desbloqueado la siguiente.",
           incorrect: "✘ Respuesta incorrecta.",
           retry_in: "Intenta de nuevo en",
 
-          // Preguntas y actividades traducibles
+          // Títulos modal
+          clue_title: "Pistas de los Xecretos",
+          clue_label: "Xecreto {{num}}",
+
+          // Pistas
+          pistas: {
+            xecreto1: "Y cuando sientas que tu mundo se acaba, El mono abre una puerta reflejante para salvarte",
+            xecreto2: "El tronco de un árbol nace desde el piso, entre sus pedestales una rana aguarda ¿escuchas su croar?",
+            xecreto3: "Entre azulejos, madera y cristales, las manchas del Jaguar se difuminan cerca de la luz del sol",
+            xecreto4: "Cuando el hambre llega, es la guacamaya quien nos guía hacia el alimento que nutre los cuerpos cansados",
+            xecreto5: "La serpiente, guardián del ciclo del tiempo, nos dice que la aplastante muerte se evidencia solo si miras hacia arriba",
+            xecreto6: "Entre los archivos secretos de Xurreal, es el venado quien los resguarda bajo sus astas",
+            xecreto7: "El búho aguarda desde el otro lado del cristal, durante las noches vigila que las aves estén descansando",
+            xecreto8: "La sabiduría esconde a la mariposa, entre las palabras de quienes también han pisado este mundo",
+            xecreto9: "Entre la inmensa vegetación de un tronco, allá donde las luces cálidas iluminan un frío lugar, el flamingo mira.",
+            xecreto10: "Bajo la tribu de vestidos blancos aguarda el gran guardián coatí",
+          },
+
+          // Experiencias y preguntas
           t_experiencia_caletas: "Explora las caletas del hotel en kayak o paddle board y sumérgete en la belleza del paisaje en cada remada.",
-          q_caletas: "¿De qué color son son los Kayaks y el Paddle board?",
+          q_caletas: "¿De qué color son los Kayaks y el Paddle board?",
 
           t_experiencia_cielo_flamingos: "¡Déjate llevar por el ritmo en el Salón Flamingo! Baila como nunca, vibra con la mejor música y conquista la pista con tus mejores pasos.",
           q_cielo_flamingos: "En la parte de atrás hay nichos con esculturas de flamingo ¿Cuántos hay?",
@@ -178,31 +202,29 @@ editAvatar: "Editar avatar",
         }
       },
 
+      // El bloque "en" (inglés) continúa debajo…
       en: {
         translation: {
-
-    back: "Back",
-    language: "Language",
-    scan_title: "Scan a Xecreto",
-    how_scan: "How to scan Xecretos?",
-    understood: "Got it",
-
+          // Global
           back: "Back",
           continue: "Continue",
           finish: "Finish",
           close: "Close",
           language: "Language",
 
+          // Login
           login: "Login",
           noAccount: "Don't have an account?",
           registerHere: "Register here",
 
+          // Home
           welcome: "Discover all the surprises and adventures that Xcaret México has for you and your family.",
           newAdventure: "Start a new adventure",
           alreadyUser: "I am already a user",
           whatIsXafari: "What is Xafari?",
           xafariDescription: "Xafari is an interactive experience inside Hotel Xcaret México where guests can explore, discover secrets, and earn rewards through gamified dynamics.",
 
+          // Register - Step 1
           registerStep1: "You need to create an account to save your progress in the game.",
           firstName: "First name",
           lastName: "Last name",
@@ -214,6 +236,7 @@ editAvatar: "Editar avatar",
           passwordMedium: "Acceptable password",
           passwordStrong: "Strong password",
 
+          // Register - Step 2
           registerStep2: "Enter your reservation number and select how you prefer to be called.",
           roomNumber: "Reservation number",
           selectGender: "How do you prefer to be called?",
@@ -223,9 +246,8 @@ editAvatar: "Editar avatar",
           explorerFemale: "Explorer",
           registerComplete: "Registration complete. Welcome to Xafari!",
 
-          welcomeApprentice: "We're glad you're here!",
-          welcomeToAdventure: "You've arrived where adventures begin",
-
+          // Avatar
+          editAvatar: "Edit avatar",
           chooseYourStyle: "Choose your style",
           skinTone: "Skin Tone",
           hair: "Hair",
@@ -240,13 +262,49 @@ editAvatar: "Editar avatar",
           saveAvatarAndContinue: "Save avatar and continue",
           randomize: "Randomize",
           reset: "Reset",
-editAvatar: "Edit avatar",
 
+          // Xecretos
+          scan_title: "Scan a Xecreto",
+          how_scan: "How to scan?",
+          see_clues: "See clues",
+          found_guardian: "You found the guardian {{guardian}}!",
+
+          // Instructions
+          understood: "Got it",
+          scan_step1: "Find the hidden plaques around the hotel.",
+          scan_step2: "Approach with your mobile device and open the camera from this app.",
+          scan_step3: "Scan the visible QR code on the plaque.",
+          scan_step4: "Discover which guardian you’ve unlocked and see it added to your Tree of Life.",
+
+          // Animations
+          welcomeApprentice: "We're glad you're here!",
+          welcomeToAdventure: "You've arrived where adventures begin",
+
+          // Feedback
           correct: "✔ Correct answer.",
           next_unlocked: "You’ve unlocked the next one.",
           incorrect: "✘ Incorrect answer.",
           retry_in: "Try again in",
 
+          // Modal
+          clue_title: "Xecreto Clues",
+          clue_label: "Xecreto {{num}}",
+
+          // Clues
+          pistas: {
+            xecreto1: "When you feel like your world is falling apart, the monkey opens a reflective door to save you.",
+            xecreto2: "A tree trunk rises from the ground, among its pedestals a frog waits — can you hear its croak?",
+            xecreto3: "Among tiles, wood, and glass, the jaguar’s spots fade near the sunlight.",
+            xecreto4: "When hunger strikes, the macaw guides you to the food that nourishes weary bodies.",
+            xecreto5: "The serpent, guardian of the time cycle, tells us that crushing death reveals itself only if you look up.",
+            xecreto6: "Among the secret archives of Xurreal, the deer guards them beneath its antlers.",
+            xecreto7: "The owl waits behind the glass, watching over the birds as they rest at night.",
+            xecreto8: "Wisdom hides the butterfly, among the words of those who have walked this world before.",
+            xecreto9: "Among the lush vegetation of a trunk, where warm lights illuminate a cold place, the flamingo watches.",
+            xecreto10: "Under the tribe of white-dressed beings, the great guardian coati awaits.",
+          },
+
+          // Experiences and Questions
           t_experiencia_caletas: "Explore the hotel's coves by kayak or paddle board and immerse yourself in the beauty of the scenery with every stroke.",
           q_caletas: "What color are the kayaks and the paddle board?",
 

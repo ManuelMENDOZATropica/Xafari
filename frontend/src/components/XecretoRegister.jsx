@@ -3,10 +3,16 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
+import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
+import ModalPistaXecreto from "@/components/ModalPistaXecreto";
+
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
   const { t, i18n } = useTranslation();
 
+  // ==========================
+  // == DATA DE GUARDIANES ==
+  // ==========================
   const qrData = {
     xecreto1: { guardian: "Mono", maya: "/maya/GuardianMono.png", arbol: "/guardianes/Mono Casa Vida.png" },
     xecreto2: { guardian: "Rana", maya: "/maya/GuardianRana.png", arbol: "/guardianes/Rana Casa Agua.png" },
@@ -20,6 +26,9 @@ export default function XecretoRegister({ onClose }) {
     xecreto10: { guardian: "Coatí", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
   };
 
+  // ==========================
+  // == ESTADO GENERAL ==
+  // ==========================
   const [scannedCodes, setScannedCodes] = useState(() => {
     const saved = localStorage.getItem("xecretos");
     const defaultState = Object.keys(qrData).reduce((acc, key) => {
@@ -34,7 +43,12 @@ export default function XecretoRegister({ onClose }) {
   const [showInsignia, setShowInsignia] = useState(false);
   const [cameraError, setCameraError] = useState(null);
   const [scannerReady, setScannerReady] = useState(false);
+  const [showInstrucciones, setShowInstrucciones] = useState(false);
+  const [showPista, setShowPista] = useState(false);
 
+  // ==========================
+  // == INICIO DEL ESCÁNER ==
+  // ==========================
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
     let isMounted = true;
@@ -53,7 +67,6 @@ export default function XecretoRegister({ onClose }) {
           videoRef.current,
           (result) => {
             if (!isMounted || !result) return;
-
             const code = result.getText();
             if (!qrData[code]) return;
 
@@ -94,42 +107,80 @@ export default function XecretoRegister({ onClose }) {
 
   return (
     <div className="relative w-screen h-screen font-lufga text-black">
+      {/* == FONDO == */}
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 
-      {/* Encabezado */}
+      {/* == HEADER == */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
-        <button onClick={onClose} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
+        <button
+          onClick={onClose}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
           ← {t("back")}
         </button>
-        <button onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")} className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white">
+
+        <button
+          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
           {t("language")}
         </button>
       </div>
 
-      {/* Título */}
+      {/* == TÍTULO == */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-6 py-3 w-[300px] text-center">
           <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
-            {t("scan_title") || "Escanea un Xecreto"}
+            {t("scan_title")}
           </h1>
         </div>
       </div>
 
-      {/* Video + Error */}
+      {/* == VIDEO ESCÁNER == */}
       {cameraError && (
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
           {cameraError}
         </div>
       )}
-
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-video bg-white/80 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden z-10">
-        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-2xl" />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full h-full object-cover rounded-2xl"
+        />
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute w-full h-0.5 bg-green-500 animate-scan" />
         </div>
       </div>
 
-      {/* Insignia animada */}
+      {/* == BOTONES INFERIORES == */}
+      <div className="absolute bottom-[10vh] right-4 z-30 flex flex-col gap-2 items-end">
+        <button
+          onClick={() => setShowInstrucciones(true)}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          {t("how_scan")}
+        </button>
+
+        <button
+          onClick={() => setShowPista(true)}
+          className="bg-white/90 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          {t("see_clues")}
+        </button>
+      </div>
+
+      {/* == MODALES == */}
+      <ModalInstruccionesXecretos show={showInstrucciones} onClose={() => setShowInstrucciones(false)} />
+      <ModalPistaXecreto
+        show={showPista}
+        onClose={() => setShowPista(false)}
+        scannedCodes={scannedCodes}
+      />
+
+      {/* == INSIGNIA ANIMADA == */}
       {lastScanned && qrData[lastScanned] && (
         <>
           <AnimatePresence>
@@ -161,7 +212,7 @@ export default function XecretoRegister({ onClose }) {
             transition={{ duration: 0.5 }}
           >
             <p className="text-lg font-bold text-emerald-800">
-              ¡Encontraste al guardián {qrData[lastScanned].guardian}!
+              {t("found_guardian", { guardian: qrData[lastScanned].guardian })}
             </p>
           </motion.div>
 
@@ -175,6 +226,7 @@ export default function XecretoRegister({ onClose }) {
         </>
       )}
 
+      {/* == ESTILOS ANIMACIÓN ESCÁNER == */}
       <style>{`
         @keyframes scan {
           0% { top: 0%; }
