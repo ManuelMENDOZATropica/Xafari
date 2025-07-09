@@ -296,6 +296,9 @@ i18n
       poolpo: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Escalador es tuyo! Todo gran buxcador sabe c\u00f3mo esquivar obst\u00e1culos para llegar hasta la cima.",
       drink: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Fiestero es tuyo! Todo gran buxcador sabe c\u00f3mo brindar con estilo y guardar los mejores secretos de la noche."
     }
+    ,lee_hint: "Lee la pista",
+scan: "Encuentra y escanea",
+discover_guardian: "Descubre al guardián",
         },
       },
 
@@ -585,7 +588,9 @@ i18n
       xpiral: "Kraaak-kaaa! You've done it—the Conqueror's Amulet is yours! Every great seeker knows how to reach as high as the sky.",
       poolpo: "Kraaak-kaaa! You've done it—the Climber's Amulet is yours! Every great seeker knows how to overcome obstacles to reach the top.",
       drink: "Kraaak-kaaa! You've done it—the Partygoer's Amulet is yours! Every great seeker knows how to toast with style and keep the night’s best secrets."
-    }
+    },lee_hint: "Read the clue",
+scan: "Find and scan",
+discover_guardian: "Discover the guardian",
         },
       },
     },

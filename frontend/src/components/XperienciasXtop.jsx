@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 const xperiencias = [
   {
     actividad: "t_experiencia_caletas",
-    lugar: "Caletas",
+    lugar: "Paddle board",
     edad: "Familiar",
     amuleto: "Kayak verde o Paddle Board blanco",
     pregunta: "q_caletas",
@@ -15,7 +15,7 @@ const xperiencias = [
     respuestaCorrecta: "a",
     insignia: "kayak",
     copy: "copy_caletas",
-  },
+  },  
   {
     actividad: "t_experiencia_cielo_flamingos",
     lugar: "Cielo",
@@ -246,7 +246,7 @@ export default function XperienciasXtop({ onClose }) {
       localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
       setShowCopy(idx);
       setTimeout(() => {
-        setShowCopy(null);
+        setShowCopy(null);  
         onClose();
       }, 3000);
     } else {
