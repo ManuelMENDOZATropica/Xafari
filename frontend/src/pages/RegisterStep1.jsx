@@ -125,13 +125,14 @@ export default function RegisterStep1() {
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
             />
             <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
+  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+>
+  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+</button>
+
           </div>
 
           <div className="w-full h-2 rounded">
@@ -175,13 +176,14 @@ export default function RegisterStep1() {
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
             />
             <button
-              type="button"
-              onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
-              aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"}
-            >
-              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+  type="button"
+  onClick={() => setShowConfirm(!showConfirm)}
+  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
+  aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"}
+>
+  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+</button>
+
           </div>
 
           <div className="min-h-[1.25rem]">

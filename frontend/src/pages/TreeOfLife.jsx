@@ -192,11 +192,12 @@ const bounceIfOut = (wrapper) => {
             {t("profile") || "Mi perfil"}
           </h3>
           <button
-            onClick={() => navigate("/edit-avatar")}
-            className="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100"
-          >
-            {t("editAvatar") || "Editar avatar"}
-          </button>
+  onClick={() => navigate("/edit-avatar")}
+  className="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-800 bg-white/70 backdrop-blur-sm hover:bg-white/90 transition"
+>
+  {t("editAvatar") || "Editar avatar"}
+</button>
+
         </div>
       )}
 

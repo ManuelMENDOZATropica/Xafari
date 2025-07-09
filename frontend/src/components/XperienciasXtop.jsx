@@ -319,10 +319,14 @@ export default function XperienciasXtop({ onClose }) {
                 return (
                   <div key={idx} className="relative">
                     {estaBloqueado && (
-                      <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex items-center justify-center text-red-600 text-lg font-bold rounded-2xl">
-                        ⏳ {minutos}:{segundos.toString().padStart(2, "0")}
-                      </div>
-                    )}
+  <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center text-red-600 font-semibold text-center rounded-2xl px-4">
+    <div className="text-2xl mb-1">{t("incorrect")}</div>
+    <div className="text-sm text-red-700">
+      {t("retry_in")} {minutos}:{segundos.toString().padStart(2, "0")}
+    </div>
+  </div>
+)}
+
                     {yaRespondida && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-green-100 px-4 py-1 rounded-full text-green-800 text-sm font-semibold shadow">
                         ✅ {t("logrado")}
@@ -376,7 +380,7 @@ export default function XperienciasXtop({ onClose }) {
                         {yaRespondida && (
                           <>
                             <div className="mt-3 text-sm text-green-700 font-semibold">
-                              ✔ {t("correct")} {t("next_unlocked")}
+                              {t("correct")} {t("next_unlocked")}
                             </div>
                             <AnimatePresence>
                               {showCopy === idx && (

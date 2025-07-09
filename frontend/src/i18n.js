@@ -92,9 +92,9 @@ i18n
             "Has llegado al lugar donde comienzan las aventuras",
 
           // Feedback preguntas
-          correct: "✔ Respuesta correcta.",
-          next_unlocked: "Has desbloqueado la siguiente.",
-          incorrect: "✘ Respuesta incorrecta.",
+          correct: "Respuesta correcta.",
+          next_unlocked: "",
+          incorrect: "Respuesta incorrecta.",
           retry_in: "Intenta de nuevo en",
 
           // Títulos modal
@@ -387,9 +387,9 @@ discover_guardian: "Descubre al guardián",
           welcomeToAdventure: "You've arrived where adventures begin",
 
           // Feedback
-          correct: "✔ Correct answer.",
-          next_unlocked: "You’ve unlocked the next one.",
-          incorrect: "✘ Incorrect answer.",
+          correct: "Correct answer.",
+          next_unlocked: "",
+          incorrect: "Incorrect answer.",
           retry_in: "Try again in",
 
           // Modal
