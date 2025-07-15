@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AvatarSelection from "./AvatarSelection";
+import XafariContext from "../components/XafariContext";
 
 export default function WelcomeToAvatarTransition() {
   const { t } = useTranslation();
   const [showAvatar, setShowAvatar] = useState(false);
   const [animateWing, setAnimateWing] = useState(false);
 
-  // Leer datos del usuario desde localStorage
-  const user = JSON.parse(localStorage.getItem("user")) || {};
+  // Leer datos del usuario desde Context
+  const { user } = useContext(XafariContext);
+
   const fullName = `${user.name || "Explorador"} ${user.lastname || ""}`.trim();
 
   useEffect(() => {
