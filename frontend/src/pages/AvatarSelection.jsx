@@ -4,44 +4,14 @@ import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 
 // Opciones de avatar
-const bodyOptions = Array.from(
-  { length: 10 },
-  (_, i) => `/avatares/CUERPO_${i + 1}.png`
-);
-const eyesOptions = Array.from(
-  { length: 5 },
-  (_, i) => `/avatares/OJOS_${i + 1}.png`
-);
-const hairOptions = [
-  null,
-  ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`),
-];
-const clothingOptions = Array.from(
-  { length: 16 },
-  (_, i) => `/avatares/VESTUARIO_${i + 1}.png`
-);
-const glassesAccessoryOptions = [
-  null,
-  ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`),
-];
-const headAccessoryOptions = [
-  null,
-  ...Array.from(
-    { length: 4 },
-    (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`
-  ),
-];
-const bodyAccessoryOptions = [
-  null,
-  ...Array.from(
-    { length: 2 },
-    (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`
-  ),
-];
-const shoeOptions = [
-  null,
-  ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`),
-];
+const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
+const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
+const hairOptions = [null, ...Array.from({ length: 18 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
+const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
+const glassesOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
+const headOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/SOMBREROS__${i + 1}.png`)];
+const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
+const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
 function useSelection(options, isObject = false, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex || 0);
@@ -57,53 +27,16 @@ function useSelection(options, isObject = false, initialIndex = 0) {
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-
   const { user, setUser, token } = useContext(XafariContext);
 
-  const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(
-    bodyOptions,
-    false,
-    user?.avatar?.bodyOptions
-  );
-
-  const [hairIndex, hairImg, setHair, hairList] = useSelection(
-    hairOptions,
-    false,
-    user?.avatar?.hairOptions
-  );
-  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(
-    clothingOptions,
-    false,
-    user?.avatar?.clothingOptions
-  );
-  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(
-    eyesOptions,
-    false,
-    user?.avatar?.eyesOptions
-  );
-  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(
-    shoeOptions,
-    false,
-    user?.avatar?.shoeOptions
-  );
-  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(
-    glassesAccessoryOptions,
-    false,
-    user?.avatar?.glassesAccessoryOptions
-  );
-  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] =
-    useSelection(
-      headAccessoryOptions,
-      false,
-      user?.avatar?.headAccessoryOptions
-    );
-
-  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] =
-    useSelection(
-      bodyAccessoryOptions,
-      false,
-      user?.avatar?.bodyAccessoryOptions
-    );
+  const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, false, user?.avatar?.bodyOptions);
+  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, user?.avatar?.hairOptions);
+  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, false, user?.avatar?.clothingOptions);
+  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, false, user?.avatar?.eyesOptions);
+  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, false, user?.avatar?.shoeOptions);
+  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesOptions, false, user?.avatar?.glassesAccessoryOptions);
+  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headOptions, false, user?.avatar?.headAccessoryOptions);
+  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccOptions, false, user?.avatar?.bodyAccessoryOptions);
 
   const [activeTab, setActiveTab] = useState("body");
 
@@ -138,10 +71,9 @@ export default function AvatarSelection() {
   ]);
 
   const handleSaveAvatar = useCallback(() => {
-    if (!token) return navigate("/treeoflife"); // automatically saved when running updateUser() setter from context
+    if (!token) return navigate("/treeoflife");
 
     (async () => {
-      // Si hay token, intenta guardar en backend
       try {
         const response = await fetch("https://xafari.rexmalebka.com/user", {
           method: "PUT",
@@ -157,7 +89,7 @@ export default function AvatarSelection() {
         try {
           const text = await response.text();
           data = text ? JSON.parse(text) : {};
-        } catch (parseErr) {
+        } catch {
           console.warn("⚠️ Respuesta sin JSON");
         }
 
@@ -170,8 +102,6 @@ export default function AvatarSelection() {
         if (data.user) {
           setUser(JSON.stringify(data.user));
           console.log("✅ Avatar actualizado en backend:", data.user.avatar);
-        } else {
-          console.log("✅ Avatar actualizado sin respuesta específica.");
         }
 
         navigate("/treeoflife");
@@ -202,62 +132,14 @@ export default function AvatarSelection() {
   };
 
   const tabs = [
-    {
-      key: "body",
-      label: t("body"),
-      set: setBody,
-      list: bodyList,
-      current: bodyIndex,
-    },
-    {
-      key: "eyes",
-      label: t("eyes"),
-      set: setEyes,
-      list: eyesList,
-      current: eyesIndex,
-    },
-    {
-      key: "hair",
-      label: t("hair"),
-      set: setHair,
-      list: hairList,
-      current: hairIndex,
-    },
-    {
-      key: "clothing",
-      label: t("clothing"),
-      set: setClothing,
-      list: clothingList,
-      current: clothingIndex,
-    },
-    {
-      key: "shoes",
-      label: t("shoes"),
-      set: setShoe,
-      list: shoeList,
-      current: shoeIndex,
-    },
-    {
-      key: "glasses",
-      label: t("glasses"),
-      set: setGlasses,
-      list: glassesList,
-      current: glassesIndex,
-    },
-    {
-      key: "headAccessory",
-      label: t("headAccessory"),
-      set: setHeadAcc,
-      list: headAccList,
-      current: headAccessoryIndex,
-    },
-    {
-      key: "bodyAccessory",
-      label: t("bodyAccessory"),
-      set: setBodyAcc,
-      list: bodyAccList,
-      current: bodyAccessoryIndex,
-    },
+    { key: "body", label: t("body"), set: setBody, list: bodyList, current: bodyIndex },
+    { key: "eyes", label: t("eyes"), set: setEyes, list: eyesList, current: eyesIndex },
+    { key: "hair", label: t("hair"), set: setHair, list: hairList, current: hairIndex },
+    { key: "clothing", label: t("clothing"), set: setClothing, list: clothingList, current: clothingIndex },
+    { key: "shoes", label: t("shoes"), set: setShoe, list: shoeList, current: shoeIndex },
+    { key: "glasses", label: t("glasses"), set: setGlasses, list: glassesList, current: glassesIndex },
+    { key: "headAccessory", label: t("headAccessory"), set: setHeadAcc, list: headAccList, current: headAccessoryIndex },
+    { key: "bodyAccessory", label: t("bodyAccessory"), set: setBodyAcc, list: bodyAccList, current: bodyAccessoryIndex },
   ];
 
   const zoomedKeys = {
@@ -285,9 +167,7 @@ export default function AvatarSelection() {
           ← {t("back")}
         </button>
         <button
-          onClick={() =>
-            i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-          }
+          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
           className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
         >
           {t("language")}
@@ -306,7 +186,7 @@ export default function AvatarSelection() {
             bodyAccImg,
             bodyImg,
             eyesImg,
-            hairImg,
+            ...(clothingIndex === 4 || clothingIndex === 5 ? [] : [hairImg]),
             shoeImg,
             clothingImg,
             headAccImg,
@@ -384,9 +264,7 @@ export default function AvatarSelection() {
                               <img
                                 src={opt}
                                 alt={`${tab.key}_${i}`}
-                                className={`w-full h-full object-contain transform ${
-                                  zoom.scale || ""
-                                } ${zoom.translateY || ""}`}
+                                className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
                               />
                             ) : (
                               <span className="text-xl font-bold text-gray-400">

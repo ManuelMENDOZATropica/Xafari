@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 // Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
 const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
-const hairOptions = [null, ...Array.from({ length: 21 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
+const hairOptions = [null, ...Array.from({ length: 18 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
 const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
 const glassesOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
-const headOptions = [null, ...Array.from({ length: 4 }, (_, i) => `/avatares/ACCESORIOS_CABEZA_${i + 1}.png`)];
+const headOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/SOMBREROS_${i + 1}.png`)];
 const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
 const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
@@ -21,12 +21,18 @@ export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
+let user = null;
+try {
+  const stored = localStorage.getItem("user");
+  user = stored ? JSON.parse(stored) : null;
+} catch (e) {
+  console.warn("❌ Error al parsear usuario:", e);
+  user = null;
+}
 
+  const token = localStorage.getItem("token");
   const avatar = user?.avatar || {};
 
-  // Cargar índices iniciales desde el avatar guardado
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, avatar.bodyOptions ?? 0);
   const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, avatar.eyesOptions ?? 0);
   const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, avatar.hairOptions ?? 0);
@@ -50,8 +56,19 @@ export default function AvatarSelection() {
     bodyAccessoryOptions: bodyAccessoryIndex,
   };
 
-  // Si no hay usuario guardado, crea un modo invitado
-  if (!user) {
+  // ✅ RE-VALIDAR justo aquí
+  const rawUser = localStorage.getItem("user");
+  const rawToken = localStorage.getItem("token");
+
+  let currentUser = null;
+  try {
+    currentUser = rawUser ? JSON.parse(rawUser) : null;
+  } catch (e) {
+    console.warn("⚠️ Usuario inválido en localStorage");
+    currentUser = null;
+  }
+
+  if (!currentUser) {
     const guestUser = {
       name: "Invitado",
       lastname: "",
@@ -64,14 +81,14 @@ export default function AvatarSelection() {
     return;
   }
 
-  // Si no hay token, guarda en localStorage sin intentar backend
-  if (!token) {
-    const updatedUser = { ...user, avatar: newAvatar };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    console.warn("👤 Avatar actualizado localmente sin token:", updatedUser.avatar);
-    navigate("/treeoflife");
-    return;
-  }
+if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken === "null" || rawToken === "") {
+  const updatedUser = { ...currentUser, avatar: newAvatar };
+  localStorage.setItem("user", JSON.stringify(updatedUser));
+  console.warn("👤 Avatar actualizado localmente como invitado:", updatedUser.avatar);
+  navigate("/treeoflife");
+  return;
+}
+
 
   // Si hay token, intenta guardar en backend
   try {
@@ -79,9 +96,9 @@ export default function AvatarSelection() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${rawToken}`,
       },
-      body: JSON.stringify({ ...user, avatar: newAvatar }),
+      body: JSON.stringify({ ...currentUser, avatar: newAvatar }),
     });
 
     if (!response.ok) throw new Error("Fallo al guardar el avatar");
@@ -133,19 +150,13 @@ export default function AvatarSelection() {
     glasses: { scale: "scale-[2.5]", translateY: "-translate-y-[-60%]" },
     headAccessory: { scale: "scale-[2.3]", translateY: "-translate-y-[-80%]" },
     shoes: { scale: "scale-[2.5]", translateY: "translate-y-[-85%]" },
-    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-18%]" }
+    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-18%]" },
   };
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
-      {/* Fondo */}
-      <img
-        src="/img/V03-CERRITOS.jpg"
-        alt="Fondo Avatar"
-        className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
-      />
+      <img src="/img/V03-CERRITOS.jpg" alt="Fondo Avatar" className="absolute inset-0 w-full h-full object-cover object-bottom z-0" />
 
-      {/* Botones superiores */}
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
         <button
           onClick={() => navigate("/treeoflife")}
@@ -161,7 +172,6 @@ export default function AvatarSelection() {
         </button>
       </div>
 
-      {/* Contenido principal */}
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-[env(safe-area-inset-bottom)] overflow-y-auto">
         <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md mb-2 w-full max-w-sm">
           <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
@@ -169,17 +179,29 @@ export default function AvatarSelection() {
           </h1>
         </div>
 
-        {/* Avatar */}
         <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
-          {[bodyAccImg, bodyImg, eyesImg, hairImg, shoeImg, clothingImg, headAccImg, glassesImg].map(
+          {[
+            bodyAccImg,
+            bodyImg,
+            eyesImg,
+            ...(clothingIndex === 4 || clothingIndex === 5 ? [] : [hairImg]),
+            shoeImg,
+            clothingImg,
+            headAccImg,
+            glassesImg,
+          ].map(
             (img, idx) =>
               img && (
-                <img key={idx} src={img} alt={`layer-${idx}`} className="absolute w-full h-full object-contain" />
+                <img
+                  key={idx}
+                  src={img}
+                  alt={`layer-${idx}`}
+                  className="absolute w-full h-full object-contain"
+                />
               )
           )}
         </div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {tabs.map((tab) => (
             <button
@@ -197,64 +219,64 @@ export default function AvatarSelection() {
         </div>
 
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
-  {tabs
-    .filter((tab) => tab.key === activeTab)
-    .map((tab) => {
-      const scrollRef = useRef();
-      const [showArrow, setShowArrow] = useState(false);
-      const zoom = zoomedKeys[tab.key] || {};
+          {tabs
+            .filter((tab) => tab.key === activeTab)
+            .map((tab) => {
+              const scrollRef = useRef();
+              const [showArrow, setShowArrow] = useState(false);
+              const zoom = zoomedKeys[tab.key] || {};
 
-      useEffect(() => {
-        const el = scrollRef.current;
-        const checkScroll = () => {
-          if (!el) return;
-          setShowArrow(el.scrollWidth > el.clientWidth && el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
-        };
-        checkScroll();
-        el?.addEventListener("scroll", checkScroll);
-        return () => el?.removeEventListener("scroll", checkScroll);
-      }, [tab.list]);
+              useEffect(() => {
+                const el = scrollRef.current;
+                const checkScroll = () => {
+                  if (!el) return;
+                  setShowArrow(
+                    el.scrollWidth > el.clientWidth &&
+                    el.scrollLeft + el.clientWidth < el.scrollWidth - 10
+                  );
+                };
+                checkScroll();
+                el?.addEventListener("scroll", checkScroll);
+                return () => el?.removeEventListener("scroll", checkScroll);
+              }, [tab.list]);
 
-      return (
-        <div key={tab.key} className="relative w-full px-2">
-          <div ref={scrollRef} className="flex overflow-x-auto gap-2 pr-6 scroll-smooth">
-            {tab.list.map((opt, i) => {
-              const isCurrent = i === tab.current;
               return (
-                <div key={i} className="flex-shrink-0">
-                  <div
-                    onClick={() => tab.set(i)}
-                    className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                      isCurrent ? "border-green-600" : "border-transparent"
-                    } bg-white overflow-hidden`}
-                  >
-                    {opt ? (
-                      <img
-                        src={opt}
-                        alt={`${tab.key}_${i}`}
-                        className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
-                      />
-                    ) : (
-                      <span className="text-xl font-bold text-gray-400">×</span>
-                    )}
+                <div key={tab.key} className="relative w-full px-2">
+                  <div ref={scrollRef} className="flex overflow-x-auto gap-2 pr-6 scroll-smooth">
+                    {tab.list.map((opt, i) => {
+                      const isCurrent = i === tab.current;
+                      return (
+                        <div key={i} className="flex-shrink-0">
+                          <div
+                            onClick={() => tab.set(i)}
+                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
+                              isCurrent ? "border-green-600" : "border-transparent"
+                            } bg-white overflow-hidden`}
+                          >
+                            {opt ? (
+                              <img
+                                src={opt}
+                                alt={`${tab.key}_${i}`}
+                                className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
+                              />
+                            ) : (
+                              <span className="text-xl font-bold text-gray-400">×</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
+                  {showArrow && (
+                    <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-green-600 text-2xl animate-bounce-right">
+                      →
+                    </div>
+                  )}
                 </div>
               );
             })}
-          </div>
-
-          {/* Flecha indicadora con animación */}
-          {showArrow && (
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-green-600 text-2xl animate-bounce-right">
-              →
-            </div>
-          )}
         </div>
-      );
-    })}
-</div>
 
-        {/* Botones */}
         <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
           <button
             onClick={handleRandomize}
