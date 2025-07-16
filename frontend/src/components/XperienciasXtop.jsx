@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 const xperiencias = [
   {
     actividad: "t_experiencia_caletas",
-    lugar: "Paddle board",
+    lugar: "Caletas del hotel en kayak o paddle board",
     edad: "Familiar",
     amuleto: "Kayak verde o Paddle Board blanco",
     pregunta: "q_caletas",
@@ -20,7 +20,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_cielo_flamingos",
-    lugar: "Cielo",
+    lugar: "Salón Flamingo",
     edad: "Familiar",
     amuleto: "Un Vinil con el centro rosa",
     pregunta: "q_cielo_flamingos",
@@ -31,7 +31,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_agua_muluk",
-    lugar: "Agua",
+    lugar: "Muluk Family Spa",
     edad: "Familiar",
     amuleto: "Una caracola",
     pregunta: "q_muluk",
@@ -42,7 +42,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_vida_maquinitas",
-    lugar: "Vida",
+    lugar: "Bar Las Maquinitas",
     edad: "Familiar",
     amuleto: "Una televisión antigua",
     pregunta: "q_vida_juegos",
@@ -53,7 +53,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_espiral_teatro",
-    lugar: "Espiral",
+    lugar: "Teatro del Río",
     edad: "Familiar",
     amuleto: "Máscaras de teatro",
     pregunta: "q_espiral_lamparas",
@@ -64,7 +64,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_tierra_alberca",
-    lugar: "Tierra",
+    lugar: "Alberca infinita",
     edad: "Familiar",
     amuleto: "Un salvavidas",
     pregunta: "q_tierra_logo",
@@ -75,7 +75,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_eclipse_luna",
-    lugar: "Eclipse",
+    lugar: "Lunateca",
     edad: "0-5 años",
     amuleto: "La silueta de un conejo en una Luna",
     pregunta: "q_eclipse_luna",
@@ -86,7 +86,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_eclipse_xiquit",
-    lugar: "Eclipse",
+    lugar: "Xiquit Inn",
     edad: "5-9 años",
     amuleto: "El camión de Xiquit Inn",
     pregunta: "q_eclipse_xiquit",
@@ -97,7 +97,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_sol_infinity",
-    lugar: "Sol",
+    lugar: "Infinity Room",
     edad: "13-17 años",
     amuleto: "Amuleto de una de las estrellas de infinity",
     pregunta: "q_sol_mensaje",
@@ -108,7 +108,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_sol_jaguar",
-    lugar: "Sol",
+    lugar: "Paxanguería",
     edad: "13-17 años",
     amuleto: "La máscara del guardián jaguar que está colgada sobre la pared",
     pregunta: "q_sol_jaguar",
@@ -119,7 +119,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_fuego_piscina",
-    lugar: "Fuego",
+    lugar: "Rooftop Fuego",
     edad: "+18 años",
     amuleto:
       "Amuleto de la famosa alberca transparente con una personita nadando",
@@ -131,7 +131,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_canal_patin",
-    lugar: "Canal",
+    lugar: "Patín",
     edad: "Familiar",
     amuleto: "El Patín",
     pregunta: "q_canal_patin",
@@ -142,7 +142,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_vida_tobogan",
-    lugar: "Vida",
+    lugar: "Kamikaze , el tobogán más alto",
     edad: "Familiar",
     amuleto: "Representación de un tobogán",
     pregunta: "q_vida_tobogan",
@@ -153,7 +153,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_ixla_xpiral",
-    lugar: "Ixla Xpiral",
+    lugar: "Xpiral",
     edad: "Familiar",
     amuleto: "Una representación de la Xpiral",
     pregunta: "q_ixla_xpiral",
@@ -164,7 +164,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_viento_poolpo",
-    lugar: "Viento",
+    lugar: "Pool’po",
     edad: "0-9 años",
     amuleto: "Amuleto de un Pool'po",
     pregunta: "q_viento_poolpo",
@@ -175,7 +175,7 @@ const xperiencias = [
   },
   {
     actividad: "t_experiencia_cielo_xupes",
-    lugar: "Cielo",
+    lugar: "Xupes y Pava Jarla",
     edad: "+18 años",
     amuleto:
       "Amuleto de un drinksito con un sticker de una máscara de luchador sobre el vaso",
