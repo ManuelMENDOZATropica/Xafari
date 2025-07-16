@@ -126,6 +126,9 @@ i18n
           },
 
           // Experiencias y preguntas
+
+          rateExperience: "Califica esta experiencia",
+          logrado: "Listo",
           t_experiencia_caletas:
             "Explora las caletas del hotel en kayak o paddle board y sumérgete en la belleza del paisaje en cada remada.",
           q_caletas: "¿De qué color son los Kayaks y el Paddle board?",
@@ -279,26 +282,44 @@ i18n
             },
           },
           copy: {
-      kayak: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Navegante es tuyo! Todo gran buxcador sabe c\u00f3mo remar con valent\u00eda y disfrutar del paisaje natural.",
-      vinil: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Rumbero es tuyo! Todo gran buxcador sabe c\u00f3mo brillar con ritmo y moverse sin parar.",
-      caracola: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Sereno es tuyo! Todo gran buxcador sabe c\u00f3mo encontrar calma entre las aguas del esp\u00edritu.",
-      tv: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Jugador Retro es tuyo! Todo gran buxcador sabe c\u00f3mo dominar los cl\u00e1sicos del pasado.",
-      teatro: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Artista es tuyo! Todo gran buxcador sabe c\u00f3mo actuar con el coraz\u00f3n y brillar con luz propia.",
-      salvavidas: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Guardi\u00e1n Acu\u00e1tico es tuyo! Todo gran buxcador sabe c\u00f3mo mantenerse a flote en cualquier tormenta.",
-      conejo: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto Lunar es tuyo! Todo gran buxcador sabe c\u00f3mo seguir los secretos que brillan en la noche.",
-      camion: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Explorador Peque\u00f1o es tuyo! Todo gran buxcador comienza su viaje con curiosidad infinita.",
-      estrella: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto Estelar es tuyo! Todo gran buxcador sabe que su brillo interior puede iluminar el mundo.",
-      mascarajaguar: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Jaguar es tuyo! Todo gran buxcador sabe c\u00f3mo avanzar con sigilo y poder.",
-      piscina: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Nadador es tuyo! Todo gran buxcador sabe c\u00f3mo lanzarse al fuego sin quemarse.",
-      patin: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Competidor es tuyo! Todo gran buxcador sabe c\u00f3mo acelerar con destreza y mantener el equilibrio en cualquier reto sobre ruedas.",
-      tobogan: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Valiente es tuyo! Todo gran buxcador sabe c\u00f3mo lanzarse desde las alturas con una sonrisa en el rostro.",
-      xpiral: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Conquistador es tuyo! Todo gran buxcador sabe c\u00f3mo llegar tan alto como el cielo.",
-      poolpo: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Escalador es tuyo! Todo gran buxcador sabe c\u00f3mo esquivar obst\u00e1culos para llegar hasta la cima.",
-      drink: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Fiestero es tuyo! Todo gran buxcador sabe c\u00f3mo brindar con estilo y guardar los mejores secretos de la noche."
-    }
-    ,lee_hint: "Lee la pista",
-scan: "Encuentra y escanea",
-discover_guardian: "Descubre al guardián",
+            kayak:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Navegante es tuyo! Todo gran buxcador sabe c\u00f3mo remar con valent\u00eda y disfrutar del paisaje natural.",
+            vinil:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Rumbero es tuyo! Todo gran buxcador sabe c\u00f3mo brillar con ritmo y moverse sin parar.",
+            caracola:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Sereno es tuyo! Todo gran buxcador sabe c\u00f3mo encontrar calma entre las aguas del esp\u00edritu.",
+            tv: "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Jugador Retro es tuyo! Todo gran buxcador sabe c\u00f3mo dominar los cl\u00e1sicos del pasado.",
+            teatro:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Artista es tuyo! Todo gran buxcador sabe c\u00f3mo actuar con el coraz\u00f3n y brillar con luz propia.",
+            salvavidas:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Guardi\u00e1n Acu\u00e1tico es tuyo! Todo gran buxcador sabe c\u00f3mo mantenerse a flote en cualquier tormenta.",
+            conejo:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto Lunar es tuyo! Todo gran buxcador sabe c\u00f3mo seguir los secretos que brillan en la noche.",
+            camion:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Explorador Peque\u00f1o es tuyo! Todo gran buxcador comienza su viaje con curiosidad infinita.",
+            estrella:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto Estelar es tuyo! Todo gran buxcador sabe que su brillo interior puede iluminar el mundo.",
+            mascarajaguar:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Jaguar es tuyo! Todo gran buxcador sabe c\u00f3mo avanzar con sigilo y poder.",
+            piscina:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Nadador es tuyo! Todo gran buxcador sabe c\u00f3mo lanzarse al fuego sin quemarse.",
+            patin:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Competidor es tuyo! Todo gran buxcador sabe c\u00f3mo acelerar con destreza y mantener el equilibrio en cualquier reto sobre ruedas.",
+            tobogan:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Valiente es tuyo! Todo gran buxcador sabe c\u00f3mo lanzarse desde las alturas con una sonrisa en el rostro.",
+            xpiral:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Conquistador es tuyo! Todo gran buxcador sabe c\u00f3mo llegar tan alto como el cielo.",
+            poolpo:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Escalador es tuyo! Todo gran buxcador sabe c\u00f3mo esquivar obst\u00e1culos para llegar hasta la cima.",
+            drink:
+              "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Fiestero es tuyo! Todo gran buxcador sabe c\u00f3mo brindar con estilo y guardar los mejores secretos de la noche.",
+          },
+          lee_hint: "Lee la pista",
+          scan: "Encuentra y escanea",
+          discover_guardian: "Descubre al guardián",
+          
+        ///Checklist
+         checklist_comido: "He comido aquí"
         },
       },
 
@@ -421,6 +442,8 @@ discover_guardian: "Descubre al guardián",
           },
 
           // Experiences and Questions
+          rateExperience: "Rate this experience",
+          logrado: "Ready",
           t_experiencia_caletas:
             "Explore the hotel's coves by kayak or paddle board and immerse yourself in the beauty of the scenery with every stroke.",
           q_caletas: "What color are the kayaks and the paddle board?",
@@ -572,25 +595,44 @@ discover_guardian: "Descubre al guardián",
             },
           },
           copy: {
-      kayak: "Kraaak-kaaa! You've done it—the Navigator's Amulet is yours! Every great seeker knows how to paddle with courage and enjoy the scenery.",
-      vinil: "Kraaak-kaaa! You've done it—the Rumbero's Amulet is yours! Every great seeker knows how to shine with rhythm and keep moving.",
-      caracola: "Kraaak-kaaa! You've done it—the Serene Amulet is yours! Every great seeker knows how to find calm in the spirit's waters.",
-      tv: "Kraaak-kaaa! You've done it—the Retro Player's Amulet is yours! Every great seeker knows how to master the classics of the past.",
-      teatro: "Kraaak-kaaa! You've done it—the Artist's Amulet is yours! Every great seeker knows how to act from the heart and shine brightly.",
-      salvavidas: "Kraaak-kaaa! You've done it—the Aquatic Guardian's Amulet is yours! Every great seeker knows how to stay afloat through any storm.",
-      conejo: "Kraaak-kaaa! You've done it—the Lunar Amulet is yours! Every great seeker knows how to follow the secrets that shine at night.",
-      camion: "Kraaak-kaaa! You've done it—the Little Explorer's Amulet is yours! Every great seeker starts their journey with endless curiosity.",
-      estrella: "Kraaak-kaaa! You've done it—the Stellar Amulet is yours! Every great seeker knows their inner light can illuminate the world.",
-      mascarajaguar: "Kraaak-kaaa! You've done it—the Jaguar's Amulet is yours! Every great seeker knows how to move forward with stealth and strength.",
-      piscina: "Kraaak-kaaa! You've done it—the Swimmer's Amulet is yours! Every great seeker knows how to dive into fire without getting burned.",
-      patin: "Kraaak-kaaa! You've done it—the Competitor's Amulet is yours! Every great seeker knows how to speed with skill and keep balance on any ride.",
-      tobogan: "Kraaak-kaaa! You've done it—the Brave's Amulet is yours! Every great seeker knows how to slide from the heights with a smile.",
-      xpiral: "Kraaak-kaaa! You've done it—the Conqueror's Amulet is yours! Every great seeker knows how to reach as high as the sky.",
-      poolpo: "Kraaak-kaaa! You've done it—the Climber's Amulet is yours! Every great seeker knows how to overcome obstacles to reach the top.",
-      drink: "Kraaak-kaaa! You've done it—the Partygoer's Amulet is yours! Every great seeker knows how to toast with style and keep the night’s best secrets."
-    },lee_hint: "Read the clue",
-scan: "Find and scan",
-discover_guardian: "Discover the guardian",
+            kayak:
+              "Kraaak-kaaa! You've done it—the Navigator's Amulet is yours! Every great seeker knows how to paddle with courage and enjoy the scenery.",
+            vinil:
+              "Kraaak-kaaa! You've done it—the Rumbero's Amulet is yours! Every great seeker knows how to shine with rhythm and keep moving.",
+            caracola:
+              "Kraaak-kaaa! You've done it—the Serene Amulet is yours! Every great seeker knows how to find calm in the spirit's waters.",
+            tv: "Kraaak-kaaa! You've done it—the Retro Player's Amulet is yours! Every great seeker knows how to master the classics of the past.",
+            teatro:
+              "Kraaak-kaaa! You've done it—the Artist's Amulet is yours! Every great seeker knows how to act from the heart and shine brightly.",
+            salvavidas:
+              "Kraaak-kaaa! You've done it—the Aquatic Guardian's Amulet is yours! Every great seeker knows how to stay afloat through any storm.",
+            conejo:
+              "Kraaak-kaaa! You've done it—the Lunar Amulet is yours! Every great seeker knows how to follow the secrets that shine at night.",
+            camion:
+              "Kraaak-kaaa! You've done it—the Little Explorer's Amulet is yours! Every great seeker starts their journey with endless curiosity.",
+            estrella:
+              "Kraaak-kaaa! You've done it—the Stellar Amulet is yours! Every great seeker knows their inner light can illuminate the world.",
+            mascarajaguar:
+              "Kraaak-kaaa! You've done it—the Jaguar's Amulet is yours! Every great seeker knows how to move forward with stealth and strength.",
+            piscina:
+              "Kraaak-kaaa! You've done it—the Swimmer's Amulet is yours! Every great seeker knows how to dive into fire without getting burned.",
+            patin:
+              "Kraaak-kaaa! You've done it—the Competitor's Amulet is yours! Every great seeker knows how to speed with skill and keep balance on any ride.",
+            tobogan:
+              "Kraaak-kaaa! You've done it—the Brave's Amulet is yours! Every great seeker knows how to slide from the heights with a smile.",
+            xpiral:
+              "Kraaak-kaaa! You've done it—the Conqueror's Amulet is yours! Every great seeker knows how to reach as high as the sky.",
+            poolpo:
+              "Kraaak-kaaa! You've done it—the Climber's Amulet is yours! Every great seeker knows how to overcome obstacles to reach the top.",
+            drink:
+              "Kraaak-kaaa! You've done it—the Partygoer's Amulet is yours! Every great seeker knows how to toast with style and keep the night’s best secrets.",
+          },
+          lee_hint: "Read the clue",
+          scan: "Find and scan",
+          discover_guardian: "Discover the guardian",
+          
+        //Checklist
+        checklist_comido: "I ate here"
         },
       },
     },

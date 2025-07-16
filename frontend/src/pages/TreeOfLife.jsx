@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import AvatarRender from "@/components/AvatarRender";
 import XecretoRegister from "@/components/XecretoRegister";
 import XperienciasXtop from "@/components/XperienciasXtop";
+import ChecklistGastro from "@/components/ChecklistGastro";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { User } from "lucide-react";
@@ -11,6 +13,7 @@ import { User } from "lucide-react";
 export default function TreeOfLife() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
 
   /* ────────── constantes ────────── */
   const CANVAS_SIZE = 1200;
@@ -164,18 +167,17 @@ export default function TreeOfLife() {
               )}
 
               <div
-  className="absolute z-40"
-  style={{
-    left: `${(615 / CANVAS_SIZE) * 100}%`,
-    top: `${(910 / CANVAS_SIZE) * 100}%`,
-    width: `${(90 / CANVAS_SIZE) * 100}%`,      // 90px relativo
-    height: `${(130 / CANVAS_SIZE) * 100}%`,    // 130px relativo
-    transform: "translate(-50%, -100%)",
-  }}
->
-  <AvatarRender className="w-full h-full" />
-</div>
-
+                className="absolute z-40"
+                style={{
+                  left: `${(615 / CANVAS_SIZE) * 100}%`,
+                  top: `${(910 / CANVAS_SIZE) * 100}%`,
+                  width: `${(90 / CANVAS_SIZE) * 100}%`, // 90px relativo
+                  height: `${(130 / CANVAS_SIZE) * 100}%`, // 130px relativo
+                  transform: "translate(-50%, -100%)",
+                }}
+              >
+                <AvatarRender className="w-full h-full" />
+              </div>
             </div>
           </TransformComponent>
         </TransformWrapper>
@@ -227,12 +229,13 @@ export default function TreeOfLife() {
               icon: "/iconos/xecretos.png",
               onClick: () => setShowXecretoModal(true),
             },
-            {
-              key: "checklist",
-              label: t("checklist") || "checklist",
-              icon: "/iconos/checklist.png",
-              onClick: () => alert("Checklist próximamente"),
-            },
+           {
+  key: "checklist",
+  label: t("checklist") || "checklist",
+  icon: "/iconos/checklist.png",
+  onClick: () => setShowChecklistModal(true),
+}
+,
             {
               key: "podium",
               label: t("podium") || "podium",
@@ -296,6 +299,25 @@ export default function TreeOfLife() {
                     localStorage.getItem("progresoXperiencias") || "{}"
                   )
                 );
+                smoothReset();
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── MODAL Checklist ─── */}
+      <AnimatePresence>
+        {showChecklistModal && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ChecklistGastro
+              onClose={() => {
+                setShowChecklistModal(false);
                 smoothReset();
               }}
             />

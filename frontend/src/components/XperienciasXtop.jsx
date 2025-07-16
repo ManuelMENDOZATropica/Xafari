@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
+
 const xperiencias = [
   {
     actividad: "t_experiencia_caletas",
@@ -15,7 +17,7 @@ const xperiencias = [
     respuestaCorrecta: "a",
     insignia: "kayak",
     copy: "copy_caletas",
-  },  
+  },
   {
     actividad: "t_experiencia_cielo_flamingos",
     lugar: "Cielo",
@@ -185,9 +187,27 @@ const xperiencias = [
   },
 ];
 
-
 export default function XperienciasXtop({ onClose }) {
   const { t, i18n } = useTranslation();
+
+  const [ratings, setRatings] = useState(() => {
+  const saved = localStorage.getItem("calificacionesXperiencias");
+  return saved ? JSON.parse(saved) : {};
+});
+
+const handleSetRating = (clave, valor) => {
+  const actualizado = { ...ratings, [clave]: valor };
+  setRatings(actualizado);
+  localStorage.setItem("calificacionesXperiencias", JSON.stringify(actualizado));
+
+  // TODO: Aquí puedes hacer un fetch para guardar la calificación en backend junto con `true`
+  // fetch("/api/guardarProgreso", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ insignia: clave, correcta: true, calificacion: valor })
+  // });
+};
+
 
   const [respuestas, setRespuestas] = useState(() => {
     const saved = localStorage.getItem("progresoXperiencias");
@@ -215,8 +235,6 @@ export default function XperienciasXtop({ onClose }) {
   });
 
   const [showCopy, setShowCopy] = useState(null);
-
- 
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -246,7 +264,7 @@ export default function XperienciasXtop({ onClose }) {
       localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
       setShowCopy(idx);
       setTimeout(() => {
-        setShowCopy(null);  
+        setShowCopy(null);
         onClose();
       }, 3000);
     } else {
@@ -256,13 +274,18 @@ export default function XperienciasXtop({ onClose }) {
       const tiemposActuales = { ...tiempos, [clave]: 180 };
       setBloqueados(actualizado);
       setTiempos(tiemposActuales);
-      localStorage.setItem("tiemposBloqueoXperiencias", JSON.stringify(actualizado));
+      localStorage.setItem(
+        "tiemposBloqueoXperiencias",
+        JSON.stringify(actualizado)
+      );
       // Modal no se cierra al fallar
     }
   };
 
   const total = xperiencias.length;
-  const respondidas = Object.values(respuestas).filter((r) => r === true).length;
+  const respondidas = Object.values(respuestas).filter(
+    (r) => r === true
+  ).length;
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
@@ -283,7 +306,9 @@ export default function XperienciasXtop({ onClose }) {
               ← {t("back")}
             </button>
             <button
-              onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+              onClick={() =>
+                i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
+              }
               className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
             >
               {t("language")}
@@ -319,13 +344,14 @@ export default function XperienciasXtop({ onClose }) {
                 return (
                   <div key={idx} className="relative">
                     {estaBloqueado && (
-  <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center text-red-600 font-semibold text-center rounded-2xl px-4">
-    <div className="text-2xl mb-1">{t("incorrect")}</div>
-    <div className="text-sm text-red-700">
-      {t("retry_in")} {minutos}:{segundos.toString().padStart(2, "0")}
-    </div>
-  </div>
-)}
+                      <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center text-red-600 font-semibold text-center rounded-2xl px-4">
+                        <div className="text-2xl mb-1">{t("incorrect")}</div>
+                        <div className="text-sm text-red-700">
+                          {t("retry_in")} {minutos}:
+                          {segundos.toString().padStart(2, "0")}
+                        </div>
+                      </div>
+                    )}
 
                     {yaRespondida && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-green-100 px-4 py-1 rounded-full text-green-800 text-sm font-semibold shadow">
@@ -343,7 +369,9 @@ export default function XperienciasXtop({ onClose }) {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-1">{xp.lugar}</h2>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                          {xp.lugar}
+                        </h2>
                         <motion.img
                           src={`/insigniasXtop/${xp.insignia}.png`}
                           alt="insignia"
@@ -354,7 +382,10 @@ export default function XperienciasXtop({ onClose }) {
                               ? {
                                   opacity: 1,
                                   scale: 2,
-                                  transition: { duration: 2.5, ease: "easeOut" }
+                                  transition: {
+                                    duration: 2.5,
+                                    ease: "easeOut",
+                                  },
                                 }
                               : yaRespondida
                               ? { opacity: 1, scale: 1 }
@@ -362,9 +393,13 @@ export default function XperienciasXtop({ onClose }) {
                           }
                         />
                       </div>
-                      <p className="text-sm text-gray-700 leading-snug">{t(xp.actividad)}</p>
+                      <p className="text-sm text-gray-700 leading-snug">
+                        {t(xp.actividad)}
+                      </p>
                       <div className="mt-4">
-                        <p className="font-medium text-gray-800 mb-2">{t(xp.pregunta)}</p>
+                        <p className="font-medium text-gray-800 mb-2">
+                          {t(xp.pregunta)}
+                        </p>
                         <div className="flex flex-col gap-2">
                           {xp.opciones.map((op, i) => (
                             <button
@@ -378,24 +413,49 @@ export default function XperienciasXtop({ onClose }) {
                           ))}
                         </div>
                         {yaRespondida && (
-                          <>
-                            <div className="mt-3 text-sm text-green-700 font-semibold">
-                              {t("correct")} {t("next_unlocked")}
-                            </div>
-                            <AnimatePresence>
-                              {showCopy === idx && (
-                                <motion.div
-                                  className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg border border-green-400 px-4 py-2 rounded-xl text-green-800 text-center text-sm w-[90%] max-w-md"
-                                  initial={{ opacity: 0, y: -20 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -20 }}
-                                  transition={{ duration: 0.5 }}
-                                >
-                                  {t(`copy.${xp.insignia}`)}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </>
+<>
+  <div className="mt-3 text-sm text-green-700 font-semibold">
+    {t("correct")} {t("next_unlocked")}
+  </div>
+
+  {/* Bloque de globo de texto con copy (comentado) */}
+  {/*
+  <AnimatePresence>
+    {showCopy === idx && (
+      <motion.div
+        className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg border border-green-400 px-4 py-2 rounded-xl text-green-800 text-center text-sm w-[90%] max-w-md"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.5 }}
+      >
+        {t(`copy.${xp.insignia}`)}
+      </motion.div>
+    )}
+  </AnimatePresence>
+  */}
+
+  {/* ⭐ Calificación por estrellas */}
+  <div className="mt-4">
+    <p className="text-sm font-medium text-gray-700 mb-1">{t("rateExperience")}</p>
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          role="button"
+          onClick={() => handleSetRating(xp.insignia, star)}
+          className={`text-xl cursor-pointer transition-transform ${
+            ratings[xp.insignia] >= star ? "text-yellow-400" : "text-gray-300"
+          }`}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  </div>
+</>
+
+
                         )}
                       </div>
                     </div>
