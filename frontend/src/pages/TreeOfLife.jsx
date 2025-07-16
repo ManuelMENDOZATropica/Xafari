@@ -40,6 +40,15 @@ export default function TreeOfLife() {
     );
   }, []);
 
+  ///Progreso checklist
+  const [checklistProgreso, setChecklistProgreso] = useState({});
+
+  useEffect(() => {
+    setChecklistProgreso(
+      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
+    );
+  }, []);
+
   /* ────────── centrado responsivo ────────── */
   const recalcInitialPos = () => {
     const vp = wrapperRef.current?.getBoundingClientRect();
@@ -166,6 +175,19 @@ export default function TreeOfLife() {
                 ) : null
               )}
 
+              {Object.entries(checklistProgreso).map(([k, v]) =>
+                v ? (
+                  <motion.img
+                    key={k}
+                    src={`/arbol/checklist/${k}.png`}
+                    className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: [1.1, 0.95, 1] }}
+                    transition={{ duration: 0.6 }}
+                  />
+                ) : null
+              )}
+
               <div
                 className="absolute z-40"
                 style={{
@@ -229,13 +251,12 @@ export default function TreeOfLife() {
               icon: "/iconos/xecretos.png",
               onClick: () => setShowXecretoModal(true),
             },
-           {
-  key: "checklist",
-  label: t("checklist") || "checklist",
-  icon: "/iconos/checklist.png",
-  onClick: () => setShowChecklistModal(true),
-}
-,
+            {
+              key: "checklist",
+              label: t("checklist") || "checklist",
+              icon: "/iconos/checklist.png",
+              onClick: () => setShowChecklistModal(true),
+            },
             {
               key: "podium",
               label: t("podium") || "podium",
