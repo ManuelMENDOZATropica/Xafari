@@ -337,11 +337,15 @@ export default function TreeOfLife() {
             exit={{ opacity: 0 }}
           >
             <ChecklistGastro
-              onClose={() => {
-                setShowChecklistModal(false);
-                smoothReset();
-              }}
-            />
+  onClose={() => {
+    setShowChecklistModal(false);
+    setChecklistProgreso(
+      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
+    );
+    smoothReset();
+  }}
+/>
+
           </motion.div>
         )}
       </AnimatePresence>
