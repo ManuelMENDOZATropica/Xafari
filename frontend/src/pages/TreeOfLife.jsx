@@ -39,6 +39,9 @@ export default function TreeOfLife() {
       JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
     );
   }, []);
+ 
+  
+
 
   ///Progreso checklist
   const [checklistProgreso, setChecklistProgreso] = useState({});
@@ -144,7 +147,7 @@ export default function TreeOfLife() {
               className="relative"
             >
               <img
-                src="/arbol/baseArbol.png"
+                src="/arbol/baseArbolv3.png"
                 alt=""
                 className="w-full h-full object-contain"
               />
@@ -154,13 +157,16 @@ export default function TreeOfLife() {
                   <motion.img
                     key={k}
                     src={`/arbol/guardianesÁrbol/${mapa[k]}.png`}
+                    
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: [1.2, 0.95, 1] }}
                     transition={{ duration: 0.8 }}
                   />
                 ) : null
-              )}
+              )
+              }
+ 
 
               {Object.entries(respuestasCorrectas).map(([k, v]) =>
                 v ? (

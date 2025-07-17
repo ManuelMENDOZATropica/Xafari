@@ -23,7 +23,7 @@ export default function XecretoRegister({ onClose }) {
     xecreto7: { guardian: "Búho", maya: "/maya/GuardianBuho.png", arbol: "/guardianes/Búho Casa Eclipse.png" },
     xecreto8: { guardian: "Mariposa", maya: "/maya/GuardianMariposa.png", arbol: "/guardianes/Mariposa Casa Viento.png" },
     xecreto9: { guardian: "Flamenco", maya: "/maya/GuardianFlamenco.png", arbol: "/guardianes/Flamenco Casa Sol.png" },
-    xecreto10: { guardian: "Coatí", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
+    xecreto10: { guardian: "Coati", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
   };
 
   // ==========================
