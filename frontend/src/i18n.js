@@ -319,7 +319,7 @@ i18n
           discover_guardian: "Descubre al guardián",
           
         ///Checklist
-         checklist_comido: "He comido aquí"
+         checklist_comido: "Ya comí en:"
         },
       },
 

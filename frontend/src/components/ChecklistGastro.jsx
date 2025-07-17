@@ -3,12 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 const checklistItems = [
-  { nombre: "quesadillas", lugar: "Mercado la Merced", copy: "Quesadillas deliciosas" },
+  {
+    nombre: "quesadillas",
+    lugar: "Mercado la Merced",
+    copy: "Quesadillas deliciosas",
+  },
   { nombre: "ceviche", lugar: "La Trajinera", copy: "Ceviche fresco" },
   { nombre: "acai", lugar: "Bio", copy: "Acai Bowl nutritivo" },
   { nombre: "ravioli", lugar: "Fuego", copy: "Ravioli artesanal" },
   { nombre: "espada", lugar: "Las Cuevas", copy: "Espada con carnita" },
-  { nombre: "mezcal", lugar: "Cantina Los Faroles", copy: "Caballito con mezcal" },
+  {
+    nombre: "mezcal",
+    lugar: "Cantina Los Faroles",
+    copy: "Caballito con mezcal",
+  },
   { nombre: "paleta", lugar: "Chibalí", copy: "Paleta de dulce miguelito" },
   { nombre: "tostada", lugar: "Las Playas", copy: "Tostada de pulpo" },
   { nombre: "ramen", lugar: "Xin-Gao", copy: "Ramen japonés" },
@@ -21,7 +29,11 @@ const checklistItems = [
   { nombre: "coctel", lugar: "Costero", copy: "Coctel de camarón" },
   { nombre: "carne", lugar: "La Silla", copy: "Carne asada" },
   { nombre: "ostion", lugar: "Ha’", copy: "Ostión fresco" },
-  { nombre: "mimosa", lugar: "Brunch Dominical Xcaret", copy: "Mimosa espumosa" },
+  {
+    nombre: "mimosa",
+    lugar: "Brunch Dominical Xcaret",
+    copy: "Mimosa espumosa",
+  },
   { nombre: "sushi", lugar: "Tama-Mon", copy: "Rollito de sushi" },
 ];
 
@@ -41,14 +53,24 @@ export default function ChecklistGastro({ onClose }) {
   const handleCheck = (clave) => {
     const actualizado = { ...estado, [clave]: true };
     setEstado(actualizado);
-    localStorage.setItem("progresoChecklistGastro", JSON.stringify(actualizado));
-    onClose(); // ← cerrar modal automáticamente
+    localStorage.setItem(
+      "progresoChecklistGastro",
+      JSON.stringify(actualizado)
+    );
+
+    // Espera para permitir que se vea la insignia activada antes de cerrar
+    setTimeout(() => {
+      onClose(); // cerrar modal
+    }, 1000); // puedes ajustar la duración
   };
 
   const handleSetRating = (clave, valor) => {
     const actualizado = { ...ratings, [clave]: valor };
     setRatings(actualizado);
-    localStorage.setItem("calificacionesChecklistGastro", JSON.stringify(actualizado));
+    localStorage.setItem(
+      "calificacionesChecklistGastro",
+      JSON.stringify(actualizado)
+    );
   };
 
   const completadas = Object.values(estado).filter((v) => v === true).length;
@@ -117,21 +139,23 @@ export default function ChecklistGastro({ onClose }) {
                       {lugar}
                     </h2>
                     <motion.img
-                      src={`/checklist/${nombre}.png`}
+                      src={`/insigniasChecklist/${nombre}.png`}
                       alt={nombre}
                       className="w-10 h-10 object-contain"
                       initial={{ opacity: 0.2, scale: 0.8 }}
                       animate={
                         completado
-                          ? { opacity: 1, scale: 1 }
+                          ? {
+                              opacity: 1,
+                              scale: [1, 1.3, 1],
+                              transition: { duration: 0.6 },
+                            }
                           : { opacity: 0.2, scale: 0.8 }
                       }
                     />
                   </div>
 
-                  <p className="text-sm text-gray-700 leading-snug">
-                    {copy}
-                  </p>
+                  <p className="text-sm text-gray-700 leading-snug">{copy}</p>
 
                   <div className="mt-4">
                     {!completado ? (
@@ -139,13 +163,11 @@ export default function ChecklistGastro({ onClose }) {
                         onClick={() => handleCheck(nombre)}
                         className="px-4 py-2 rounded-full text-sm font-medium shadow-sm transition-all border bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
                       >
-                         {t("checklist_comido")} {lugar}
+                        {t("checklist_comido")} "{lugar}"
                       </button>
                     ) : (
                       <>
-                        <p className="text-sm text-green-700 font-semibold">
-                          {t("correct")} {t("next_unlocked")}
-                        </p>
+                      
 
                         <div className="mt-4">
                           <p className="text-sm font-medium text-gray-700 mb-1">
