@@ -314,14 +314,16 @@ i18n
             drink:
               "\u00a1Kraaak-kaaa! \u00a1Lo has logrado, el Amuleto del Fiestero es tuyo! Todo gran buxcador sabe c\u00f3mo brindar con estilo y guardar los mejores secretos de la noche.",
           },
-          blocked:"Bloqueado",
+          blocked: "Bloqueado",
 
           lee_hint: "Lee la pista",
           scan: "Encuentra y escanea",
           discover_guardian: "Descubre al guardián",
-          
-        ///Checklist
-         checklist_comido: "Ya comí en:"
+
+          ///Checklist
+          checklist_comido: "Ya comí en:",
+          your_progress: "Tu Progreso",
+          podium: "Podio de Exploradores",
         },
       },
 
@@ -629,13 +631,15 @@ i18n
             drink:
               "Kraaak-kaaa! You've done it—the Partygoer's Amulet is yours! Every great seeker knows how to toast with style and keep the night’s best secrets.",
           },
-          blocked:"Blocked",
+          blocked: "Blocked",
           lee_hint: "Read the clue",
           scan: "Find and scan",
           discover_guardian: "Discover the guardian",
-          
-        //Checklist
-        checklist_comido: "I ate here"
+
+          //Checklist
+          checklist_comido: "I ate here",
+          your_progress: "Your Progress",
+          podium: "Explorers' Podium",
         },
       },
     },
@@ -646,4 +650,3 @@ i18n
   });
 
 export default i18n;
-

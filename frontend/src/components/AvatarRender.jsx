@@ -1,6 +1,6 @@
-export default function AvatarRender({ className = "" }) {
+export default function AvatarRender({ avatarData: avatarFromProps, className = "" }) {
   const user = JSON.parse(localStorage.getItem("user"));
-  const avatarData = user?.avatar;
+  const avatarData = avatarFromProps || user?.avatar;
 
   if (!avatarData) return null;
 
@@ -13,7 +13,6 @@ export default function AvatarRender({ className = "" }) {
   const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
   const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
-  // Evaluar si se debe ocultar el cabello
   const hideHair = avatarData.clothingOptions === 4 || avatarData.clothingOptions === 5;
 
   const layers = [

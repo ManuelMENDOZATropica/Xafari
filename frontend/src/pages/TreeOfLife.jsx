@@ -5,6 +5,7 @@ import AvatarRender from "@/components/AvatarRender";
 import XecretoRegister from "@/components/XecretoRegister";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import ChecklistGastro from "@/components/ChecklistGastro";
+import PodiumModal from "@/components/PodiumModal";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
@@ -14,6 +15,7 @@ export default function TreeOfLife() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [showPodiumModal, setShowPodiumModal] = useState(false);
 
   /* ────────── constantes ────────── */
   const CANVAS_SIZE = 1200;
@@ -32,6 +34,10 @@ export default function TreeOfLife() {
   const [showXecretoModal, setShowXecretoModal] = useState(false);
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
 
+  const [insigniaReciente, setInsigniaReciente] = useState(null);
+  const [checklistReciente, setChecklistReciente] = useState(null);
+  const [guardianReciente, setGuardianReciente] = useState(null);
+
   /* ────────── carga de progreso ────────── */
   useEffect(() => {
     setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
@@ -39,9 +45,17 @@ export default function TreeOfLife() {
       JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
     );
   }, []);
- 
-  
 
+  useEffect(() => {
+    if (insigniaReciente || checklistReciente || guardianReciente) {
+      const timeout = setTimeout(() => {
+        setInsigniaReciente(null);
+        setChecklistReciente(null);
+        setGuardianReciente(null);
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [insigniaReciente, checklistReciente, guardianReciente]);
 
   ///Progreso checklist
   const [checklistProgreso, setChecklistProgreso] = useState({});
@@ -126,6 +140,12 @@ export default function TreeOfLife() {
   /* ────────── render ────────── */
   return (
     <div className="relative w-screen h-screen overflow-hidden font-lufga bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
+      <img
+        src="/img/flores.png"
+        alt="flores"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+      />
+
       <div ref={wrapperRef} className="w-full h-full overflow-hidden">
         <TransformWrapper
           ref={transformRef}
@@ -157,16 +177,17 @@ export default function TreeOfLife() {
                   <motion.img
                     key={k}
                     src={`/arbol/guardianesÁrbol/${mapa[k]}.png`}
-                    
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: [1.2, 0.95, 1] }}
+                    animate={
+                      insigniaReciente === k
+                        ? { opacity: 1, scale: [1.5, 0.95, 1] }
+                        : { opacity: 1, scale: 1 }
+                    }
                     transition={{ duration: 0.8 }}
                   />
                 ) : null
-              )
-              }
- 
+              )}
 
               {Object.entries(respuestasCorrectas).map(([k, v]) =>
                 v ? (
@@ -175,7 +196,11 @@ export default function TreeOfLife() {
                     src={`/arbol/xtopÁrbol/${k}.png`}
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: [1.1, 0.95, 1] }}
+                    animate={
+                      insigniaReciente === k
+                        ? { opacity: 1, scale: [1.5, 0.95, 1] }
+                        : { opacity: 1, scale: 1 }
+                    }
                     transition={{ duration: 0.6 }}
                   />
                 ) : null
@@ -188,7 +213,11 @@ export default function TreeOfLife() {
                     src={`/arbol/checklist/${k}.png`}
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: [1.1, 0.95, 1] }}
+                    animate={
+                      insigniaReciente === k
+                        ? { opacity: 1, scale: [1.5, 0.95, 1] }
+                        : { opacity: 1, scale: 1 }
+                    }
                     transition={{ duration: 0.6 }}
                   />
                 ) : null
@@ -267,7 +296,7 @@ export default function TreeOfLife() {
               key: "podium",
               label: t("podium") || "podium",
               icon: "/iconos/podium.png",
-              onClick: () => alert("Podium próximamente"),
+              onClick: () => setShowPodiumModal(true),
             },
           ].map(({ key, label, icon, onClick }) => (
             <button
@@ -298,10 +327,16 @@ export default function TreeOfLife() {
           >
             <XecretoRegister
               onClose={() => {
-                setShowXecretoModal(false);
-                setXecretos(
-                  JSON.parse(localStorage.getItem("xecretos") || "{}")
+                const prev = xecretos;
+                const nuevos = JSON.parse(
+                  localStorage.getItem("xecretos") || "{}"
                 );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
+                setXecretos(nuevos);
+                setGuardianReciente(nueva || null);
+                setShowXecretoModal(false);
                 smoothReset();
               }}
             />
@@ -320,12 +355,16 @@ export default function TreeOfLife() {
           >
             <XperienciasXtop
               onClose={() => {
-                setShowXperienciasModal(false);
-                setRespuestasCorrectas(
-                  JSON.parse(
-                    localStorage.getItem("progresoXperiencias") || "{}"
-                  )
+                const prev = respuestasCorrectas;
+                const nuevos = JSON.parse(
+                  localStorage.getItem("progresoXperiencias") || "{}"
                 );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
+                setRespuestasCorrectas(nuevos);
+                setInsigniaReciente(nueva || null);
+                setShowXperienciasModal(false);
                 smoothReset();
               }}
             />
@@ -344,18 +383,40 @@ export default function TreeOfLife() {
           >
             <ChecklistGastro
               onClose={() => {
-                setShowChecklistModal(false);
-                setChecklistProgreso(
-                  JSON.parse(
-                    localStorage.getItem("progresoChecklistGastro") || "{}"
-                  )
+                const prev = checklistProgreso;
+                const nuevos = JSON.parse(
+                  localStorage.getItem("progresoChecklistGastro") || "{}"
                 );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
+                setChecklistProgreso(nuevos);
+                setChecklistReciente(nueva || null);
+                setShowChecklistModal(false);
                 smoothReset();
               }}
             />
           </motion.div>
         )}
       </AnimatePresence>
+<AnimatePresence>
+  {showPodiumModal && (
+    <motion.div
+      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <PodiumModal
+        onClose={() => {
+          setShowPodiumModal(false);
+        }}
+      />
+    </motion.div>
+  )}
+</AnimatePresence>
+
+
     </div>
   );
 }

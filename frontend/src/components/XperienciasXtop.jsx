@@ -277,9 +277,10 @@ export default function XperienciasXtop({ onClose }) {
   };
 
   const total = xperiencias.length;
-  const respondidas = Object.values(respuestas).filter(
-    (r) => r === true
-  ).length;
+  const respondidas = xperiencias.filter(
+  (xp) => respuestas[xp.insignia] === xp.respuestaCorrecta
+).length;
+
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
