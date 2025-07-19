@@ -1,12 +1,24 @@
+/* ─────────────────────────────────────────────
+ * TREE OF LIFE
+ * Visualización interactiva de progreso en el árbol místico
+ * ───────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────
+ * IMPORTACIONES
+ * ───────────────────────────────────────────── */
+// React y hooks
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
+// Componentes internos
 import AvatarRender from "@/components/AvatarRender";
 import XecretoRegister from "@/components/XecretoRegister";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import ChecklistGastro from "@/components/ChecklistGastro";
 import PodiumModal from "@/components/PodiumModal";
 
+// Librerías externas
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { User } from "lucide-react";
@@ -14,6 +26,12 @@ import { User } from "lucide-react";
 export default function TreeOfLife() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  /* ─────────────────────────────────────────────
+   * ESTADO PRINCIPAL
+   * ───────────────────────────────────────────── */
+
+  // Control de visibilidad de modales
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
 
@@ -28,21 +46,35 @@ export default function TreeOfLife() {
   const transformRef = useRef(null);
   const [initialPos, setInitialPos] = useState({ x: 0, y: 0 });
 
+  // Datos cargados desde localStorage
   const [xecretos, setXecretos] = useState({});
   const [respuestasCorrectas, setRespuestasCorrectas] = useState({});
+  const [checklistProgreso, setChecklistProgreso] = useState({});
+
+  // Estado para mostrar menú y modales
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showXecretoModal, setShowXecretoModal] = useState(false);
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
 
+  // Identificadores de nuevas insignias o desbloqueos
   const [insigniaReciente, setInsigniaReciente] = useState(null);
   const [checklistReciente, setChecklistReciente] = useState(null);
   const [guardianReciente, setGuardianReciente] = useState(null);
 
-  /* ────────── carga de progreso ────────── */
+  /* ─────────────────────────────────────────────
+   * EFECTOS: CARGA DE DATOS Y TEMPORIZADORES
+   * ───────────────────────────────────────────── */
+
   useEffect(() => {
     setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
     setRespuestasCorrectas(
       JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
+    );
+  }, []);
+
+  useEffect(() => {
+    setChecklistProgreso(
+      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
     );
   }, []);
 
@@ -57,16 +89,10 @@ export default function TreeOfLife() {
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
-  ///Progreso checklist
-  const [checklistProgreso, setChecklistProgreso] = useState({});
+  /* ─────────────────────────────────────────────
+   * CENTRADO RESPONSIVO
+   * ───────────────────────────────────────────── */
 
-  useEffect(() => {
-    setChecklistProgreso(
-      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
-    );
-  }, []);
-
-  /* ────────── centrado responsivo ────────── */
   const recalcInitialPos = () => {
     const vp = wrapperRef.current?.getBoundingClientRect();
     if (!vp) return;
@@ -82,7 +108,10 @@ export default function TreeOfLife() {
     return () => window.removeEventListener("resize", recalcInitialPos);
   }, []);
 
-  /* ────────── helpers ────────── */
+  /* ─────────────────────────────────────────────
+   * FUNCIONES AUXILIARES
+   * ───────────────────────────────────────────── */
+
   const smoothReset = () => {
     recalcInitialPos();
     transformRef.current?.setTransform(
@@ -94,8 +123,6 @@ export default function TreeOfLife() {
     );
   };
 
-  /* ---------- rebote manual ---------- */
-  /* ---------- rebote manual (v3) ---------- */
   const bounceIfOut = (wrapper) => {
     if (!wrapperRef.current || !wrapper?.state) return;
 
@@ -104,17 +131,14 @@ export default function TreeOfLife() {
     const scaledW = CANVAS_SIZE * scale;
     const scaledH = CANVAS_SIZE * scale;
 
-    // límites absolutos (si el lienzo es > viewport)
-    const minX = vp.width - scaledW; // será negativo
+    const minX = vp.width - scaledW;
     const maxX = 0;
     const minY = vp.height - scaledH;
     const maxY = 0;
 
-    // centro deseado del lienzo
     const centerX = (vp.width - scaledW) / 2;
     const centerY = (vp.height - scaledH) / 2;
 
-    // objetivo = centro, pero clamped al rango permitido
     const targetX = Math.min(maxX, Math.max(minX, centerX));
     const targetY = Math.min(maxY, Math.max(minY, centerY));
 
@@ -123,7 +147,9 @@ export default function TreeOfLife() {
     }
   };
 
-  /* ────────── mapa guardianes ────────── */
+  /* ─────────────────────────────────────────────
+   * MAPA DE GUARDIANES (key → nombre gráfico)
+   * ───────────────────────────────────────────── */
   const mapa = {
     xecreto1: "mono",
     xecreto2: "rana",
@@ -137,15 +163,20 @@ export default function TreeOfLife() {
     xecreto10: "coati",
   };
 
-  /* ────────── render ────────── */
+  /* ─────────────────────────────────────────────
+   * RENDER PRINCIPAL
+   * ───────────────────────────────────────────── */
+
   return (
     <div className="relative w-screen h-screen overflow-hidden font-lufga bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
+      {/* Fondo de flores en capa superior */}
       <img
         src="/img/flores.png"
         alt="flores"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
       />
 
+      {/* CONTENEDOR DE TRANSFORMACIONES */}
       <div ref={wrapperRef} className="w-full h-full overflow-hidden">
         <TransformWrapper
           ref={transformRef}
@@ -158,20 +189,22 @@ export default function TreeOfLife() {
           limitToBounds={false}
           wheel={{ step: 50 }}
           doubleClick={{ disabled: true }}
-          onPanningStop={bounceIfOut} // ← arrastre
-          onZoomStop={bounceIfOut} // ← rueda o pellizco
+          onPanningStop={bounceIfOut}
+          onZoomStop={bounceIfOut}
         >
           <TransformComponent>
             <div
               style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
               className="relative"
             >
+              {/* Imagen base del árbol */}
               <img
                 src="/arbol/baseArbolv3.png"
                 alt=""
                 className="w-full h-full object-contain"
               />
 
+              {/* Guardianes desbloqueados */}
               {Object.entries(xecretos).map(([k, v]) =>
                 v && mapa[k] ? (
                   <motion.img
@@ -189,6 +222,7 @@ export default function TreeOfLife() {
                 ) : null
               )}
 
+              {/* Insignias por respuestas correctas */}
               {Object.entries(respuestasCorrectas).map(([k, v]) =>
                 v ? (
                   <motion.img
@@ -206,6 +240,7 @@ export default function TreeOfLife() {
                 ) : null
               )}
 
+              {/* Avance en checklist */}
               {Object.entries(checklistProgreso).map(([k, v]) =>
                 v ? (
                   <motion.img
@@ -223,13 +258,14 @@ export default function TreeOfLife() {
                 ) : null
               )}
 
+              {/* Avatar del usuario */}
               <div
                 className="absolute z-40"
                 style={{
                   left: `${(615 / CANVAS_SIZE) * 100}%`,
                   top: `${(910 / CANVAS_SIZE) * 100}%`,
-                  width: `${(90 / CANVAS_SIZE) * 100}%`, // 90px relativo
-                  height: `${(130 / CANVAS_SIZE) * 100}%`, // 130px relativo
+                  width: `${(90 / CANVAS_SIZE) * 100}%`,
+                  height: `${(130 / CANVAS_SIZE) * 100}%`,
                   transform: "translate(-50%, -100%)",
                 }}
               >
@@ -240,15 +276,16 @@ export default function TreeOfLife() {
         </TransformWrapper>
       </div>
 
-      {/* ─── BOTONES flotantes y menús (igual que antes) ─── */}
-      {/* ─── BOTÓN PERFIL ─── */}
+      {/* ─────────────────────────────────────────────
+       * INTERFAZ FLOTANTE
+       * ───────────────────────────────────────────── */}
+
+      {/* Botón de perfil */}
       <button
         onClick={() => setShowProfileMenu(!showProfileMenu)}
         title="Perfil"
-        /*  ⬇️  contenedor más grande y redondeado */
-        className="fixed top-4 left-4 w-14 h-14 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-gray-300 flex items-center justify-center"
+        className="fixed top-4 left-4 w-14 h-14 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-gray-300 flex items-center justify-center z-50"
       >
-        {/* icono ahora 10×10  */}
         <img
           src="/iconos/perfil.png"
           alt="perfil"
@@ -256,6 +293,7 @@ export default function TreeOfLife() {
         />
       </button>
 
+      {/* Menú de perfil */}
       {showProfileMenu && (
         <div className="fixed top-20 left-4 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4 z-30">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
@@ -270,7 +308,7 @@ export default function TreeOfLife() {
         </div>
       )}
 
-      {/* ─── BARRA INFERIOR ─── */}
+      {/* Barra inferior */}
       <div className="fixed bottom-0 left-0 w-full z-30 bg-white/0 backdrop-blur-md border-t border-gray-200">
         <div className="grid grid-cols-4 divide-x divide-gray-0">
           {[
@@ -302,7 +340,6 @@ export default function TreeOfLife() {
             <button
               key={key}
               onClick={onClick}
-              /*  fondo de cada botón translúcido  */
               className="py-2 flex flex-col items-center justify-center w-full text-xs font-medium text-gray-800 bg-white/60 backdrop-blur-sm transition rounded-none"
             >
               <img
@@ -316,7 +353,11 @@ export default function TreeOfLife() {
         </div>
       </div>
 
-      {/* ─── MODAL Xecreto ─── */}
+      {/* ─────────────────────────────────────────────
+       * MODALES
+       * ───────────────────────────────────────────── */}
+
+      {/* Modal Xecreto */}
       <AnimatePresence>
         {showXecretoModal && (
           <motion.div
@@ -344,7 +385,7 @@ export default function TreeOfLife() {
         )}
       </AnimatePresence>
 
-      {/* ─── MODAL Xperiencias ─── */}
+      {/* Modal Xperiencias */}
       <AnimatePresence>
         {showXperienciasModal && (
           <motion.div
@@ -372,7 +413,7 @@ export default function TreeOfLife() {
         )}
       </AnimatePresence>
 
-      {/* ─── MODAL Checklist ─── */}
+      {/* Modal Checklist */}
       <AnimatePresence>
         {showChecklistModal && (
           <motion.div
@@ -399,24 +440,20 @@ export default function TreeOfLife() {
           </motion.div>
         )}
       </AnimatePresence>
-<AnimatePresence>
-  {showPodiumModal && (
-    <motion.div
-      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <PodiumModal
-        onClose={() => {
-          setShowPodiumModal(false);
-        }}
-      />
-    </motion.div>
-  )}
-</AnimatePresence>
 
-
+      {/* Modal Podium */}
+      <AnimatePresence>
+        {showPodiumModal && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <PodiumModal onClose={() => setShowPodiumModal(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

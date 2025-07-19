@@ -9,7 +9,7 @@ const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}
 const hairOptions = [null, ...Array.from({ length: 18 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
 const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
 const glassesOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
-const headOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/SOMBREROS__${i + 1}.png`)];
+const headOptions = Array.from({ length: 10 }, (_, i) => `/avatares/SOMBREROS_${i + 1}.png`);
 const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
 const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
 
