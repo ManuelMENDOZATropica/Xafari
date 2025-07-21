@@ -120,6 +120,8 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
     setBody(Math.floor(Math.random() * bodyList.length));
+    
+    setHeadAcc(Math.floor(Math.random()* headAccList.length));
   };
 
   const handleReset = () => {
