@@ -11,8 +11,9 @@ export default function TreeCanvasIndividual({
 }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
-  const wrapperRef = useRef(null);
   const transformUtilsRef = useRef(null);
+  const initialScale = 0.22;
+  const initialOffset = useRef({ x: 0, y: 0 });
 
   const mapa = {
     xecreto1: "mono",
@@ -28,43 +29,20 @@ export default function TreeCanvasIndividual({
   };
 
   useEffect(() => {
-    const checkBoundaries = () => {
-      if (!transformUtilsRef.current) return;
-
-      const { state, setTransform } = transformUtilsRef.current;
-      const scale = state.scale;
-      const posX = state.positionX;
-      const posY = state.positionY;
-
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-
-      const scaledWidth = CANVAS_WIDTH * scale;
-      const scaledHeight = CANVAS_HEIGHT * scale;
-
-      const visibleX = Math.max(0, Math.min(vw, scaledWidth + posX)) - Math.max(0, Math.min(vw, posX));
-      const visibleY = Math.max(0, Math.min(vh, scaledHeight + posY)) - Math.max(0, Math.min(vh, posY));
-
-      const visibleXRatio = visibleX / vw;
-      const visibleYRatio = visibleY / vh;
-
-      if (visibleXRatio < 0.8 || visibleYRatio < 0.8) {
-        // Recentrar
-        const resetScale = 0.2;
-        const offsetX = (vw - CANVAS_WIDTH * resetScale) / 2;
-        const offsetY = (vh - CANVAS_HEIGHT * resetScale) / 2;
-        setTransform(offsetX, offsetY, resetScale);
+    const timeout = setTimeout(() => {
+      if (transformUtilsRef.current) {
+        const { setTransform } = transformUtilsRef.current;
+        const { x, y } = initialOffset.current;
+        setTransform(x, y, initialScale);
       }
-    };
+    }, 100); // Delay para asegurar montaje
 
-    const interval = setInterval(checkBoundaries, 1000);
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
     <TransformWrapper
-      ref={wrapperRef}
-      initialScale={0.2}
+      initialScale={initialScale}
       minScale={0.1}
       maxScale={0.4}
       wheel={{ step: 50 }}
@@ -74,12 +52,10 @@ export default function TreeCanvasIndividual({
         transformUtilsRef.current = utils;
         const vw = window.innerWidth;
         const vh = window.innerHeight;
-        const scale = 0.2;
-
-        const offsetX = (vw - CANVAS_WIDTH * scale) / 2;
-        const offsetY = (vh - CANVAS_HEIGHT * scale) / 2;
-
-        utils.setTransform(offsetX, offsetY, scale);
+        const offsetX = (vw - CANVAS_WIDTH * initialScale) / 2;
+        const offsetY = (vh - CANVAS_HEIGHT * initialScale) / 2;
+        initialOffset.current = { x: offsetX, y: offsetY };
+        // Aquí ya no aplicamos el setTransform directamente
       }}
     >
       <TransformComponent>
