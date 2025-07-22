@@ -11,8 +11,9 @@ export default function TreeCanvasIndividual({
 }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
-  const transformUtilsRef = useRef(null);
   const initialScale = 0.22;
+
+  const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
 
   const mapa = {
@@ -35,10 +36,47 @@ export default function TreeCanvasIndividual({
         const { x, y } = initialOffset.current;
         setTransform(x, y, initialScale);
       }
-    }, 100); // Delay para asegurar montaje
+    }, 100); // Delay para que el canvas esté montado y se centre suavemente
 
     return () => clearTimeout(timeout);
   }, []);
+  
+useEffect(() => {
+  const checkBoundaries = () => {
+    if (!transformUtilsRef.current) return;
+
+    const { state, setTransform } = transformUtilsRef.current;
+    const scale = state.scale;
+    const posX = state.positionX;
+    const posY = state.positionY;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const scaledWidth = CANVAS_WIDTH * scale;
+    const scaledHeight = CANVAS_HEIGHT * scale;
+
+    // Cuánto de la imagen está dentro del viewport
+    const visibleX = Math.max(0, Math.min(vw, scaledWidth + posX)) - Math.max(0, Math.min(vw, posX));
+    const visibleY = Math.max(0, Math.min(vh, scaledHeight + posY)) - Math.max(0, Math.min(vh, posY));
+
+    const visibleXRatio = visibleX / vw;
+    const visibleYRatio = visibleY / vh;
+
+    // Zoom muy adentro o afuera o la imagen fuera del canvas
+    if (
+      scale < 0.15 || scale > 0.35 ||
+      visibleXRatio < 0.8 || // menos del 80% en pantalla horizontal
+      visibleYRatio < 0.9    // menos del 90% en pantalla vertical
+    ) {
+      const { x, y } = initialOffset.current;
+      setTransform(x, y, initialScale);
+    }
+  };
+
+  const interval = setInterval(checkBoundaries, 1000); // cada segundo
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <TransformWrapper
@@ -55,7 +93,6 @@ export default function TreeCanvasIndividual({
         const offsetX = (vw - CANVAS_WIDTH * initialScale) / 2;
         const offsetY = (vh - CANVAS_HEIGHT * initialScale) / 2;
         initialOffset.current = { x: offsetX, y: offsetY };
-        // Aquí ya no aplicamos el setTransform directamente
       }}
     >
       <TransformComponent>
@@ -65,7 +102,7 @@ export default function TreeCanvasIndividual({
         >
           <img
             src="/arbol/baseArbolv3.png"
-            alt=""
+            alt="árbol"
             className="w-full h-full object-contain"
           />
 
@@ -123,7 +160,7 @@ export default function TreeCanvasIndividual({
             ) : null
           )}
 
-          {/* Avatar */}
+          {/* Avatar del usuario */}
           <div
             className="absolute z-40"
             style={{
@@ -131,7 +168,7 @@ export default function TreeCanvasIndividual({
               top: `${(910 / CANVAS_HEIGHT) * 100}%`,
               width: `${(90 / CANVAS_WIDTH) * 100}%`,
               height: `${(130 / CANVAS_HEIGHT) * 100}%`,
-              transform: "translate(-50%, -100%)",
+              transform: "translate(680%, 1525%) scale(3)",
             }}
           >
             <AvatarRender className="w-full h-full" />
