@@ -1,0 +1,159 @@
+{
+  
+  "rateExperience": "Califica esta experiencia",
+  "logrado": "Listo",
+  "blocked": "Bloqueado",
+  "next_unlocked": "Haz desbloqueado el siguiente",
+
+  "t_experiencia_caletas": "Explora las caletas del hotel en Kayak o Paddle board y sumérgete en la belleza del paisaje en cada remada.",
+  "q_caletas": "¿De qué color son los Kayaks y el Paddle board?",
+
+
+  "t_experiencia_cielo_flamingos": "¡Déjate llevar por el ritmo en el Salón Flamingo! Baila como nunca, vibra con la mejor música y conquista la pista con tus mejores pasos.",
+  "q_cielo_flamingos": "En la parte de atrás hay nichos con esculturas de flamingo ¿Cuántos hay?",
+
+  "t_experiencia_agua_muluk": "¡Déjate envolver por la calma en el Muluk Family Spa. Disfruta de un entorno natural, aromas y sonidos.",
+  "q_muluk": "¿Cuántas albercas hay en Muluk?",
+
+
+  "t_experiencia_vida_maquinitas": "¡Escápate de pinta al Bar Las Maquinitas! Disfruta buena música, ambiente vibrante y momentos que se vuelven recuerdos.",
+  "q_vida_juegos": "¿Qué puedes encontrar en el área de juegos?",
+
+  "t_experiencia_espiral_teatro": "¡Déjate sorprender en uno de los espectáculos de Teatro del Río! Vive un momento mágico en el restaurante.",
+  "q_espiral_lamparas": "¿Qué forma tienen las lámparas que cuelgan del techo?",
+
+  "t_experiencia_tierra_alberca": "Sumérgete en la alberca infinita y déjate envolver por la tranquilidad del horizonte. Relájate y disfruta de una vista que se funde con el cielo y el mar",
+  "q_tierra_logo": "¿Qué imagen puedes encontrar en el fondo del azulejo de la alberca?",
+
+  "t_experiencia_eclipse_luna": "¡Descubre la magia de La Lunateca junto a los más peques de la familia! Sumérgete en un mundo de juegos, risas y aventuras",
+  "q_eclipse_luna": "¿Qué animal hay en la Luna?",
+
+  "t_experiencia_eclipse_xiquit": "¡Explora todos los roles en Xiquit Inn: el hotel hecho para y por niños! Resuelve todos los retos y conviértete en el Gerente del Hotel.",
+  "q_eclipse_xiquit": "Una familia de ______ fueron los responsables del desorden dentro de las habitaciones",
+
+  "t_experiencia_sol_infinity": "¡Adéntrate en el asombroso Infinity Room y deja que las estrellas te envuelvan! Una experiencia inmersiva fuera de este mundo.",
+  "q_sol_mensaje": "¿Cuál es el mensaje de la experiencia?",
+
+  "t_experiencia_sol_jaguar": "¡Déjate llevar por el ritmo en la Paxanguería!Sumérgete en un ambiente lleno de luces y música",
+  "q_sol_jaguar": "¿Cuál es la máscara del animal guardián que está arriba del DJ?",
+
+  "t_experiencia_fuego_piscina": "Eleva tus sentidos en Rooftop Fuego, donde el cielo y el mar se encuentran. Un oasis exclusivo para adultos",
+  "q_fuego_piscina": "Aquí puedes encontrar una de las____ más icónicas del Hotel Xcaret México",
+
+  "t_experiencia_canal_patin": "¡Súbete al patín y reta a otro jugador en una carrera! Demuestra tu velocidad y siente la emoción.",
+  "q_canal_patin": "¿Cuál es la pista más complicada?",
+
+  "t_experiencia_vida_tobogan": "¡Atrévete a subir al Kamikaze , el tobogán más alto y siente la emoción al máximo! Prueba tu valentía desde las alturas",
+  "q_vida_tobogan": "¿En qué piso está el tobogán más alto?",
+
+  "t_experiencia_ixla_xpiral": "¡Llega a la cima de la Xpiral y contempla una vista que te dejará sin aliento! Desde lo más alto, disfruta un paisaje paradisíaco.",
+  "q_ixla_xpiral": "¿Cuántos ángeles hay en La Capilla?",
+
+  "t_experiencia_viento_poolpo": "¡Atrévete a conquistar el muro de Pool’po! Pon a prueba tu fuerza y llega a la cima con una sonrisa de victoria.",
+  "q_viento_poolpo": "¿Cuántas rocas hay sobre el muro de escalar?",
+
+  "t_experiencia_cielo_xupes": "¡Tómate unos tragos en Xupes, el antro para adultos más vibrante del hotel! Y cuando la fiesta termine… ponle el broche de oro con unos tacos de Pava Jarla.",
+  "q_cielo_xupes": "¿Cuántas máscaras de luchadores hay en Pava Jarla?",
+
+  "options": {
+    "q_caletas": {
+      "A": "Verdes y blancos",
+      "B": "Rojos y verdes",
+      "C": "Azules y blancos"
+    },
+    "q_cielo_flamingos": {
+      "A": "Más de 5",
+      "B": "Más de 15",
+      "C": "Más de 25"
+    },
+    "q_muluk": {
+      "A": "Una",
+      "B": "Cinco",
+      "C": "Dos"
+    },
+    "q_vida_juegos": {
+      "A": "Un boliche, un billar y un air hockey",
+      "B": "Un billar, un air hockey y un futbolito",
+      "C": "Juegos de apuestas, un boliche y un billar"
+    },
+    "q_espiral_lamparas": {
+      "A": "Rectangulares",
+      "B": "Circulares",
+      "C": "En forma de espirales"
+    },
+    "q_tierra_logo": {
+      "A": "El logo de Casa Tierra",
+      "B": "El logo de Hotel Xcaret México",
+      "C": "Ninguna de las anteriores"
+    },
+    "q_eclipse_luna": {
+      "A": "El conejo",
+      "B": "El coatí",
+      "C": "El búho"
+    },
+    "q_eclipse_xiquit": {
+      "A": "Conejos",
+      "B": "Coatíes",
+      "C": "Búhos"
+    },
+    "q_sol_mensaje": {
+      "A": "Que somos importantes en el mundo",
+      "B": "Que somos amados",
+      "C": "Que siempre vale la pena intentarlo"
+    },
+    "q_sol_jaguar": {
+      "A": "Venado",
+      "B": "Guacamaya",
+      "C": "Serpiente"
+    },
+    "q_fuego_piscina": {
+      "A": "Escaleras",
+      "B": "Piscinas",
+      "C": "Sillas"
+    },
+    "q_canal_patin": {
+      "A": "Son iguales",
+      "B": "La que está del lado de las tiendas del canal",
+      "C": "Datos pendientes"
+    },
+    "q_vida_tobogan": {
+      "A": "Piso 10",
+      "B": "Piso 7",
+      "C": "Piso 5"
+    },
+    "q_ixla_xpiral": {
+      "A": "Datos pendientes",
+      "B": "Datos pendientes",
+      "C": "Datos pendientes"
+    },
+    "q_viento_poolpo": {
+      "A": "Datos pendientes",
+      "B": "Datos pendientes",
+      "C": "Datos pendientes"
+    },
+    "q_cielo_xupes": {
+      "A": "28",
+      "B": "30",
+      "C": "32"
+    }
+  },
+
+  "copy": {
+    "kayak": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Remador es tuyo! Todo gran buxcador sabe cómo remar para cruzar entre islas y ríos.",
+    "vinil": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Bailador es tuyo! Todo gran buxcador sabe cómo bailar para comunicarse sin tener que usar palabras.",
+    "caracola": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Contemplador es tuyo! Todo gran buxcador sabe cómo calmar su mente para sentir lo que ocurre alrededor.",
+    "tv": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Ambientador es tuyo! Todo gran buxcador sabe cómo mezclarse en cualquier ambiente para no desentonar.",
+    "teatro": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Actor es tuyo! Todo gran buxcador sabe cómo meterse en el papel y no ser descubierto en la aventura.",
+    "salvavidas": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Buceador es tuyo! Todo gran buxcador sabe cómo aguantar la respiración para descubrir tesoros submarinos.",
+    "conejo": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Cuidador es tuyo! Todo gran buxcador sabe cómo cuidar a los más pequeños de la tropa.",
+    "camion": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Chambeador es tuyo! Todo gran buxcador sabe cómo resolver cualquier trabajo que surja en el campamento.",
+    "estrella": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Soñador es tuyo! Todo gran buxcador sabe cómo encontrar su camino en la noche más oscura  estrellada.",
+    "mascarajaguar": "Datos Pendientes",
+    "piscina": "Satos Pendientes",
+    "patin": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Competidor es tuyo! Todo gran buxcador sabe cómo ganar a cualquier desafío que se le presenta.",
+    "tobogan": "Datos Pendientes",
+    "xpiral": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Conquistador es tuyo! Todo gran buxcador sabe cómo llegar tan alto como el cielo.",
+    "poolpo": "¡Kraaak-kaaa! ¡Lo has logrado, el Amuleto del Escalador es tuyo! Todo gran buxcador sabe cómo esquivar obstáculos para llegar hasta la cima.",
+    "drink": "Datos Pendientes"
+  }
+}

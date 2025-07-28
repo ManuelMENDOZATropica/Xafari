@@ -1,0 +1,30 @@
+{
+  "scan_title": "Scan a Xecreto",
+  "how_scan": "How to scan?",
+  "see_clues": "See clues",
+  "found_guardian": "You found the guardian {{guardian}}!",
+  "understood": "Got it",
+  "scan_step1": "Find the hidden plaques around the hotel.",
+  "scan_step2": "Approach with your mobile device and open the camera from this app.",
+  "scan_step3": "Scan the visible QR code on the plaque.",
+  "scan_step4": "Discover which guardian you’ve unlocked and see it added to your Tree of Life.",
+  "welcomeApprentice": "We're glad you're here!",
+  "welcomeToAdventure": "You've arrived where adventures begin",
+  "correct": "Correct answer.",
+  "incorrect": "Incorrect answer.",
+  "retry_in": "Try again in",
+  "clue_title": "Xecreto Clues",
+  "clue_label": "Xecreto {{num}}",
+  "pistas": {
+    "xecreto1": "When you feel like your world is falling apart, the monkey opens a reflective door to save you.",
+    "xecreto2": "A tree trunk rises from the ground, among its pedestals a frog waits — can you hear its croak?",
+    "xecreto3": "Among tiles, wood, and glass, the jaguar’s spots fade near the sunlight.",
+    "xecreto4": "When hunger strikes, the macaw guides you to the food that nourishes weary bodies.",
+    "xecreto5": "The serpent, guardian of the time cycle, tells us that crushing death reveals itself only if you look up.",
+    "xecreto6": "Among the secret archives of Xurreal, the deer guards them beneath its antlers.",
+    "xecreto7": "The owl waits behind the glass, watching over the birds as they rest at night.",
+    "xecreto8": "Wisdom hides the butterfly, among the words of those who have walked this world before.",
+    "xecreto9": "Among the lush vegetation of a trunk, where warm lights illuminate a cold place, the flamingo watches.",
+    "xecreto10": "Under the tribe of white-dressed beings, the great guardian coati awaits."
+  }
+}
