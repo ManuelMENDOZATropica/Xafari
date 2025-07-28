@@ -7,6 +7,8 @@ export default function TreeCanvasIndividual({
   xecretos,
   respuestasCorrectas,
   checklistProgreso,
+  xperienciasProgreso,
+  xtopProgreso,
   insigniaReciente,
 }) {
   const CANVAS_WIDTH = 2450;
@@ -29,6 +31,48 @@ export default function TreeCanvasIndividual({
     xecreto10: "coati",
   };
 
+  const mapaXperiencias = {
+    x1: "acai",
+    x2: "carne",
+    x3: "ceviche",
+    x4: "coctel",
+    x5: "corunda",
+    x6: "espada",
+    x7: "mezcal",
+    x8: "mimosa",
+    x9: "nogada",
+    x10: "ostion",
+    x11: "paleta",
+    x12: "palomitas",
+    x13: "panucho",
+    x14: "quesadillas",
+    x15: "quesos",
+    x16: "ramen",
+    x17: "ravioli",
+    x18: "sushi",
+    x19: "torta",
+    x20: "tostada",
+  };
+
+  const mapaXtop = {
+    xtop1: "camion",
+    xtop2: "caracola",
+    xtop3: "conejo",
+    xtop4: "drink",
+    xtop5: "estrella",
+    xtop6: "kayak",
+    xtop7: "mascarajaguar",
+    xtop8: "patin",
+    xtop9: "piscina",
+    xtop10: "poolpo",
+    xtop11: "salvavidas",
+    xtop12: "teatro",
+    xtop13: "tobogan",
+    xtop14: "tv",
+    xtop15: "vinil",
+    xtop16: "xpiral",
+  };
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (transformUtilsRef.current) {
@@ -36,47 +80,49 @@ export default function TreeCanvasIndividual({
         const { x, y } = initialOffset.current;
         setTransform(x, y, initialScale);
       }
-    }, 100); // Delay para que el canvas esté montado y se centre suavemente
-
+    }, 100);
     return () => clearTimeout(timeout);
   }, []);
-  
-useEffect(() => {
-  const checkBoundaries = () => {
-    if (!transformUtilsRef.current) return;
 
-    const { state, setTransform } = transformUtilsRef.current;
-    const scale = state.scale;
-    const posX = state.positionX;
-    const posY = state.positionY;
+  useEffect(() => {
+    const checkBoundaries = () => {
+      if (!transformUtilsRef.current) return;
 
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+      const { state, setTransform } = transformUtilsRef.current;
+      const scale = state.scale;
+      const posX = state.positionX;
+      const posY = state.positionY;
 
-    const scaledWidth = CANVAS_WIDTH * scale;
-    const scaledHeight = CANVAS_HEIGHT * scale;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
-    // Cuánto de la imagen está dentro del viewport
-    const visibleX = Math.max(0, Math.min(vw, scaledWidth + posX)) - Math.max(0, Math.min(vw, posX));
-    const visibleY = Math.max(0, Math.min(vh, scaledHeight + posY)) - Math.max(0, Math.min(vh, posY));
+      const scaledWidth = CANVAS_WIDTH * scale;
+      const scaledHeight = CANVAS_HEIGHT * scale;
 
-    const visibleXRatio = visibleX / vw;
-    const visibleYRatio = visibleY / vh;
+      const visibleX =
+        Math.max(0, Math.min(vw, scaledWidth + posX)) -
+        Math.max(0, Math.min(vw, posX));
+      const visibleY =
+        Math.max(0, Math.min(vh, scaledHeight + posY)) -
+        Math.max(0, Math.min(vh, posY));
 
-    // Zoom muy adentro o afuera o la imagen fuera del canvas
-    if (
-      scale < 0.15 || scale > 0.35 ||
-      visibleXRatio < 0.8 || // menos del 80% en pantalla horizontal
-      visibleYRatio < 0.9    // menos del 90% en pantalla vertical
-    ) {
-      const { x, y } = initialOffset.current;
-      setTransform(x, y, initialScale);
-    }
-  };
+      const visibleXRatio = visibleX / vw;
+      const visibleYRatio = visibleY / vh;
 
-  const interval = setInterval(checkBoundaries, 1000); // cada segundo
-  return () => clearInterval(interval);
-}, []);
+      if (
+        scale < 0.15 ||
+        scale > 0.35 ||
+        visibleXRatio < 0.8 ||
+        visibleYRatio < 0.9
+      ) {
+        const { x, y } = initialOffset.current;
+        setTransform(x, y, initialScale);
+      }
+    };
+
+    const interval = setInterval(checkBoundaries, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <TransformWrapper
@@ -110,7 +156,7 @@ useEffect(() => {
           {Object.entries(xecretos).map(([k, v]) =>
             v && mapa[k] ? (
               <motion.img
-                key={k}
+                key={`xecreto-${k}`}
                 src={`/arbol/guardianesÁrbol/${mapa[k]}.png`}
                 className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -125,10 +171,28 @@ useEffect(() => {
           )}
 
           {/* Xperiencias */}
-          {Object.entries(respuestasCorrectas).map(([k, v]) =>
-            v ? (
+          {Object.entries(xperienciasProgreso || {}).map(([k, v]) =>
+            v && mapaXperiencias[k] ? (
               <motion.img
-                key={k}
+                key={`xperiencia-${k}`}
+                src={`/arbol/xtopÁrbol/${mapaXperiencias[k]}.png`}
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={
+                  insigniaReciente === k
+                    ? { opacity: 1, scale: [1.5, 0.95, 1] }
+                    : { opacity: 1, scale: 1 }
+                }
+                transition={{ duration: 0.8 }}
+              />
+            ) : null
+          )}
+
+          {/* XTOP */}
+          {Object.entries(xtopProgreso || {}).map(([k, v]) =>
+            v && Object.values(mapaXtop).includes(k) ? (
+              <motion.img
+                key={`xtop-${k}`}
                 src={`/arbol/xtopÁrbol/${k}.png`}
                 className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -137,16 +201,16 @@ useEffect(() => {
                     ? { opacity: 1, scale: [1.5, 0.95, 1] }
                     : { opacity: 1, scale: 1 }
                 }
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.8 }}
               />
             ) : null
           )}
 
           {/* Checklist */}
-          {Object.entries(checklistProgreso).map(([k, v]) =>
+          {Object.entries(checklistProgreso || {}).map(([k, v]) =>
             v ? (
               <motion.img
-                key={k}
+                key={`checklist-${k}`}
                 src={`/arbol/checklist/${k}.png`}
                 className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                 initial={{ opacity: 0, scale: 0.8 }}

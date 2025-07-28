@@ -46,6 +46,26 @@ export default function TreeOfLife() {
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
+const progreso = JSON.parse(localStorage.getItem("progresoXperiencias")) || {};
+
+const xtopProgreso = {};
+const xperienciasProgreso = {};
+
+const xtopNombres = [
+  "camion", "caracola", "conejo", "drink", "estrella", "kayak",
+  "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
+  "teatro", "tobogan", "tv", "vinil", "xpiral"
+];
+
+Object.entries(progreso).forEach(([k, v]) => {
+  if (xtopNombres.includes(k)) {
+    xtopProgreso[k] = true;
+  } else if (k.startsWith("x")) {
+    xperienciasProgreso[k] = true;
+  }
+});
+
+
   return (
     <div className="relative w-screen h-screen overflow-hidden font-lufga bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
       <img
@@ -58,12 +78,15 @@ export default function TreeOfLife() {
         <TreeCanvasFamilia key="canvas-familia" />
       ) : (
         <TreeCanvasIndividual
-          key="canvas-individual"
-          xecretos={xecretos}
-          respuestasCorrectas={respuestasCorrectas}
-          checklistProgreso={checklistProgreso}
-          insigniaReciente={insigniaReciente}
-        />
+  key="canvas-individual"
+  xecretos={xecretos}
+  respuestasCorrectas={respuestasCorrectas}
+  checklistProgreso={checklistProgreso}
+  xperienciasProgreso={xperienciasProgreso}
+  xtopProgreso={xtopProgreso}
+  insigniaReciente={insigniaReciente}
+/>
+
       )}
 
       <button
