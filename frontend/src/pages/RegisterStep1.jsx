@@ -24,13 +24,21 @@ export default function RegisterStep1() {
 
   const getPasswordStrength = (password) => {
     if (password.length < 6) return "weak";
-    if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)) return "medium";
-    if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) return "strong";
+    if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password))
+      return "medium";
+    if (
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+        password
+      )
+    )
+      return "strong";
     return "weak";
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
-  const passwordsMatch = formData.password === formData.confirmPassword && formData.password.length > 0;
+  const passwordsMatch =
+    formData.password === formData.confirmPassword &&
+    formData.password.length > 0;
   const isFormValid =
     formData.firstName &&
     formData.lastName &&
@@ -60,7 +68,9 @@ export default function RegisterStep1() {
 
         <div className="absolute top-4 right-4">
           <button
-            onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
+            onClick={() =>
+              i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
+            }
             className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
           >
             {t("language")}
@@ -125,14 +135,15 @@ export default function RegisterStep1() {
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
             />
             <button
-  type="button"
-  onClick={() => setShowPassword(!showPassword)}
-  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
-  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
->
-  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-</button>
-
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+              }
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <div className="w-full h-2 rounded">
@@ -176,14 +187,15 @@ export default function RegisterStep1() {
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-black text-base shadow-inner"
             />
             <button
-  type="button"
-  onClick={() => setShowConfirm(!showConfirm)}
-  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
-  aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"}
->
-  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-</button>
-
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
+              aria-label={
+                showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"
+              }
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <div className="min-h-[1.25rem]">
