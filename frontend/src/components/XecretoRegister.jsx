@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
+import ModalMapa from "@/components/ModalMapa"; // Ajusta la ruta si es diferente
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
@@ -45,6 +46,7 @@ export default function XecretoRegister({ onClose }) {
   const [scannerReady, setScannerReady] = useState(false);
   const [showInstrucciones, setShowInstrucciones] = useState(false);
   const [showPista, setShowPista] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
 
   // ==========================
   // == INICIO DEL ESCÁNER ==
@@ -170,7 +172,18 @@ export default function XecretoRegister({ onClose }) {
         >
           {t("see_clues")}
         </button>
+
+        <button
+  onClick={() => setShowMapModal(true)}
+  className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+>
+  {t("open_map")} {/* Necesitarás añadir esta traducción en tu archivo i18n */}
+</button>
       </div>
+
+
+
+      
 
       {/* == MODALES == */}
       <ModalInstruccionesXecretos show={showInstrucciones} onClose={() => setShowInstrucciones(false)} />
@@ -179,6 +192,8 @@ export default function XecretoRegister({ onClose }) {
         onClose={() => setShowPista(false)}
         scannedCodes={scannedCodes}
       />
+      {/* Nuevo Modal del Mapa */}
+<ModalMapa show={showMapModal} onClose={() => setShowMapModal(false)} />
 
       {/* == INSIGNIA ANIMADA == */}
       {lastScanned && qrData[lastScanned] && (

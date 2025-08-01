@@ -31,8 +31,12 @@ export default function TreeOfLife() {
 
   useEffect(() => {
     setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
-    setRespuestasCorrectas(JSON.parse(localStorage.getItem("progresoXperiencias") || "{}"));
-    setChecklistProgreso(JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}"));
+    setRespuestasCorrectas(
+      JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
+    );
+    setChecklistProgreso(
+      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
+    );
   }, []);
 
   useEffect(() => {
@@ -46,25 +50,39 @@ export default function TreeOfLife() {
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
-const progreso = JSON.parse(localStorage.getItem("progresoXperiencias")) || {};
+  const progreso =
+    JSON.parse(localStorage.getItem("progresoXperiencias")) || {};
 
-const xtopProgreso = {};
-const xperienciasProgreso = {};
+  const xtopProgreso = {};
+  const xperienciasProgreso = {};
 
-const xtopNombres = [
-  "camion", "caracola", "conejo", "drink", "estrella", "kayak",
-  "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
-  "teatro", "tobogan", "tv", "vinil", "xpiral"
-];
+  const xtopNombres = [
+    "camion",
+    "caracola",
+    "conejo",
+    "drink",
+    "estrella",
+    "kayak",
+    "mascarajaguar",
+    "patin",
+    "piscina",
+    "poolpo",
+    "salvavidas",
+    "teatro",
+    "tobogan",
+    "tv",
+    "vinil",
+    "xpiral",
+    "xorbeteria"
+  ];
 
-Object.entries(progreso).forEach(([k, v]) => {
-  if (xtopNombres.includes(k)) {
-    xtopProgreso[k] = true;
-  } else if (k.startsWith("x")) {
-    xperienciasProgreso[k] = true;
-  }
-});
-
+  Object.entries(progreso).forEach(([k, v]) => {
+    if (xtopNombres.includes(k)) {
+      xtopProgreso[k] = true;
+    } else if (k.startsWith("x")) {
+      xperienciasProgreso[k] = true;
+    }
+  });
 
   return (
     <div className="relative w-screen h-screen overflow-hidden font-lufga bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
@@ -74,20 +92,23 @@ Object.entries(progreso).forEach(([k, v]) => {
         className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
       />
 
-      {modoFamilia ? (
-        <TreeCanvasFamilia key="canvas-familia" />
-      ) : (
-        <TreeCanvasIndividual
-  key="canvas-individual"
-  xecretos={xecretos}
-  respuestasCorrectas={respuestasCorrectas}
-  checklistProgreso={checklistProgreso}
-  xperienciasProgreso={xperienciasProgreso}
-  xtopProgreso={xtopProgreso}
-  insigniaReciente={insigniaReciente}
-/>
-
-      )}
+     {modoFamilia ? (
+  <TreeCanvasFamilia
+    key="canvas-familia"
+    insigniaReciente={insigniaReciente}
+  />
+) : (
+  <TreeCanvasIndividual
+    key="canvas-individual"
+    xecretos={xecretos}
+    respuestasCorrectas={respuestasCorrectas}
+    checklistProgreso={checklistProgreso}
+    xperienciasProgreso={xperienciasProgreso}
+    xtopProgreso={xtopProgreso}
+    insigniaReciente={insigniaReciente}
+  />
+)}
+  
 
       <button
         onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -177,8 +198,12 @@ Object.entries(progreso).forEach(([k, v]) => {
             <XecretoRegister
               onClose={() => {
                 const prev = xecretos;
-                const nuevos = JSON.parse(localStorage.getItem("xecretos") || "{}");
-                const nueva = Object.keys(nuevos).find(k => nuevos[k] && !prev[k]);
+                const nuevos = JSON.parse(
+                  localStorage.getItem("xecretos") || "{}"
+                );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
                 setXecretos(nuevos);
                 setGuardianReciente(nueva || null);
                 setShowXecretoModal(false);
@@ -199,8 +224,12 @@ Object.entries(progreso).forEach(([k, v]) => {
             <XperienciasXtop
               onClose={() => {
                 const prev = respuestasCorrectas;
-                const nuevos = JSON.parse(localStorage.getItem("progresoXperiencias") || "{}");
-                const nueva = Object.keys(nuevos).find(k => nuevos[k] && !prev[k]);
+                const nuevos = JSON.parse(
+                  localStorage.getItem("progresoXperiencias") || "{}"
+                );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
                 setRespuestasCorrectas(nuevos);
                 setInsigniaReciente(nueva || null);
                 setShowXperienciasModal(false);
@@ -221,8 +250,12 @@ Object.entries(progreso).forEach(([k, v]) => {
             <ChecklistGastro
               onClose={() => {
                 const prev = checklistProgreso;
-                const nuevos = JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}");
-                const nueva = Object.keys(nuevos).find(k => nuevos[k] && !prev[k]);
+                const nuevos = JSON.parse(
+                  localStorage.getItem("progresoChecklistGastro") || "{}"
+                );
+                const nueva = Object.keys(nuevos).find(
+                  (k) => nuevos[k] && !prev[k]
+                );
                 setChecklistProgreso(nuevos);
                 setChecklistReciente(nueva || null);
                 setShowChecklistModal(false);

@@ -53,6 +53,9 @@
   "t_experiencia_cielo_xupes": "Grab some drinks at Xupes, the hotel's most vibrant adult club! And when the party’s over... top it off with tacos from Pava Jarla.",
   "q_cielo_xupes": "How many wrestler masks are there in Pava Jarla?",
 
+  "t_experiencia_cielo_xorbeteria": "Enjoy a delicious ice cream at the 'Xorbetería'.",
+  "q_cielo_xorbeteria": "Name one of the animals painted on the ceiling mural.",
+
   "options": {
     "q_caletas": {
       "A": "Green and white",
@@ -133,6 +136,11 @@
       "A": "28",
       "B": "30",
       "C": "32"
+    },
+    "q_cielo_xorbeteria": {
+      "A": "Iguana",
+      "B": "Hen",
+      "C": "Axolotl"
     }
   },
 

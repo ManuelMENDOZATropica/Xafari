@@ -71,6 +71,7 @@ export default function TreeCanvasIndividual({
     xtop14: "tv",
     xtop15: "vinil",
     xtop16: "xpiral",
+    xtop17: "xorbeteria"
   };
 
   useEffect(() => {
@@ -170,23 +171,7 @@ export default function TreeCanvasIndividual({
             ) : null
           )}
 
-          {/* Xperiencias */}
-          {Object.entries(xperienciasProgreso || {}).map(([k, v]) =>
-            v && mapaXperiencias[k] ? (
-              <motion.img
-                key={`xperiencia-${k}`}
-                src={`/arbol/xtopÁrbol/${mapaXperiencias[k]}.png`}
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={
-                  insigniaReciente === k
-                    ? { opacity: 1, scale: [1.5, 0.95, 1] }
-                    : { opacity: 1, scale: 1 }
-                }
-                transition={{ duration: 0.8 }}
-              />
-            ) : null
-          )}
+          
 
           {/* XTOP */}
           {Object.entries(xtopProgreso || {}).map(([k, v]) =>

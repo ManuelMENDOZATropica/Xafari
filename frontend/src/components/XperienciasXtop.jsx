@@ -67,7 +67,7 @@ const xperiencias = [
     amuleto: "Un salvavidas",
     pregunta: "q_tierra_logo",
     opciones: ["a", "b", "c"],
-    respuestaCorrecta: "b",
+    respuestaCorrecta: "c",
     insignia: "salvavidas",
     copy: "copy_tierra_alberca",
   },
@@ -182,6 +182,17 @@ const xperiencias = [
     respuestaCorrecta: "a",
     insignia: "drink",
     copy: "copy_cielo_xupes",
+  },{
+    actividad: "t_experiencia_cielo_xorbeteria",
+    lugar: "La Xorbeteria",
+    edad: "+18 años",
+    amuleto:
+      "Un cono de helado",
+    pregunta: "q_cielo_xorbeteria",
+    opciones: ["a", "b", "c"],
+    respuestaCorrecta: "a",
+    insignia: "xorbeteria",
+    copy: "copy_cielo_xorbeteria",
   },
 ];
 

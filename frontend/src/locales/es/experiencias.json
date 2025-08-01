@@ -54,6 +54,9 @@
 
   "t_experiencia_cielo_xupes": "¡Tómate unos tragos en Xupes, el antro para adultos más vibrante del hotel! Y cuando la fiesta termine… ponle el broche de oro con unos tacos de Pava Jarla.",
   "q_cielo_xupes": "¿Cuántas máscaras de luchadores hay en Pava Jarla?",
+  
+  "t_experiencia_cielo_xorbeteria": "¡Cómete un rico helado en la 'Xorbetería!",
+  "q_cielo_xorbeteria": "Menciona uno de los animales que están dibujados en el mural del techo.",
 
   "options": {
     "q_caletas": {
@@ -135,6 +138,11 @@
       "A": "28",
       "B": "30",
       "C": "32"
+    },
+    "q_cielo_xorbeteria": {
+      "A": "Iguana",
+      "B": "Gallina",
+      "C": "Ajolote"
     }
   },
 

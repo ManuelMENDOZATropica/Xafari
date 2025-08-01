@@ -1,11 +1,8 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import AvatarRender from "@/components/AvatarRender";
 import { motion } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
-// ================================
-// == POSICIONES POR ID (px base) ==
-// ================================
 const positionsById = {
   1: { x: 1450, y: 3000 },
   2: { x: 1100, y: 3000 },
@@ -14,18 +11,6 @@ const positionsById = {
   5: { x: 1350, y: 3100 },
   6: { x: 1200, y: 3100 },
 };
-
-// ================================
-// == AVATARES DE LA FAMILIA ==
-// ================================
-
-// JSON EMULADO DE FAMILIA PARA ÁRBOL MODO FAMILIA
-// IMPORTANTE PARA BACKEND:
-// Aquí deben reemplazarse los valores 'true/false' con información real
-// proveniente del backend para cada usuario, en cada tipo de insignia:
-// - xecretos: placas escaneadas (10)
-// - checklist: gastronomía (10)
-// - xperiencias: experiencias (12)
 
 const familia = [
   {
@@ -46,10 +31,10 @@ const familia = [
         xecreto1: true,
         xecreto2: true,
         xecreto3: true,
-        xecreto4: false,
-        xecreto5: false,
+        xecreto4: true,
+        xecreto5: true,
         xecreto6: true,
-        xecreto7: false,
+        xecreto7: true,
         xecreto8: true,
         xecreto9: false,
         xecreto10: true,
@@ -60,7 +45,7 @@ const familia = [
         checklist3: true,
         checklist4: true,
         checklist5: false,
-        checklist6: false,
+        checklist6: true,
         checklist7: true,
         checklist8: false,
         checklist9: true,
@@ -353,10 +338,6 @@ const familia = [
     },
   },
 ];
-
-// ==============================
-// == MAPA DE XEcretos ==
-// ==============================
 const mapa = {
   xecreto1: "mono",
   xecreto2: "rana",
@@ -412,28 +393,43 @@ const mapaXtop = {
   xtop16: "xpiral",
 };
 
-export default function TreeCanvasFamilia() {
+export default function TreeCanvasFamilia({ insigniaReciente }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
   const initialScale = 0.22;
   const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
 
-  // ===========================
-  // == Cálculo de insignias ==
-  // ===========================
+ const [jugador, setJugador] = useState(() => JSON.parse(localStorage.getItem("user") || "{}"));
+
+useEffect(() => {
+  const handleStorage = () => {
+    const updated = JSON.parse(localStorage.getItem("user") || "{}");
+    setJugador(updated);
+  };
+
+  // Escuchar cambios externos (por seguridad)
+  window.addEventListener("storage", handleStorage);
+
+  // Y también actualizar por cambios internos si el componente se vuelve a renderizar
+  handleStorage();
+
+  return () => window.removeEventListener("storage", handleStorage);
+}, []);
+
+
   const calcularNivelDesbloqueo = (clave, tipo) => {
-    const total = familia.length;
-    const desbloqueos = familia.filter((m) => m.progreso[tipo]?.[clave]).length;
-    const porcentaje = desbloqueos / total;
+    const total = familia.length + 1;
+    const desbloqueosFamilia = familia.filter(
+      (m) => m.progreso?.[tipo]?.[clave]
+    ).length;
+    const desbloqueoJugador = jugador?.progreso?.[tipo]?.[clave] ? 1 : 0;
+    const porcentaje = (desbloqueosFamilia + desbloqueoJugador) / total;
     if (porcentaje === 1) return 1;
     if (porcentaje >= 0.5) return 0.5;
     return 0.25;
   };
 
-  // ===========================
-  // == Centrado inicial ==
-  // ===========================
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (transformUtilsRef.current) {
@@ -445,21 +441,14 @@ export default function TreeCanvasFamilia() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // ================================
-  // == Verifica que no se pierda ==
-  // ================================
   useEffect(() => {
     const checkBoundaries = () => {
       if (!transformUtilsRef.current) return;
-
       const { state, setTransform } = transformUtilsRef.current;
-      const scale = state.scale;
-      const posX = state.positionX;
-      const posY = state.positionY;
+      const { positionX: posX, positionY: posY, scale } = state;
 
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-
       const scaledWidth = CANVAS_WIDTH * scale;
       const scaledHeight = CANVAS_HEIGHT * scale;
 
@@ -488,6 +477,37 @@ export default function TreeCanvasFamilia() {
     return () => clearInterval(interval);
   }, []);
 
+  const renderInsignias = (mapaTipo, tipo) => {
+    return Object.entries(mapaTipo).map(([clave, asset]) => {
+      const nivel = calcularNivelDesbloqueo(clave, tipo);
+      const jugadorLaTiene = jugador?.progreso?.[tipo]?.[clave] === true;
+      const esReciente =
+        insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave;
+      const debeAnimar = jugadorLaTiene && esReciente;
+
+      const basePath =
+        tipo === "xecretos"
+          ? "/arbol/guardianesÁrbol/"
+          : tipo === "checklist"
+          ? "/arbol/checklist/"
+          : "/arbol/xtopÁrbol/";
+
+      // Se cambia key para forzar animación si es reciente
+      const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
+
+      return (
+        <motion.img
+          key={key}
+          src={`${basePath}${asset}.png`}
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+          initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
+          animate={{ opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel], scale: 1 }}
+          transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
+        />
+      );
+    });
+  };
+
   return (
     <TransformWrapper
       initialScale={initialScale}
@@ -510,15 +530,14 @@ export default function TreeCanvasFamilia() {
           style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
           className="relative"
         >
-          {/* Fondo del árbol */}
           <img
             src="/arbol/baseArbolv3.png"
             alt=""
             className="w-full h-full object-contain"
           />
 
-          {/* Avatares familiares */}
-          {familia.map((m, index) => {
+          {/* Avatares familia */}
+          {familia.map((m) => {
             const pos = positionsById[m.id];
             if (!pos) return null;
             return (
@@ -540,6 +559,7 @@ export default function TreeCanvasFamilia() {
               </div>
             );
           })}
+
           {/* Avatar del jugador principal */}
           {typeof window !== "undefined" && (
             <div
@@ -553,65 +573,16 @@ export default function TreeCanvasFamilia() {
               }}
             >
               <AvatarRender
-                avatarData={
-                  JSON.parse(localStorage.getItem("user") || "{}").avatarData
-                }
+                avatarData={jugador?.avatarData}
                 className="w-full h-full"
               />
             </div>
           )}
 
-          {/* Guardianes */}
-          {Object.keys(mapa).map((clave) => {
-            const nivel = calcularNivelDesbloqueo(clave, "xecretos");
-            const opacityMap = { 1: 1, 0.5: 0.7, 0.25: 0.4 };
-            return (
-              <motion.img
-                key={clave}
-                src={`/arbol/guardianesÁrbol/${mapa[clave]}.png`}
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: opacityMap[nivel] }}
-                transition={{ duration: 0.8 }}
-              />
-            );
-          })}
-
-          {/* XTOP */}
-          {Object.values(mapaXtop).map((clave) => {
-            const nivel = calcularNivelDesbloqueo(clave, "xperiencias");
-            const opacityMap = { 1: 1, 0.5: 0.7, 0.25: 0.4 };
-
-            return (
-              <motion.img
-                key={`xtop-${clave}`}
-                src={`/arbol/xtopÁrbol/${clave}.png`}
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: opacityMap[nivel] }}
-                transition={{ duration: 0.6 }}
-              />
-            );
-          })}
-
-          {Object.values(mapaXperiencias).map((clave) => {
-  const nivel = calcularNivelDesbloqueo(clave, "checklist");
-  const opacityMap = { 1: 1, 0.5: 0.7, 0.25: 0.4 };
-
-  return (
-    <motion.img
-      key={`checklist-${clave}`}
-      src={`/arbol/checklist/${clave}.png`}
-      className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: opacityMap[nivel] }}
-      transition={{ duration: 0.6 }}
-    />
-  );
-})}
-
-
-
+          {/* Render de insignias */}
+          {renderInsignias(mapa, "xecretos")}
+          {renderInsignias(mapaXtop, "xperiencias")}
+          {renderInsignias(mapaXperiencias, "checklist")}
         </div>
       </TransformComponent>
     </TransformWrapper>
