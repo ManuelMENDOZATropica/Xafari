@@ -1,12 +1,12 @@
 {
   "intro": {
-    "001 ARBOL": "Los árboles nos contaban que el mundo tiene forma de un Gran Árbol. Tan grande que en su tronco cabe todo lo que existe.",
+    "001 ARBOL": "Los antiguos nos contaban que el mundo tiene forma de un Gran Árbol. Tan grande que en su tronco cabe todo lo que existe.",
     "002 GUARDIANES": "Que en cada una de sus ramas habita una tribu distinta, con historias y tradiciones tan únicas como especiales.",
     "003 CELEBRACION": "Estas ramas son tan grandes que se veneran como Árboles Sagrados. Cada uno teniendo un poder creador que mantiene el balance.",
     "004 ELEMENTOS": "También nos contaban que nosotros nacimos del Árbol de la vida. Cuando sus guardianes tomaron los elementos y los usaron para crearnos.",
     "005 RAMA": "Pero un día comenzó a secarse, agrietarse y romperse. Ahí fue donde la aventura comenzó.",
-    "006 VIAJE": "Y así hemos vivido por miles de años, en paz y aprovechando lo que el Gran Árbol nos regala, visitando tribus e investigando cómo salvar a cada uno de los Árboles Sagrados.",
-    "007": "..."
+    "006 VIAJE": "Y así hemos vivido por miles de años, en paz y aprovechando lo que el Gran Árbol nos regala, ",
+    "007 FIN": "visitando tribus e investigando cómo salvar a cada uno de los Árboles Sagrados."
   },
   "next": "Siguiente",
   "language": "Idioma"

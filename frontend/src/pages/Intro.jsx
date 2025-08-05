@@ -90,16 +90,20 @@ const Intro = () => {
 
        .intro-text {
   position: absolute;
-  bottom: 8%;
-  padding: 7.5rem 1rem;
+  top: 71%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
   border-radius: 1rem;
   max-width: 70%;
+  width: 700px;
   text-align: center;
   font-size: 1rem;
-  color: white;
+  color: black;
   z-index: 10;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
 }
+
 
 /* Elimina fondo blanco */
 .intro-text.no-bg {
