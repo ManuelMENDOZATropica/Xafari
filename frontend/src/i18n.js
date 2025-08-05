@@ -12,6 +12,7 @@ import xecretosEs from "./locales/es/xecretos.json";
 import experienciasEs from "./locales/es/experiencias.json";
 import copyEs from "./locales/es/copy.json";
 import checklistEs from "./locales/es/checklist.json";
+import introEs from "./locales/es/intro.json";
 
 // Inglés
 import globalEn from "./locales/en/global.json";
@@ -23,6 +24,7 @@ import xecretosEn from "./locales/en/xecretos.json";
 import experienciasEn from "./locales/en/experiencias.json";
 import copyEn from "./locales/en/copy.json";
 import checklistEn from "./locales/en/checklist.json";
+import introEn from "./locales/en/intro.json";
 
 i18n
   .use(LanguageDetector)
@@ -40,6 +42,7 @@ i18n
           ...experienciasEs,
           ...copyEs,
           ...checklistEs,
+          ...introEs
         },
       },
       en: {
@@ -53,6 +56,7 @@ i18n
           ...experienciasEn,
           ...copyEn,
           ...checklistEn,
+          ...introEn
         },
       },
     },

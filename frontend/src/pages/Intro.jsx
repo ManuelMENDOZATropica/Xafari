@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const baseNames = ["1", "2", "3", "4", "5", "6"];
+const baseNames = ["001 ARBOL", "002 GUARDIANES", "003 CELEBRACION", "004 ELEMENTOS", "005 RAMA", "006 VIAJE", "007 FIN"];
 
 const Intro = () => {
   const [index, setIndex] = useState(0);
@@ -13,12 +13,6 @@ const Intro = () => {
 
   const fadeOutTimeout = useRef(null);
   const nextImageTimeout = useRef(null);
-
-  const getImageSrc = (name) => {
-    return i18n.language === "en"
-      ? `/intro/${name}.jpg`
-      : `/intro/${name}.jpg`;
-  };
 
   const goToNextImage = () => {
     clearTimeout(fadeOutTimeout.current);
@@ -56,6 +50,8 @@ const Intro = () => {
     };
   }, [index, navigate]);
 
+  const currentName = baseNames[index];
+
   return (
     <div className={`intro-container ${exitFade ? "exit-fade" : ""} font-lufga`}>
       <style>{`
@@ -91,6 +87,26 @@ const Intro = () => {
         .fade-out {
           opacity: 0;
         }
+
+       .intro-text {
+  position: absolute;
+  bottom: 8%;
+  padding: 7.5rem 1rem;
+  border-radius: 1rem;
+  max-width: 70%;
+  text-align: center;
+  font-size: 1rem;
+  color: white;
+  z-index: 10;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Elimina fondo blanco */
+.intro-text.no-bg {
+  background-color: transparent;
+  box-shadow: none;
+}
+
       `}</style>
 
       {/* Botón de idioma */}
@@ -105,15 +121,18 @@ const Intro = () => {
         </button>
       </div>
 
-      {/* Imágenes */}
-      {baseNames.map((name, i) => (
-        <img
-          key={i}
-          src={getImageSrc(name)}
-          alt={`intro-${name}`}
-          className={`intro-image ${i === index ? "fade-in" : "fade-out"}`}
-        />
-      ))}
+      {/* Imagen base */}
+      <img
+        src={`/intro/${currentName}.jpg`}
+        alt={`intro-${currentName}`}
+        className={`intro-image ${fade ? "fade-in" : "fade-out"}`}
+      />
+
+      {/* Texto superpuesto */}
+     <div className="intro-text no-bg">
+  {t(`intro.${currentName}`)}
+</div>
+
 
       {/* Botón Siguiente */}
       {index < baseNames.length && (
