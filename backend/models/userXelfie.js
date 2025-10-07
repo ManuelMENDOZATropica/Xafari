@@ -1,31 +1,15 @@
-const { DataTypes, STRING } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
-const User = require("./user");
-const Xelfie = require("./xelfie");
-
 const userXelfie = database.define("userXelfie", {
-  user_id: {
+  id: {
     type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: "id",
-    },
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
   },
-  xelfie_id: {
-    type: DataTypes.UUID,
-    references: {
-      model: Xelfie,
-      key: "id",
-    },
-  },
-  xelfie_url: {
-    type: STRING,
+  xelfieUrl: {
+    type: DataTypes.STRING,
     unique: true,
-    allowNull: false,
-  },
-  completed_at: {
-    type: DATE,
     allowNull: false,
   },
 });

@@ -1,0 +1,30 @@
+{
+  "scan_title": "Escanea un Xecreto",
+  "how_scan": "¿Cómo escanear?",
+  "see_clues": "Ver pistas",
+  "found_guardian": "¡Encontraste al guardián {{guardian}}!",
+  "understood": "Entendido",
+  "scan_step1": "Ubica las placas escondidas en el hotel.",
+  "scan_step2": "Acércate con tu dispositivo móvil y abre la cámara desde esta app.",
+  "scan_step3": "Escanea el código QR visible en la placa.",
+  "scan_step4": "Descubre qué guardián has desbloqueado y mira cómo se agrega al Árbol de la Vida.",
+  "welcomeApprentice": "¡Qué alegría tenerte aquí!",
+  "welcomeToAdventure": "Has llegado al lugar donde comienzan las aventuras",
+  "correct": "Respuesta correcta.",
+  "incorrect": "Respuesta incorrecta.",
+  "retry_in": "Intenta de nuevo en",
+  "clue_title": "Pistas de los Xecretos",
+  "clue_label": "Xecreto {{num}}",
+  "pistas": {
+    "xecreto1": "Y cuando sientas que tu mundo se acaba, El mono abre una puerta reflejante para salvarte",
+    "xecreto2": "El tronco de un árbol nace desde el piso, entre sus pedestales una rana aguarda ¿escuchas su croar?",
+    "xecreto3": "Entre azulejos, madera y cristales, las manchas del Jaguar se difuminan cerca de la luz del sol",
+    "xecreto4": "Cuando el hambre llega, es la guacamaya quien nos guía hacia el alimento que nutre los cuerpos cansados",
+    "xecreto5": "La serpiente, guardián del ciclo del tiempo, nos dice que la aplastante muerte se evidencia solo si miras hacia arriba",
+    "xecreto6": "Entre los archivos secretos de Xurreal, es el venado quien los resguarda bajo sus astas",
+    "xecreto7": "El búho aguarda desde el otro lado del cristal, durante las noches vigila que las aves estén descansando",
+    "xecreto8": "La sabiduría esconde a la mariposa, entre las palabras de quienes también han pisado este mundo",
+    "xecreto9": "Entre la inmensa vegetación de un tronco, allá donde las luces cálidas iluminan un frío lugar, el flamingo mira.",
+    "xecreto10": "Bajo la tribu de vestidos blancos aguarda el gran guardián coatí"
+  }
+}

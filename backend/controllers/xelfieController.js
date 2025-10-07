@@ -1,54 +1,82 @@
+const { toXelfieDTO } = require("../dto/xelfie.dto");
 const xelfieService = require("../services/xelfieService");
+const {
+  handleSequelizeError,
+  ResourceNotFoundError,
+} = require("../utils/errors");
 
-exports.getXelfie = async (req, res) => {
+exports.createXelfie = async (req, res, next) => {
+  const { ...activityParams } = req.body;
+
+  try {
+    const xelfie = await xelfieService.createXelfie({
+      type: "Xelfie",
+      ...activityParams,
+    });
+
+    res.status(200).json(toXelfieDTO(xelfie));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
+};
+
+exports.getXelfie = async (req, res, next) => {
   const id = req.params.id;
-  const xelfie = await xelfieService.getXelfieById(id);
+  try {
+    const xelfie = await xelfieService.getXelfie(id);
 
-  res.json({
-    xelfie: {
-      name: xelfie.name,
-      description: xelfie.description,
-      familiar: xelfie.familiar,
-      min_age: xelfie.min_age,
-      max_age: xelfie.max_age,
-    },
-  });
+    if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
+
+    res.status(200).json(toXelfieDTO(xelfie));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
 };
 
-exports.getAllXelfies = async (req, res) => {
-  const xelfies = await xelfieService.getAllXelfies();
-  res.json({
-    xelfies: xelfies.map((xelfie) => xelfie.id),
-  });
+exports.getAllXelfies = async (req, res, next) => {
+  try {
+    const xelfies = await xelfieService.getAllXelfies();
+
+    res.status(200).json(xelfies.map((xelfie) => toXelfieDTO(xelfie)));
+  } catch (err) {
+    logger.error(err);
+    next(handleSequelizeError(err, "Xelfie"));
+  }
 };
 
-exports.deleteXelfie = async (req, res) => {
+exports.deleteXelfie = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const xelfie = await xelfieService.deleteXelfie(id);
+
+    if (!xelfie) return next(new ResourceNotFoundError("Xelfie not found"));
+
+    res.status(200).json(toXelfieDTO(xelfie));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
+};
+
+exports.updateXelfie = async (req, res, next) => {
   const id = req.params.id;
 
-  await xelfieService.deleteXelfie(id);
+  try {
+    const newXelfieData = {
+      ...(req.body.name ? { name: req.body.name } : {}),
+      ...(req.body.description ? { description: req.body.description } : {}),
+      ...(req.body.location ? { location: req.body.location } : {}),
+      ...(req.body.type ? { type: req.body.type } : {}),
+      ...(req.body.isActive ? { isActive: req.body.isActive } : {}),
+      ...(req.body.minAge ? { minAge: req.body.minAge } : {}),
+      ...(req.body.maxAge ? { maxAge: req.body.maxAge } : {}),
+    };
 
-  res.json({
-    xelfie: {
-      id,
-    },
-  });
-};
+    const newXelfie = await xelfieService.updateXelfie(id, newXelfieData);
 
-exports.addXelfie = async (req, res) => {
-  const { name, description, familiar, min_age, max_age, casa_id } = req.body;
+    if (!newXelfie) return next(new ResourceNotFoundError("Xelfie not found"));
 
-  const xelfie = await casaService.addXelfie(
-    casa_id,
-    name,
-    description,
-    familiar,
-    min_age,
-    max_age
-  );
-
-  res.json({
-    xelfie: {
-      id: xelfie.id,
-    },
-  });
+    res.status(200).json(toXelfieDTO(newXelfie));
+  } catch (err) {
+    next(handleSequelizeError(err, "Xelfie"));
+  }
 };

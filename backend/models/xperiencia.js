@@ -1,7 +1,5 @@
-const { DataTypes, STRING } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const database = require("../config/database");
-
-const Casa = require("./casa");
 
 const xperiencia = database.define("xperiencia", {
   id: {
@@ -9,34 +7,15 @@ const xperiencia = database.define("xperiencia", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  qr: {
-    type: STRING,
+  qrCode: {
+    type: DataTypes.STRING,
+    allowNull: true,
     unique: true,
-    allowNull: false,
   },
-  name: {
-    type: DataTypes.STRING,
-  },
-  description: {
-    type: DataTypes.STRING,
-  },
-  familiar: {
+  isValidable: {
     type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
-  min_age: {
-    type: DataTypes.INTEGER,
-  },
-  max_age: {
-    type: DataTypes.INTEGER,
-  },
-});
-
-xperiencia.belongsTo(Casa, {
-  foreignKey: "casa_id",
-});
-
-Casa.hasMany(xperiencia, {
-  foreignKey: "casa_id",
 });
 
 module.exports = xperiencia;

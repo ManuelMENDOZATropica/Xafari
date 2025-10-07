@@ -1,0 +1,165 @@
+{
+  "rateExperience": "Rate this experience",
+  "logrado": "Done",
+  "blocked": "Blocked",
+  "next_unlocked": "You have unlocked the next one",
+
+
+  "t_experiencia_caletas": "Explore the hotel’s coves by Kayak or Paddle board and immerse yourself in the beauty of the landscape with every stroke.",
+  "q_caletas": "What color are the Kayaks and Paddle boards?",
+
+  "t_experiencia_cielo_flamingos": "Let yourself go at the Flamingo Hall! Dance like never before, vibe with the best music, and conquer the dance floor with your best moves.",
+  "q_cielo_flamingos": "At the back there are niches with flamingo sculptures. How many are there?",
+
+  "t_experiencia_agua_muluk": "Let yourself be enveloped by calm at the Muluk Family Spa. Enjoy a natural environment, scents, and sounds.",
+  "q_muluk": "How many pools are there in Muluk?",
+
+  "t_experiencia_vida_maquinitas": "Escape to Las Maquinitas Bar! Enjoy good music, a vibrant atmosphere, and moments that turn into memories.",
+  "q_vida_juegos": "What can you find in the game area?",
+
+  "t_experiencia_espiral_teatro": "Be amazed by one of the shows at Teatro del Río! Experience a magical moment at the restaurant.",
+  "q_espiral_lamparas": "What shape are the hanging lamps?",
+
+  "t_experiencia_tierra_alberca": "Immerse yourself in the infinity pool and let the tranquility of the horizon surround you. Relax and enjoy a view that blends sky and sea.",
+  "q_tierra_logo": "What image can you find at the bottom of the pool tile?",
+
+  "t_experiencia_eclipse_luna": "Discover the magic of La Lunateca with the little ones! Dive into a world of games, laughter, and adventures.",
+  "q_eclipse_luna": "What animal is on the Moon?",
+
+  "t_experiencia_eclipse_xiquit": "Explore all the roles at Xiquit Inn: the hotel made for and by kids! Solve all the challenges and become the Hotel Manager.",
+  "q_eclipse_xiquit": "A family of ______ caused the mess in the rooms",
+
+  "t_experiencia_sol_infinity": "Step into the amazing Infinity Room and let the stars surround you! An immersive experience out of this world.",
+  "q_sol_mensaje": "What is the message of the experience?",
+
+  "t_experiencia_sol_jaguar": "Let yourself go at the Paxanguería! Immerse yourself in an atmosphere full of lights and music.",
+  "q_sol_jaguar": "What is the guardian animal mask above the DJ?",
+
+  "t_experiencia_fuego_piscina": "Elevate your senses at Rooftop Fuego, where the sky and sea meet. An exclusive adults-only oasis.",
+  "q_fuego_piscina": "Here you can find one of the most iconic ____ of Hotel Xcaret Mexico",
+
+  "t_experiencia_canal_patin": "Hop on the skater and challenge another player to a race! Show your speed and feel the excitement.",
+  "q_canal_patin": "Which is the most challenging track?",
+
+  "t_experiencia_vida_tobogan": "Dare to ride the Kamikaze, the tallest slide, and feel the thrill to the max! Test your courage from the heights.",
+  "q_vida_tobogan": "On which floor is the tallest slide located?",
+
+  "t_experiencia_ixla_xpiral": "Reach the top of the Xpiral and enjoy a breathtaking view! From the highest point, admire a paradisiacal landscape.",
+  "q_ixla_xpiral": "How many angels are in the Chapel?",
+
+  "t_experiencia_viento_poolpo": "Dare to conquer the Pool’po wall! Test your strength and reach the top with a victorious smile.",
+  "q_viento_poolpo": "How many rocks are on the climbing wall?",
+
+  "t_experiencia_cielo_xupes": "Grab some drinks at Xupes, the hotel's most vibrant adult club! And when the party’s over... top it off with tacos from Pava Jarla.",
+  "q_cielo_xupes": "How many wrestler masks are there in Pava Jarla?",
+
+  "t_experiencia_cielo_xorbeteria": "Enjoy a delicious ice cream at the 'Xorbetería'.",
+  "q_cielo_xorbeteria": "Name one of the animals painted on the ceiling mural.",
+
+  "options": {
+    "q_caletas": {
+      "A": "Green and white",
+      "B": "Red and green",
+      "C": "Blue and white"
+    },
+    "q_cielo_flamingos": {
+      "A": "More than 5",
+      "B": "More than 15",
+      "C": "More than 25"
+    },
+    "q_muluk": {
+      "A": "One",
+      "B": "Five",
+      "C": "Two"
+    },
+    "q_vida_juegos": {
+      "A": "A bowling alley, a pool table, and an air hockey",
+      "B": "A pool table, an air hockey, and a foosball",
+      "C": "Betting games, a bowling alley, and a pool table"
+    },
+    "q_espiral_lamparas": {
+      "A": "Rectangular",
+      "B": "Circular",
+      "C": "Spiral shaped"
+    },
+    "q_tierra_logo": {
+      "A": "Casa Tierra logo",
+      "B": "Hotel Xcaret Mexico logo",
+      "C": "None of the above"
+    },
+    "q_eclipse_luna": {
+      "A": "The rabbit",
+      "B": "The coati",
+      "C": "The owl"
+    },
+    "q_eclipse_xiquit": {
+      "A": "Rabbits",
+      "B": "Coatis",
+      "C": "Owls"
+    },
+    "q_sol_mensaje": {
+      "A": "That we are important in the world",
+      "B": "That we are loved",
+      "C": "That it's always worth trying"
+    },
+    "q_sol_jaguar": {
+      "A": "Deer",
+      "B": "Macaw",
+      "C": "Snake"
+    },
+    "q_fuego_piscina": {
+      "A": "Stairs",
+      "B": "Pools",
+      "C": "Chairs"
+    },
+    "q_canal_patin": {
+      "A": "They are the same",
+      "B": "The one on the side of the canal shops",
+      "C": "Data pending"
+    },
+    "q_vida_tobogan": {
+      "A": "10th floor",
+      "B": "7th floor",
+      "C": "5th floor"
+    },
+    "q_ixla_xpiral": {
+      "A": "Data pending",
+      "B": "Data pending",
+      "C": "Data pending"
+    },
+    "q_viento_poolpo": {
+      "A": "Data pending",
+      "B": "Data pending",
+      "C": "Data pending"
+    },
+    "q_cielo_xupes": {
+      "A": "28",
+      "B": "30",
+      "C": "32"
+    },
+    "q_cielo_xorbeteria": {
+      "A": "Iguana",
+      "B": "Hen",
+      "C": "Axolotl"
+    }
+  },
+
+  "copy": {
+    "kayak": "Kraaak-kaaa! You did it, the Paddler's Amulet is yours! Every great seeker knows how to paddle across islands and rivers.",
+    "vinil": "Kraaak-kaaa! You did it, the Dancer's Amulet is yours! Every great seeker knows how to dance to communicate without words.",
+    "caracola": "Kraaak-kaaa! You did it, the Contemplator's Amulet is yours! Every great seeker knows how to calm their mind to feel what’s around.",
+    "tv": "Kraaak-kaaa! You did it, the Blender's Amulet is yours! Every great seeker knows how to blend in with any environment.",
+    "teatro": "Kraaak-kaaa! You did it, the Actor's Amulet is yours! Every great seeker knows how to play a role and not get caught in the adventure.",
+    "salvavidas": "Kraaak-kaaa! You did it, the Diver's Amulet is yours! Every great seeker knows how to hold their breath to find underwater treasures.",
+    "conejo": "Kraaak-kaaa! You did it, the Caretaker's Amulet is yours! Every great seeker knows how to take care of the youngest of the troop.",
+    "camion": "Kraaak-kaaa! You did it, the Hardworker's Amulet is yours! Every great seeker knows how to handle any task at camp.",
+    "estrella": "Kraaak-kaaa! You did it, the Dreamer's Amulet is yours! Every great seeker knows how to find their way in the starry night.",
+    "mascarajaguar": "Data pending",
+    "piscina": "Data pending",
+    "patin": "Kraaak-kaaa! You did it, the Competitor's Amulet is yours! Every great seeker knows how to win any challenge that comes their way.",
+    "tobogan": "Data pending",
+    "xpiral": "Kraaak-kaaa! You did it, the Conqueror's Amulet is yours! Every great seeker knows how to reach as high as the sky.",
+    "poolpo": "Kraaak-kaaa! You did it, the Climber's Amulet is yours! Every great seeker knows how to dodge obstacles to reach the top.",
+    "drink": "Data pending"
+  }
+}

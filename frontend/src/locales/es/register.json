@@ -1,0 +1,20 @@
+{
+  "registerStep1": "Debes crear una cuenta para guardar tu progreso en el juego.",
+  "firstName": "Primer nombre",
+  "lastName": "Primer apellido",
+  "email": "Correo electrónico",
+  "password": "Contraseña",
+  "confirmPassword": "Confirmar contraseña",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "passwordWeak": "Contraseña débil",
+  "passwordMedium": "Contraseña aceptable",
+  "passwordStrong": "Contraseña fuerte",
+  "registerStep2": "Ingresa tu número de reserva y selecciona cómo prefieres que te llamen.",
+  "roomNumber": "Número de reserva",
+  "selectGender": "¿Cómo prefieres que se te llame?",
+  "buxcadora": "Buxcadora",
+  "buxcador": "Buxcador",
+  "explorerMale": "Explorador",
+  "explorerFemale": "Exploradora",
+  "registerComplete": "Registro completado. ¡Bienvenido a Xafari!"
+}

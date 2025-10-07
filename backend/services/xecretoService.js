@@ -1,58 +1,60 @@
+const Clue = require("../models/clue");
+const Activity = require("../models/activity");
 const Xecreto = require("../models/xecreto");
-const { NotFoundError } = require("../utils/errors");
 
-const casaService = require("../services/casaService");
+exports.createXecreto = async ({ clues, ...activityParams }) => {
+  const xecreto = await Xecreto.create(
+    {
+      clues,
+      activity: activityParams,
+    },
+    {
+      include: [Activity, Clue],
+    }
+  );
 
-exports.getXecretoById = async (id) => {
-  if (!id) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
-
-  const xecreto = await Xecreto.findByPk(id);
-  if (!xecreto) {
-    throw new NotFoundError("Xecreto not found");
-  }
   return xecreto;
 };
 
-exports.addXecreto = async (
-  casa_id,
-  name,
-  description,
-  familiar,
-  min_age,
-  max_age
-) => {
-  if (
-    !name ||
-    !description ||
-    typeof familiar != "boolean" ||
-    isNaN(min_age) ||
-    isNaN(max_age)
-  ) {
-    throw new BadRequestError("Not enough args or wrong parameters");
-  }
+exports.getXecreto = async (id) => {
+  let xecreto = await Xecreto.findByPk(id, {
+    include: [Activity, Clue],
+  });
 
-  try {
-    const xecreto = await Xecreto.create({
-      casa_id,
-      name,
-      description,
-      familiar,
-      min_age,
-      max_age,
-    });
-    return xecreto;
-  } catch (err) {
-    if (err instanceof ForeignKeyConstraintError) {
-      throw new NotFoundError("Casa not found");
-    } else {
-      throw err;
-    }
-  }
+  return xecreto;
+};
+
+exports.getAllXecretos = async () => {
+  const xecretos = await Xecreto.findAll({
+    include: [Activity, Clue],
+  });
+
+  return xecretos;
 };
 
 exports.deleteXecreto = async (id) => {
-  const xecreto = await this.getXecretoById(id);
-  return await xecreto.destroy();
+  const xecreto = await this.getXecreto(id);
+
+  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
+
+  const destroyed = await xecreto.destroy();
+  return destroyed;
+};
+
+exports.updateXecreto = async (id, newData) => {
+  const xecreto = await this.getXecreto(id);
+
+  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
+
+  if (newData.clues) {
+    for (const clue of xecreto.clues) {
+      await clue.destroy();
+    }
+  }
+
+  const updated = await xecreto.update(newData);
+
+  await xecreto.activity.update(newData);
+
+  return updated;
 };
