@@ -76,7 +76,8 @@ const SOUND_OPTIONS = [
 ];
 
 export default function SoundMenu() {
-  const { soundSetting, setSoundSetting } = useContext(XafariContext);
+  const { soundSetting, setSoundSetting, triggerClickFeedback } =
+    useContext(XafariContext);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
@@ -104,11 +105,9 @@ export default function SoundMenu() {
 
   const handleSelect = (value) => {
     setSoundSetting(value);
-
-    if (value === "vibrate" && typeof navigator !== "undefined" && navigator.vibrate) {
-      navigator.vibrate(100);
+    if (typeof triggerClickFeedback === "function") {
+      triggerClickFeedback(value);
     }
-
     setIsOpen(false);
   };
 
@@ -149,6 +148,7 @@ export default function SoundMenu() {
                     aria-label={`${t("soundMenu")}: ${t(option.labelKey)}`}
                     title={t(option.labelKey)}
                     aria-pressed={isActive}
+                    data-skip-sound-click="true"
                   >
                     <span aria-hidden="true">{SOUND_ICONS[option.value]}</span>
                   </button>

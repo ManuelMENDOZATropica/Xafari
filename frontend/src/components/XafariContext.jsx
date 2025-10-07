@@ -22,6 +22,7 @@ const XafariContext = createContext({
   xecretos: {},
   soundSetting: "full",
   setSoundSetting: () => {},
+  triggerClickFeedback: () => {},
 });
 
 export default XafariContext;
