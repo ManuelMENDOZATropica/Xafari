@@ -1,5 +1,7 @@
+
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
 import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
 
@@ -13,6 +15,7 @@ const SOUND_OPTIONS = [
 export default function SoundMenu() {
   const { soundSetting, setSoundSetting } = useContext(XafariContext);
   const { t } = useTranslation();
+
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
