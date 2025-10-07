@@ -20,6 +20,8 @@ const XafariContext = createContext({
   token: null,
   setToken: () => {},
   xecretos: {},
+  soundSetting: "full",
+  setSoundSetting: () => {},
 });
 
 export default XafariContext;
