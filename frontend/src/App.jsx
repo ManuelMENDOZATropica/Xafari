@@ -11,7 +11,9 @@ import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XafariContext from "./components/XafariContext";
-import { use, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import SoundMenu from "./components/SoundMenu";
+import useSoundController from "./hooks/useSoundController";
 
 function App() {
   // carga user desde localStorage o lo define
@@ -31,6 +33,16 @@ function App() {
     },
   });
   const [token, setToken] = useState(localStorage.getItem(null) || null);
+  const [soundSetting, setSoundSetting] = useState(() => {
+    if (typeof window === "undefined") {
+      return "full";
+    }
+
+    return localStorage.getItem("soundSetting") || "full";
+  });
+
+  const { triggerClickFeedback, playWardrobeSound, playSuccessSound, playErrorSound } =
+    useSoundController(soundSetting);
 
   useEffect(() => {
     try {
@@ -52,15 +64,41 @@ function App() {
     localStorage.setItem("token", JSON.stringify(token));
   }, [token]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    localStorage.setItem("soundSetting", soundSetting);
+  }, [soundSetting]);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      setUser,
+      token,
+      setToken,
+      soundSetting,
+      setSoundSetting,
+      triggerClickFeedback,
+      playWardrobeSound,
+      playSuccessSound,
+      playErrorSound,
+    }),
+    [
+      user,
+      token,
+      soundSetting,
+      triggerClickFeedback,
+      playWardrobeSound,
+      playSuccessSound,
+      playErrorSound,
+    ]
+  );
+
   return (
-    <XafariContext.Provider
-      value={{
-        user,
-        setUser,
-        token,
-        setToken,
-      }}
-    >
+    <XafariContext.Provider value={contextValue}>
+      <SoundMenu />
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />

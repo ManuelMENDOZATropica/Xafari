@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import ModalMapa from "@/components/ModalMapa"; // Ajusta la ruta si es diferente
+import XafariContext from "./XafariContext";
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
   const { t, i18n } = useTranslation();
+  const { playSuccessSound } = useContext(XafariContext);
 
   // ==========================
   // == DATA DE GUARDIANES ==
@@ -76,6 +78,9 @@ export default function XecretoRegister({ onClose }) {
               const updated = { ...scannedCodes, [code]: true };
               setScannedCodes(updated);
               localStorage.setItem("xecretos", JSON.stringify(updated));
+              if (typeof playSuccessSound === "function") {
+                playSuccessSound();
+              }
             }
 
             setLastScanned(code);

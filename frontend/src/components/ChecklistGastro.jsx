@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import XafariContext from "./XafariContext";
 
 const checklistItems = [
   {
@@ -39,6 +40,7 @@ const checklistItems = [
 
 export default function ChecklistGastro({ onClose }) {
   const { t, i18n } = useTranslation();
+  const { playSuccessSound } = useContext(XafariContext);
 
   const [estado, setEstado] = useState(() => {
     const saved = localStorage.getItem("progresoChecklistGastro");
@@ -57,6 +59,10 @@ export default function ChecklistGastro({ onClose }) {
       "progresoChecklistGastro",
       JSON.stringify(actualizado)
     );
+
+    if (typeof playSuccessSound === "function") {
+      playSuccessSound();
+    }
 
     // Espera para permitir que se vea la insignia activada antes de cerrar
     setTimeout(() => {
