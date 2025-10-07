@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import XafariContext from "./XafariContext";
 
 const xperiencias = [
   {
@@ -198,6 +199,7 @@ const xperiencias = [
 
 export default function XperienciasXtop({ onClose }) {
   const { t, i18n } = useTranslation();
+  const { playSuccessSound, playErrorSound } = useContext(XafariContext);
 
   const [ratings, setRatings] = useState(() => {
     const saved = localStorage.getItem("calificacionesXperiencias");
@@ -255,6 +257,9 @@ export default function XperienciasXtop({ onClose }) {
     const esCorrecta = opcion === xperiencias[idx].respuestaCorrecta;
 
     if (esCorrecta) {
+      if (typeof playSuccessSound === "function") {
+        playSuccessSound();
+      }
       const nuevo = { ...respuestas, [clave]: opcion };
       localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
       setShowCopy(idx);
@@ -265,6 +270,9 @@ export default function XperienciasXtop({ onClose }) {
         onClose();
       }, 2000);
     } else {
+      if (typeof playErrorSound === "function") {
+        playErrorSound();
+      }
       const now = new Date();
       const unlockTime = new Date(now.getTime() + 180000);
       const actualizado = { ...bloqueados, [clave]: unlockTime.toISOString() };

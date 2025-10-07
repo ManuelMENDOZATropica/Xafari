@@ -27,7 +27,7 @@ function useSelection(options, isObject = false, initialIndex = 0) {
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user, setUser, token } = useContext(XafariContext);
+  const { user, setUser, token, playWardrobeSound } = useContext(XafariContext);
 
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, false, user?.avatar?.bodyOptions);
   const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, false, user?.avatar?.hairOptions);
@@ -251,10 +251,27 @@ export default function AvatarSelection() {
                   >
                     {tab.list.map((opt, i) => {
                       const isCurrent = i === tab.current;
+                      const handleSelect = () => {
+                        if (typeof playWardrobeSound === "function") {
+                          playWardrobeSound();
+                        }
+                        tab.set(i);
+                      };
+
                       return (
                         <div key={i} className="flex-shrink-0">
                           <div
-                            onClick={() => tab.set(i)}
+                            role="button"
+                            tabIndex={0}
+                            onClick={handleSelect}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                handleSelect();
+                              }
+                            }}
+                            data-skip-sound-click="true"
+                            aria-pressed={isCurrent}
                             className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
                               isCurrent
                                 ? "border-green-600"

@@ -23,6 +23,9 @@ const XafariContext = createContext({
   soundSetting: "full",
   setSoundSetting: () => {},
   triggerClickFeedback: () => {},
+  playWardrobeSound: () => {},
+  playSuccessSound: () => {},
+  playErrorSound: () => {},
 });
 
 export default XafariContext;

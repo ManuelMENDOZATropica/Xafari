@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import XafariContext from "../components/XafariContext";
 
 // Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
@@ -20,6 +21,7 @@ function useSelection(options, initialIndex = 0) {
 export default function AvatarSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { playWardrobeSound } = useContext(XafariContext);
 
 let user = null;
 try {
@@ -247,10 +249,27 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
                   <div ref={scrollRef} className="flex overflow-x-auto gap-2 pr-6 scroll-smooth">
                     {tab.list.map((opt, i) => {
                       const isCurrent = i === tab.current;
+                      const handleSelect = () => {
+                        if (typeof playWardrobeSound === "function") {
+                          playWardrobeSound();
+                        }
+                        tab.set(i);
+                      };
+
                       return (
                         <div key={i} className="flex-shrink-0">
                           <div
-                            onClick={() => tab.set(i)}
+                            role="button"
+                            tabIndex={0}
+                            onClick={handleSelect}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                handleSelect();
+                              }
+                            }}
+                            data-skip-sound-click="true"
+                            aria-pressed={isCurrent}
                             className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
                               isCurrent ? "border-green-600" : "border-transparent"
                             } bg-white overflow-hidden`}

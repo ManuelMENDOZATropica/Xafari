@@ -41,7 +41,8 @@ function App() {
     return localStorage.getItem("soundSetting") || "full";
   });
 
-  const { triggerClickFeedback } = useSoundController(soundSetting);
+  const { triggerClickFeedback, playWardrobeSound, playSuccessSound, playErrorSound } =
+    useSoundController(soundSetting);
 
   useEffect(() => {
     try {
@@ -80,8 +81,19 @@ function App() {
       soundSetting,
       setSoundSetting,
       triggerClickFeedback,
+      playWardrobeSound,
+      playSuccessSound,
+      playErrorSound,
     }),
-    [user, token, soundSetting, triggerClickFeedback]
+    [
+      user,
+      token,
+      soundSetting,
+      triggerClickFeedback,
+      playWardrobeSound,
+      playSuccessSound,
+      playErrorSound,
+    ]
   );
 
   return (
