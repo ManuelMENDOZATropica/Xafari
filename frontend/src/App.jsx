@@ -11,7 +11,8 @@ import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XafariContext from "./components/XafariContext";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import SoundMenu from "./components/SoundMenu";
 
 function App() {
   // carga user desde localStorage o lo define
@@ -31,6 +32,13 @@ function App() {
     },
   });
   const [token, setToken] = useState(localStorage.getItem(null) || null);
+  const [soundSetting, setSoundSetting] = useState(() => {
+    if (typeof window === "undefined") {
+      return "full";
+    }
+
+    return localStorage.getItem("soundSetting") || "full";
+  });
 
   useEffect(() => {
     try {
@@ -52,6 +60,14 @@ function App() {
     localStorage.setItem("token", JSON.stringify(token));
   }, [token]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    localStorage.setItem("soundSetting", soundSetting);
+  }, [soundSetting]);
+
   return (
     <XafariContext.Provider
       value={{
@@ -59,8 +75,11 @@ function App() {
         setUser,
         token,
         setToken,
+        soundSetting,
+        setSoundSetting,
       }}
     >
+      <SoundMenu />
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />
