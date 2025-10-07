@@ -9,5 +9,10 @@
   "scan": "Encuentra y escanea",
   "discover_guardian": "Descubre al guardián",
   "next": "Siguiente",
-  "profile":"Perfil"
+  "profile": "Perfil",
+  "soundMenu": "Sonido",
+  "soundFull": "Con sonido",
+  "soundMedium": "Sonido medio",
+  "soundVibrate": "Solo vibrar",
+  "soundOff": "Sin sonido"
 }

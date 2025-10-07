@@ -9,5 +9,10 @@
   "scan": "Find and scan",
   "discover_guardian": "Discover the guardian",
   "next": "Next",
-  "profile":"Profile"
+  "profile": "Profile",
+  "soundMenu": "Sound",
+  "soundFull": "Full sound",
+  "soundMedium": "Medium sound",
+  "soundVibrate": "Vibrate only",
+  "soundOff": "Mute"
 }
