@@ -26,6 +26,18 @@ import copyEn from "./locales/en/copy.json";
 import checklistEn from "./locales/en/checklist.json";
 import introEn from "./locales/en/intro.json";
 
+// Portugués
+import globalPt from "./locales/pt/global.json";
+import loginPt from "./locales/pt/login.json";
+import homePt from "./locales/pt/home.json";
+import registerPt from "./locales/pt/register.json";
+import avatarPt from "./locales/pt/avatar.json";
+import xecretosPt from "./locales/pt/xecretos.json";
+import experienciasPt from "./locales/pt/experiencias.json";
+import copyPt from "./locales/pt/copy.json";
+import checklistPt from "./locales/pt/checklist.json";
+import introPt from "./locales/pt/intro.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -57,6 +69,20 @@ i18n
           ...copyEn,
           ...checklistEn,
           ...introEn
+        },
+      },
+      pt: {
+        translation: {
+          ...globalPt,
+          ...loginPt,
+          ...homePt,
+          ...registerPt,
+          ...avatarPt,
+          ...xecretosPt,
+          ...experienciasPt,
+          ...copyPt,
+          ...checklistPt,
+          ...introPt,
         },
       },
     },

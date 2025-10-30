@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
+import LanguageToggle from "./LanguageToggle";
 
 const xperiencias = [
   {
@@ -198,7 +199,7 @@ const xperiencias = [
 ];
 
 export default function XperienciasXtop({ onClose }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { playSuccessSound, playErrorSound } = useContext(XafariContext);
 
   const [ratings, setRatings] = useState(() => {
@@ -319,14 +320,7 @@ export default function XperienciasXtop({ onClose }) {
             >
               ← {t("back")}
             </button>
-            <button
-              onClick={() =>
-                i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-              }
-              className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-            >
-              {t("language")}
-            </button>
+            <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
           </div>
 
           <div className="px-6 pt-3 pb-1">

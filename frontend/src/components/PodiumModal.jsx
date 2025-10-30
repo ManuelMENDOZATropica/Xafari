@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import AvatarRender from "@/components/AvatarRender";
+import LanguageToggle from "./LanguageToggle";
 
 const NOMBRES = [
   "Ana",
@@ -39,7 +40,7 @@ const generarAvanceAleatorio = () => ({
 });
 
 export default function PodiumModal({ onClose }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [top10, setTop10] = useState([]);
   const [userProgress, setUserProgress] = useState({});
 
@@ -129,14 +130,7 @@ export default function PodiumModal({ onClose }) {
         </div>
 
         <div className="absolute top-4 right-4 z-10">
-          <button
-            onClick={() =>
-              i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-            }
-            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-          >
-            {t("language")}
-          </button>
+          <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
         </div>
 
         {/* TU PROGRESO */}

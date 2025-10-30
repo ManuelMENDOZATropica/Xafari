@@ -7,10 +7,11 @@ import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos"
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import ModalMapa from "@/components/ModalMapa"; // Ajusta la ruta si es diferente
 import XafariContext from "./XafariContext";
+import LanguageToggle from "./LanguageToggle";
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { playSuccessSound } = useContext(XafariContext);
 
   // ==========================
@@ -126,12 +127,7 @@ export default function XecretoRegister({ onClose }) {
           ← {t("back")}
         </button>
 
-        <button
-          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-        >
-          {t("language")}
-        </button>
+        <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
       </div>
 
       {/* == TÍTULO == */}

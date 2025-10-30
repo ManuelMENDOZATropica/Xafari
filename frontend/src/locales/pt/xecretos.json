@@ -1,0 +1,30 @@
+{
+  "scan_title": "Escaneie um Xecreto",
+  "how_scan": "Como escanear?",
+  "see_clues": "Ver pistas",
+  "found_guardian": "Você encontrou o guardião {{guardian}}!",
+  "understood": "Entendi",
+  "scan_step1": "Encontre as placas escondidas no hotel.",
+  "scan_step2": "Aproxime-se com seu dispositivo móvel e abra a câmera a partir deste app.",
+  "scan_step3": "Escaneie o código QR visível na placa.",
+  "scan_step4": "Descubra qual guardião você desbloqueou e veja como ele é adicionado à Árvore da Vida.",
+  "welcomeApprentice": "Que alegria ter você aqui!",
+  "welcomeToAdventure": "Você chegou ao lugar onde as aventuras começam",
+  "correct": "Resposta correta.",
+  "incorrect": "Resposta incorreta.",
+  "retry_in": "Tente novamente em",
+  "clue_title": "Pistas dos Xecretos",
+  "clue_label": "Xecreto {{num}}",
+  "pistas": {
+    "xecreto1": "E quando sentir que seu mundo está acabando, o macaco abre uma porta espelhada para te salvar",
+    "xecreto2": "O tronco de uma árvore nasce do piso, entre seus pedestais uma rã aguarda. Ouve seu coaxar?",
+    "xecreto3": "Entre azulejos, madeira e cristais, as manchas do Jaguar se desfazem perto da luz do sol",
+    "xecreto4": "Quando a fome chega, é a arara que nos guia até o alimento que nutre os corpos cansados",
+    "xecreto5": "A serpente, guardiã do ciclo do tempo, nos diz que a esmagadora morte só se revela se você olhar para cima",
+    "xecreto6": "Entre os arquivos secretos de Xurreal, é o veado quem os protege sob seus chifres",
+    "xecreto7": "A coruja aguarda do outro lado do vidro; nas noites vigia para que as aves estejam descansando",
+    "xecreto8": "A sabedoria esconde a borboleta entre as palavras daqueles que também já pisaram neste mundo",
+    "xecreto9": "Entre a imensa vegetação de um tronco, lá onde as luzes quentes iluminam um lugar frio, o flamingo observa.",
+    "xecreto10": "Sob a tribo de vestidos brancos aguarda o grande guardião quati"
+  }
+}

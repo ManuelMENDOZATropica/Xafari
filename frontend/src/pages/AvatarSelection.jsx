@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
+import LanguageToggle from "@/components/LanguageToggle";
 
 // Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
@@ -25,7 +26,7 @@ function useSelection(options, isObject = false, initialIndex = 0) {
 }
 
 export default function AvatarSelection() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser, token, playWardrobeSound } = useContext(XafariContext);
 
@@ -167,12 +168,7 @@ export default function AvatarSelection() {
         >
           ← {t("back")}
         </button>
-        <button
-          onClick={() => i18n.changeLanguage(i18n.language === "es" ? "en" : "es")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-        >
-          {t("language")}
-        </button>
+        <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-[env(safe-area-inset-bottom)] overflow-y-auto">

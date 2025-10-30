@@ -2,10 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export default function Welcome() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -29,14 +30,7 @@ export default function Welcome() {
         </button>
       </div>
       <div className="absolute top-4 right-4 z-20">
-        <button
-          onClick={() =>
-            i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-          }
-          className="px-4 py-2 bg-white text-sm text-gray-800 rounded-full border border-gray-200 shadow-md hover:bg-gray-100 transition-all"
-        >
-          {t("language")}
-        </button>
+        <LanguageToggle />
       </div>
 
       {/* Capa de contenido */}
