@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import LanguageToggle from "@/components/LanguageToggle";
 
 const baseNames = ["001 ARBOL", "002 GUARDIANES", "003 CELEBRACION", "004 ELEMENTOS", "005 RAMA", "006 VIAJE", "007 FIN"];
 
@@ -9,7 +10,7 @@ const Intro = () => {
   const [fade, setFade] = useState(true);
   const [exitFade, setExitFade] = useState(false);
   const navigate = useNavigate();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
 
   const fadeOutTimeout = useRef(null);
   const nextImageTimeout = useRef(null);
@@ -115,14 +116,7 @@ const Intro = () => {
 
       {/* Botón de idioma */}
       <div className="absolute top-4 right-4 z-20">
-        <button
-          onClick={() =>
-            i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
-          }
-          className="px-4 py-2 bg-white text-sm text-gray-800 rounded-full border border-gray-200 shadow-md hover:bg-gray-100 transition-all"
-        >
-          {t("language")}
-        </button>
+        <LanguageToggle />
       </div>
 
       {/* Imagen base */}
