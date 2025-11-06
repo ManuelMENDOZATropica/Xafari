@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageToggle from "@/components/LanguageToggle";
+import { Info } from "lucide-react";
 
 export default function Welcome() {
   const navigate = useNavigate();
@@ -24,9 +25,11 @@ export default function Welcome() {
       <div className="absolute top-4 left-4 z-20">
         <button
           onClick={() => setIsOpen(true)}
-          className="px-4 py-2 bg-white text-sm text-gray-800 rounded-full border border-gray-200 shadow-md hover:bg-gray-100 transition-all"
+          className="p-2 bg-white text-sm text-gray-800 rounded-full border border-gray-200 shadow-md hover:bg-gray-100 transition-all flex items-center justify-center"
+          aria-label={t("whatIsXafari")}
         >
-          {t("whatIsXafari")}
+          <Info className="h-5 w-5" aria-hidden />
+          <span className="sr-only">{t("whatIsXafari")}</span>
         </button>
       </div>
       <div className="absolute top-4 right-4 z-20">
