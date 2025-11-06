@@ -14,5 +14,10 @@
   "soundFull": "Com som",
   "soundMedium": "Som médio",
   "soundVibrate": "Somente vibrar",
-  "soundOff": "Sem som"
+  "soundOff": "Sem som",
+  "languages": {
+    "es": "Espanhol",
+    "en": "Inglês",
+    "pt": "Português"
+  }
 }

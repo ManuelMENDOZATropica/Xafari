@@ -14,5 +14,10 @@
   "soundFull": "Full sound",
   "soundMedium": "Medium sound",
   "soundVibrate": "Vibrate only",
-  "soundOff": "Mute"
+  "soundOff": "Mute",
+  "languages": {
+    "es": "Spanish",
+    "en": "English",
+    "pt": "Portuguese"
+  }
 }
