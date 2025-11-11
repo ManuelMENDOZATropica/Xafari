@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import LanguageToggle from "@/components/LanguageToggle";
 
 export default function Login() {
   const { t } = useTranslation();
@@ -70,7 +69,6 @@ const handleLogin = async () => {
         >
           ← {t("back")}
         </button>
-        <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-10 min-h-screen overflow-y-auto">

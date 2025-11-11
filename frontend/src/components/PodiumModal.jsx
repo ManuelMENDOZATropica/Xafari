@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import AvatarRender from "@/components/AvatarRender";
-import LanguageToggle from "./LanguageToggle";
 
 const NOMBRES = [
   "Ana",
@@ -127,10 +126,6 @@ export default function PodiumModal({ onClose }) {
           >
             ← {t("back")}
           </button>
-        </div>
-
-        <div className="absolute top-4 right-4 z-10">
-          <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
         </div>
 
         {/* TU PROGRESO */}

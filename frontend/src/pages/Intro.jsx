@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import LanguageToggle from "@/components/LanguageToggle";
 
 const baseNames = ["001 ARBOL", "002 GUARDIANES", "003 CELEBRACION", "004 ELEMENTOS", "005 RAMA", "006 VIAJE", "007 FIN"];
 
@@ -113,11 +112,6 @@ const Intro = () => {
 }
 
       `}</style>
-
-      {/* Botón de idioma */}
-      <div className="absolute top-4 right-4 z-20">
-        <LanguageToggle />
-      </div>
 
       {/* Imagen base */}
       <img

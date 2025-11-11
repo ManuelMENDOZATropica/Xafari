@@ -15,6 +15,13 @@
   "soundMedium": "Medium sound",
   "soundVibrate": "Vibrate only",
   "soundOff": "Mute",
+  "settingsMenuTitle": "Settings",
+  "settingsOpenLabel": "Open settings",
+  "settingsCloseLabel": "Close settings",
+  "settingsLanguageTitle": "Language",
+  "settingsSoundTitle": "Sound & vibration",
+  "settingsLegalButton": "Privacy notice",
+  "settingsMenuSubtitle": "Tune your experience",
   "languages": {
     "es": "Spanish",
     "en": "English",

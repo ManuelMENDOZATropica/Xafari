@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
-import LanguageToggle from "@/components/LanguageToggle";
 
 // Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
@@ -162,14 +161,13 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
     <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo Avatar" className="absolute inset-0 w-full h-full object-cover object-bottom z-0" />
 
-      <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
+      <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-start items-center">
         <button
           onClick={() => navigate("/treeoflife")}
           className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
         >
           ← {t("back")}
         </button>
-        <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-[env(safe-area-inset-bottom)] overflow-y-auto">

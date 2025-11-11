@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import LanguageToggle from "@/components/LanguageToggle";
 
 export default function RegisterStep2() {
   const { t } = useTranslation();
@@ -89,10 +88,6 @@ const userData = storedData ? JSON.parse(storedData) : {};
         >
           ← {t("back")}
         </button>
-      </div>
-
-      <div className="absolute top-4 right-4 z-10">
-        <LanguageToggle className="bg-white/50 backdrop-blur-sm" />
       </div>
 
       <div className="z-20 w-full mb-12">

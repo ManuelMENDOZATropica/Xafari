@@ -13,6 +13,7 @@ import experienciasEs from "./locales/es/experiencias.json";
 import copyEs from "./locales/es/copy.json";
 import checklistEs from "./locales/es/checklist.json";
 import introEs from "./locales/es/intro.json";
+import legalEs from "./locales/es/legal.json";
 
 // Inglés
 import globalEn from "./locales/en/global.json";
@@ -25,6 +26,7 @@ import experienciasEn from "./locales/en/experiencias.json";
 import copyEn from "./locales/en/copy.json";
 import checklistEn from "./locales/en/checklist.json";
 import introEn from "./locales/en/intro.json";
+import legalEn from "./locales/en/legal.json";
 
 // Portugués
 import globalPt from "./locales/pt/global.json";
@@ -37,6 +39,7 @@ import experienciasPt from "./locales/pt/experiencias.json";
 import copyPt from "./locales/pt/copy.json";
 import checklistPt from "./locales/pt/checklist.json";
 import introPt from "./locales/pt/intro.json";
+import legalPt from "./locales/pt/legal.json";
 
 i18n
   .use(LanguageDetector)
@@ -54,7 +57,8 @@ i18n
           ...experienciasEs,
           ...copyEs,
           ...checklistEs,
-          ...introEs
+          ...introEs,
+          ...legalEs
         },
       },
       en: {
@@ -68,7 +72,8 @@ i18n
           ...experienciasEn,
           ...copyEn,
           ...checklistEn,
-          ...introEn
+          ...introEn,
+          ...legalEn
         },
       },
       pt: {
@@ -83,6 +88,7 @@ i18n
           ...copyPt,
           ...checklistPt,
           ...introPt,
+          ...legalPt,
         },
       },
     },

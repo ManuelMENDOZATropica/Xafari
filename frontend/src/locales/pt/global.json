@@ -15,6 +15,13 @@
   "soundMedium": "Som médio",
   "soundVibrate": "Somente vibrar",
   "soundOff": "Sem som",
+  "settingsMenuTitle": "Configurações",
+  "settingsOpenLabel": "Abrir configurações",
+  "settingsCloseLabel": "Fechar configurações",
+  "settingsLanguageTitle": "Idioma",
+  "settingsSoundTitle": "Som e vibração",
+  "settingsLegalButton": "Aviso de privacidade",
+  "settingsMenuSubtitle": "Ajuste sua experiência",
   "languages": {
     "es": "Espanhol",
     "en": "Inglês",
