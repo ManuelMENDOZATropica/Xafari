@@ -13,32 +13,63 @@ import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
 
 const FamilyIcon = (props) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 42 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
     {...props}
   >
+    {/* Persona más a la izquierda */}
+    <circle cx="2.5" cy="8.5" r="2" fill="currentColor" />
     <path
-      d="M8 5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z"
+      d="M2.5 18v-1c0-1.9-1.3-3.5-3-4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+
+    {/* Persona izquierda */}
+    <circle cx="8" cy="8.5" r="2" fill="currentColor" />
+    <path
+      d="M8 18v-1c0-1.9-1.3-3.5-3-4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+
+    {/* Persona central */}
+    <path
+      d="M13 5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z"
       fill="currentColor"
     />
     <path
-      d="M4.5 18v-1.2A4.8 4.8 0 0 1 9.3 12h2.4a4.8 4.8 0 0 1 4.8 4.8V18"
+      d="M9.5 18v-1.2A4.8 4.8 0 0 1 14.3 12h2.4a4.8 4.8 0 0 1 4.8 4.8V18"
       stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="round"
     />
-    <circle cx="17.5" cy="8.5" r="2" fill="currentColor" opacity=".6" />
+
+    {/* Persona derecha */}
+    <circle cx="22.5" cy="8.5" r="2" fill="currentColor" />
     <path
-      d="M17.5 18v-1c0-1.9 1.3-3.5 3-4"
+      d="M22.5 18v-1c0-1.9 1.3-3.5 3-4"
       stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="round"
-      opacity=".6"
+    />
+
+    {/* Persona más a la derecha */}
+    <circle cx="28.5" cy="8.5" r="2" fill="currentColor" />
+    <path
+      d="M28.5 18v-1c0-1.9 1.3-3.5 3-4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
     />
   </svg>
 );
+
+
 
 const IndividualIcon = (props) => (
   <svg
@@ -169,32 +200,51 @@ export default function TreeOfLife() {
         />
       </button>
 
-      <button
-        onClick={() => setModoFamilia((prev) => !prev)}
-        aria-pressed={modoFamilia}
-        className="fixed top-4 right-4 z-50 flex flex-col items-center gap-1 text-gray-700"
+  <button
+  onClick={() => setModoFamilia((prev) => !prev)}
+  aria-pressed={modoFamilia}
+  className="fixed top-4 right-4 z-50 flex flex-col items-center gap-0 text-gray-700 bg-transparent border-0 p-0 appearance-none shadow-none"
+>
+  <div className="flex flex-col items-center gap-1 bg-white/80 backdrop-blur-md rounded-2xl px-4 py-3 shadow-lg">
+    {/* Toggle principal */}
+    <div className="flex items-center gap-3">
+      <span
+        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
+          modoFamilia
+            ? "bg-amber-200 text-amber-700 shadow-inner"
+            : "bg-white text-gray-400"
+        }`}
       >
-        <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md border border-gray-300 rounded-full px-3 py-2 shadow-lg">
-          <span
-            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${modoFamilia ? "bg-amber-200 text-amber-700 shadow-inner" : "bg-white text-gray-400"}`}
-          >
-            <FamilyIcon className="h-5 w-5" />
-          </span>
-          <span className="relative flex h-6 w-12 items-center rounded-full bg-gray-200">
-            <span
-              className={`absolute h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ease-out ${modoFamilia ? "translate-x-6" : "translate-x-0"}`}
-            />
-          </span>
-          <span
-            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${modoFamilia ? "bg-white text-gray-400" : "bg-sky-200 text-sky-700 shadow-inner"}`}
-          >
-            <IndividualIcon className="h-5 w-5" />
-          </span>
-        </div>
-        <span className="text-xs font-semibold drop-shadow">
-          {modoFamilia ? "Modo Familia" : "Modo Individual"}
-        </span>
-      </button>
+        <FamilyIcon className="h-8 w-8 ml-2" />
+      </span>
+
+      <span className="relative flex h-6 w-12 items-center rounded-full bg-gray-200">
+        <span
+          className={`absolute h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ease-out ${
+            modoFamilia ? "translate-x-6" : "translate-x-0"
+          }`}
+        />
+      </span>
+
+      <span
+        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
+          modoFamilia
+            ? "bg-white text-gray-400"
+            : "bg-sky-200 text-sky-700 shadow-inner"
+        }`}
+      >
+        <IndividualIcon className="h-5 w-5" />
+      </span>
+    </div>
+
+    {/* Texto dentro del botón */}
+    <span className="text-xs font-semibold text-gray-700 mt-1">
+      {modoFamilia ? "Modo Familia" : "Modo Individual"}
+    </span>
+  </div>
+</button>
+
+
 
       {showProfileMenu && (
         <div className="fixed top-20 left-4 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4 z-30">
