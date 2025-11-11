@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import LanguageToggle from "@/components/LanguageToggle";
 
 export default function RegisterStep1() {
   const { t } = useTranslation();
@@ -65,10 +64,6 @@ export default function RegisterStep1() {
           >
             ← {t("back")}
           </button>
-        </div>
-
-        <div className="absolute top-4 right-4">
-          <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
         </div>
 
         <div className="w-full mb-4">

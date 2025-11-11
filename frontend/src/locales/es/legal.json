@@ -1,0 +1,27 @@
+{
+  "privacy": {
+    "title": "Aviso de Privacidad, Cookies y Uso de Datos",
+    "updated": "Última actualización: Abril 2024",
+    "intro": "En Xafari valoramos tu confianza. Este aviso explica qué información recopilamos, cómo la usamos y las opciones que tienes para controlarla.",
+    "privacyTitle": "Privacidad y protección de datos",
+    "privacyList": [
+      "Recopilamos únicamente los datos necesarios para crear tu cuenta y personalizar tu experiencia dentro de Xafari.",
+      "Guardamos tu progreso y las configuraciones del juego de forma cifrada y segura.",
+      "Puedes solicitar la modificación o eliminación de tu información escribiendo al equipo de soporte."
+    ],
+    "cookiesTitle": "Uso de cookies",
+    "cookiesList": [
+      "Utilizamos cookies esenciales para recordar tu sesión y tus ajustes de idioma y sonido.",
+      "Estas cookies no se comparten con terceros ni se usan con fines publicitarios.",
+      "Puedes desactivar las cookies desde tu navegador, aunque algunas funciones podrían dejar de estar disponibles."
+    ],
+    "dataUseTitle": "Cómo usamos tus datos",
+    "dataUseList": [
+      "Personalizar la experiencia de juego y mostrar contenido acorde a tu avance.",
+      "Mejorar el rendimiento de la plataforma y detectar posibles incidencias técnicas.",
+      "Enviar comunicaciones importantes sobre cambios en el servicio o seguridad."
+    ],
+    "contactTitle": "¿Necesitas ayuda?",
+    "contactDescription": "Si tienes preguntas sobre este aviso o deseas ejercer tus derechos de privacidad, escríbenos a privacidad@xafari.com."
+  }
+}

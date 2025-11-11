@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
-import LanguageToggle from "./LanguageToggle";
 
 const checklistItems = [
   {
@@ -94,14 +93,13 @@ export default function ChecklistGastro({ onClose }) {
 
       <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
         {/* Barra superior */}
-        <div className="flex justify-between items-center px-4 py-3 border-b z-10">
+        <div className="flex justify-start items-center px-4 py-3 border-b z-10">
           <button
             onClick={onClose}
             className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
           >
             ← {t("back")}
           </button>
-          <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
         </div>
 
         {/* Progreso */}

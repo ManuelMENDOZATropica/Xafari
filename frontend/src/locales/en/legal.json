@@ -1,0 +1,27 @@
+{
+  "privacy": {
+    "title": "Privacy, Cookies and Data Use Notice",
+    "updated": "Last updated: April 2024",
+    "intro": "At Xafari we value your trust. This notice explains what information we collect, how we use it and the choices you have to stay in control.",
+    "privacyTitle": "Privacy and data protection",
+    "privacyList": [
+      "We only collect the information needed to create your account and personalise your Xafari experience.",
+      "Your progress and in-game settings are stored securely using encryption.",
+      "You can request changes or deletion of your data by contacting our support team."
+    ],
+    "cookiesTitle": "Use of cookies",
+    "cookiesList": [
+      "We rely on essential cookies to remember your session together with your language and sound preferences.",
+      "These cookies are not shared with third parties nor used for advertising purposes.",
+      "You may disable cookies in your browser, although some features might stop working correctly."
+    ],
+    "dataUseTitle": "How we use your data",
+    "dataUseList": [
+      "Tailor the gameplay experience and show content that matches your progress.",
+      "Improve the platform performance and detect potential technical issues.",
+      "Send important communications about service updates or security topics."
+    ],
+    "contactTitle": "Need assistance?",
+    "contactDescription": "If you have questions about this notice or want to exercise your privacy rights, write to privacy@xafari.com."
+  }
+}

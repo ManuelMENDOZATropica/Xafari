@@ -7,7 +7,6 @@ import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos"
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import ModalMapa from "@/components/ModalMapa"; // Ajusta la ruta si es diferente
 import XafariContext from "./XafariContext";
-import LanguageToggle from "./LanguageToggle";
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
@@ -119,15 +118,13 @@ export default function XecretoRegister({ onClose }) {
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 
       {/* == HEADER == */}
-      <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
+      <div className="absolute top-0 left-0 w-full flex justify-start items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
         <button
           onClick={onClose}
           className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
         >
           ← {t("back")}
         </button>
-
-        <LanguageToggle className="bg-white/80 backdrop-blur-sm" />
       </div>
 
       {/* == TÍTULO == */}

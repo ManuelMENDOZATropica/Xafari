@@ -12,10 +12,13 @@ import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XafariContext from "./components/XafariContext";
 import { useEffect, useMemo, useState } from "react";
-import SoundMenu from "./components/SoundMenu";
+import SettingsMenu from "./components/SettingsMenu";
 import useSoundController from "./hooks/useSoundController";
+import { useLocation } from "react-router-dom";
+import PrivacyNotice from "./pages/PrivacyNotice";
 
 function App() {
+  const location = useLocation();
   // carga user desde localStorage o lo define
   const [user, setUser] = useState({
     name: null,
@@ -96,9 +99,22 @@ function App() {
     ]
   );
 
+  const hiddenSettingsRoutes = useMemo(
+    () =>
+      new Set([
+        "/",
+        "/welcome",
+        "/welcome-animation",
+        "/welcome-animation-login",
+      ]),
+    []
+  );
+
+  const shouldShowSettings = !hiddenSettingsRoutes.has(location.pathname);
+
   return (
     <XafariContext.Provider value={contextValue}>
-      <SoundMenu />
+      {shouldShowSettings && <SettingsMenu />}
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />
@@ -115,6 +131,7 @@ function App() {
         <Route path="/login" element={<LogIn />} />
         <Route path="/edit-avatar" element={<EditAvatar />} />
         <Route path="/minimalqr" element={<MinimalQr />} />
+        <Route path="/privacy" element={<PrivacyNotice />} />
       </Routes>
     </XafariContext.Provider>
   );
