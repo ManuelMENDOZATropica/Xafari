@@ -11,6 +11,53 @@ import PodiumModal from "@/components/PodiumModal";
 import TreeCanvasIndividual from "@/components/TreeCanvasIndividual";
 import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
 
+const FamilyIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    {...props}
+  >
+    <path
+      d="M8 5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z"
+      fill="currentColor"
+    />
+    <path
+      d="M4.5 18v-1.2A4.8 4.8 0 0 1 9.3 12h2.4a4.8 4.8 0 0 1 4.8 4.8V18"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <circle cx="17.5" cy="8.5" r="2" fill="currentColor" opacity=".6" />
+    <path
+      d="M17.5 18v-1c0-1.9 1.3-3.5 3-4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      opacity=".6"
+    />
+  </svg>
+);
+
+const IndividualIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    {...props}
+  >
+    <circle cx="12" cy="6.5" r="3" fill="currentColor" />
+    <path
+      d="M6 18v-1a5.5 5.5 0 0 1 5.5-5.5h1a5.5 5.5 0 0 1 5.5 5.5v1"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 export default function TreeOfLife() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -123,10 +170,30 @@ export default function TreeOfLife() {
       </button>
 
       <button
-        onClick={() => setModoFamilia(!modoFamilia)}
-        className="fixed top-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-gray-300 rounded-full px-4 py-2 text-sm text-black shadow-lg hover:bg-white"
+        onClick={() => setModoFamilia((prev) => !prev)}
+        aria-pressed={modoFamilia}
+        className="fixed top-4 right-4 z-50 flex flex-col items-center gap-1 text-gray-700"
       >
-        {modoFamilia ? "Modo Individual" : "Modo Familia"}
+        <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md border border-gray-300 rounded-full px-3 py-2 shadow-lg">
+          <span
+            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${modoFamilia ? "bg-amber-200 text-amber-700 shadow-inner" : "bg-white text-gray-400"}`}
+          >
+            <FamilyIcon className="h-5 w-5" />
+          </span>
+          <span className="relative flex h-6 w-12 items-center rounded-full bg-gray-200">
+            <span
+              className={`absolute h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ease-out ${modoFamilia ? "translate-x-6" : "translate-x-0"}`}
+            />
+          </span>
+          <span
+            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${modoFamilia ? "bg-white text-gray-400" : "bg-sky-200 text-sky-700 shadow-inner"}`}
+          >
+            <IndividualIcon className="h-5 w-5" />
+          </span>
+        </div>
+        <span className="text-xs font-semibold drop-shadow">
+          {modoFamilia ? "Modo Familia" : "Modo Individual"}
+        </span>
       </button>
 
       {showProfileMenu && (
