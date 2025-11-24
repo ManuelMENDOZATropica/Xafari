@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,6 +34,16 @@ export default function Welcome() {
       </div>
       <div className="absolute top-4 right-4 z-20">
         <LanguageToggle />
+      </div>
+
+      <div className="absolute bottom-4 left-4 z-20">
+        <Link
+          to="/privacy"
+          className="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-gray-800 shadow-md backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          aria-label={t("settingsLegalButton")}
+        >
+          {t("settingsLegalButton")}
+        </Link>
       </div>
 
       {/* Capa de contenido */}
