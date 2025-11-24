@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Welcome from "./pages/Welcome";
+import SplashScreen from "./pages/SplashScreen";
 import RegisterStep1 from "./pages/RegisterStep1";
 import RegisterStep2 from "./pages/RegisterStep2";
 import WelcomeAnimation from "./pages/WelcomeAnimation";
@@ -116,7 +117,7 @@ function App() {
     <XafariContext.Provider value={contextValue}>
       {shouldShowSettings && <SettingsMenu />}
       <Routes>
-        <Route path="/" element={<Welcome />} />
+        <Route path="/" element={<SplashScreen />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route
           path="/welcome-animation-login"
