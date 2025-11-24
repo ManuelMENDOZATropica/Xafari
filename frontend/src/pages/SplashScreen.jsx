@@ -16,12 +16,12 @@ export default function SplashScreen() {
     <div className="flex min-h-screen flex-col items-center justify-between bg-black px-6 py-10 text-white">
       <div className="flex flex-1 flex-col items-center justify-center gap-8">
         <img
-          src="/iconos/Pictograma_Xafari_Positivo.svg"
+          src="/iconos/Pictograma_Xafari_Positivo.png"
           alt="Pictograma Xafari"
           className="h-48 w-auto"
         />
         <img
-          src="/iconos/Logotipo_Xafari_Positivo.svg"
+          src="/iconos/Logotipo_Xafari_Positivo.png"
           alt="Logotipo Xafari"
           className="h-20 w-auto"
         />
