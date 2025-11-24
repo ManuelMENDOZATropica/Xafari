@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageToggle from "@/components/LanguageToggle";
 import { Info } from "lucide-react";
+import SoundMenu from "@/components/SoundMenu";
 
 export default function Welcome() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function Welcome() {
           className="w-full h-full object-cover object-bottom md:object-center"
         />
       </div>
+
+      {/* --- Menú de audio (Esquina superior derecha) --- */}
+      <SoundMenu />
 
       {/* --- Botón de Información (Esquina superior izquierda) --- */}
       <div className="absolute top-4 left-4 z-20">
