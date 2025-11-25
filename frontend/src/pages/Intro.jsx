@@ -3,15 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import alaMaya from "/intro/alaMaya.png";
 
-const baseNames = ["001 ARBOL", "002 GUARDIANES", "003 CELEBRACION", "004 ELEMENTOS", "005 RAMA", "006 VIAJE", "007 FIN"];
+const baseNames = [
+  "001 ARBOL",
+  "002 GUARDIANES",
+  "003 CELEBRACION",
+  "004 ELEMENTOS",
+  "005 RAMA",
+  "006 VIAJE"
+];
 
 const Intro = () => {
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [exitFade, setExitFade] = useState(false);
+
   const [torchPos, setTorchPos] = useState({ x: 0, y: 0, isDragging: false });
-  const [torchSize, setTorchSize] = useState({ width: 130, height: 130 });
+  const [torchSize, setTorchSize] = useState({ width: 600, height: 0 });
   const [litElements, setLitElements] = useState({ image: false, text: false });
+
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -23,56 +32,78 @@ const Intro = () => {
   const introTextRef = useRef(null);
   const dragOffset = useRef({ x: 0, y: 0 });
 
+  // --- FUNCIÓN MANUAL (CLICK) ---
   const goToNextImage = () => {
+    // Limpiamos los timers automáticos para evitar conflictos
     clearTimeout(fadeOutTimeout.current);
     clearTimeout(nextImageTimeout.current);
-    setFade(true);
+
     setIndex((prev) => {
       const next = prev + 1;
+      
+      // Si el siguiente índice se sale del array, terminamos
       if (next >= baseNames.length) {
         setExitFade(true);
         setTimeout(() => navigate("/create-avatar"), 500);
+        return prev; // 👈 IMPORTANTE: Mantenemos la imagen actual visible
       }
+      
+      // Si no, avanzamos y activamos el fade in
+      setFade(true); 
       return next;
     });
   };
 
+  // --- FUNCIÓN AUTOMÁTICA (TIMER) ---
   useEffect(() => {
-    if (index >= baseNames.length) return;
+    // Si ya estamos en proceso de salida, no configurar timers
+    if (exitFade) return;
 
+    // 1. Programar el Fade Out de la imagen actual a los 5s
     fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
+    
+    // 2. Programar el cambio a la siguiente imagen a los 5.5s
     nextImageTimeout.current = setTimeout(() => {
       setIndex((prev) => {
         const next = prev + 1;
+        
+        // Verificamos si llegamos al final
         if (next >= baseNames.length) {
           setExitFade(true);
           setTimeout(() => navigate("/create-avatar"), 500);
+          return prev; // 👈 IMPORTANTE: Nos quedamos en la última imagen
         }
+        
+        // Si seguimos, activamos fade in
+        setFade(true);
         return next;
       });
-      setFade(true);
     }, 5500);
 
     return () => {
       clearTimeout(fadeOutTimeout.current);
       clearTimeout(nextImageTimeout.current);
     };
-  }, [index, navigate]);
+  }, [index, exitFade, navigate]); // Agregamos exitFade a dependencias
 
+  // --- CENTRAR ANTORCHA AL INICIO Y RESIZE ---
   useEffect(() => {
     const centerTorch = () => {
       if (!containerRef.current || !torchRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
       const torchRect = torchRef.current.getBoundingClientRect();
+
+      const fixedY = containerRect.height - torchRect.height + 40;
+
       setTorchPos((prev) => ({
         ...prev,
         x: (containerRect.width - torchRect.width) / 2,
-        y: (containerRect.height - torchRect.height) / 2,
+        y: fixedY,
       }));
       setTorchSize({ width: torchRect.width, height: torchRect.height });
     };
 
-    centerTorch();
+    setTimeout(centerTorch, 100);
     window.addEventListener("resize", centerTorch);
 
     return () => {
@@ -82,7 +113,10 @@ const Intro = () => {
 
   const getClientPosition = (event) => {
     if (event.touches && event.touches[0]) {
-      return { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY };
+      return {
+        clientX: event.touches[0].clientX,
+        clientY: event.touches[0].clientY,
+      };
     }
     return { clientX: event.clientX, clientY: event.clientY };
   };
@@ -93,32 +127,30 @@ const Intro = () => {
     const containerRect = containerRef.current.getBoundingClientRect();
     const torchRect = torchRef.current.getBoundingClientRect();
 
-    const minX = 0;
-    const minY = 0;
-    const maxX = containerRect.width - torchRect.width;
-    const maxY = containerRect.height - torchRect.height;
+    const halfWidth = torchRect.width / 2;
+    const minX = -halfWidth; 
+    const maxX = containerRect.width - halfWidth; 
 
     const nextX = clientX - containerRect.left - dragOffset.current.x;
-    const nextY = clientY - containerRect.top - dragOffset.current.y;
+
+    const fixedY = containerRect.height - torchRect.height + 40;
 
     return {
       x: Math.min(Math.max(nextX, minX), maxX),
-      y: Math.min(Math.max(nextY, minY), maxY),
+      y: fixedY,
     };
   };
 
   useEffect(() => {
     const containerRect = containerRef.current?.getBoundingClientRect();
-    const torchRect = torchRef.current?.getBoundingClientRect();
-
-    if (!containerRect || !torchRect) return;
+    if (!containerRect) return;
 
     const torchCenter = {
       x: torchPos.x + torchSize.width / 2,
       y: torchPos.y + torchSize.height / 2,
     };
 
-    const LIGHT_RADIUS = 220;
+    const LIGHT_RADIUS = 350;
 
     const isLit = (elementRef) => {
       const rect = elementRef.current?.getBoundingClientRect();
@@ -139,12 +171,17 @@ const Intro = () => {
 
   const startDrag = (event) => {
     if (!torchRef.current || !torchRef.current.contains(event.target)) return;
-    event.preventDefault();
+
+    if (!event.type.includes("touch")) {
+      event.preventDefault();
+    }
+
     const { clientX, clientY } = getClientPosition(event);
     const torchRect = torchRef.current.getBoundingClientRect();
+
     dragOffset.current = {
       x: clientX - torchRect.left,
-      y: clientY - torchRect.top,
+      y: 0,
     };
 
     const clamped = clampPosition(clientX, clientY);
@@ -153,17 +190,23 @@ const Intro = () => {
 
   const handleMove = (event) => {
     if (!torchPos.isDragging) return;
-    event.preventDefault();
+
+    if (!event.type.includes('touch')) {
+       event.preventDefault();
+    }
+
     const { clientX, clientY } = getClientPosition(event);
     const clamped = clampPosition(clientX, clientY);
     setTorchPos((prev) => ({ ...prev, ...clamped }));
   };
-
+  
   const endDrag = () => {
     setTorchPos((prev) => ({ ...prev, isDragging: false }));
   };
 
-  const currentName = baseNames[index];
+  // Safe Guard: Si por alguna razón index es inválido, usar el último
+  const safeIndex = Math.min(index, baseNames.length - 1);
+  const currentName = baseNames[safeIndex];
 
   return (
     <div
@@ -190,6 +233,7 @@ const Intro = () => {
           position: relative;
           opacity: 1;
           transition: opacity 0.5s ease-in-out;
+          touch-action: none; 
         }
 
         .exit-fade {
@@ -201,40 +245,22 @@ const Intro = () => {
           width: auto;
           position: absolute;
           opacity: 0;
-          filter: brightness(0.75) saturate(0.9);
+          filter: brightness(1) saturate(1);
           transition: opacity 0.5s ease-in-out, filter 0.2s ease;
         }
 
-        .fade-in {
-          opacity: 1;
-        }
-
-        .fade-out {
-          opacity: 0;
-        }
-
-        .intro-image.lit {
-          filter: brightness(1.1) drop-shadow(0 0 25px rgba(255, 223, 128, 0.35));
-        }
+        .fade-in { opacity: 1; }
+        .fade-out { opacity: 0; }
 
         .torch-image {
-          position: absolute;
-          width: 130px;
-          height: auto;
+          position: fixed;
           pointer-events: auto;
-          z-index: 15;
-          animation: float 4s ease-in-out infinite;
-          transition: transform 0.15s ease-in-out;
+          z-index: 15; 
+          transition: transform 0.1s linear; 
         }
 
-        .torch-image:hover {
-          transform: translateY(-3px);
-        }
-
-        @keyframes float {
-          0% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-          100% { transform: translateY(0); }
+        .torch-image:active {
+          cursor: grabbing;
         }
 
         .intro-text {
@@ -248,34 +274,41 @@ const Intro = () => {
           width: 700px;
           text-align: center;
           font-size: 1rem;
-          color: black;
+          color: white; 
           z-index: 10;
-          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
           transition: text-shadow 0.2s ease, filter 0.2s ease;
         }
 
-        /* Elimina fondo blanco */
         .intro-text.no-bg {
           background-color: transparent;
           box-shadow: none;
-        }
-
-        .intro-text.lit {
-          filter: brightness(1.1);
-          text-shadow: 0 0 18px rgba(255, 241, 196, 0.85), 1px 1px 3px rgba(0, 0, 0, 0.6);
         }
 
         .light-overlay {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          mix-blend-mode: screen;
-          opacity: 0.95;
-          transition: background-position 0.15s ease, background-size 0.15s ease, opacity 0.2s ease;
-          z-index: 12;
+          transition: background-position 0.05s linear;
+          z-index: 14; 
         }
-
       `}</style>
+
+      {/* LUZ INVERTIDA */}
+      <div
+        className="light-overlay"
+        style={{
+          background: `radial-gradient(circle at ${
+            torchPos.x + torchSize.width / 2
+          }px ${
+            torchPos.y + torchSize.height * 0.4
+          }px, 
+          transparent 0%, 
+          rgba(0,0,0,0.5) 25%, 
+          rgba(0,0,0,0.9) 45%, 
+          black 80%)`,
+        }}
+      />
 
       <img
         ref={torchRef}
@@ -284,17 +317,11 @@ const Intro = () => {
         className="torch-image"
         style={{
           left: `${torchPos.x}px`,
-          top: `${torchPos.y}px`,
+          bottom: "-40px",
+          top: "auto",
+          width: "600px",
+          height: "auto",
           cursor: torchPos.isDragging ? "grabbing" : "grab",
-        }}
-      />
-
-      <div
-        className="light-overlay"
-        style={{
-          background: `radial-gradient(circle at ${torchPos.x + torchSize.width / 2}px ${
-            torchPos.y + torchSize.height / 2
-          }px, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.35) 35%, rgba(255, 255, 255, 0.15) 55%, rgba(0, 0, 0, 0) 75%)`,
         }}
       />
 
@@ -303,20 +330,20 @@ const Intro = () => {
         ref={introImageRef}
         src={`/intro/${currentName}.jpg`}
         alt={`intro-${currentName}`}
-        className={`intro-image ${fade ? "fade-in" : "fade-out"} ${litElements.image ? "lit" : ""}`}
+        className={`intro-image ${fade ? "fade-in" : "fade-out"}`}
       />
 
       {/* Texto superpuesto */}
       <div
         ref={introTextRef}
-        className={`intro-text no-bg ${litElements.text ? "lit" : ""}`}
+        className={`intro-text no-bg`}
       >
         {t(`intro.${currentName}`)}
       </div>
 
       {/* Botón Siguiente */}
       {index < baseNames.length && (
-        <div className="absolute bottom-8 z-20">
+        <div className="absolute bottom-8 right-8 z-20">
           <button
             onClick={goToNextImage}
             className="px-6 py-3 bg-white text-sm text-gray-800 rounded-full border border-gray-200 shadow-md hover:bg-gray-100 transition-all"
