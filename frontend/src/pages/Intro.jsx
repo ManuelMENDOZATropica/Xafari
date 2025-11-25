@@ -10,6 +10,8 @@ const Intro = () => {
   const [fade, setFade] = useState(true);
   const [exitFade, setExitFade] = useState(false);
   const [torchPos, setTorchPos] = useState({ x: 0, y: 0, isDragging: false });
+  const [torchSize, setTorchSize] = useState({ width: 130, height: 130 });
+  const [litElements, setLitElements] = useState({ image: false, text: false });
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -17,6 +19,8 @@ const Intro = () => {
   const nextImageTimeout = useRef(null);
   const containerRef = useRef(null);
   const torchRef = useRef(null);
+  const introImageRef = useRef(null);
+  const introTextRef = useRef(null);
   const dragOffset = useRef({ x: 0, y: 0 });
 
   const goToNextImage = () => {
@@ -65,6 +69,7 @@ const Intro = () => {
         x: (containerRect.width - torchRect.width) / 2,
         y: (containerRect.height - torchRect.height) / 2,
       }));
+      setTorchSize({ width: torchRect.width, height: torchRect.height });
     };
 
     centerTorch();
@@ -101,6 +106,36 @@ const Intro = () => {
       y: Math.min(Math.max(nextY, minY), maxY),
     };
   };
+
+  useEffect(() => {
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    const torchRect = torchRef.current?.getBoundingClientRect();
+
+    if (!containerRect || !torchRect) return;
+
+    const torchCenter = {
+      x: torchPos.x + torchSize.width / 2,
+      y: torchPos.y + torchSize.height / 2,
+    };
+
+    const LIGHT_RADIUS = 220;
+
+    const isLit = (elementRef) => {
+      const rect = elementRef.current?.getBoundingClientRect();
+      if (!rect) return false;
+
+      const center = {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+      };
+
+      const dx = center.x - torchCenter.x;
+      const dy = center.y - torchCenter.y;
+      return Math.hypot(dx, dy) <= LIGHT_RADIUS;
+    };
+
+    setLitElements({ image: isLit(introImageRef), text: isLit(introTextRef) });
+  }, [torchPos, torchSize, index]);
 
   const startDrag = (event) => {
     if (!torchRef.current || !torchRef.current.contains(event.target)) return;
@@ -166,7 +201,8 @@ const Intro = () => {
           width: auto;
           position: absolute;
           opacity: 0;
-          transition: opacity 0.5s ease-in-out;
+          filter: brightness(0.75) saturate(0.9);
+          transition: opacity 0.5s ease-in-out, filter 0.2s ease;
         }
 
         .fade-in {
@@ -175,6 +211,10 @@ const Intro = () => {
 
         .fade-out {
           opacity: 0;
+        }
+
+        .intro-image.lit {
+          filter: brightness(1.1) drop-shadow(0 0 25px rgba(255, 223, 128, 0.35));
         }
 
         .torch-image {
@@ -211,12 +251,28 @@ const Intro = () => {
           color: black;
           z-index: 10;
           text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+          transition: text-shadow 0.2s ease, filter 0.2s ease;
         }
 
         /* Elimina fondo blanco */
         .intro-text.no-bg {
           background-color: transparent;
           box-shadow: none;
+        }
+
+        .intro-text.lit {
+          filter: brightness(1.1);
+          text-shadow: 0 0 18px rgba(255, 241, 196, 0.85), 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        .light-overlay {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          mix-blend-mode: screen;
+          opacity: 0.95;
+          transition: background-position 0.15s ease, background-size 0.15s ease, opacity 0.2s ease;
+          z-index: 12;
         }
 
       `}</style>
@@ -233,15 +289,30 @@ const Intro = () => {
         }}
       />
 
+      <div
+        className="light-overlay"
+        style={{
+          background: `radial-gradient(circle at ${torchPos.x + torchSize.width / 2}px ${
+            torchPos.y + torchSize.height / 2
+          }px, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.35) 35%, rgba(255, 255, 255, 0.15) 55%, rgba(0, 0, 0, 0) 75%)`,
+        }}
+      />
+
       {/* Imagen base */}
       <img
+        ref={introImageRef}
         src={`/intro/${currentName}.jpg`}
         alt={`intro-${currentName}`}
-        className={`intro-image ${fade ? "fade-in" : "fade-out"}`}
+        className={`intro-image ${fade ? "fade-in" : "fade-out"} ${litElements.image ? "lit" : ""}`}
       />
 
       {/* Texto superpuesto */}
-      <div className="intro-text no-bg">{t(`intro.${currentName}`)}</div>
+      <div
+        ref={introTextRef}
+        className={`intro-text no-bg ${litElements.text ? "lit" : ""}`}
+      >
+        {t(`intro.${currentName}`)}
+      </div>
 
       {/* Botón Siguiente */}
       {index < baseNames.length && (
