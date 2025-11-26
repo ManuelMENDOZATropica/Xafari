@@ -23,7 +23,7 @@ export default function Xelfies({ onClose }) {
         </p>
         <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700">
           <span className="inline-block h-2 w-2 rounded-full bg-amber-500" />
-          Nueva función en camino
+          Nueva función en caminoo
         </div>
       </div>
     </div>
