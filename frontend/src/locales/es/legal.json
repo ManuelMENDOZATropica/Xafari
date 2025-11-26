@@ -23,5 +23,36 @@
     ],
     "contactTitle": "¿Necesitas ayuda?",
     "contactDescription": "Si tienes preguntas sobre este aviso o deseas ejercer tus derechos de privacidad, escríbenos a privacidad@xafari.com."
+  },
+  "terms": {
+    "title": "Términos y condiciones de Xafari",
+    "updated": "Última actualización: Abril 2024",
+    "intro": "Estos términos regulan el uso de la aplicación Xafari y describen las reglas básicas para que disfrutes la aventura de forma segura y respetuosa.",
+    "accountTitle": "Cuenta y acceso",
+    "accountList": [
+      "Registra información real para que tu avatar y tus progresos reflejen tu experiencia.",
+      "Eres responsable de mantener la confidencialidad de tu acceso y de tu dispositivo.",
+      "Si detectas uso no autorizado, avísanos de inmediato para proteger tu cuenta."
+    ],
+    "playTitle": "Juego y misiones",
+    "playList": [
+      "Las misiones son narrativas: no requieren acciones peligrosas ni invasivas.",
+      "Respeta las señales de seguridad y sigue instrucciones del personal en los espacios físicos.",
+      "El progreso puede reiniciarse si se detecta uso indebido o trampas."
+    ],
+    "conductTitle": "Convivencia y comunidad",
+    "conductList": [
+      "Respeta a otros jugadores y colaboradores; evita lenguaje ofensivo o discriminatorio.",
+      "No compartas contenido que viole derechos de autor o la privacidad de terceros.",
+      "Sigue las reglas de cada ubicación que visites dentro o fuera del juego."
+    ],
+    "dataTitle": "Datos y notificaciones",
+    "dataList": [
+      "Usamos tus datos conforme al Aviso de Privacidad, consúltalo en cualquier momento desde el menú.",
+      "Algunas misiones pueden enviar notificaciones; ajusta los permisos en tu dispositivo si lo prefieres.",
+      "Guardamos tu progreso para sincronizarlo entre sesiones y dispositivos."
+    ],
+    "supportTitle": "Soporte",
+    "supportDescription": "Para dudas o solicitudes escríbenos a soporte@xafari.com indicando tu usuario y dispositivo."
   }
 }

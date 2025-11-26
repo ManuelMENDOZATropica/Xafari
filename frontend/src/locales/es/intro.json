@@ -9,5 +9,11 @@
     "007 FIN": "visitando tribus e investigando cómo salvar a cada uno de los Árboles Sagrados."
   },
   "next": "Siguiente",
-  "language": "Idioma"
+  "language": "Idioma",
+  "introMaya": {
+    "slide1Alt": "Guacamaya mensajera saludando",
+    "slide1Text": "La Guacamaya Sagrada te da la bienvenida. La rama maya perdió su brillo y necesita de un buscador valiente para recuperar sus colores.",
+    "slide2Alt": "Guacamaya señalando el camino de misión",
+    "slide2Text": "Acepta la misión, regístrate y sigue las pistas para despertar a los guardianes y salvar el Árbol Sagrado."
+  }
 }

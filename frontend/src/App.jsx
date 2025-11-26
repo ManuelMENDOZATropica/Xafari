@@ -19,6 +19,7 @@ import SettingsMenu from "./components/SettingsMenu";
 import useSoundController from "./hooks/useSoundController";
 import { useLocation } from "react-router-dom";
 import PrivacyNotice from "./pages/PrivacyNotice";
+import TermsConditions from "./pages/TermsConditions";
 
 function App() {
   const location = useLocation();
@@ -137,6 +138,7 @@ function App() {
         <Route path="/edit-avatar" element={<EditAvatar />} />
         <Route path="/minimalqr" element={<MinimalQr />} />
         <Route path="/privacy" element={<PrivacyNotice />} />
+        <Route path="/terms" element={<TermsConditions />} />
       </Routes>
     </XafariContext.Provider>
   );

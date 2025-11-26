@@ -1,29 +1,10 @@
 import { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
-
-const steps = [
-  {
-    title: "Nombre",
-    description: "Escribe tus nombres",
-    secondary: "Escribe tus Apellidos",
-    fields: ["firstName", "lastName"],
-  },
-  {
-    title: "e-Mail",
-    description: "Correo",
-    fields: ["email"],
-  },
-  {
-    title: "Cumpleaños",
-    description: "Día",
-    secondary: "Mes",
-    tertiary: "Año",
-    fields: ["day", "month", "year"],
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { setUser } = useContext(XafariContext);
 
@@ -37,6 +18,30 @@ export default function Register() {
     year: "",
     acceptTerms: false,
   });
+
+  const steps = useMemo(
+    () => [
+      {
+        title: t("registerFlow.step1Title"),
+        description: t("registerFlow.firstNamePlaceholder"),
+        secondary: t("registerFlow.lastNamePlaceholder"),
+        fields: ["firstName", "lastName"],
+      },
+      {
+        title: t("registerFlow.step2Title"),
+        description: t("registerFlow.emailPlaceholder"),
+        fields: ["email"],
+      },
+      {
+        title: t("registerFlow.step3Title"),
+        description: t("registerFlow.dayPlaceholder"),
+        secondary: t("registerFlow.monthPlaceholder"),
+        tertiary: t("registerFlow.yearPlaceholder"),
+        fields: ["day", "month", "year"],
+      },
+    ],
+    [t, i18n.language]
+  );
 
   const handleChange = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -74,6 +79,12 @@ export default function Register() {
     }));
 
     navigate("/create-avatar");
+  };
+
+  const handleTermsClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate("/terms");
   };
 
   const renderFields = () => {
@@ -151,7 +162,16 @@ export default function Register() {
             onChange={(e) => handleChange("acceptTerms", e.target.checked)}
             className="h-4 w-4 rounded border-white/60 bg-white/80 text-emerald-600 focus:ring-emerald-500"
           />
-          <span>Aceptar términos y condiciones</span>
+          <span className="flex flex-wrap items-center gap-1">
+            <span>{t("registerFlow.acceptTermsPrefix")}</span>
+            <button
+              type="button"
+              onClick={handleTermsClick}
+              className="underline decoration-2 underline-offset-2 font-semibold text-[#5CA7FF] hover:brightness-110"
+            >
+              {t("registerFlow.acceptTermsLink")}
+            </button>
+          </span>
         </label>
       </div>
     );
@@ -179,7 +199,7 @@ export default function Register() {
             canContinue ? "hover:brightness-110" : "opacity-60 cursor-not-allowed"
           }`}
         >
-          Siguiente
+          {t("next")}
         </button>
       </div>
     </div>

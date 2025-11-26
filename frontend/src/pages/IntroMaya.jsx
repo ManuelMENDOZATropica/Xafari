@@ -1,22 +1,27 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const steps = [
-  {
-    image: "/maya/tutorial/1.png",
-    alt: "Guacamaya introductoria 1",
-    text: "Texto que expone la problemática y que identifica al buscador",
-  },
-  {
-    image: "/maya/tutorial/2.png",
-    alt: "Guacamaya introductoria 2",
-    text: "Texto que presenta la misión y te invita a registrarte",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function IntroMaya() {
+  const { t, i18n } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+
+  const steps = useMemo(
+    () => [
+      {
+        image: "/maya/tutorial/1.png",
+        alt: t("introMaya.slide1Alt"),
+        text: t("introMaya.slide1Text"),
+      },
+      {
+        image: "/maya/tutorial/2.png",
+        alt: t("introMaya.slide2Alt"),
+        text: t("introMaya.slide2Text"),
+      },
+    ],
+    [t, i18n.language]
+  );
 
   const goNext = () => {
     if (currentStep < steps.length - 1) {
@@ -40,7 +45,7 @@ export default function IntroMaya() {
             onClick={() => navigate("/welcome")}
             className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-white/20"
           >
-            Menú
+            {t("menu")}
           </button>
           <span className="text-sm text-white/70">{`${currentStep + 1}/${steps.length}`}</span>
         </div>
@@ -63,7 +68,7 @@ export default function IntroMaya() {
             onClick={goNext}
             className="flex items-center gap-2 rounded-full bg-[#5CA7FF] px-6 py-3 text-lg font-semibold text-white shadow-xl transition hover:brightness-110"
           >
-            Siguiente
+            {t("next")}
           </button>
         </div>
       </div>

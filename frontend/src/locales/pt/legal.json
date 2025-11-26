@@ -23,5 +23,36 @@
     ],
     "contactTitle": "Precisa de ajuda?",
     "contactDescription": "Se tiver dúvidas sobre este aviso ou desejar exercer seus direitos de privacidade, escreva para privacidade@xafari.com."
+  },
+  "terms": {
+    "title": "Termos e condições do Xafari",
+    "updated": "Última atualização: Abril de 2024",
+    "intro": "Estes termos regem o uso do aplicativo Xafari e descrevem as regras básicas para aproveitar a aventura com segurança e respeito.",
+    "accountTitle": "Conta e acesso",
+    "accountList": [
+      "Informe dados reais para que seu avatar e progresso reflitam sua experiência.",
+      "Você é responsável por manter seu acesso e dispositivo seguros.",
+      "Se notar uso não autorizado, avise-nos imediatamente para proteger sua conta."
+    ],
+    "playTitle": "Jogo e missões",
+    "playList": [
+      "As missões são narrativas: não exigem ações perigosas ou invasivas.",
+      "Respeite as sinalizações de segurança e siga as orientações da equipe nos espaços físicos.",
+      "O progresso pode ser reiniciado se for detectado uso indevido ou trapaças."
+    ],
+    "conductTitle": "Convivência e comunidade",
+    "conductList": [
+      "Respeite outros jogadores e colaboradores; evite linguagem ofensiva ou discriminatória.",
+      "Não compartilhe conteúdo que viole direitos autorais ou a privacidade de terceiros.",
+      "Siga as regras de cada local que visitar dentro e fora do jogo."
+    ],
+    "dataTitle": "Dados e notificações",
+    "dataList": [
+      "Usamos seus dados conforme o Aviso de Privacidade; consulte-o a qualquer momento pelo menu.",
+      "Algumas missões podem enviar notificações; ajuste as permissões no seu dispositivo se preferir.",
+      "Armazenamos seu progresso para sincronizá-lo entre sessões e dispositivos."
+    ],
+    "supportTitle": "Suporte",
+    "supportDescription": "Para dúvidas ou solicitações, escreva para suporte@xafari.com informando seu usuário e dispositivo."
   }
 }

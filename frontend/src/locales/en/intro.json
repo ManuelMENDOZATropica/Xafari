@@ -9,5 +9,11 @@
         "007 FIN": "visiting tribes and discovering how to save each of the Sacred Trees."
   },
   "next": "Next",
-  "language": "Language"
+  "language": "Language",
+  "introMaya": {
+    "slide1Alt": "Messenger macaw greeting",
+    "slide1Text": "The Sacred Macaw welcomes you. The Mayan branch has lost its shine and needs a brave seeker to restore its colors.",
+    "slide2Alt": "Macaw pointing toward the mission path",
+    "slide2Text": "Accept the mission, register, and follow the clues to awaken the guardians and save the Sacred Tree."
+  }
 }
