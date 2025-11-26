@@ -44,7 +44,7 @@ const Intro = () => {
       // Si el siguiente índice se sale del array, terminamos
       if (next >= baseNames.length) {
         setExitFade(true);
-        setTimeout(() => navigate("/create-avatar"), 500);
+        setTimeout(() => navigate("/intro-maya"), 500);
         return prev; // 👈 IMPORTANTE: Mantenemos la imagen actual visible
       }
       
@@ -70,7 +70,7 @@ const Intro = () => {
         // Verificamos si llegamos al final
         if (next >= baseNames.length) {
           setExitFade(true);
-          setTimeout(() => navigate("/create-avatar"), 500);
+          setTimeout(() => navigate("/intro-maya"), 500);
           return prev; // 👈 IMPORTANTE: Nos quedamos en la última imagen
         }
         
