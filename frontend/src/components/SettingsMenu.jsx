@@ -127,6 +127,15 @@ export default function SettingsMenu() {
     setIsOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleOpenRequest = () => setIsOpen(true);
+
+    window.addEventListener("open-settings-menu", handleOpenRequest);
+    return () => {
+      window.removeEventListener("open-settings-menu", handleOpenRequest);
+    };
+  }, []);
+
   const handleSoundSelect = (value) => {
     setSoundSetting(value);
     if (typeof triggerClickFeedback === "function") {
