@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
+// Componentes originales importados
 import XecretoRegister from "@/components/XecretoRegister";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import ChecklistGastro from "@/components/ChecklistGastro";
@@ -131,7 +132,7 @@ export default function TreeOfLife() {
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
   const progreso =
-    JSON.parse(localStorage.getItem("progresoXperiencias")) || {};
+    JSON.parse(localStorage.getItem("progresoXperiencias") || "{}");
 
   const xtopProgreso = {};
   const xperienciasProgreso = {};
@@ -201,14 +202,18 @@ export default function TreeOfLife() {
   }, [showXperienciasModal, showXecretoModal, showXelfiesModal]);
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center flex flex-col">
+    // CORRECCIÓN 1: Se usa 'h-screen' y 'bg-contain bg-no-repeat bg-center' para asegurar que la imagen de fondo se muestre completa y los menús no se salgan.
+    <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-contain bg-no-repeat bg-center flex flex-col">
       <img
         src="/img/flores.png"
         alt="flores"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
       />
 
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 pt-12 pb-36">
+      {/* CORRECCIÓN 2: Se ajusta el padding-top (pt-20) y padding-bottom (pb-[160px] / sm:pb-[140px]) para
+          dejar espacio al menú fijo inferior y los botones superiores. Esto asegura que el Canvas
+          ocupe el espacio restante sin solaparse con el footer fijo. */}
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 pt-20 pb-[160px] sm:pb-[140px]">
         <div className="w-full max-w-5xl h-full flex items-center justify-center">
           {modoFamilia ? (
             <TreeCanvasFamilia
@@ -299,8 +304,9 @@ export default function TreeOfLife() {
         </div>
       )}
 
-      <div className="relative z-30 pb-5">
-        <div className="flex flex-col items-center gap-3 px-4">
+      {/* CORRECCIÓN 3: El menú inferior se hace 'fixed' en la parte inferior de la pantalla */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 pb-5 pt-3 bg-transparent pointer-events-none">
+        <div className="flex flex-col items-center gap-3 px-4 pointer-events-auto">
           <AnimatePresence>
             {showArbolMenu && (
               <motion.div
@@ -471,7 +477,7 @@ export default function TreeOfLife() {
                 const nuevos = JSON.parse(
                   localStorage.getItem("progresoChecklistGastro") || "{}"
                 );
-                const nueva = Object.keys(nuevos).find(
+                const nueva = Object.keys(nueuos).find(
                   (k) => nuevos[k] && !prev[k]
                 );
                 setChecklistProgreso(nuevos);

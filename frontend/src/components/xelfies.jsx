@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-
 export default function Xelfies({ onClose }) {
   return (
     <div className="relative w-[90vw] max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -31,7 +29,3 @@ export default function Xelfies({ onClose }) {
     </div>
   );
 }
-
-Xelfies.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
