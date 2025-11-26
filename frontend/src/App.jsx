@@ -3,10 +3,12 @@ import Welcome from "./pages/Welcome";
 import SplashScreen from "./pages/SplashScreen";
 import RegisterStep1 from "./pages/RegisterStep1";
 import RegisterStep2 from "./pages/RegisterStep2";
+import Register from "./pages/Register";
 import WelcomeAnimation from "./pages/WelcomeAnimation";
 import AvatarSelection from "./pages/AvatarSelection";
 import TreeOfLife from "./pages/TreeOfLife";
 import Intro from "./pages/Intro";
+import IntroMaya from "./pages/IntroMaya";
 import LogIn from "./pages/LogIn";
 import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
@@ -124,6 +126,8 @@ function App() {
           element={<WelcomeAnimationLogin />}
         />
         <Route path="/welcome-animation" element={<WelcomeAnimation />} />
+        <Route path="/intro-maya" element={<IntroMaya />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/register-step1" element={<RegisterStep1 />} />
         <Route path="/register-step2" element={<RegisterStep2 />} />
         <Route path="/create-avatar" element={<AvatarSelection />} />
