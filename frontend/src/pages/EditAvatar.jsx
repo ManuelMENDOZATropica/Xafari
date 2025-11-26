@@ -158,7 +158,7 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
+    <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo Avatar" className="absolute inset-0 w-full h-full object-cover object-bottom z-0" />
 
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-start items-center">

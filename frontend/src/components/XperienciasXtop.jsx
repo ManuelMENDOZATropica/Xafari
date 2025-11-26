@@ -304,7 +304,7 @@ export default function XperienciasXtop({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="relative w-screen h-screen font-lufga text-black">
+      <div className="relative w-screen h-screen font-apercu text-black">
         <img
           src="/img/V03-CERRITOS.jpg"
           alt="Fondo"

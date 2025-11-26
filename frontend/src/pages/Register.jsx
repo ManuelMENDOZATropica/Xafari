@@ -179,7 +179,7 @@ export default function Register() {
 
   return (
     <div
-      className="relative min-h-screen w-screen overflow-hidden bg-center bg-cover font-lufga"
+      className="relative min-h-screen w-screen overflow-hidden bg-center bg-cover font-apercu"
       style={{ backgroundImage: "url('/img/fondoPrincipal.png')" }}
     >
       <div className="absolute inset-0 bg-black/35" aria-hidden="true" />

@@ -24,7 +24,7 @@ export default function TermsConditions() {
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden font-lufga text-gray-800">
+    <div className="relative min-h-screen overflow-hidden font-apercu text-gray-800">
       <div className="absolute inset-0">
         <img
           src="/img/fondoArbolDeLaVida.png"

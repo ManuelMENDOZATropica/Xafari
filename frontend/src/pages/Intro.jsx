@@ -211,7 +211,7 @@ const Intro = () => {
   return (
     <div
       ref={containerRef}
-      className={`intro-container ${exitFade ? "exit-fade" : ""} font-lufga`}
+      className={`intro-container ${exitFade ? "exit-fade" : ""} font-apercu`}
       onMouseDown={startDrag}
       onTouchStart={startDrag}
       onMouseMove={handleMove}

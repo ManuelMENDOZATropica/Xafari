@@ -163,7 +163,7 @@ export default function TreeOfLife() {
   });
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden font-lufga bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
+    <div className="relative w-screen h-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center">
       <img
         src="/img/flores.png"
         alt="flores"

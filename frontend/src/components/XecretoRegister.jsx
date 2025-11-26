@@ -113,7 +113,7 @@ export default function XecretoRegister({ onClose }) {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen font-lufga text-black">
+    <div className="relative w-screen h-screen font-apercu text-black">
       {/* == FONDO == */}
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 

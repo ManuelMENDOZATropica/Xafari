@@ -33,7 +33,7 @@ export default function IntroMaya() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden bg-[#0a0a0a] text-white font-lufga">
+    <div className="relative min-h-screen w-screen overflow-hidden bg-[#0a0a0a] text-white font-apercu">
       <div className="absolute inset-0 opacity-70" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black" />
       </div>

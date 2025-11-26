@@ -117,7 +117,7 @@ export default function PodiumModal({ onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-<div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-28 overflow-y-auto font-lufga">
+<div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-28 overflow-y-auto font-apercu">
         {/* Encabezado */}
         <div className="absolute top-4 left-4 z-10">
           <button

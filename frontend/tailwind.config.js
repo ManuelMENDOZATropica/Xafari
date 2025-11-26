@@ -14,7 +14,8 @@ export default {
         "slide-wing-up-exit": "slideWingUpExit 3s ease-in-out forwards",
       },
       fontFamily: {
-        lufga: ['"Lufga"', 'sans-serif'],
+        apercu: ['"Apercu Pro"', 'sans-serif'],
+        volume: ['"Volume CT"', 'sans-serif'],
       },
     },
   },

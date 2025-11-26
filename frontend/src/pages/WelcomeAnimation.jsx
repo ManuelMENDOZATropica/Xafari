@@ -29,7 +29,7 @@ export default function WelcomeToAvatarTransition() {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white font-lufga">
+    <div className="relative w-screen h-screen overflow-hidden bg-white font-apercu">
       {/* Fondo de bienvenida */}
       {!showAvatar && (
         <img

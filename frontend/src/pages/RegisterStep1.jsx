@@ -47,7 +47,7 @@ export default function RegisterStep1() {
     passwordStrength !== "weak";
 
   return (
-    <div className="relative h-screen w-full overflow-hidden font-lufga">
+    <div className="relative h-screen w-full overflow-hidden font-apercu">
       <div className="absolute inset-0 z-0">
         <img
           src="/img/V03-CERRITOS.jpg"
