@@ -16,5 +16,18 @@
   "buxcador": "Buxcador",
   "explorerMale": "Explorador",
   "explorerFemale": "Exploradora",
-  "registerComplete": "Registro completado. ¡Bienvenido a Xafari!"
+  "registerComplete": "Registro completado. ¡Bienvenido a Xafari!",
+  "registerFlow": {
+    "step1Title": "Nombre",
+    "firstNamePlaceholder": "Escribe tus nombres",
+    "lastNamePlaceholder": "Escribe tus apellidos",
+    "step2Title": "e-Mail",
+    "emailPlaceholder": "Correo electrónico",
+    "step3Title": "Cumpleaños",
+    "dayPlaceholder": "Día",
+    "monthPlaceholder": "Mes",
+    "yearPlaceholder": "Año",
+    "acceptTermsPrefix": "Acepto los",
+    "acceptTermsLink": "términos y condiciones"
+  }
 }

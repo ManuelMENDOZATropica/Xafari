@@ -9,5 +9,11 @@
     "007 FIN": "visitando tribos e investigando como salvar cada uma das Árvores Sagradas."
   },
   "next": "Próximo",
-  "language": "Idioma"
+  "language": "Idioma",
+  "introMaya": {
+    "slide1Alt": "Arara mensageira saudando",
+    "slide1Text": "A Arara Sagrada lhe dá as boas-vindas. O ramo maia perdeu o brilho e precisa de um buscador corajoso para recuperar suas cores.",
+    "slide2Alt": "Arara apontando o caminho da missão",
+    "slide2Text": "Aceite a missão, registre-se e siga as pistas para despertar os guardiões e salvar a Árvore Sagrada."
+  }
 }

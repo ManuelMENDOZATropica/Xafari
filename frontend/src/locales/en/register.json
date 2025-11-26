@@ -16,5 +16,18 @@
   "buxcador": "Explorer (he/him)",
   "explorerMale": "Explorer",
   "explorerFemale": "Explorer",
-  "registerComplete": "Registration complete. Welcome to Xafari!"
+  "registerComplete": "Registration complete. Welcome to Xafari!",
+  "registerFlow": {
+    "step1Title": "Name",
+    "firstNamePlaceholder": "Enter your first name(s)",
+    "lastNamePlaceholder": "Enter your last name(s)",
+    "step2Title": "Email",
+    "emailPlaceholder": "Email address",
+    "step3Title": "Birthday",
+    "dayPlaceholder": "Day",
+    "monthPlaceholder": "Month",
+    "yearPlaceholder": "Year",
+    "acceptTermsPrefix": "I accept the",
+    "acceptTermsLink": "terms and conditions"
+  }
 }
