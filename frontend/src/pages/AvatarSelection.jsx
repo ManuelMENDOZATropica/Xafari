@@ -153,7 +153,7 @@ export default function AvatarSelection() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden font-lufga">
+    <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img
         src="/img/V03-CERRITOS.jpg"
         alt="Fondo"

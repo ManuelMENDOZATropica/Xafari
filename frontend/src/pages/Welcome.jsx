@@ -12,7 +12,7 @@ export default function Welcome() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden pb-12 font-lufga">
+    <div className="relative h-screen w-full overflow-hidden pb-12 font-apercu">
       {/* Imagen de fondo responsive */}
       <div className="absolute inset-0 z-0">
         <img

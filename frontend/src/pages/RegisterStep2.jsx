@@ -72,7 +72,7 @@ const userData = storedData ? JSON.parse(storedData) : {};
 
 
   return (
-    <div className="relative flex flex-col items-center justify-start h-screen w-full overflow-hidden px-[6%] pt-[30%] pb-[10%] font-lufga">
+    <div className="relative flex flex-col items-center justify-start h-screen w-full overflow-hidden px-[6%] pt-[30%] pb-[10%] font-apercu">
       <div className="absolute inset-0 z-0">
         <img
           src="/img/V03-CERRITOS.jpg"

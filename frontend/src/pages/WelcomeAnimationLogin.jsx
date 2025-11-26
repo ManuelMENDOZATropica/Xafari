@@ -27,7 +27,7 @@ export default function WelcomeToAvatarTransition() {
   }, [navigate]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white font-lufga">
+    <div className="relative w-screen h-screen overflow-hidden bg-white font-apercu">
       {/* Fondo */}
       <img
         src="/img/V03-CERRITOS.jpg"

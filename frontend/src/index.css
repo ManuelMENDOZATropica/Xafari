@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Apercu Pro", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -31,7 +31,7 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: "Lufga", sans-serif;
+  font-family: "Apercu Pro", sans-serif;
   min-width: 320px;
   min-height: 100vh;
   background-color: #ffffff;
@@ -52,7 +52,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+  font-family: "Volume CT", sans-serif;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
@@ -80,118 +80,106 @@ button:focus-visible {
 
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaThin.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Thin.otf") format("opentype");
   font-weight: 100;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaThinItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Thin Italic.otf") format("opentype");
   font-weight: 100;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaExtraLight.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Extra Light.otf") format("opentype");
   font-weight: 200;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaExtraLightItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Extra Light Italic.otf") format("opentype");
   font-weight: 200;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaLight.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaLightItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Light Italic.otf") format("opentype");
   font-weight: 300;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaRegular.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaMedium.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaMediumItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Medium Italic.otf") format("opentype");
   font-weight: 500;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaSemiBold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaSemiBoldItalic.ttf") format("truetype");
-  font-weight: 600;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaBold.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaBoldItalic.ttf") format("truetype");
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Bold Italic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaExtraBold.ttf") format("truetype");
-  font-weight: 800;
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Black.otf") format("opentype");
+  font-weight: 900;
   font-style: normal;
 }
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaExtraBoldItalic.ttf") format("truetype");
-  font-weight: 800;
+  font-family: "Apercu Pro";
+  src: url("/fonts/Apercu Pro Black Italic.otf") format("opentype");
+  font-weight: 900;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaBlack.ttf") format("truetype");
-  font-weight: 900;
+  font-family: "Volume CT";
+  src: url("/fonts/VolumeCT-Scan-RusticSolid.otf") format("opentype");
+  font-weight: 700;
   font-style: normal;
 }
+
 @font-face {
-  font-family: "Lufga";
-  src: url("/fonts/Lufga/LufgaBlackItalic.ttf") format("truetype");
-  font-weight: 900;
+  font-family: "Volume CT";
+  src: url("/fonts/VolumeCT-Scan-RusticSolidShadow.otf") format("opentype");
+  font-weight: 700;
   font-style: italic;
 }
