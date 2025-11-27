@@ -165,27 +165,40 @@ export default function TreeOfLife() {
     }
   });
 
+  const closePrimaryModals = () => {
+    setShowXecretoModal(false);
+    setShowXperienciasModal(false);
+    setShowXelfiesModal(false);
+    setShowMapaModal(false);
+    setShowPodiumModal(false);
+  };
+
   const handleOpenXperiencias = () => {
+    closePrimaryModals();
     setShowXperienciasModal(true);
     setShowArbolMenu(false);
   };
 
   const handleOpenXecretos = () => {
+    closePrimaryModals();
     setShowXecretoModal(true);
     setShowArbolMenu(false);
   };
 
   const handleOpenXelfies = () => {
+    closePrimaryModals();
     setShowXelfiesModal(true);
     setShowArbolMenu(false);
   };
 
   const handleOpenMapa = () => {
+    closePrimaryModals();
     setShowMapaModal(true);
     setShowArbolMenu(false);
   };
 
   const handleOpenPodio = () => {
+    closePrimaryModals();
     setShowPodiumModal(true);
     setShowArbolMenu(false);
   };
@@ -409,25 +422,29 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXecretoModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/80"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <XecretoRegister
-              onClose={() => {
-                const prev = xecretos;
-                const nuevos = JSON.parse(
-                  localStorage.getItem("xecretos") || "{}"
-                );
-                const nueva = Object.keys(nuevos).find(
-                  (k) => nuevos[k] && !prev[k]
-                );
-                setXecretos(nuevos);
-                setGuardianReciente(nueva || null);
-                setShowXecretoModal(false);
-              }}
-            />
+            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+                <XecretoRegister
+                  onClose={() => {
+                    const prev = xecretos;
+                    const nuevos = JSON.parse(
+                      localStorage.getItem("xecretos") || "{}"
+                    );
+                    const nueva = Object.keys(nuevos).find(
+                      (k) => nuevos[k] && !prev[k]
+                    );
+                    setXecretos(nuevos);
+                    setGuardianReciente(nueva || null);
+                    setShowXecretoModal(false);
+                  }}
+                />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -435,25 +452,29 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXperienciasModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <XperienciasXtop
-              onClose={() => {
-                const prev = respuestasCorrectas;
-                const nuevos = JSON.parse(
-                  localStorage.getItem("progresoXperiencias") || "{}"
-                );
-                const nueva = Object.keys(nuevos).find(
-                  (k) => nuevos[k] && !prev[k]
-                );
-                setRespuestasCorrectas(nuevos);
-                setInsigniaReciente(nueva || null);
-                setShowXperienciasModal(false);
-              }}
-            />
+            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+                <XperienciasXtop
+                  onClose={() => {
+                    const prev = respuestasCorrectas;
+                    const nuevos = JSON.parse(
+                      localStorage.getItem("progresoXperiencias") || "{}"
+                    );
+                    const nueva = Object.keys(nuevos).find(
+                      (k) => nuevos[k] && !prev[k]
+                    );
+                    setRespuestasCorrectas(nuevos);
+                    setInsigniaReciente(nueva || null);
+                    setShowXperienciasModal(false);
+                  }}
+                />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -487,12 +508,16 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showPodiumModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <PodiumModal onClose={() => setShowPodiumModal(false)} />
+            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+                <PodiumModal onClose={() => setShowPodiumModal(false)} />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -500,12 +525,16 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showMapaModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <ModalMapa onClose={() => setShowMapaModal(false)} />
+            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+                <ModalMapa onClose={() => setShowMapaModal(false)} />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -513,12 +542,16 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXelfiesModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <Xelfies onClose={() => setShowXelfiesModal(false)} />
+            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+                <Xelfies onClose={() => setShowXelfiesModal(false)} />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

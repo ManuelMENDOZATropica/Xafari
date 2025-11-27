@@ -111,22 +111,24 @@ export default function PodiumModal({ onClose }) {
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-<div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-28 overflow-y-auto font-apercu">
-        {/* Encabezado */}
-        <div className="absolute top-4 left-4 z-10">
-          <button
-            onClick={onClose}
-            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-          >
-            ← {t("back")}
-          </button>
-        </div>
+    <motion.div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-16 overflow-y-auto font-apercu">
+      {/* Encabezado */}
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <button
+          onClick={onClose}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          ← {t("back")}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="h-10 w-10 rounded-full bg-white/80 text-gray-800 font-bold shadow border border-gray-300 hover:bg-white"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+      </div>
 
         {/* TU PROGRESO */}
         <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">

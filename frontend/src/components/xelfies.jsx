@@ -1,6 +1,6 @@
 export default function Xelfies({ onClose }) {
   return (
-    <div className="relative w-[90vw] max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-auto">
       <button
         type="button"
         onClick={onClose}
@@ -10,7 +10,7 @@ export default function Xelfies({ onClose }) {
         ✕
       </button>
 
-      <div className="flex flex-col items-center gap-4 px-8 py-10 text-center text-gray-800">
+      <div className="flex flex-col items-center gap-4 px-8 py-10 text-center text-gray-800 h-full justify-center">
         <img
           src="/iconos/xelfies.png"
           alt="Xelfies"

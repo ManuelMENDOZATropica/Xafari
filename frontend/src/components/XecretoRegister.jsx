@@ -113,17 +113,43 @@ export default function XecretoRegister({ onClose }) {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen font-apercu text-black">
+    <div className="relative w-full h-full font-apercu text-black">
       {/* == FONDO == */}
       <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0" />
 
       {/* == HEADER == */}
-      <div className="absolute top-0 left-0 w-full flex justify-start items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
+      <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
         <button
           onClick={onClose}
           className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
         >
           ← {t("back")}
+        </button>
+        <div className="flex items-center gap-3 bg-white/80 rounded-full px-4 py-2 shadow border border-gray-300">
+          <div className="text-xs text-gray-700">
+            <div className="font-semibold text-sm">{t("guardians")}</div>
+            <div className="text-xs text-gray-600">
+              {Object.values(scannedCodes).filter(Boolean).length} / {Object.keys(qrData).length}
+            </div>
+          </div>
+          <div className="flex -space-x-2">
+            {Object.entries(scannedCodes)
+              .filter(([, val]) => val)
+              .slice(0, 5)
+              .map(([key]) => (
+                <div key={key} className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow bg-white">
+                  <img src={qrData[key].arbol} alt="Guardian" className="w-full h-full object-cover" />
+                </div>
+              ))}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="h-10 w-10 rounded-full bg-white/80 text-gray-800 font-bold shadow border border-gray-300 hover:bg-white"
+          aria-label="Cerrar"
+        >
+          ✕
         </button>
       </div>
 
@@ -191,7 +217,7 @@ export default function XecretoRegister({ onClose }) {
         scannedCodes={scannedCodes}
       />
       {/* Nuevo Modal del Mapa */}
-<ModalMapa show={showMapModal} onClose={() => setShowMapModal(false)} />
+      {showMapModal && <ModalMapa onClose={() => setShowMapModal(false)} />}
 
       {/* == INSIGNIA ANIMADA == */}
       {lastScanned && qrData[lastScanned] && (
