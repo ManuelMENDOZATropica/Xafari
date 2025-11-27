@@ -204,17 +204,12 @@ export default function TreeOfLife() {
   return (
     // CORRECCIÓN 1: Se usa 'h-screen' y 'bg-contain bg-no-repeat bg-center' para asegurar que la imagen de fondo se muestre completa y los menús no se salgan.
     <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-contain bg-no-repeat bg-center flex flex-col">
-      <img
-        src="/img/flores.png"
-        alt="flores"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-      />
-
+      
       {/* CORRECCIÓN 2: Se ajusta el padding-top (pt-20) y padding-bottom (pb-[160px] / sm:pb-[140px]) para
           dejar espacio al menú fijo inferior y los botones superiores. Esto asegura que el Canvas
           ocupe el espacio restante sin solaparse con el footer fijo. */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 pt-20 pb-[160px] sm:pb-[140px]">
-        <div className="w-full max-w-5xl h-full flex items-center justify-center">
+      <div className="absolute top-[65%] left-1/2 -translate-x-1/2 translate-y-[-700px] w-full max-w-5xl h-[55vh] flex items-center justify-center z-10 pointer-events-none">
+        <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
             <TreeCanvasFamilia
               key="canvas-familia"
