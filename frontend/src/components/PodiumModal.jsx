@@ -4,55 +4,42 @@ import { motion } from "framer-motion";
 import AvatarRender from "@/components/AvatarRender";
 
 const NOMBRES = [
-  "Ana",
-  "Luis",
-  "Carlos",
-  "María",
-  "Jorge",
-  "Valeria",
-  "Sofía",
-  "Miguel",
-  "Elena",
-  "Tomás",
+  "Ana", "Luis", "Carlos", "María", "Jorge", 
+  "Valeria", "Sofía", "Miguel", "Elena", "Tomás"
 ];
-const user = JSON.parse(localStorage.getItem("user"));
 
 const generarAvanceAleatorio = () => ({
   x: Object.fromEntries(
-    Array.from({ length: Math.floor(Math.random() * 13) }, (_, i) => [
-      `e${i}`,
-      true,
-    ])
+    Array.from({ length: Math.floor(Math.random() * 13) }, (_, i) => [`e${i}`, true])
   ),
   c: Object.fromEntries(
-    Array.from({ length: Math.floor(Math.random() * 11) }, (_, i) => [
-      `c${i}`,
-      true,
-    ])
+    Array.from({ length: Math.floor(Math.random() * 11) }, (_, i) => [`c${i}`, true])
   ),
   e: Object.fromEntries(
-    Array.from({ length: Math.floor(Math.random() * 11) }, (_, i) => [
-      `x${i}`,
-      true,
-    ])
+    Array.from({ length: Math.floor(Math.random() * 11) }, (_, i) => [`x${i}`, true])
   ),
 });
 
 export default function PodiumModal({ onClose }) {
   const { t } = useTranslation();
   const [top10, setTop10] = useState([]);
-  const [userProgress, setUserProgress] = useState({});
+  const [userProgress, setUserProgress] = useState({ xperiencias: 0, checklist: 0, xecretos: 0 });
+  
+  // CORRECCIÓN 1: Mover la lectura de user dentro del componente para evitar errores si es null
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const totalExperiencias = 12;
   const totalChecklist = 10;
   const totalXecretos = 10;
 
   const calcularAvancePorcentual = (completados, total) => {
+    if (!total) return "0.0";
     return ((completados / total) * 100).toFixed(1);
   };
 
   const calcularAvanceDetalle = (datos) => {
-    const { x = {}, c = {}, e = {} } = datos;
+    // Validación de seguridad por si datos es null
+    const { x = {}, c = {}, e = {} } = datos || {};
     const completadosE = Object.values(e).filter(Boolean).length;
     const completadosC = Object.values(c).filter(Boolean).length;
     const completadosX = Object.values(x).filter(Boolean).length;
@@ -130,109 +117,113 @@ export default function PodiumModal({ onClose }) {
         </button>
       </div>
 
-        {/* TU PROGRESO */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
-          <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
-            {t("your_progress") || "Tu Progreso"}
-          </h1>
-        </div>
+      {/* TU PROGRESO */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
+        <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
+          {t("your_progress") || "Tu Progreso"}
+        </h1>
+      </div>
 
-        <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md border border-gray-300 max-w-md mx-auto mb-10">
-          <div className="relative w-20 h-20 rounded-xl overflow-hidden shadow-md shrink-0">
-            <AvatarRender className="w-full h-full object-cover" />
+      <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md border border-gray-300 max-w-md mx-auto mb-10">
+        <div className="relative w-20 h-20 rounded-xl overflow-hidden shadow-md shrink-0">
+          {/* CORRECCIÓN 2: Se pasa avatarData o un objeto vacío para evitar crash */}
+          <AvatarRender 
+            avatarData={user?.avatarData || {}} 
+            className="w-full h-full object-cover" 
+          />
+        </div>
+        <div className="flex flex-col w-full">
+          <p className="text-lg font-bold text-gray-800">
+            {user?.name || "Tú"}
+          </p>
+
+          <div className="mt-1">
+            <p className="text-xs text-gray-700">Xperiencias</p>
+            <progress
+              value={userProgress.xperiencias || 0}
+              max="100"
+              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
+            />
           </div>
-          <div className="flex flex-col w-full">
-            <p className="text-lg font-bold text-gray-800">
-              {user?.name || "Tú"}
-            </p>
 
-            <div className="mt-1">
-              <p className="text-xs text-gray-700">Xperiencias</p>
-              <progress
-                value={userProgress.xperiencias}
-                max="100"
-                className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
-              />
-            </div>
-
-            <div className="mt-1">
-              <p className="text-xs text-gray-700">Checklist</p>
-              <progress
-                value={userProgress.checklist}
-                max="100"
-                className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
-              />
-            </div>
-
-            <div className="mt-1">
-              <p className="text-xs text-gray-700">Xecretos</p>
-              <progress
-                value={userProgress.xecretos}
-                max="100"
-                className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
-              />
-            </div>
+          <div className="mt-1">
+            <p className="text-xs text-gray-700">Checklist</p>
+            <progress
+              value={userProgress.checklist || 0}
+              max="100"
+              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
+            />
           </div>
-        </div>
 
-        {/* Subtítulo */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
-          <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
-            {t("podium") || "Podio de Exploradores"}
-          </h1>
-        </div>
-
-        {/* TOP 10 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-5xl mx-auto">
-          {top10.map((jugador, idx) => (
-            <div
-              key={idx}
-              className={`flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md transition-transform relative ${borderClass(
-                idx
-              )}`}
-            >
-              <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-md shrink-0">
-                <AvatarRender
-                  avatarData={jugador.avatarData}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <p className="text-lg font-bold text-gray-800">
-                  {jugador.nombre}
-                </p>
-
-                <div className="mt-1">
-                  <p className="text-xs text-gray-700">Xperiencias</p>
-                  <progress
-                    value={jugador.detalle.xperiencias}
-                    max="100"
-                    className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
-                  />
-                </div>
-
-                <div className="mt-1">
-                  <p className="text-xs text-gray-700">Checklist</p>
-                  <progress
-                    value={jugador.detalle.checklist}
-                    max="100"
-                    className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
-                  />
-                </div>
-
-                <div className="mt-1">
-                  <p className="text-xs text-gray-700">Xecretos</p>
-                  <progress
-                    value={jugador.detalle.xecretos}
-                    max="100"
-                    className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+          <div className="mt-1">
+            <p className="text-xs text-gray-700">Xecretos</p>
+            <progress
+              value={userProgress.xecretos || 0}
+              max="100"
+              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
+            />
+          </div>
         </div>
       </div>
+
+      {/* Subtítulo */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
+        <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
+          {t("podium") || "Podio de Exploradores"}
+        </h1>
+      </div>
+
+      {/* TOP 10 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-5xl mx-auto pb-10">
+        {top10.map((jugador, idx) => (
+          <div
+            key={idx}
+            className={`flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md transition-transform relative ${borderClass(
+              idx
+            )}`}
+          >
+            <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-md shrink-0">
+              <AvatarRender
+                avatarData={jugador.avatarData}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <p className="text-lg font-bold text-gray-800">
+                {jugador.nombre}
+              </p>
+
+              <div className="mt-1">
+                <p className="text-xs text-gray-700">Xperiencias</p>
+                <progress
+                  value={jugador.detalle.xperiencias}
+                  max="100"
+                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
+                />
+              </div>
+
+              <div className="mt-1">
+                <p className="text-xs text-gray-700">Checklist</p>
+                <progress
+                  value={jugador.detalle.checklist}
+                  max="100"
+                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
+                />
+              </div>
+
+              <div className="mt-1">
+                <p className="text-xs text-gray-700">Xecretos</p>
+                <progress
+                  value={jugador.detalle.xecretos}
+                  max="100"
+                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* CORRECCIÓN 3: Eliminado el div de cierre sobrante que estaba aquí */}
     </motion.div>
   );
 }

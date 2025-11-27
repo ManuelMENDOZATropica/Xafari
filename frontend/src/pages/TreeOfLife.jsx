@@ -422,12 +422,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXecretoModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80"
+            className="fixed inset-0 z-50 "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
               <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
                 <XecretoRegister
                   onClose={() => {
@@ -452,12 +452,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXperienciasModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70"
+            className="fixed inset-0 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
               <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
                 <XperienciasXtop
                   onClose={() => {
@@ -482,7 +482,7 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showChecklistModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -508,12 +508,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showPodiumModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70"
+            className="fixed inset-0 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
               <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
                 <PodiumModal onClose={() => setShowPodiumModal(false)} />
               </div>
@@ -525,12 +525,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showMapaModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70"
+            className="fixed inset-0 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
               <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
                 <ModalMapa onClose={() => setShowMapaModal(false)} />
               </div>
@@ -542,12 +542,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXelfiesModal && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70"
+            className="fixed inset-0 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[40%]">
+            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
               <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
                 <Xelfies onClose={() => setShowXelfiesModal(false)} />
               </div>
