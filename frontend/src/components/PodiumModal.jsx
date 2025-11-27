@@ -98,24 +98,27 @@ export default function PodiumModal({ onClose }) {
   };
 
   return (
-    <motion.div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-16 overflow-y-auto font-apercu">
-      {/* Encabezado */}
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <button
-          onClick={onClose}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
-        >
-          ← {t("back")}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
-          aria-label="Cerrar"
-        >
-          ✕
-        </button>
-      </div>
+    <div className="w-full h-full mt-[22px] ">
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
+        aria-label="Cerrar"
+      >
+        ✕
+      </button>
+      <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
+        <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
+          <motion.div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-16 overflow-y-auto font-apercu">
+            {/* Encabezado */}
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <button
+                onClick={onClose}
+                className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+              >
+                ← {t("back")}
+              </button>
+            </div>
 
       {/* TU PROGRESO */}
       <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
@@ -173,57 +176,60 @@ export default function PodiumModal({ onClose }) {
         </h1>
       </div>
 
-      {/* TOP 10 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-5xl mx-auto pb-10">
-        {top10.map((jugador, idx) => (
-          <div
-            key={idx}
-            className={`flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md transition-transform relative ${borderClass(
-              idx
-            )}`}
-          >
-            <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-md shrink-0">
-              <AvatarRender
-                avatarData={jugador.avatarData}
-                className="w-full h-full object-cover"
-              />
+            {/* TOP 10 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-5xl mx-auto pb-10">
+              {top10.map((jugador, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md transition-transform relative ${borderClass(
+                    idx
+                  )}`}
+                >
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-md shrink-0">
+                    <AvatarRender
+                      avatarData={jugador.avatarData}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full">
+                    <p className="text-lg font-bold text-gray-800">
+                      {jugador.nombre}
+                    </p>
+
+                    <div className="mt-1">
+                      <p className="text-xs text-gray-700">Xperiencias</p>
+                      <progress
+                        value={jugador.detalle.xperiencias}
+                        max="100"
+                        className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <p className="text-xs text-gray-700">Checklist</p>
+                      <progress
+                        value={jugador.detalle.checklist}
+                        max="100"
+                        className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <p className="text-xs text-gray-700">Xecretos</p>
+                      <progress
+                        value={jugador.detalle.xecretos}
+                        max="100"
+                        className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex flex-col w-full">
-              <p className="text-lg font-bold text-gray-800">
-                {jugador.nombre}
-              </p>
-
-              <div className="mt-1">
-                <p className="text-xs text-gray-700">Xperiencias</p>
-                <progress
-                  value={jugador.detalle.xperiencias}
-                  max="100"
-                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
-                />
-              </div>
-
-              <div className="mt-1">
-                <p className="text-xs text-gray-700">Checklist</p>
-                <progress
-                  value={jugador.detalle.checklist}
-                  max="100"
-                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
-                />
-              </div>
-
-              <div className="mt-1">
-                <p className="text-xs text-gray-700">Xecretos</p>
-                <progress
-                  value={jugador.detalle.xecretos}
-                  max="100"
-                  className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+            {/* CORRECCIÓN 3: Eliminado el div de cierre sobrante que estaba aquí */}
+          </motion.div>
+        </div>
       </div>
-      {/* CORRECCIÓN 3: Eliminado el div de cierre sobrante que estaba aquí */}
-    </motion.div>
+    </div>
   );
 }

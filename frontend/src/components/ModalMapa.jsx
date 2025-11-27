@@ -4,7 +4,7 @@ import React from "react";
 
 export default function ModalMapa({ onClose }) {
   return (
-    <div className="relative w-full h-full bg-white rounded-3xl overflow-hidden shadow-2xl">
+    <div className="w-full h-full mt-[22px] ">
       <button
         type="button"
         onClick={onClose}
@@ -13,16 +13,19 @@ export default function ModalMapa({ onClose }) {
       >
         ✕
       </button>
-
-      <div className="flex items-center justify-center h-full p-4">
-        <div className="relative w-full max-w-lg aspect-square bg-white rounded-full overflow-hidden shadow-inner border border-gray-200">
-          <div className="absolute inset-0 overflow-scroll rounded-full">
-            <img
-              src="/mapa/mapa.png"
-              alt="Mapa del lugar"
-              className="w-full h-auto min-w-[300%] min-h-[300%] object-contain"
-              style={{ transformOrigin: "center center" }}
-            />
+      <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
+        <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
+          <div className="flex items-center justify-center h-full p-4">
+            <div className="relative w-full max-w-lg aspect-square bg-white rounded-full overflow-hidden shadow-inner border border-gray-200">
+              <div className="absolute inset-0 overflow-scroll rounded-full">
+                <img
+                  src="/mapa/mapa.png"
+                  alt="Mapa del lugar"
+                  className="w-full h-auto min-w-[300%] min-h-[300%] object-contain"
+                  style={{ transformOrigin: "center center" }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
