@@ -12,14 +12,14 @@ export default function ModalMapa({ show, onClose }) {
     <AnimatePresence>
       {show && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-start justify-center px-[10%] pt-[10%] pb-[40%] bg-black bg-opacity-70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }} // Este es el fondo oscuro, su animación de salida está bien así.
           onClick={onClose} // Cerrar al hacer clic fuera del modal
         >
           <motion.div
-            className="relative w-full max-w-sm aspect-square bg-white rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-2"
+            className="relative w-full h-full max-w-sm max-h-full aspect-square bg-white rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-2"
             initial={{ scale: 0.5, opacity: 0, rotate: -180 }} // Animación de entrada
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
             exit={{ scale: 0.5, opacity: 0, rotate: -180 }} // <-- ¡Cambiado! Ahora es igual a 'initial'

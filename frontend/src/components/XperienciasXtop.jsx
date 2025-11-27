@@ -303,8 +303,8 @@ export default function XperienciasXtop({ onClose }) {
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="relative w-screen h-screen font-apercu text-black">
+    <div className="relative w-full h-full z-50 overflow-hidden rounded-3xl shadow-2xl">
+      <div className="relative w-full h-full font-apercu text-black">
         <img
           src="/img/V03-CERRITOS.jpg"
           alt="Fondo"
