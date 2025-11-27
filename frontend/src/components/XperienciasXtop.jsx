@@ -303,19 +303,17 @@ export default function XperienciasXtop({ onClose }) {
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
-    <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00]">
+  <div className="w-full h-full mt-[22px] ">
+  <button
+      type="button"
+      onClick={onClose}
+      className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
+      aria-label="Cerrar"
+    >
+      ✕
+    </button>
+    <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
       <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
-        <div className="flex justify-between items-center px-4 py-3 border-b z-10 bg-white/40 backdrop-blur-sm">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm text-gray-800 font-bold"
-            aria-label="Cerrar"
-          >
-            ✕
-          </button>
-        </div>
-
         <div className="px-6 pt-3 pb-1">
           <div className="w-full max-w-md mx-auto mt-3 bg-white/80 rounded-full overflow-hidden">
             <div
@@ -440,13 +438,13 @@ export default function XperienciasXtop({ onClose }) {
     ${
       yaRespondida
         ? esCorrecta
-          ? "bg-green-100 text-green-800 border-green-400" // CASO 1: Correcta (Verde)
-          : "bg-white text-gray-500 border-gray-300"       // CASO 2: Las otras opciones al responder (Blanco/Gris)
-        : "bg-[#FBFF98] text-gray-800 border-gray-300 hover:brightness-95" // CASO 3: Normal / Sin responder (TU AMARILLO)
+          ? "bg-green-100 text-green-800 border-green-400"
+          : "bg-white text-gray-500 border-gray-300"
+        : "bg-[#FBFF98] text-gray-800 border-gray-300 hover:brightness-95"
     }
     ${
       respuestas[clave] === op && !esCorrecta
-        ? "!bg-red-100 !text-red-800 !border-red-400" // CASO 4: Error (Rojo). El '!' fuerza el color.
+        ? "!bg-red-100 !text-red-800 !border-red-400"
         : ""
     }
     disabled:opacity-100 `}
@@ -496,5 +494,7 @@ export default function XperienciasXtop({ onClose }) {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
