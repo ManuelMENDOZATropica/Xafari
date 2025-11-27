@@ -110,7 +110,7 @@ export default function PodiumModal({ onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="h-10 w-10 rounded-full bg-white/80 text-gray-800 font-bold shadow border border-gray-300 hover:bg-white"
+          className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
           aria-label="Cerrar"
         >
           ✕

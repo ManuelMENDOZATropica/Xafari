@@ -4,7 +4,7 @@ export default function Xelfies({ onClose }) {
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-4 top-4 h-10 w-10 rounded-full bg-amber-100 text-amber-700 font-semibold shadow-md hover:bg-amber-200 transition"
+        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
         aria-label="Cerrar"
       >
         ✕

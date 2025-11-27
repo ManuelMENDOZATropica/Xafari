@@ -6,8 +6,9 @@ export default function ModalMapa({ onClose }) {
   return (
     <div className="relative w-full h-full bg-white rounded-3xl overflow-hidden shadow-2xl">
       <button
+        type="button"
         onClick={onClose}
-        className="absolute top-4 right-4 bg-gray-200/90 text-gray-800 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold z-10 hover:bg-gray-300"
+        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
         aria-label="Cerrar mapa"
       >
         ✕
