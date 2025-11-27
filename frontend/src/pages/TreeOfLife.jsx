@@ -433,8 +433,8 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden">
                 <XecretoRegister
                   onClose={() => {
                     const prev = xecretos;
@@ -519,8 +519,8 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden">
                 <PodiumModal onClose={() => setShowPodiumModal(false)} />
               </div>
             </div>
@@ -536,8 +536,8 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden">
                 <ModalMapa onClose={() => setShowMapaModal(false)} />
               </div>
             </div>
@@ -553,8 +553,8 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md">
+            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden">
                 <Xelfies onClose={() => setShowXelfiesModal(false)} />
               </div>
             </div>
