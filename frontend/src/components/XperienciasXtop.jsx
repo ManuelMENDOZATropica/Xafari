@@ -303,40 +303,47 @@ export default function XperienciasXtop({ onClose }) {
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="relative w-screen h-screen font-apercu text-black">
-        <img
-          src="/img/V03-CERRITOS.jpg"
-          alt="Fondo"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        />
+    <div className="relative w-full h-full font-apercu text-black">
+      <img
+        src="/img/V03-CERRITOS.jpg"
+        alt="Fondo"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
 
-        <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
-          <div className="flex justify-start items-center px-4 py-3 border-b z-10">
-            <button
-              onClick={onClose}
-              className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+      <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
+        <div className="flex justify-between items-center px-4 py-3 border-b z-10 bg-white/40 backdrop-blur-sm">
+          <button
+            onClick={onClose}
+            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          >
+            ← {t("back")}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm text-gray-800 font-bold shadow border border-gray-300 hover:bg-white"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="px-6 pt-3 pb-1">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit">
+            <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
+              Xperiencias Xtop
+            </h1>
+          </div>
+
+          <div className="w-full max-w-md mx-auto mt-3 bg-white/80 rounded-full overflow-hidden shadow border border-gray-300">
+            <div
+              className="bg-green-500 text-white text-xs font-semibold text-center py-1 transition-all"
+              style={{ width: `${progreso}%` }}
             >
-              ← {t("back")}
-            </button>
-          </div>
-
-          <div className="px-6 pt-3 pb-1">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit">
-              <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
-                Xperiencias Xtop
-              </h1>
-            </div>
-
-            <div className="w-full max-w-md mx-auto mt-3 bg-white/80 rounded-full overflow-hidden shadow border border-gray-300">
-              <div
-                className="bg-green-500 text-white text-xs font-semibold text-center py-1 transition-all"
-                style={{ width: `${progreso}%` }}
-              >
-                {progreso}%
-              </div>
+              {progreso}%
             </div>
           </div>
+        </div>
 
           <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
             <div className="grid gap-6">
@@ -512,7 +519,6 @@ export default function XperienciasXtop({ onClose }) {
               })}
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
