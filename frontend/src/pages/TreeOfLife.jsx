@@ -173,6 +173,11 @@ export default function TreeOfLife() {
     setShowPodiumModal(false);
   };
 
+  const handleToggleArbolMenu = () => {
+    closePrimaryModals();
+    setShowArbolMenu((prev) => !prev);
+  };
+
   const handleOpenXperiencias = () => {
     closePrimaryModals();
     setShowXperienciasModal(true);
@@ -204,6 +209,7 @@ export default function TreeOfLife() {
   };
 
   const handleOpenSettings = () => {
+    closePrimaryModals();
     setShowArbolMenu(false);
     window.dispatchEvent(new Event("open-settings-menu"));
   };
@@ -376,7 +382,7 @@ export default function TreeOfLife() {
                 label: "Árbol",
                 icon: "/iconos/menuArbol.png",
                 color: "#f36c12",
-                onClick: () => setShowArbolMenu((prev) => !prev),
+                onClick: handleToggleArbolMenu,
               },
               {
                 key: "mapa",

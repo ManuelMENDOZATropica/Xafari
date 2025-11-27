@@ -83,7 +83,15 @@ export default function ChecklistGastro({ onClose }) {
   const progreso = Math.round((completadas / checklistItems.length) * 100);
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50 relative">
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
+        aria-label="Cerrar"
+      >
+        ✕
+      </button>
       {/* Fondo de imagen */}
       <img
         src="/img/V03-CERRITOS.jpg"
