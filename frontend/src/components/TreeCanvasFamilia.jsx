@@ -400,22 +400,21 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
   const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
 
- const [jugador, setJugador] = useState(() => JSON.parse(localStorage.getItem("user") || "{}"));
+  const [jugador, setJugador] = useState(() =>
+    JSON.parse(localStorage.getItem("user") || "{}")
+  );
 
-useEffect(() => {
-  const handleStorage = () => {
-    const updated = JSON.parse(localStorage.getItem("user") || "{}");
-    setJugador(updated);
-  };
+  useEffect(() => {
+    const handleStorage = () => {
+      const updated = JSON.parse(localStorage.getItem("user") || "{}");
+      setJugador(updated);
+    };
 
-  // Escuchar cambios externos (por seguridad)
-  window.addEventListener("storage", handleStorage);
+    window.addEventListener("storage", handleStorage);
+    handleStorage();
 
-  // Y también actualizar por cambios internos si el componente se vuelve a renderizar
-  handleStorage();
-
-  return () => window.removeEventListener("storage", handleStorage);
-}, []);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
 
   const calcularNivelDesbloqueo = (clave, tipo) => {
@@ -492,7 +491,6 @@ useEffect(() => {
           ? "/arbol/checklist/"
           : "/arbol/xtopÁrbol/";
 
-      // Se cambia key para forzar animación si es reciente
       const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
 
       return (
@@ -536,7 +534,6 @@ useEffect(() => {
             className="w-full h-full object-contain"
           />
 
-          {/* Avatares familia */}
           {familia.map((m) => {
             const pos = positionsById[m.id];
             if (!pos) return null;
@@ -560,7 +557,6 @@ useEffect(() => {
             );
           })}
 
-          {/* Avatar del jugador principal */}
           {typeof window !== "undefined" && (
             <div
               className="absolute z-[999]"
@@ -579,7 +575,6 @@ useEffect(() => {
             </div>
           )}
 
-          {/* Render de insignias */}
           {renderInsignias(mapa, "xecretos")}
           {renderInsignias(mapaXtop, "xperiencias")}
           {renderInsignias(mapaXperiencias, "checklist")}

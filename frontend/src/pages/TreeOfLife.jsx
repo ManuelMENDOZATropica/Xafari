@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import LanguageToggle from "@/components/LanguageToggle";
 import XafariContext from "@/components/XafariContext";
 
-// Componentes originales importados
 import XecretoRegister from "@/components/XecretoRegister";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import ChecklistGastro from "@/components/ChecklistGastro";
@@ -23,7 +22,6 @@ const FamilyIcon = (props) => (
     aria-hidden="true"
     {...props}
   >
-    {/* Persona más a la izquierda */}
     <circle cx="2.5" cy="8.5" r="2" fill="currentColor" />
     <path
       d="M2.5 18v-1c0-1.9-1.3-3.5-3-4"
@@ -32,7 +30,6 @@ const FamilyIcon = (props) => (
       strokeLinecap="round"
     />
 
-    {/* Persona izquierda */}
     <circle cx="8" cy="8.5" r="2" fill="currentColor" />
     <path
       d="M8 18v-1c0-1.9-1.3-3.5-3-4"
@@ -41,7 +38,6 @@ const FamilyIcon = (props) => (
       strokeLinecap="round"
     />
 
-    {/* Persona central */}
     <path
       d="M13 5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z"
       fill="currentColor"
@@ -53,7 +49,6 @@ const FamilyIcon = (props) => (
       strokeLinecap="round"
     />
 
-    {/* Persona derecha */}
     <circle cx="22.5" cy="8.5" r="2" fill="currentColor" />
     <path
       d="M22.5 18v-1c0-1.9-1.3-3.5-3-4"
@@ -62,7 +57,6 @@ const FamilyIcon = (props) => (
       strokeLinecap="round"
     />
 
-    {/* Persona más a la derecha */}
     <circle cx="28.5" cy="8.5" r="2" fill="currentColor" />
     <path
       d="M28.5 18v-1c0-1.9-1.3-3.5-3-4"
@@ -356,7 +350,6 @@ export default function TreeOfLife() {
       >
         <div className="flex flex-col items-center gap-1 bg-[#C8C5C5] backdrop-blur-md rounded-2xl px-4 py-2 shadow-lg">
           <div className="flex items-center gap-3">
-            {/* Opción FAMILIA */}
             <span
               className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
         ${
@@ -368,7 +361,6 @@ export default function TreeOfLife() {
               Familia
             </span>
 
-            {/* Opción SOLO */}
             <span
               className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
         ${

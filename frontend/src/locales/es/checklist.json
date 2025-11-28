@@ -1,5 +1,90 @@
 {
   "checklist_comido": "Ya comí en:",
   "your_progress": "Tu Progreso",
-  "podium": "Podio de Exploradores"
+  "podium": "Podio de Exploradores",
+  "gastroChecklist": {
+    "title": "Checklist Gastronómico",
+    "items": {
+      "quesadillas": {
+        "place": "Mercado la Merced",
+        "description": "Quesadillas deliciosas"
+      },
+      "ceviche": {
+        "place": "La Trajinera",
+        "description": "Ceviche fresco"
+      },
+      "acai": {
+        "place": "Bio",
+        "description": "Acai Bowl nutritivo"
+      },
+      "ravioli": {
+        "place": "Fuego",
+        "description": "Ravioli artesanal"
+      },
+      "espada": {
+        "place": "Las Cuevas",
+        "description": "Espada con carnita"
+      },
+      "mezcal": {
+        "place": "Cantina Los Faroles",
+        "description": "Caballito con mezcal"
+      },
+      "paleta": {
+        "place": "Chibalí",
+        "description": "Paleta de dulce miguelito"
+      },
+      "tostada": {
+        "place": "Las Playas",
+        "description": "Tostada de pulpo"
+      },
+      "ramen": {
+        "place": "Xin-Gao",
+        "description": "Ramen japonés"
+      },
+      "quesos": {
+        "place": "Arriba Baja",
+        "description": "Tabla de quesos"
+      },
+      "torta": {
+        "place": "La Xentral",
+        "description": "Torta deliciosa"
+      },
+      "palomitas": {
+        "place": "Xinema",
+        "description": "Palomitas de película"
+      },
+      "nogada": {
+        "place": "Azul Nogada",
+        "description": "Chile en nogada"
+      },
+      "panucho": {
+        "place": "Chi’",
+        "description": "Panucho tradicional"
+      },
+      "corunda": {
+        "place": "Monarca",
+        "description": "Corunda michoacana"
+      },
+      "coctel": {
+        "place": "Costero",
+        "description": "Coctel de camarón"
+      },
+      "carne": {
+        "place": "La Silla",
+        "description": "Carne asada"
+      },
+      "ostion": {
+        "place": "Ha’",
+        "description": "Ostión fresco"
+      },
+      "mimosa": {
+        "place": "Brunch Dominical Xcaret",
+        "description": "Mimosa espumosa"
+      },
+      "sushi": {
+        "place": "Tama-Mon",
+        "description": "Rollito de sushi"
+      }
+    }
+  }
 }

@@ -33,7 +33,7 @@ const handleLogin = async () => {
 
     const data = await response.json();
 
-    console.log("Respuesta del servidor:", data); // 👈 Aquí imprimimos todo
+    console.log("Respuesta del servidor:", data);
 
     if (!response.ok) {
       throw new Error(data || "Login failed");

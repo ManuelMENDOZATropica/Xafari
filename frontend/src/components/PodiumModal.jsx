@@ -25,7 +25,6 @@ export default function PodiumModal({ onClose }) {
   const [top10, setTop10] = useState([]);
   const [userProgress, setUserProgress] = useState({ xperiencias: 0, checklist: 0, xecretos: 0 });
   
-  // CORRECCIÓN 1: Mover la lectura de user dentro del componente para evitar errores si es null
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const totalExperiencias = 12;
@@ -38,7 +37,6 @@ export default function PodiumModal({ onClose }) {
   };
 
   const calcularAvanceDetalle = (datos) => {
-    // Validación de seguridad por si datos es null
     const { x = {}, c = {}, e = {} } = datos || {};
     const completadosE = Object.values(e).filter(Boolean).length;
     const completadosC = Object.values(c).filter(Boolean).length;
@@ -98,85 +96,73 @@ export default function PodiumModal({ onClose }) {
   };
 
   return (
-    <div className="w-full h-full mt-[22px] ">
+    <div className="w-full h-full min-h-screen mt-[22px] overflow-y-auto px-4">
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
-        aria-label="Cerrar"
+        className="absolute top-[-10px] right-5 z-50 mt-[10px] rounded-full border-2 border-white/50 bg-white px-5 py-1.5 font-bold text-gray-900 shadow-lg transition-transform hover:scale-105"
+        aria-label={t("close")}
       >
         ✕
       </button>
-      <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
-        <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
-          <motion.div className="relative w-full h-full bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 md:px-10 py-6 pt-16 overflow-y-auto font-apercu">
-            {/* Encabezado */}
-            <div className="flex items-center justify-between gap-4 mb-6">
+      <div className="relative h-full w-full rounded-[10px] bg-[#FFBB00] font-apercu text-black">
+        <div className="absolute inset-0 z-10 flex h-full w-full flex-col overflow-hidden bg-white/0">
+          <motion.div className="relative h-full w-full overflow-y-auto bg-[url('/img/fondoArbolDeLaVida.png')] bg-cover bg-center px-4 py-6 pt-16 font-apercu md:px-10">
+            <div className="mb-6 flex items-center justify-between gap-4">
               <button
                 onClick={onClose}
-                className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+                className="rounded-full border border-gray-300 bg-white/80 px-4 py-2 text-black shadow backdrop-blur-sm transition hover:bg-white"
               >
                 ← {t("back")}
               </button>
             </div>
 
-      {/* TU PROGRESO */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
-        <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
-          {t("your_progress") || "Tu Progreso"}
-        </h1>
-      </div>
+            <div className="mx-auto mb-4 w-fit rounded-xl bg-white/80 px-4 py-2 shadow backdrop-blur-sm">
+              <h1 className="text-center text-xl font-bold text-emerald-800 md:text-2xl">
+                {t("your_progress")}
+              </h1>
+            </div>
 
-      <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md border border-gray-300 max-w-md mx-auto mb-10">
-        <div className="relative w-20 h-20 rounded-xl overflow-hidden shadow-md shrink-0">
-          {/* CORRECCIÓN 2: Se pasa avatarData o un objeto vacío para evitar crash */}
-          <AvatarRender 
-            avatarData={user?.avatarData || {}} 
-            className="w-full h-full object-cover" 
-          />
-        </div>
-        <div className="flex flex-col w-full">
-          <p className="text-lg font-bold text-gray-800">
-            {user?.name || "Tú"}
-          </p>
+            <div className="mx-auto mb-10 flex max-w-md items-center gap-4 rounded-2xl border border-gray-300 bg-white/90 p-4 shadow-md backdrop-blur-md">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl shadow-md">
+                <AvatarRender avatarData={user?.avatarData || {}} className="h-full w-full object-cover" />
+              </div>
+              <div className="flex w-full flex-col">
+                <p className="text-lg font-bold text-gray-800">{user?.name || t("youLabel")}</p>
 
-          <div className="mt-1">
-            <p className="text-xs text-gray-700">Xperiencias</p>
-            <progress
-              value={userProgress.xperiencias || 0}
-              max="100"
-              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
-            />
-          </div>
+                <div className="mt-1">
+                  <p className="text-xs text-gray-700">{t("xperiencesLabel")}</p>
+                  <progress
+                    value={userProgress.xperiencias || 0}
+                    max="100"
+                    className="h-2 w-full rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-emerald-600"
+                  />
+                </div>
 
-          <div className="mt-1">
-            <p className="text-xs text-gray-700">Checklist</p>
-            <progress
-              value={userProgress.checklist || 0}
-              max="100"
-              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
-            />
-          </div>
+                <div className="mt-1">
+                  <p className="text-xs text-gray-700">{t("checklistLabel")}</p>
+                  <progress
+                    value={userProgress.checklist || 0}
+                    max="100"
+                    className="h-2 w-full rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-blue-500"
+                  />
+                </div>
 
-          <div className="mt-1">
-            <p className="text-xs text-gray-700">Xecretos</p>
-            <progress
-              value={userProgress.xecretos || 0}
-              max="100"
-              className="w-full h-2 rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
-            />
-          </div>
-        </div>
-      </div>
+                <div className="mt-1">
+                  <p className="text-xs text-gray-700">{t("secretsLabel")}</p>
+                  <progress
+                    value={userProgress.xecretos || 0}
+                    max="100"
+                    className="h-2 w-full rounded bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-purple-500"
+                  />
+                </div>
+              </div>
+            </div>
 
-      {/* Subtítulo */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow mx-auto w-fit mb-4">
-        <h1 className="text-xl md:text-2xl font-bold text-emerald-800 text-center">
-          {t("podium") || "Podio de Exploradores"}
-        </h1>
-      </div>
+            <div className="mx-auto mb-4 w-fit rounded-xl bg-white/80 px-4 py-2 shadow backdrop-blur-sm">
+              <h1 className="text-center text-xl font-bold text-emerald-800 md:text-2xl">{t("podium")}</h1>
+            </div>
 
-            {/* TOP 10 */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-5xl mx-auto pb-10">
               {top10.map((jugador, idx) => (
                 <div
@@ -197,7 +183,7 @@ export default function PodiumModal({ onClose }) {
                     </p>
 
                     <div className="mt-1">
-                      <p className="text-xs text-gray-700">Xperiencias</p>
+                      <p className="text-xs text-gray-700">{t("xperiencesLabel")}</p>
                       <progress
                         value={jugador.detalle.xperiencias}
                         max="100"
@@ -206,7 +192,7 @@ export default function PodiumModal({ onClose }) {
                     </div>
 
                     <div className="mt-1">
-                      <p className="text-xs text-gray-700">Checklist</p>
+                      <p className="text-xs text-gray-700">{t("checklistLabel")}</p>
                       <progress
                         value={jugador.detalle.checklist}
                         max="100"
@@ -215,7 +201,7 @@ export default function PodiumModal({ onClose }) {
                     </div>
 
                     <div className="mt-1">
-                      <p className="text-xs text-gray-700">Xecretos</p>
+                      <p className="text-xs text-gray-700">{t("secretsLabel")}</p>
                       <progress
                         value={jugador.detalle.xecretos}
                         max="100"
@@ -226,7 +212,6 @@ export default function PodiumModal({ onClose }) {
                 </div>
               ))}
             </div>
-            {/* CORRECCIÓN 3: Eliminado el div de cierre sobrante que estaba aquí */}
           </motion.div>
         </div>
       </div>

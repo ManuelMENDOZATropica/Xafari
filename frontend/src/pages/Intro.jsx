@@ -31,50 +31,32 @@ const Intro = () => {
   const introImageRef = useRef(null);
   const introTextRef = useRef(null);
   const dragOffset = useRef({ x: 0, y: 0 });
-
-  // --- FUNCIÓN MANUAL (CLICK) ---
   const goToNextImage = () => {
-    // Limpiamos los timers automáticos para evitar conflictos
     clearTimeout(fadeOutTimeout.current);
     clearTimeout(nextImageTimeout.current);
 
     setIndex((prev) => {
       const next = prev + 1;
-      
-      // Si el siguiente índice se sale del array, terminamos
       if (next >= baseNames.length) {
         setExitFade(true);
         setTimeout(() => navigate("/intro-maya"), 500);
-        return prev; // 👈 IMPORTANTE: Mantenemos la imagen actual visible
+        return prev;
       }
-      
-      // Si no, avanzamos y activamos el fade in
       setFade(true); 
       return next;
     });
   };
-
-  // --- FUNCIÓN AUTOMÁTICA (TIMER) ---
   useEffect(() => {
-    // Si ya estamos en proceso de salida, no configurar timers
     if (exitFade) return;
-
-    // 1. Programar el Fade Out de la imagen actual a los 5s
     fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
-    
-    // 2. Programar el cambio a la siguiente imagen a los 5.5s
     nextImageTimeout.current = setTimeout(() => {
       setIndex((prev) => {
         const next = prev + 1;
-        
-        // Verificamos si llegamos al final
         if (next >= baseNames.length) {
           setExitFade(true);
           setTimeout(() => navigate("/intro-maya"), 500);
-          return prev; // 👈 IMPORTANTE: Nos quedamos en la última imagen
+          return prev;
         }
-        
-        // Si seguimos, activamos fade in
         setFade(true);
         return next;
       });
@@ -84,9 +66,7 @@ const Intro = () => {
       clearTimeout(fadeOutTimeout.current);
       clearTimeout(nextImageTimeout.current);
     };
-  }, [index, exitFade, navigate]); // Agregamos exitFade a dependencias
-
-  // --- CENTRAR ANTORCHA AL INICIO Y RESIZE ---
+  }, [index, exitFade, navigate]);
   useEffect(() => {
     const centerTorch = () => {
       if (!containerRef.current || !torchRef.current) return;
@@ -203,8 +183,6 @@ const Intro = () => {
   const endDrag = () => {
     setTorchPos((prev) => ({ ...prev, isDragging: false }));
   };
-
-  // Safe Guard: Si por alguna razón index es inválido, usar el último
   const safeIndex = Math.min(index, baseNames.length - 1);
   const currentName = baseNames[safeIndex];
 
@@ -294,7 +272,6 @@ const Intro = () => {
         }
       `}</style>
 
-      {/* LUZ INVERTIDA */}
       <div
         className="light-overlay"
         style={{
@@ -325,7 +302,6 @@ const Intro = () => {
         }}
       />
 
-      {/* Imagen base */}
       <img
         ref={introImageRef}
         src={`/intro/${currentName}.jpg`}
@@ -333,7 +309,6 @@ const Intro = () => {
         className={`intro-image ${fade ? "fade-in" : "fade-out"}`}
       />
 
-      {/* Texto superpuesto */}
       <div
         ref={introTextRef}
         className={`intro-text no-bg`}
@@ -341,7 +316,6 @@ const Intro = () => {
         {t(`intro.${currentName}`)}
       </div>
 
-      {/* Botón Siguiente */}
       {index < baseNames.length && (
         <div className="absolute bottom-8 right-8 z-20">
           <button

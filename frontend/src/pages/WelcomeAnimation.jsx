@@ -7,11 +7,8 @@ export default function WelcomeToAvatarTransition() {
   const { t } = useTranslation();
   const [showAvatar, setShowAvatar] = useState(false);
   const [animateWing, setAnimateWing] = useState(false);
-
-  // Leer datos del usuario desde Context
   const { user } = useContext(XafariContext);
-
-  const fullName = `${user.name || "Explorador"} ${user.lastname || ""}`.trim();
+  const fullName = `${user.name || t("defaultExplorerName")} ${user.lastname || ""}`.trim();
 
   useEffect(() => {
     const showWingTimeout = setTimeout(() => {
@@ -29,17 +26,15 @@ export default function WelcomeToAvatarTransition() {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white font-apercu">
-      {/* Fondo de bienvenida */}
+    <div className="relative h-screen w-screen overflow-hidden bg-white font-apercu">
       {!showAvatar && (
         <img
           src="/img/V03-CERRITOS.jpg"
-          alt="Fondo Bienvenida"
-          className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
+          alt={t("welcomeAvatarBackgroundAlt")}
+          className="absolute inset-0 z-0 h-full w-full object-cover object-bottom"
         />
       )}
 
-      {/* Texto de bienvenida */}
       {!showAvatar && (
         <div className="absolute z-10 inset-0 flex flex-col items-center justify-center px-6 text-center">
           <div className="max-w-md space-y-2">
@@ -56,16 +51,14 @@ export default function WelcomeToAvatarTransition() {
         </div>
       )}
 
-      {/* Ala animada */}
       {animateWing && (
         <img
           src="/img/ala-maya.png"
-          alt="Ala Maya"
-          className="absolute bottom-0 left-0 w-full h-full object-cover z-50 animate-slide-wing-up-exit"
+          alt={t("welcomeMayaWingAlt")}
+          className="absolute bottom-0 left-0 z-50 h-full w-full animate-slide-wing-up-exit object-cover"
         />
       )}
 
-      {/* Pantalla de avatar */}
       {showAvatar && <AvatarSelection />}
     </div>
   );

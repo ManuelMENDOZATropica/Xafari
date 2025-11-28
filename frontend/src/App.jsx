@@ -24,7 +24,6 @@ import TermsConditions from "./pages/TermsConditions";
 
 function App() {
   const location = useLocation();
-  // carga user desde localStorage o lo define
   const [user, setUser] = useState({
     name: null,
     lastname: null,

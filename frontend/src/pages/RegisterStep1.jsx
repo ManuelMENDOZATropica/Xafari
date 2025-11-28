@@ -127,9 +127,7 @@ export default function RegisterStep1() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
-              aria-label={
-                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-              }
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -180,7 +178,7 @@ export default function RegisterStep1() {
               onClick={() => setShowConfirm(!showConfirm)}
               className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-1 rounded-full text-gray-600 hover:bg-white/90 transition"
               aria-label={
-                showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"
+                showConfirm ? t("hideConfirmPassword") : t("showConfirmPassword")
               }
             >
               {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
