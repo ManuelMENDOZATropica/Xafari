@@ -267,41 +267,31 @@ export default function TreeOfLife() {
         aria-pressed={modoFamilia}
         className="absolute top-4 right-4 z-40 flex flex-col items-center gap-0 text-gray-700 bg-transparent border-0 p-0 appearance-none shadow-none"
       >
-        <div className="flex flex-col items-center gap-1 bg-white/80 backdrop-blur-md rounded-2xl px-4 py-3 shadow-lg">
-          <div className="flex items-center gap-3">
-            <span
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
-                modoFamilia
-                  ? "bg-amber-200 text-amber-700 shadow-inner"
-                  : "bg-white text-gray-400"
-              }`}
-            >
-              <FamilyIcon className="h-8 w-8 ml-2" />
-            </span>
+        <div className="inline-flex items-center bg-gray-300 rounded-lg p-1">
+  {/* Botón Solo */}
+  <button
+    onClick={() => setModoFamilia(false)}
+    className={`px-6 py-1.5 rounded-md text-sm font-bold transition-all duration-200 ${
+      !modoFamilia
+        ? "bg-gray-500/60 text-black shadow-sm" // Estilo Activo
+        : "text-gray-900 hover:bg-gray-400/20"  // Estilo Inactivo
+    }`}
+  >
+    Solo
+  </button>
 
-            <span className="relative flex h-6 w-12 items-center rounded-full bg-gray-200">
-              <span
-                className={`absolute h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ease-out ${
-                  modoFamilia ? "translate-x-6" : "translate-x-0"
-                }`}
-              />
-            </span>
-
-            <span
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
-                modoFamilia
-                  ? "bg-white text-gray-400"
-                  : "bg-sky-200 text-sky-700 shadow-inner"
-              }`}
-            >
-              <IndividualIcon className="h-5 w-5" />
-            </span>
-          </div>
-
-          <span className="text-xs font-semibold text-gray-700 mt-1">
-            {modoFamilia ? "Modo Familia" : "Modo Individual"}
-          </span>
-        </div>
+  {/* Botón Familia */}
+  <button
+    onClick={() => setModoFamilia(true)}
+    className={`px-6 py-1.5 rounded-md text-sm font-bold transition-all duration-200 ${
+      modoFamilia
+        ? "bg-gray-500/60 text-black shadow-sm" // Estilo Activo
+        : "text-gray-900 hover:bg-gray-400/20"  // Estilo Inactivo
+    }`}
+  >
+    Familia
+  </button>
+</div>
       </button>
 
       {showProfileMenu && (
