@@ -16,6 +16,7 @@ import MinimalQr from "./components/minimalQr";
 import XafariContext from "./components/XafariContext";
 import { useEffect, useMemo, useState } from "react";
 import SettingsMenu from "./components/SettingsMenu";
+import SoundMenu from "./components/SoundMenu";
 import useSoundController from "./hooks/useSoundController";
 import { useLocation } from "react-router-dom";
 import PrivacyNotice from "./pages/PrivacyNotice";
@@ -114,11 +115,12 @@ function App() {
     []
   );
 
+  const isTreeOfLife = location.pathname === "/treeoflife";
   const shouldShowSettings = !hiddenSettingsRoutes.has(location.pathname);
 
   return (
     <XafariContext.Provider value={contextValue}>
-      {shouldShowSettings && <SettingsMenu />}
+      {shouldShowSettings && (isTreeOfLife ? <SoundMenu /> : <SettingsMenu />)}
       <Routes>
         <Route path="/" element={<SplashScreen />} />
         <Route path="/welcome" element={<Welcome />} />

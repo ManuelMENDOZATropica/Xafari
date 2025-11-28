@@ -116,7 +116,7 @@ export default function SoundMenu() {
     SOUND_OPTIONS[0];
 
   return (
-    <div className="pointer-events-none fixed right-4 top-4 z-40 flex flex-col items-end pt-12">
+    <div className="pointer-events-none fixed right-4 top-4 z-40 flex flex-col items-end">
       <div className="pointer-events-auto relative" ref={containerRef}>
         <button
           type="button"

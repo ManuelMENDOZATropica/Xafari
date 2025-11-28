@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import LanguageToggle from "@/components/LanguageToggle";
+import XafariContext from "@/components/XafariContext";
 
 // Componentes originales importados
 import XecretoRegister from "@/components/XecretoRegister";
@@ -89,19 +91,101 @@ const IndividualIcon = (props) => (
   </svg>
 );
 
+const SUPPORTED_LANGUAGES = ["es", "en", "pt"];
+
+const LANGUAGE_FLAGS = {
+  es: "🇲🇽",
+  en: "🇺🇸",
+  pt: "🇧🇷",
+};
+
+const SOUND_OPTIONS = [
+  { value: "full", labelKey: "soundFull" },
+  { value: "medium", labelKey: "soundMedium" },
+  { value: "vibrate", labelKey: "soundVibrate" },
+  { value: "off", labelKey: "soundOff" },
+];
+
+const SOUND_ICONS = {
+  full: (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4.5 14.25v-4.5a.75.75 0 0 1 .75-.75H8.4a.75.75 0 0 0 .53-.22l3.08-3.08c.48-.48 1.29-.14 1.29.53v14.14c0 .67-.81 1.01-1.29.53l-3.08-3.08a.75.75 0 0 0-.53-.22H5.25a.75.75 0 0 1-.75-.75Z" />
+      <path d="M17.25 8.25c1.5 1.5 1.5 6 0 7.5" />
+      <path d="M19.5 6c2.25 2.25 2.25 9.75 0 12" />
+    </svg>
+  ),
+  medium: (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4.5 14.25v-4.5a.75.75 0 0 1 .75-.75H8.4a.75.75 0 0 0 .53-.22l3.08-3.08c.48-.48 1.29-.14 1.29.53v14.14c0 .67-.81 1.01-1.29.53l-3.08-3.08a.75.75 0 0 0-.53-.22H5.25a.75.75 0 0 1-.75-.75Z" />
+      <path d="M17.25 8.25c1.5 1.5 1.5 6 0 7.5" />
+    </svg>
+  ),
+  vibrate: (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="7.5" y="3" width="9" height="18" rx="2.25" />
+      <path d="M5.25 8.25 3.75 9.75 5.25 11.25 3.75 12.75 5.25 14.25 3.75 15.75" />
+      <path d="M18.75 8.25 20.25 9.75 18.75 11.25 20.25 12.75 18.75 14.25 20.25 15.75" />
+    </svg>
+  ),
+  off: (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4.5 14.25v-4.5a.75.75 0 0 1 .75-.75H8.4a.75.75 0 0 0 .53-.22l3.08-3.08c.48-.48 1.29-.14 1.29.53v14.14c0 .67-.81 1.01-1.29.53l-3.08-3.08a.75.75 0 0 0-.53-.22H5.25a.75.75 0 0 1-.75-.75Z" />
+      <path d="m16.5 7.5 3 3-3 3" />
+      <path d="M19.5 7.5 16.5 10.5" />
+    </svg>
+  ),
+};
+
 export default function TreeOfLife() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const { soundSetting, setSoundSetting, triggerClickFeedback } =
+    useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showXecretoModal, setShowXecretoModal] = useState(false);
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
   const [showXelfiesModal, setShowXelfiesModal] = useState(false);
   const [showMapaModal, setShowMapaModal] = useState(false);
   const [showArbolMenu, setShowArbolMenu] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const [xecretos, setXecretos] = useState({});
   const [respuestasCorrectas, setRespuestasCorrectas] = useState({});
@@ -109,6 +193,8 @@ export default function TreeOfLife() {
   const [insigniaReciente, setInsigniaReciente] = useState(null);
   const [checklistReciente, setChecklistReciente] = useState(null);
   const [guardianReciente, setGuardianReciente] = useState(null);
+
+  const currentLanguage = i18n.language?.split("-")[0] ?? "es";
 
   useEffect(() => {
     setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
@@ -158,7 +244,7 @@ export default function TreeOfLife() {
     "xorbeteria",
   ];
 
-  Object.entries(progreso).forEach(([k, v]) => {
+  Object.entries(progreso).forEach(([k]) => {
     if (xtopNombres.includes(k)) {
       xtopProgreso[k] = true;
     } else if (k.startsWith("x")) {
@@ -172,6 +258,7 @@ export default function TreeOfLife() {
     setShowXelfiesModal(false);
     setShowMapaModal(false);
     setShowPodiumModal(false);
+    setShowSettingsModal(false);
   };
 
   const handleToggleArbolMenu = () => {
@@ -212,7 +299,22 @@ export default function TreeOfLife() {
   const handleOpenSettings = () => {
     closePrimaryModals();
     setShowArbolMenu(false);
-    window.dispatchEvent(new Event("open-settings-menu"));
+    setShowSettingsModal(true);
+  };
+
+  const handleSoundSelect = (value) => {
+    setSoundSetting(value);
+    if (typeof triggerClickFeedback === "function") {
+      triggerClickFeedback(value);
+    }
+  };
+
+  const handleLanguageSelect = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+
+  const handleCloseSettingsModal = () => {
+    setShowSettingsModal(false);
   };
 
   useEffect(() => {
@@ -388,6 +490,141 @@ export default function TreeOfLife() {
       </div>
 
       <AnimatePresence>
+        {showSettingsModal && (
+          <motion.div
+            className="fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
+              <div className="relative h-full w-full rounded-3xl overflow-hidden bg-white/90 backdrop-blur-lg shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/80 to-white" />
+
+                <div className="relative flex h-full flex-col overflow-hidden">
+                  <div className="flex items-center justify-between px-6 pt-5 pb-2">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                        {t("settingsMenuTitle")}
+                      </p>
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        {t("settingsMenuSubtitle")}
+                      </h2>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCloseSettingsModal}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                      aria-label={t("close")}
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="m6 6 12 12M18 6 6 18" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="flex-1 space-y-6 overflow-y-auto px-6 pb-6">
+                    <section className="space-y-3">
+                      <h3 className="text-sm font-semibold text-gray-800">
+                        {t("settingsLanguageTitle")}
+                      </h3>
+                      <div className="grid grid-cols-3 gap-3">
+                        {SUPPORTED_LANGUAGES.map((lang) => {
+                          const isActive = currentLanguage === lang;
+                          return (
+                            <button
+                              key={lang}
+                              type="button"
+                              onClick={() => handleLanguageSelect(lang)}
+                              className={`flex flex-col items-center justify-center gap-1 rounded-2xl border px-3 py-2 text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                                isActive
+                                  ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
+                                  : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
+                              }`}
+                              aria-pressed={isActive}
+                            >
+                              <span className="text-2xl" aria-hidden="true">
+                                {LANGUAGE_FLAGS[lang]}
+                              </span>
+                              <span className="text-[0.65rem] leading-tight">
+                                {t(`languages.${lang}`)}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </section>
+
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+                    <section className="space-y-3">
+                      <h3 className="text-sm font-semibold text-gray-800">
+                        {t("settingsSoundTitle")}
+                      </h3>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {SOUND_OPTIONS.map((option) => {
+                          const isActive = soundSetting === option.value;
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() => handleSoundSelect(option.value)}
+                              className={`flex flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-2 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                                isActive
+                                  ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
+                                  : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
+                              }`}
+                              aria-pressed={isActive}
+                            >
+                              <span aria-hidden="true">{SOUND_ICONS[option.value]}</span>
+                              <span className="text-xs font-semibold tracking-wide">
+                                {t(option.labelKey)}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </section>
+
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+                    <section className="space-y-3">
+                      <h3 className="text-sm font-semibold text-gray-800">
+                        {t("settingsMenuLegalTitle") || "Privacidad"}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {t("settingsLegalDescription") ||
+                          "Consulta los avisos de privacidad y detalles legales del recorrido."}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Link
+                          to="/privacy"
+                          onClick={handleCloseSettingsModal}
+                          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#00b6e9] px-4 py-2 text-sm font-semibold text-white shadow hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                        >
+                          {t("settingsLegalButton") || "Aviso de Privacidad"}
+                        </Link>
+                        <LanguageToggle />
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {showXecretoModal && (
           <motion.div
             className="fixed inset-0 z-50 "
@@ -461,7 +698,7 @@ export default function TreeOfLife() {
                 const nuevos = JSON.parse(
                   localStorage.getItem("progresoChecklistGastro") || "{}"
                 );
-                const nueva = Object.keys(nueuos).find(
+                const nueva = Object.keys(nuevos).find(
                   (k) => nuevos[k] && !prev[k]
                 );
                 setChecklistProgreso(nuevos);
