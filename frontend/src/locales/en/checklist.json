@@ -1,5 +1,90 @@
 {
   "checklist_comido": "I ate here",
   "your_progress": "Your Progress",
-  "podium": "Explorers' Podium"
+  "podium": "Explorers' Podium",
+  "gastroChecklist": {
+    "title": "Gastronomy Checklist",
+    "items": {
+      "quesadillas": {
+        "place": "Mercado la Merced",
+        "description": "Delicious quesadillas"
+      },
+      "ceviche": {
+        "place": "La Trajinera",
+        "description": "Fresh ceviche"
+      },
+      "acai": {
+        "place": "Bio",
+        "description": "Nutritious acai bowl"
+      },
+      "ravioli": {
+        "place": "Fuego",
+        "description": "Handcrafted ravioli"
+      },
+      "espada": {
+        "place": "Las Cuevas",
+        "description": "Meat skewer"
+      },
+      "mezcal": {
+        "place": "Cantina Los Faroles",
+        "description": "Mezcal shot"
+      },
+      "paleta": {
+        "place": "Chibalí",
+        "description": "Miguelito candy popsicle"
+      },
+      "tostada": {
+        "place": "Las Playas",
+        "description": "Octopus tostada"
+      },
+      "ramen": {
+        "place": "Xin-Gao",
+        "description": "Japanese ramen"
+      },
+      "quesos": {
+        "place": "Arriba Baja",
+        "description": "Cheese board"
+      },
+      "torta": {
+        "place": "La Xentral",
+        "description": "Delicious torta"
+      },
+      "palomitas": {
+        "place": "Xinema",
+        "description": "Movie-style popcorn"
+      },
+      "nogada": {
+        "place": "Azul Nogada",
+        "description": "Chiles en nogada"
+      },
+      "panucho": {
+        "place": "Chi’",
+        "description": "Traditional panucho"
+      },
+      "corunda": {
+        "place": "Monarca",
+        "description": "Michoacan corunda"
+      },
+      "coctel": {
+        "place": "Costero",
+        "description": "Shrimp cocktail"
+      },
+      "carne": {
+        "place": "La Silla",
+        "description": "Grilled meat"
+      },
+      "ostion": {
+        "place": "Ha’",
+        "description": "Fresh oyster"
+      },
+      "mimosa": {
+        "place": "Brunch Dominical Xcaret",
+        "description": "Sparkling mimosa"
+      },
+      "sushi": {
+        "place": "Tama-Mon",
+        "description": "Sushi roll"
+      }
+    }
+  }
 }

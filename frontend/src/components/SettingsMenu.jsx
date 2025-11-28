@@ -156,9 +156,6 @@ export default function SettingsMenu() {
     : t("settingsOpenLabel");
 
   return (
-    // 👇 CAMBIO PRINCIPAL AQUÍ:
-    // "top-20" -> "top-4" para subirlo.
-    // Eliminé "pt-12" que añadía espacio extra innecesario arriba.
     <div className="pointer-events-none fixed right-4 top-4 z-50 flex flex-col items-end">
       <div className="pointer-events-auto relative" ref={containerRef}>
         <button
@@ -186,10 +183,8 @@ export default function SettingsMenu() {
 
         {isOpen && (
           <div className="absolute right-0 mt-3 w-72 max-w-[90vw]">
-            {/* Card estilo "chip" como el toggle */}
             <div className="rounded-2xl border border-gray-300 bg-white/90 backdrop-blur-md shadow-xl">
               <div className="p-5">
-                {/* Título / subtítulo */}
                 <div className="mb-4 text-center">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
                     {t("settingsMenuTitle")}
@@ -200,7 +195,6 @@ export default function SettingsMenu() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Idioma */}
                   <section
                     aria-label={t("settingsLanguageTitle")}
                     className="space-y-2"
@@ -236,10 +230,8 @@ export default function SettingsMenu() {
                     </div>
                   </section>
 
-                  {/* Separador sutil */}
                   <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
-                  {/* Sonido */}
                   <section
                     aria-label={t("settingsSoundTitle")}
                     className="space-y-2"
@@ -302,10 +294,8 @@ export default function SettingsMenu() {
                     </div>
                   </section>
 
-                  {/* Separador sutil */}
                   <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
-                  {/* CTA Legal */}
                   <Link
                     to="/privacy"
                     onClick={() => setIsOpen(false)}

@@ -2,7 +2,6 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// Español
 import globalEs from "./locales/es/global.json";
 import loginEs from "./locales/es/login.json";
 import homeEs from "./locales/es/home.json";
@@ -15,7 +14,6 @@ import checklistEs from "./locales/es/checklist.json";
 import introEs from "./locales/es/intro.json";
 import legalEs from "./locales/es/legal.json";
 
-// Inglés
 import globalEn from "./locales/en/global.json";
 import loginEn from "./locales/en/login.json";
 import homeEn from "./locales/en/home.json";
@@ -28,7 +26,6 @@ import checklistEn from "./locales/en/checklist.json";
 import introEn from "./locales/en/intro.json";
 import legalEn from "./locales/en/legal.json";
 
-// Portugués
 import globalPt from "./locales/pt/global.json";
 import loginPt from "./locales/pt/login.json";
 import homePt from "./locales/pt/home.json";

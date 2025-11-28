@@ -263,10 +263,10 @@ export default function XperienciasXtop({ onClose }) {
       const nuevo = { ...respuestas, [clave]: opcion };
       localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
       setShowCopy(idx);
-      setRespuestaReciente(clave); // <- Añadido
+      setRespuestaReciente(clave);
       setTimeout(() => {
         setShowCopy(null);
-        setRespuestaReciente(null); // <- Limpiar después de animar
+        setRespuestaReciente(null);
         onClose();
       }, 2000);
     } else {

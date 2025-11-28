@@ -153,7 +153,6 @@ export default function TreeCanvasIndividual({
             className="w-full h-full object-contain"
           />
 
-          {/* Xecretos */}
           {Object.entries(xecretos).map(([k, v]) =>
             v && mapa[k] ? (
               <motion.img
@@ -173,7 +172,6 @@ export default function TreeCanvasIndividual({
 
           
 
-          {/* XTOP */}
           {Object.entries(xtopProgreso || {}).map(([k, v]) =>
             v && Object.values(mapaXtop).includes(k) ? (
               <motion.img
@@ -191,7 +189,6 @@ export default function TreeCanvasIndividual({
             ) : null
           )}
 
-          {/* Checklist */}
           {Object.entries(checklistProgreso || {}).map(([k, v]) =>
             v ? (
               <motion.img
@@ -209,7 +206,6 @@ export default function TreeCanvasIndividual({
             ) : null
           )}
 
-          {/* Avatar del usuario */}
           <div
             className="absolute z-40"
             style={{

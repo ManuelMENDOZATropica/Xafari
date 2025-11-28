@@ -7,9 +7,8 @@ export default function WelcomeToAvatarTransition() {
   const navigate = useNavigate();
   const [animateWing, setAnimateWing] = useState(false);
 
-  // Leer nombre completo desde localStorage
   const user = JSON.parse(localStorage.getItem("user")) || {};
-  const fullName = `${user.name || "Explorador"} ${user.lastname || ""}`.trim();
+  const fullName = `${user.name || t("defaultExplorerName")} ${user.lastname || ""}`.trim();
 
   useEffect(() => {
     const showWingTimeout = setTimeout(() => {
@@ -18,7 +17,7 @@ export default function WelcomeToAvatarTransition() {
 
     const redirectTimeout = setTimeout(() => {
       navigate("/treeoflife");
-    }, 6000); // o 8000 si deseas que la animación dure más
+    }, 6000);
 
     return () => {
       clearTimeout(showWingTimeout);
@@ -27,15 +26,13 @@ export default function WelcomeToAvatarTransition() {
   }, [navigate]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white font-apercu">
-      {/* Fondo */}
+    <div className="relative h-screen w-screen overflow-hidden bg-white font-apercu">
       <img
         src="/img/V03-CERRITOS.jpg"
-        alt="Fondo Bienvenida"
-        className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
+        alt={t("welcomeAvatarBackgroundAlt")}
+        className="absolute inset-0 z-0 h-full w-full object-cover object-bottom"
       />
 
-      {/* Texto de bienvenida */}
       <div className="absolute z-10 inset-0 flex flex-col items-center justify-center px-6 text-center">
         <div className="max-w-md space-y-2">
           <p className="text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
@@ -50,12 +47,11 @@ export default function WelcomeToAvatarTransition() {
         </div>
       </div>
 
-      {/* Ala animada */}
       {animateWing && (
         <img
           src="/img/ala-maya.png"
-          alt="Ala Maya"
-          className="absolute bottom-0 left-0 w-full h-full object-cover z-50 animate-slide-wing-up-exit"
+          alt={t("welcomeMayaWingAlt")}
+          className="absolute bottom-0 left-0 z-50 h-full w-full object-cover animate-slide-wing-up-exit"
         />
       )}
     </div>

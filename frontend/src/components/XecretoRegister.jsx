@@ -5,17 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
-import ModalMapa from "@/components/ModalMapa"; // Ajusta la ruta si es diferente
+import ModalMapa from "@/components/ModalMapa";
 import XafariContext from "./XafariContext";
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
   const { t } = useTranslation();
   const { playSuccessSound } = useContext(XafariContext);
-
-  // ==========================
-  // == DATA DE GUARDIANES ==
-  // ==========================
   const qrData = {
     xecreto1: { guardian: "Mono", maya: "/maya/GuardianMono.png", arbol: "/guardianes/Mono Casa Vida.png" },
     xecreto2: { guardian: "Rana", maya: "/maya/GuardianRana.png", arbol: "/guardianes/Rana Casa Agua.png" },
@@ -28,10 +24,6 @@ export default function XecretoRegister({ onClose }) {
     xecreto9: { guardian: "Flamenco", maya: "/maya/GuardianFlamenco.png", arbol: "/guardianes/Flamenco Casa Sol.png" },
     xecreto10: { guardian: "Coati", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
   };
-
-  // ==========================
-  // == ESTADO GENERAL ==
-  // ==========================
   const [scannedCodes, setScannedCodes] = useState(() => {
     const saved = localStorage.getItem("xecretos");
     const defaultState = Object.keys(qrData).reduce((acc, key) => {
@@ -49,10 +41,6 @@ export default function XecretoRegister({ onClose }) {
   const [showInstrucciones, setShowInstrucciones] = useState(false);
   const [showPista, setShowPista] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
-
-  // ==========================
-  // == INICIO DEL ESCÁNER ==
-  // ==========================
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
     let isMounted = true;
@@ -113,31 +101,33 @@ export default function XecretoRegister({ onClose }) {
   }, []);
 
   return (
-    <div className="w-full h-full mt-[22px] ">
+    <div className="w-full h-full min-h-screen mt-[22px] overflow-y-auto px-4">
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
-        aria-label="Cerrar"
+        className="absolute top-[-10px] right-5 z-50 mt-[10px] rounded-full border-2 border-white/50 bg-white px-5 py-1.5 font-bold text-gray-900 shadow-lg transition-transform hover:scale-105"
+        aria-label={t("close")}
       >
         ✕
       </button>
-      <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
-        {/* == FONDO == */}
-        <img src="/img/V03-CERRITOS.jpg" alt="Fondo" className="absolute inset-0 w-full h-full object-cover z-0 rounded-[10px]" />
+      <div className="relative h-full w-full rounded-[10px] bg-[#FFBB00] font-apercu text-black">
+        <img
+          src="/img/V03-CERRITOS.jpg"
+          alt={t("genericBackgroundAlt")}
+          className="absolute inset-0 z-0 h-full w-full rounded-[10px] object-cover"
+        />
 
-        <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
-          {/* == HEADER == */}
-          <div className="absolute top-0 left-0 w-full flex justify-between items-center px-4 pt-[env(safe-area-inset-top)] mt-4 z-20">
+        <div className="absolute inset-0 z-10 flex h-full w-full flex-col overflow-hidden bg-white/0">
+          <div className="absolute left-0 top-0 z-20 mt-4 flex w-full items-center justify-between px-4 pt-[env(safe-area-inset-top)]">
             <button
               onClick={onClose}
-              className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+              className="rounded-full border border-gray-300 bg-white/80 px-4 py-2 text-black shadow backdrop-blur-sm hover:bg-white"
             >
               ← {t("back")}
             </button>
-            <div className="flex items-center gap-3 bg-white/80 rounded-full px-4 py-2 shadow border border-gray-300">
+            <div className="flex items-center gap-3 rounded-full border border-gray-300 bg-white/80 px-4 py-2 shadow">
               <div className="text-xs text-gray-700">
-                <div className="font-semibold text-sm">{t("guardians")}</div>
+                <div className="text-sm font-semibold">{t("guardians")}</div>
                 <div className="text-xs text-gray-600">
                   {Object.values(scannedCodes).filter(Boolean).length} / {Object.keys(qrData).length}
                 </div>
@@ -147,15 +137,14 @@ export default function XecretoRegister({ onClose }) {
                   .filter(([, val]) => val)
                   .slice(0, 5)
                   .map(([key]) => (
-                    <div key={key} className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow bg-white">
-                      <img src={qrData[key].arbol} alt="Guardian" className="w-full h-full object-cover" />
+                    <div key={key} className="h-10 w-10 overflow-hidden rounded-full border-2 border-white bg-white shadow">
+                      <img src={qrData[key].arbol} alt={t("discover_guardian")} className="h-full w-full object-cover" />
                     </div>
                   ))}
               </div>
             </div>
           </div>
 
-      {/* == TÍTULO == */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow px-6 py-3 w-[300px] text-center">
           <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
@@ -164,7 +153,6 @@ export default function XecretoRegister({ onClose }) {
         </div>
       </div>
 
-      {/* == VIDEO ESCÁNER == */}
       {cameraError && (
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 bg-red-100 text-red-800 px-4 py-2 rounded shadow z-50">
           {cameraError}
@@ -183,7 +171,6 @@ export default function XecretoRegister({ onClose }) {
         </div>
       </div>
 
-      {/* == BOTONES INFERIORES == */}
       <div className="absolute bottom-[10vh] right-4 z-30 flex flex-col gap-2 items-end">
         <button
           onClick={() => setShowInstrucciones(true)}
@@ -200,28 +187,25 @@ export default function XecretoRegister({ onClose }) {
         </button>
 
         <button
-  onClick={() => setShowMapModal(true)}
-  className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
->
-  {t("open_map")} {/* Necesitarás añadir esta traducción en tu archivo i18n */}
-</button>
+          onClick={() => setShowMapModal(true)}
+          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+        >
+          {t("open_map")}
+        </button>
       </div>
 
 
 
       
 
-      {/* == MODALES == */}
       <ModalInstruccionesXecretos show={showInstrucciones} onClose={() => setShowInstrucciones(false)} />
       <ModalPistaXecreto
         show={showPista}
         onClose={() => setShowPista(false)}
         scannedCodes={scannedCodes}
       />
-      {/* Nuevo Modal del Mapa */}
       {showMapModal && <ModalMapa onClose={() => setShowMapModal(false)} />}
 
-      {/* == INSIGNIA ANIMADA == */}
       {lastScanned && qrData[lastScanned] && (
         <>
           <AnimatePresence>
@@ -229,7 +213,7 @@ export default function XecretoRegister({ onClose }) {
               <motion.img
                 key={insigniaKey}
                 src={qrData[lastScanned].arbol}
-                alt="Insignia"
+                alt={t("badgeAlt")}
                 initial={{ scale: 0, opacity: 0, x: "-50%", y: "-50%", rotate: -10 }}
                 animate={{
                   scale: [0, 1.2, 1, 1.1, 1],
@@ -260,14 +244,13 @@ export default function XecretoRegister({ onClose }) {
           <div className="absolute bottom-[6%] left-1/2 -translate-x-1/2 z-[9998]">
             <img
               src={qrData[lastScanned].maya}
-              alt={`Maya ${qrData[lastScanned].guardian}`}
+              alt={t("mayaGuardianAlt", { guardian: qrData[lastScanned].guardian })}
               className="max-w-[40vw] max-h-[40vh] drop-shadow-2xl"
             />
           </div>
         </>
       )}
 
-      {/* == ESTILOS ANIMACIÓN ESCÁNER == */}
       <style>{`
         @keyframes scan {
           0% { top: 0%; }

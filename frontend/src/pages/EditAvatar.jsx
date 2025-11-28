@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 
-// Opciones de avatar
 const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
 const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
 const hairOptions = [null, ...Array.from({ length: 18 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
@@ -58,7 +57,6 @@ try {
     bodyAccessoryOptions: bodyAccessoryIndex,
   };
 
-  // ✅ RE-VALIDAR justo aquí
   const rawUser = localStorage.getItem("user");
   const rawToken = localStorage.getItem("token");
 
@@ -92,7 +90,6 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
 }
 
 
-  // Si hay token, intenta guardar en backend
   try {
     const response = await fetch("https://xafari.rexmalebka.com/user", {
       method: "PUT",

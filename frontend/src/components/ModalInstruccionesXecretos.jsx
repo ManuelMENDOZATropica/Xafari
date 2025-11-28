@@ -12,18 +12,16 @@ const slides = [
   { src: descubreImg, labelKey: "discover_guardian" },
 ];
 
-const INTERVAL_MS = 2000; // ⏲️ más rápido (2 s)
+const INTERVAL_MS = 2000;
 
 export default function ModalInstruccionesXecretos({ show, onClose }) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
 
-  // Reinicia al primer slide cada vez que se abre el modal
   useEffect(() => {
     if (show) setIndex(0);
   }, [show]);
 
-  // Carrusel automático
   useEffect(() => {
     if (!show) return;
     const interval = setInterval(() => {
@@ -48,7 +46,6 @@ export default function ModalInstruccionesXecretos({ show, onClose }) {
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            {/* Botón cierre */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-600 hover:text-black bg-transparent border-none p-0 m-0"
@@ -61,7 +58,6 @@ export default function ModalInstruccionesXecretos({ show, onClose }) {
               {t("how_scan")}
             </h2>
 
-            {/* Imagen */}
             <div className="w-40 h-40 mx-auto mb-4 overflow-hidden relative">
               <AnimatePresence initial={false} custom={index}>
                 <motion.img
@@ -78,7 +74,6 @@ export default function ModalInstruccionesXecretos({ show, onClose }) {
               </AnimatePresence>
             </div>
 
-            {/* Indicadores por puntos */}
             <div className="flex justify-center mb-4">
               {slides.map((_, i) => (
                 <span

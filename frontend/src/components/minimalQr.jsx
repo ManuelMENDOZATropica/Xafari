@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
+import { useTranslation } from "react-i18next";
 
 export default function MinimalQR() {
   const videoRef = useRef(null);
   const [lastCode, setLastCode] = useState(null);
   const [error, setError] = useState(null);
   const [scannerReady, setScannerReady] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
@@ -20,7 +22,7 @@ export default function MinimalQR() {
 
         setScannerReady(true);
         await codeReader.decodeFromVideoDevice(
-          undefined, // sin restricciones
+          undefined,
           videoRef.current,
           (result) => {
             if (!isMounted || !result) return;
@@ -46,8 +48,8 @@ export default function MinimalQR() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4 bg-gray-100">
-      <h1 className="text-xl font-bold mb-4">Lector QR Simple</h1>
+    <div className="flex min-h-screen w-full max-w-screen-md flex-col items-center justify-center gap-4 bg-gray-100 p-4 text-center">
+      <h1 className="text-xl font-bold text-gray-800">{t("qrReaderTitle")}</h1>
 
       {error && (
         <div className="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
@@ -66,12 +68,12 @@ export default function MinimalQR() {
       <div className="mt-4 text-center">
         {lastCode ? (
           <p className="text-green-700 font-semibold">
-            QR Detqqqectado: {lastCode}
+            {t("qrDetected")}: {lastCode}
           </p>
         ) : scannerReady ? (
-          <p className="text-gray-500">Escaneando...</p>
+          <p className="text-gray-600">{t("scannerReady")}</p>
         ) : (
-          <p className="text-gray-500">Inicializando cámara...</p>
+          <p className="text-gray-600">{t("scannerInitializing")}</p>
         )}
       </div>
     </div>
