@@ -131,8 +131,9 @@ export default function TreeOfLife() {
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
-  const progreso =
-    JSON.parse(localStorage.getItem("progresoXperiencias") || "{}");
+  const progreso = JSON.parse(
+    localStorage.getItem("progresoXperiencias") || "{}"
+  );
 
   const xtopProgreso = {};
   const xperienciasProgreso = {};
@@ -221,12 +222,8 @@ export default function TreeOfLife() {
   }, [showXperienciasModal, showXecretoModal, showXelfiesModal]);
 
   return (
-    // CORRECCIÓN 1: Se usa 'h-screen' y 'bg-contain bg-no-repeat bg-center' para asegurar que la imagen de fondo se muestre completa y los menús no se salgan.
     <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-contain bg-no-repeat bg-center flex flex-col">
-      
-      {/* CORRECCIÓN 2: Se ajusta el padding-top (pt-20) y padding-bottom (pb-[160px] / sm:pb-[140px]) para
-          dejar espacio al menú fijo inferior y los botones superiores. Esto asegura que el Canvas
-          ocupe el espacio restante sin solaparse con el footer fijo. */}
+   
       <div className="absolute top-[65%] left-1/2 -translate-x-1/2 translate-y-[-700px] w-full max-w-5xl h-[55vh] flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
@@ -248,67 +245,42 @@ export default function TreeOfLife() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setShowProfileMenu(!showProfileMenu)}
-        title="Perfil"
-        className="absolute top-4 left-4 w-14 h-14 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-gray-300 flex items-center justify-center z-40"
-      >
-        <img
-          src="/iconos/perfil.png"
-          alt="perfil"
-          className="w-10 h-10 object-contain pointer-events-none"
-        />
-      </button>
-
+      
       <button
         type="button"
         onClick={() => setModoFamilia((prev) => !prev)}
         aria-pressed={modoFamilia}
-        className="absolute top-4 right-4 z-40 flex flex-col items-center gap-0 text-gray-700 bg-transparent border-0 p-0 appearance-none shadow-none"
+        className="absolute top-4 left-4 z-40 flex flex-col items-center gap-0 text-gray-700 bg-transparent border-0 p-0 appearance-none shadow-none"
       >
-        <div className="inline-flex items-center bg-gray-300 rounded-lg p-1">
-  {/* Botón Solo */}
-  <button
-    onClick={() => setModoFamilia(false)}
-    className={`px-6 py-1.5 rounded-md text-sm font-bold transition-all duration-200 ${
-      !modoFamilia
-        ? "bg-gray-500/60 text-black shadow-sm" // Estilo Activo
-        : "text-gray-900 hover:bg-gray-400/20"  // Estilo Inactivo
-    }`}
-  >
-    Solo
-  </button>
+        <div className="flex flex-col items-center gap-1 bg-[#C8C5C5] backdrop-blur-md rounded-2xl px-4 py-2 shadow-lg">
+          <div className="flex items-center gap-3">
+            {/* Opción FAMILIA */}
+            <span
+              className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
+        ${
+          modoFamilia
+            ? "bg-[#939393] text-black shadow-inner"
+            : "bg-[#C8C5C5] text-black"
+        }`}
+            >
+              Familia
+            </span>
 
-  {/* Botón Familia */}
-  <button
-    onClick={() => setModoFamilia(true)}
-    className={`px-6 py-1.5 rounded-md text-sm font-bold transition-all duration-200 ${
-      modoFamilia
-        ? "bg-gray-500/60 text-black shadow-sm" // Estilo Activo
-        : "text-gray-900 hover:bg-gray-400/20"  // Estilo Inactivo
-    }`}
-  >
-    Familia
-  </button>
-</div>
+            {/* Opción SOLO */}
+            <span
+              className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
+        ${
+          modoFamilia
+            ? "bg-[#C8C5C5] text-black"
+            : "bg-[#939393] text-black shadow-inner"
+        }`}
+            >
+              Solo
+            </span>
+          </div>
+        </div>
       </button>
 
-      {showProfileMenu && (
-        <div className="absolute top-20 left-4 w-48 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border border-gray-300 p-4 z-40">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            {t("profile") || "Mi perfil"}
-          </h3>
-          <button
-            onClick={() => navigate("/edit-avatar")}
-            className="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-800 bg-white/70 backdrop-blur-sm hover:bg-white/90 transition"
-          >
-            {t("editAvatar") || "Editar avatar"}
-          </button>
-        </div>
-      )}
-
-      {/* CORRECCIÓN 3: El menú inferior se hace 'fixed' en la parte inferior de la pantalla */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pb-5 pt-3 bg-transparent pointer-events-none">
         <div className="flex flex-col items-center gap-3 px-4 pointer-events-auto">
           <AnimatePresence>
