@@ -15,7 +15,7 @@ export default function Welcome() {
     <div className="relative min-h-screen w-full overflow-hidden pb-12 font-apercu">
       <div className="absolute inset-0 z-0">
         <img
-          src="/img/fondoPrincipal.png"
+          src="/img/fondoPrincipal.jpg"
           alt={t("welcomeBackgroundAlt")}
           className="h-full w-full object-cover object-bottom md:object-center"
         />

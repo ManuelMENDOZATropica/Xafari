@@ -180,7 +180,7 @@ export default function Register() {
   return (
     <div
       className="relative min-h-screen w-screen overflow-hidden bg-center bg-cover font-apercu"
-      style={{ backgroundImage: "url('/img/fondoPrincipal.png')" }}
+      style={{ backgroundImage: "url('/img/fondoPrincipal.jpg')" }}
     >
       <div className="absolute inset-0 bg-black/35" aria-hidden="true" />
 
@@ -195,9 +195,8 @@ export default function Register() {
           type="button"
           onClick={goNext}
           disabled={!canContinue}
-          className={`w-full max-w-xs rounded-xl bg-[#5CA7FF] px-8 py-3 text-lg font-semibold text-white shadow-xl transition ${
-            canContinue ? "hover:brightness-110" : "opacity-60 cursor-not-allowed"
-          }`}
+          className={`w-full max-w-xs rounded-xl bg-[#5CA7FF] px-8 py-3 text-lg font-semibold text-white shadow-xl transition ${canContinue ? "hover:brightness-110" : "opacity-60 cursor-not-allowed"
+            }`}
         >
           {t("next")}
         </button>
