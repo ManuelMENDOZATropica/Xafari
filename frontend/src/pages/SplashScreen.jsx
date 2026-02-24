@@ -6,6 +6,7 @@ const ALL_ASSETS = [
   // Iconos
   "/iconos/Logotipo_Xafari_Positivo.png",
   "/iconos/Pictograma_Xafari_Positivo.png",
+  "/iconos/icon_toqueBlanco.png",
   "/iconos/cambioIdioma.png",
   "/iconos/checklist.png",
   "/iconos/experiencias.png",
@@ -101,14 +102,12 @@ const ALL_ASSETS = [
   "/maya/tutorial/1.png",
   "/maya/tutorial/2.png",
   // Intro
-  "/intro/001 ARBOL.jpg",
-  "/intro/002 GUARDIANES.jpg",
-  "/intro/003 CELEBRACION.jpg",
-  "/intro/004 ELEMENTOS.jpg",
-  "/intro/005 RAMA.jpg",
-  "/intro/006 VIAJE.jpg",
-  "/intro/007 FIN.jpg",
-  "/intro/alaMaya.png",
+  "/intro/caverna (1).jpg",
+  "/intro/caverna (2).jpg",
+  "/intro/caverna (3).jpg",
+  "/intro/caverna (4).jpg",
+  "/intro/caverna (5).jpg",
+  "/intro/caverna (6).jpg",
   // Mapa
   "/mapa/mapa.png",
   // Xecretos
