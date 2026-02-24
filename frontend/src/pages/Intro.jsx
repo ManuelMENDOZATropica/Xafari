@@ -16,6 +16,7 @@ const Intro = () => {
   const [fade, setFade] = useState(true);
   const [exitFade, setExitFade] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [countdown, setCountdown] = useState(5);
 
   const [torchPos, setTorchPos] = useState({ x: 0, y: 0 });
 
@@ -24,6 +25,7 @@ const Intro = () => {
 
   const fadeOutTimeout = useRef(null);
   const nextImageTimeout = useRef(null);
+  const countdownInterval = useRef(null);
   const containerRef = useRef(null);
   const introImageRef = useRef(null);
   const introTextRef = useRef(null);
@@ -33,13 +35,16 @@ const Intro = () => {
   };
 
   const repeatIntro = () => {
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
     setExitFade(false);
     setIndex(0);
     setFade(true);
     setShowTutorial(false);
+    setCountdown(5);
   };
 
   const finishIntro = () => {
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
     setExitFade(true);
     setTimeout(() => navigate("/intro-maya"), 500);
   };
@@ -47,23 +52,41 @@ const Intro = () => {
   useEffect(() => {
     if (exitFade || showTutorial) return;
 
-    // Auto-progression logic
-    fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
-    nextImageTimeout.current = setTimeout(() => {
-      setIndex((prev) => {
-        const next = prev + 1;
-        if (next >= baseNames.length) {
-          // Stay on last image to show repeat option
-          return prev;
-        }
-        setFade(true);
-        return next;
-      });
-    }, 5500);
+    const isLast = index === baseNames.length - 1;
+
+    if (isLast) {
+      // Start countdown
+      setCountdown(5); // Reset countdown when entering the last slide
+      countdownInterval.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval.current);
+            finishIntro();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      // Auto-progression logic
+      fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
+      nextImageTimeout.current = setTimeout(() => {
+        setIndex((prev) => {
+          const next = prev + 1;
+          if (next >= baseNames.length) {
+            // Stay on last image to show repeat option
+            return prev;
+          }
+          setFade(true);
+          return next;
+        });
+      }, 5500);
+    }
 
     return () => {
       clearTimeout(fadeOutTimeout.current);
       clearTimeout(nextImageTimeout.current);
+      if (countdownInterval.current) clearInterval(countdownInterval.current);
     };
   }, [index, exitFade, navigate, showTutorial]);
 
@@ -146,7 +169,7 @@ const Intro = () => {
 
         .intro-text {
           position: absolute;
-          top: 85%;
+          top: 15%;
           left: 50%;
           transform: translate(-50%, -50%);
           padding: 1rem;
@@ -245,18 +268,12 @@ const Intro = () => {
       </div>
 
       {isLastImage && (
-        <div className="absolute bottom-8 flex gap-4 z-20">
+        <div className="absolute bottom-8 flex flex-col items-center gap-4 z-20">
           <button
             onClick={repeatIntro}
             className="btn-repeat px-8 py-3 bg-white/10 text-white rounded-full border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all font-semibold uppercase tracking-wider text-xs"
           >
-            {t("intro.repeatIntro")}
-          </button>
-          <button
-            onClick={finishIntro}
-            className="btn-repeat px-8 py-3 bg-white text-gray-900 rounded-full border border-white shadow-lg hover:bg-gray-100 transition-all font-bold uppercase tracking-wider text-xs"
-          >
-            {t("next") || "Continuar"}
+            {t("intro.repeatIntro")} ({countdown}s)
           </button>
         </div>
       )}
