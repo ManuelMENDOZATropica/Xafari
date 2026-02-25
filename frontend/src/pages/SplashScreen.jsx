@@ -10,6 +10,7 @@ const ALL_ASSETS = [
   "/iconos/cambioIdioma.png",
   "/iconos/checklist.png",
   "/iconos/experiencias.png",
+  "/iconos/icon_ajustes.svg",
   "/iconos/menuAjuste.png",
   "/iconos/menuArbol.png",
   "/iconos/menuMapa.png",

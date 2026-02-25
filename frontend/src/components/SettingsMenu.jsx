@@ -166,19 +166,11 @@ export default function SettingsMenu() {
           aria-label={buttonLabel}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-gray-300 text-gray-600 shadow-md p-0 transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-sky-300"
         >
-          <svg
-            aria-hidden="true"
-            className="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 5.1 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-          </svg>
+          <img
+            src="/iconos/icon_ajustes.svg"
+            alt={buttonLabel}
+            className="w-6 h-6 object-contain"
+          />
         </button>
 
         {isOpen && (
@@ -211,11 +203,10 @@ export default function SettingsMenu() {
                             key={lang}
                             type="button"
                             onClick={() => handleLanguageSelect(lang)}
-                            className={`flex flex-col items-center justify-center gap-1 rounded-2xl border text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
-                              isActive
-                                ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                                : "border-gray-200 bg-white/70 text-gray-700 shadow-sm hover:bg-white"
-                            }`}
+                            className={`flex flex-col items-center justify-center gap-1 rounded-2xl border text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
+                              ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
+                              : "border-gray-200 bg-white/70 text-gray-700 shadow-sm hover:bg-white"
+                              }`}
                             aria-pressed={isActive}
                           >
                             <span className="text-2xl" aria-hidden="true">
@@ -248,11 +239,10 @@ export default function SettingsMenu() {
                             key={option.value}
                             type="button"
                             onClick={() => handleSoundSelect(option.value)}
-                            className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
-                              isActive
-                                ? "border-sky-300 bg-sky-50 text-sky-800 shadow"
-                                : "border-gray-200 bg-white/70 text-gray-800 shadow-sm hover:bg-white"
-                            }`}
+                            className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
+                              ? "border-sky-300 bg-sky-50 text-sky-800 shadow"
+                              : "border-gray-200 bg-white/70 text-gray-800 shadow-sm hover:bg-white"
+                              }`}
                             role="radio"
                             aria-checked={isActive}
                             aria-label={`${t("soundMenu")}: ${t(
@@ -262,11 +252,10 @@ export default function SettingsMenu() {
                           >
                             <div className="flex items-center gap-3">
                               <span
-                                className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                                  isActive
-                                    ? "bg-sky-100 text-sky-600"
-                                    : "bg-slate-100 text-slate-500"
-                                }`}
+                                className={`flex h-10 w-10 items-center justify-center rounded-full ${isActive
+                                  ? "bg-sky-100 text-sky-600"
+                                  : "bg-slate-100 text-slate-500"
+                                  }`}
                                 aria-hidden="true"
                               >
                                 {SOUND_ICONS[option.icon]}
@@ -278,14 +267,12 @@ export default function SettingsMenu() {
 
                             <span
                               aria-hidden="true"
-                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                                isActive ? "bg-emerald-400" : "bg-slate-300"
-                              }`}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${isActive ? "bg-emerald-400" : "bg-slate-300"
+                                }`}
                             >
                               <span
-                                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
-                                  isActive ? "translate-x-5" : "translate-x-1"
-                                }`}
+                                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${isActive ? "translate-x-5" : "translate-x-1"
+                                  }`}
                               />
                             </span>
                           </button>

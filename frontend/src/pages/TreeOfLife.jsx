@@ -319,7 +319,7 @@ export default function TreeOfLife() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-contain bg-no-repeat bg-center flex flex-col">
-   
+
       <div className="absolute top-[65%] left-1/2 -translate-x-1/2 translate-y-[-700px] w-full max-w-5xl h-[55vh] flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
@@ -341,7 +341,7 @@ export default function TreeOfLife() {
         </div>
       </div>
 
-      
+
       <button
         type="button"
         onClick={() => setModoFamilia((prev) => !prev)}
@@ -352,22 +352,20 @@ export default function TreeOfLife() {
           <div className="flex items-center gap-3">
             <span
               className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
-        ${
-          modoFamilia
-            ? "bg-[#939393] text-black shadow-inner"
-            : "bg-[#C8C5C5] text-black"
-        }`}
+        ${modoFamilia
+                  ? "bg-[#939393] text-black shadow-inner"
+                  : "bg-[#C8C5C5] text-black"
+                }`}
             >
               Familia
             </span>
 
             <span
               className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
-        ${
-          modoFamilia
-            ? "bg-[#C8C5C5] text-black"
-            : "bg-[#939393] text-black shadow-inner"
-        }`}
+        ${modoFamilia
+                  ? "bg-[#C8C5C5] text-black"
+                  : "bg-[#939393] text-black shadow-inner"
+                }`}
             >
               Solo
             </span>
@@ -457,7 +455,7 @@ export default function TreeOfLife() {
               {
                 key: "ajustes",
                 label: "Ajustes",
-                icon: "/iconos/menuAjuste.png",
+                icon: "/iconos/icon_ajustes.svg",
                 color: "#00b6e9",
                 onClick: handleOpenSettings,
               },
@@ -472,7 +470,7 @@ export default function TreeOfLife() {
                 <img
                   src={icon}
                   alt={label}
-                  className="w-10 h-10 object-contain"
+                  className="w-7 h-7 object-contain"
                 />
                 <span className="text-sm font-semibold">{label}</span>
               </button>
@@ -537,11 +535,10 @@ export default function TreeOfLife() {
                               key={lang}
                               type="button"
                               onClick={() => handleLanguageSelect(lang)}
-                              className={`flex flex-col items-center justify-center gap-1 rounded-2xl border px-3 py-2 text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
-                                isActive
-                                  ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                                  : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
-                              }`}
+                              className={`flex flex-col items-center justify-center gap-1 rounded-2xl border px-3 py-2 text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
+                                ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
+                                : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
+                                }`}
                               aria-pressed={isActive}
                             >
                               <span className="text-2xl" aria-hidden="true">
@@ -570,11 +567,10 @@ export default function TreeOfLife() {
                               key={option.value}
                               type="button"
                               onClick={() => handleSoundSelect(option.value)}
-                              className={`flex flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-2 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
-                                isActive
-                                  ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                                  : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
-                              }`}
+                              className={`flex flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-2 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
+                                ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
+                                : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
+                                }`}
                               aria-pressed={isActive}
                             >
                               <span aria-hidden="true">{SOUND_ICONS[option.value]}</span>
