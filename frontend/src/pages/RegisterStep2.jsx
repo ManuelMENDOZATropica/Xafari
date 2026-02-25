@@ -39,14 +39,8 @@ export default function RegisterStep2() {
           reservationNumber: formData.roomNumber,
           pronouns: formData.gender,
           avatar: {
-            bodyOptions: 1,
-            eyesOptions: 1,
-            hairOptions: 1,
-            clothingOptions: 1,
-            glassesAccessoryOptions: 1,
-            headAccessoryOptions: 1,
-            bodyAccessoryOptions: 1,
-            shoeOptions: 1
+            bodyOptions: 0,
+            faceOptions: 0,
           }
         }),
       });

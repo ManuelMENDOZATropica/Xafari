@@ -3,14 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 
-const bodyOptions = Array.from({ length: 10 }, (_, i) => `/avatares/CUERPO_${i + 1}.png`);
-const eyesOptions = Array.from({ length: 5 }, (_, i) => `/avatares/OJOS_${i + 1}.png`);
-const hairOptions = [null, ...Array.from({ length: 18 }, (_, i) => `/avatares/PELO_${i + 1}.png`)];
-const clothingOptions = Array.from({ length: 16 }, (_, i) => `/avatares/VESTUARIO_${i + 1}.png`);
-const glassesOptions = [null, ...Array.from({ length: 10 }, (_, i) => `/avatares/LENTES_${i + 1}.png`)];
-const headOptions = Array.from({ length: 10 }, (_, i) => `/avatares/SOMBREROS_${i + 1}.png`);
-const bodyAccOptions = [null, ...Array.from({ length: 2 }, (_, i) => `/avatares/ACCESORIOS_CUERPOS_${i + 1}.png`)];
-const shoeOptions = [null, ...Array.from({ length: 15 }, (_, i) => `/avatares/ZAPATOS_${i + 1}.png`)];
+const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
+const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
 
 function useSelection(options, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex);
@@ -35,26 +29,14 @@ export default function AvatarSelection() {
   const avatar = user?.avatar || {};
 
   const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, avatar.bodyOptions ?? 0);
-  const [eyesIndex, eyesImg, setEyes, eyesList] = useSelection(eyesOptions, avatar.eyesOptions ?? 0);
-  const [hairIndex, hairImg, setHair, hairList] = useSelection(hairOptions, avatar.hairOptions ?? 0);
-  const [clothingIndex, clothingImg, setClothing, clothingList] = useSelection(clothingOptions, avatar.clothingOptions ?? 0);
-  const [shoeIndex, shoeImg, setShoe, shoeList] = useSelection(shoeOptions, avatar.shoeOptions ?? 0);
-  const [glassesIndex, glassesImg, setGlasses, glassesList] = useSelection(glassesOptions, avatar.glassesAccessoryOptions ?? 0);
-  const [headAccessoryIndex, headAccImg, setHeadAcc, headAccList] = useSelection(headOptions, avatar.headAccessoryOptions ?? 0);
-  const [bodyAccessoryIndex, bodyAccImg, setBodyAcc, bodyAccList] = useSelection(bodyAccOptions, avatar.bodyAccessoryOptions ?? 0);
+  const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, avatar.faceOptions ?? 0);
 
   const [activeTab, setActiveTab] = useState("body");
 
   const handleSaveAvatar = async () => {
     const newAvatar = {
       bodyOptions: bodyIndex,
-      eyesOptions: eyesIndex,
-      hairOptions: hairIndex,
-      clothingOptions: clothingIndex,
-      shoeOptions: shoeIndex,
-      glassesAccessoryOptions: glassesIndex,
-      headAccessoryOptions: headAccessoryIndex,
-      bodyAccessoryOptions: bodyAccessoryIndex,
+      faceOptions: faceIndex,
     };
 
     const rawUser = localStorage.getItem("user");
@@ -69,26 +51,16 @@ export default function AvatarSelection() {
     }
 
     if (!currentUser) {
-      const guestUser = {
-        name: "Invitado",
-        lastname: "",
-        email: "",
-        avatar: newAvatar,
-      };
-      localStorage.setItem("user", JSON.stringify(guestUser));
-      console.warn("👤 Avatar guardado como invitado:", guestUser.avatar);
+      localStorage.setItem("user", JSON.stringify({ name: "Invitado", avatar: newAvatar }));
       navigate("/treeoflife");
       return;
     }
 
-    if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken === "null" || rawToken === "") {
-      const updatedUser = { ...currentUser, avatar: newAvatar };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      console.warn("👤 Avatar actualizado localmente como invitado:", updatedUser.avatar);
+    if (currentUser.name === "Invitado" || !rawToken) {
+      localStorage.setItem("user", JSON.stringify({ ...currentUser, avatar: newAvatar }));
       navigate("/treeoflife");
       return;
     }
-
 
     try {
       const response = await fetch("https://xafari.rexmalebka.com/user", {
@@ -104,7 +76,6 @@ export default function AvatarSelection() {
 
       const updatedUser = await response.json();
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      console.log("✅ Avatar guardado correctamente en backend");
       navigate("/treeoflife");
     } catch (err) {
       alert("Error al guardar el avatar.");
@@ -112,37 +83,19 @@ export default function AvatarSelection() {
     }
   };
 
-
   const handleRandomize = () => {
-    setEyes(Math.floor(Math.random() * eyesList.length));
-    setHair(Math.floor(Math.random() * hairList.length));
-    setClothing(Math.floor(Math.random() * clothingList.length));
-    setShoe(Math.floor(Math.random() * shoeList.length));
     setBody(Math.floor(Math.random() * bodyList.length));
-
-    setHeadAcc(Math.floor(Math.random() * headAccList.length));
+    setFace(Math.floor(Math.random() * faceList.length));
   };
 
   const handleReset = () => {
     setBody(0);
-    setHair(0);
-    setClothing(0);
-    setShoe(0);
-    setEyes(0);
-    setGlasses(0);
-    setHeadAcc(0);
-    setBodyAcc(0);
+    setFace(0);
   };
 
   const tabs = [
     { key: "body", label: t("body"), set: setBody, list: bodyList, current: bodyIndex },
-    { key: "eyes", label: t("eyes"), set: setEyes, list: eyesList, current: eyesIndex },
-    { key: "hair", label: t("hair"), set: setHair, list: hairList, current: hairIndex },
-    { key: "clothing", label: t("clothing"), set: setClothing, list: clothingList, current: clothingIndex },
-    { key: "shoes", label: t("shoes"), set: setShoe, list: shoeList, current: shoeIndex },
-    { key: "glasses", label: t("glasses"), set: setGlasses, list: glassesList, current: glassesIndex },
-    { key: "headAccessory", label: t("headAccessory"), set: setHeadAcc, list: headAccList, current: headAccessoryIndex },
-    { key: "bodyAccessory", label: t("bodyAccessory"), set: setBodyAcc, list: bodyAccList, current: bodyAccessoryIndex },
+    { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
   ];
 
   const zoomedKeys = {
@@ -175,27 +128,21 @@ export default function AvatarSelection() {
           </h1>
         </div>
 
-        <div className="relative w-[50vw] max-w-[180px] h-[80vw] max-h-[320px] flex items-center justify-center mb-4">
-          {[
-            bodyAccImg,
-            bodyImg,
-            eyesImg,
-            ...(clothingIndex === 4 || clothingIndex === 5 ? [] : [hairImg]),
-            shoeImg,
-            clothingImg,
-            headAccImg,
-            glassesImg,
-          ].map(
-            (img, idx) =>
-              img && (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`layer-${idx}`}
-                  className="absolute w-full h-full object-contain"
-                />
-              )
-          )}
+        <div className="relative w-[60vw] max-w-[200px] h-[80vw] max-h-[320px] flex items-center justify-center mb-6">
+          <img
+            src={bodyImg}
+            alt="body"
+            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyIndex === 0 ? "scale-[0.85] translate-y-[5%]" : "scale-100"
+              }`}
+          />
+          <img
+            src={faceImg}
+            alt="face"
+            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyIndex === 0
+                ? "scale-[0.35] -translate-y-[12%]"
+                : "scale-[0.4] -translate-y-[22%]"
+              }`}
+          />
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-4">
@@ -203,9 +150,9 @@ export default function AvatarSelection() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${activeTab === tab.key
-                ? "bg-green-600 text-white"
-                : "bg-white/80 text-black border border-gray-300"
+              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === tab.key
+                  ? "bg-green-600 text-white shadow-lg scale-105"
+                  : "bg-white/80 text-black border border-gray-300 hover:bg-white"
                 }`}
             >
               {tab.label}
@@ -219,7 +166,7 @@ export default function AvatarSelection() {
             .map((tab) => {
               const scrollRef = useRef();
               const [showArrow, setShowArrow] = useState(false);
-              const zoom = zoomedKeys[tab.key] || {};
+              const zoom = tab.key === "face" ? { scale: "scale-[2.5]", translateY: "-translate-y-[0%]" } : { scale: "scale-[1.2]" };
 
               useEffect(() => {
                 const el = scrollRef.current;
@@ -237,7 +184,11 @@ export default function AvatarSelection() {
 
               return (
                 <div key={tab.key} className="relative w-full px-2">
-                  <div ref={scrollRef} className="flex overflow-x-auto gap-2 pr-6 scroll-smooth">
+                  <div
+                    ref={scrollRef}
+                    className={`flex items-center gap-4 pr-6 scroll-smooth ${tab.list.length <= 3 ? "justify-center overflow-x-hidden" : "overflow-x-auto"
+                      }`}
+                  >
                     {tab.list.map((opt, i) => {
                       const isCurrent = i === tab.current;
                       const handleSelect = () => {
