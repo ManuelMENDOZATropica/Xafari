@@ -35,9 +35,10 @@ export default function PrivacyNotice() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="rounded-full border border-gray-200 bg-white/90 px-4 py-2 text-sm font-semibold text-sky-800 shadow transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-800 shadow-md transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            aria-label={t("back")}
           >
-            ← {t("back")}
+            <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
           </button>
           <p className="hidden text-xs font-semibold uppercase tracking-[0.2em] text-sky-500 md:block">
             {t("privacy.updated")}

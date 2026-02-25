@@ -21,30 +21,14 @@ export default function Welcome() {
         />
       </div>
 
-      <SoundMenu />
-
       <div className="absolute top-4 left-4 z-20">
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center rounded-lg bg-[#5D8C97] p-2 text-sm font-medium text-white shadow-md transition-all hover:bg-[#4a7079]"
+          className="flex items-center justify-center rounded-full bg-[#5D8C97] w-10 h-10 text-white shadow-md transition-all hover:bg-[#4a7079]"
           aria-label={t("whatIsXafari")}
         >
-          <span className="px-2">{t("whatIsXafari")}</span>
+          <Info size={20} />
         </button>
-      </div>
-
-      <div className="absolute bottom-10 left-4 z-20">
-        <Link
-          to="/privacy"
-          className="flex items-center gap-2 rounded-lg bg-[#5D8C97]/90 px-4 py-2 text-xs font-medium text-white backdrop-blur shadow-md transition hover:bg-[#4a7079] focus:outline-none"
-          aria-label={t("settingsLegalButton")}
-        >
-          {t("settingsLegalButton")}
-        </Link>
-      </div>
-
-      <div className="absolute bottom-4 right-4 z-20">
-        <LanguageToggle />
       </div>
 
       <div className="relative z-10 flex h-full min-h-screen flex-col items-center justify-between px-4 pt-24 pb-20 text-center md:px-6">

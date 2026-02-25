@@ -50,7 +50,7 @@ export default function RegisterStep1() {
     <div className="relative h-screen w-full overflow-hidden font-apercu">
       <div className="absolute inset-0 z-0">
         <img
-          src="/img/V03-CERRITOS.jpg"
+          src="/img/fondoPrincipal.jpg"
           alt="Fondo Registro"
           className="w-full h-full object-cover object-bottom md:object-center"
         />
@@ -59,10 +59,11 @@ export default function RegisterStep1() {
       <div className="relative z-10 flex flex-col min-h-screen px-[6%] pt-20 pb-10 overflow-y-auto">
         <div className="absolute top-4 left-4">
           <button
-            onClick={() => navigate("/")}
-            className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+            onClick={() => navigate(-1)}
+            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
+            aria-label={t("back")}
           >
-            ← {t("back")}
+            <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
           </button>
         </div>
 
@@ -135,30 +136,28 @@ export default function RegisterStep1() {
 
           <div className="w-full h-2 rounded">
             <div
-              className={`h-full rounded transition-all duration-300 ${
-                passwordStrength === "weak"
-                  ? "bg-red-400 w-1/12"
-                  : passwordStrength === "medium"
+              className={`h-full rounded transition-all duration-300 ${passwordStrength === "weak"
+                ? "bg-red-400 w-1/12"
+                : passwordStrength === "medium"
                   ? "bg-amber-400 w-2/12"
                   : "bg-emerald-600 w-3/12"
-              }`}
+                }`}
             ></div>
           </div>
 
           <p
-            className={`text-sm font-medium ${
-              passwordStrength === "weak"
-                ? "text-red-600"
-                : passwordStrength === "medium"
+            className={`text-sm font-medium ${passwordStrength === "weak"
+              ? "text-red-600"
+              : passwordStrength === "medium"
                 ? "text-amber-600"
                 : "text-emerald-600"
-            }`}
+              }`}
           >
             {passwordStrength === "weak"
               ? t("passwordWeak")
               : passwordStrength === "medium"
-              ? t("passwordMedium")
-              : t("passwordStrong")}
+                ? t("passwordMedium")
+                : t("passwordStrong")}
           </p>
 
           <label className="block text-black text-sm md:text-base font-semibold">
@@ -199,11 +198,10 @@ export default function RegisterStep1() {
               sessionStorage.setItem("registerData", JSON.stringify(formData));
               navigate("/register-step2");
             }}
-            className={`mt-2 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
-              isFormValid
-                ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+            className={`mt-2 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${isFormValid
+              ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
           >
             {t("continue")}
           </button>

@@ -107,7 +107,6 @@ function App() {
     () =>
       new Set([
         "/",
-        "/welcome",
         "/welcome-animation",
         "/welcome-animation-login",
       ]),

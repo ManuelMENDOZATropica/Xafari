@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 const SUPPORTED_LANGUAGES = ["es", "en", "pt"];
 const LANGUAGE_FLAGS = {
-  es: "🇪🇸",
+  es: "🇲🇽",
   en: "🇺🇸",
   pt: "🇧🇷",
 };
@@ -64,11 +64,10 @@ export default function LanguageToggle({ className = "" }) {
                 key={lang}
                 type="button"
                 onClick={() => handleSelect(lang)}
-                className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors ${
-                  lang === currentLanguage
-                    ? "bg-gray-100 text-gray-900 font-medium" 
-                    : "bg-transparent text-gray-700 hover:bg-gray-50" 
-                }`}
+                className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors ${lang === currentLanguage
+                    ? "bg-gray-100 text-gray-900 font-medium"
+                    : "bg-transparent text-gray-700 hover:bg-gray-50"
+                  }`}
                 role="option"
                 aria-selected={lang === currentLanguage}
               >

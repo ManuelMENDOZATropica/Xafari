@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 export default function RegisterStep2() {
   const { t } = useTranslation();
   const navigate = useNavigate();
- const storedData = sessionStorage.getItem("registerData");
-const userData = storedData ? JSON.parse(storedData) : {};
+  const storedData = sessionStorage.getItem("registerData");
+  const userData = storedData ? JSON.parse(storedData) : {};
 
   const [serverError, setServerError] = useState("");
 
@@ -25,57 +25,57 @@ const userData = storedData ? JSON.parse(storedData) : {};
   const isFormValid =
     formData.roomNumber && formData.gender && formData.birthdate;
 
- const handleRegister = async () => {
-  try {
-    const response = await fetch("/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.firstName,
-        lastname: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        birthdate: new Date(formData.birthdate).toISOString(),
-        reservationNumber: formData.roomNumber,
-        pronouns: formData.gender,
-        avatar: {
-          bodyOptions: 1,
-          eyesOptions: 1,
-          hairOptions: 1,
-          clothingOptions: 1,
-          glassesAccessoryOptions: 1,
-          headAccessoryOptions: 1,
-          bodyAccessoryOptions: 1,
-          shoeOptions: 1
-        }
-      }),
-    });
+  const handleRegister = async () => {
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.firstName,
+          lastname: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          birthdate: new Date(formData.birthdate).toISOString(),
+          reservationNumber: formData.roomNumber,
+          pronouns: formData.gender,
+          avatar: {
+            bodyOptions: 1,
+            eyesOptions: 1,
+            hairOptions: 1,
+            clothingOptions: 1,
+            glassesAccessoryOptions: 1,
+            headAccessoryOptions: 1,
+            bodyAccessoryOptions: 1,
+            shoeOptions: 1
+          }
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-   if (!response.ok) {
-  console.error("Error del servidor:", data);
-  setServerError(data?.error || "Ocurrió un error.");
-  return;
-}
+      if (!response.ok) {
+        console.error("Error del servidor:", data);
+        setServerError(data?.error || "Ocurrió un error.");
+        return;
+      }
 
 
-    localStorage.setItem("token", data.token);
-    navigate("/welcome-animation", { state: data.user });
+      localStorage.setItem("token", data.token);
+      navigate("/welcome-animation", { state: data.user });
 
-  } catch (error) {
-  console.error(error);
-  setServerError("Ocurrió un error inesperado.");
-}
+    } catch (error) {
+      console.error(error);
+      setServerError("Ocurrió un error inesperado.");
+    }
 
-};
+  };
 
 
   return (
     <div className="relative flex flex-col items-center justify-start h-screen w-full overflow-hidden px-[6%] pt-[30%] pb-[10%] font-apercu">
       <div className="absolute inset-0 z-0">
         <img
-          src="/img/V03-CERRITOS.jpg"
+          src="/img/fondoPrincipal.jpg"
           alt="Fondo Registro"
           className="w-full h-full object-cover object-bottom md:object-center"
         />
@@ -83,10 +83,11 @@ const userData = storedData ? JSON.parse(storedData) : {};
 
       <div className="absolute top-4 left-4 z-10">
         <button
-          onClick={() => navigate("/register-step1")}
-          className="bg-white/50 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
+          aria-label={t("back")}
         >
-          ← {t("back")}
+          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
         </button>
       </div>
 
@@ -134,21 +135,19 @@ const userData = storedData ? JSON.parse(storedData) : {};
           <div className="flex gap-2">
             <button
               onClick={() => setFormData({ ...formData, gender: "buxcadora" })}
-              className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
-                formData.gender === "buxcadora"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-white/50 text-black"
-              }`}
+              className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${formData.gender === "buxcadora"
+                ? "bg-emerald-600 text-white"
+                : "bg-white/50 text-black"
+                }`}
             >
               {t("buxcadora")}
             </button>
             <button
               onClick={() => setFormData({ ...formData, gender: "buxcador" })}
-              className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${
-                formData.gender === "buxcador"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-white/50 text-black"
-              }`}
+              className={`p-3 border border-gray-300 rounded-lg w-full text-base font-semibold shadow-md backdrop-blur-sm transition-all ${formData.gender === "buxcador"
+                ? "bg-emerald-600 text-white"
+                : "bg-white/50 text-black"
+                }`}
             >
               {t("buxcador")}
             </button>
@@ -158,18 +157,17 @@ const userData = storedData ? JSON.parse(storedData) : {};
         <button
           disabled={!isFormValid}
           onClick={handleRegister}
-          className={`mt-6 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
-            isFormValid
-              ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
+          className={`mt-6 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${isFormValid
+            ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
         >
           {t("finish")}
         </button>
 
         {serverError && (
-  <p className="text-red-600 text-sm font-medium text-center">{serverError}</p>
-)}
+          <p className="text-red-600 text-sm font-medium text-center">{serverError}</p>
+        )}
 
       </div>
     </div>

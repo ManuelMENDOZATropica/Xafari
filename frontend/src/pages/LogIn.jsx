@@ -19,55 +19,56 @@ export default function Login() {
 
   const isFormValid = formData.email && formData.password;
 
-const handleLogin = async () => {
-  setLoading(true);
-  try {
-    const response = await fetch("https://xafari.rexmalebka.com/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("https://xafari.rexmalebka.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    console.log("Respuesta del servidor:", data);
+      console.log("Respuesta del servidor:", data);
 
-    if (!response.ok) {
-      throw new Error(data || "Login failed");
+      if (!response.ok) {
+        throw new Error(data || "Login failed");
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+
+      navigate("/welcome-animation-login", { state: data.user });
+
+    } catch (error) {
+      console.error("Error en login:", error.message);
+      alert("Error al iniciar sesión: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    
-
-    navigate("/welcome-animation-login", { state: data.user });
-
-  } catch (error) {
-    console.error("Error en login:", error.message);
-    alert("Error al iniciar sesión: " + error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img
-        src="/img/V03-CERRITOS.jpg"
+        src="/img/fondoPrincipal.jpg"
         alt="Fondo Login"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-between items-center">
         <button
-          onClick={() => navigate("/")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
+          aria-label={t("back")}
         >
-          ← {t("back")}
+          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
         </button>
       </div>
 
@@ -111,24 +112,25 @@ const handleLogin = async () => {
             <button
               disabled={!isFormValid || loading}
               onClick={handleLogin}
-              className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
-                isFormValid && !loading
-                  ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${isFormValid && !loading
+                ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
             >
               {loading ? t("loading") : t("login")}
             </button>
 
-            <p className="text-center text-sm text-black">
-              {t("noAccount")}&nbsp;
+            <div className="flex flex-col items-center gap-2 mt-3">
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">
+                {t("noAccount")}
+              </p>
               <button
                 onClick={() => navigate("/register-step1")}
-                className="underline text-emerald-600 hover:text-emerald-800 transition"
+                className="px-6 py-2 bg-emerald-600/10 text-emerald-700 rounded-full border border-emerald-600/20 backdrop-blur-md hover:bg-emerald-600/20 transition-all font-semibold uppercase tracking-widest text-[10px]"
               >
                 {t("registerHere")}
               </button>
-            </p>
+            </div>
           </div>
         </div>
       </div>

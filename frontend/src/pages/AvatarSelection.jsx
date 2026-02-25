@@ -117,7 +117,7 @@ export default function AvatarSelection() {
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
     setBody(Math.floor(Math.random() * bodyList.length));
-    setHeadAcc(Math.floor(Math.random()* headAccList.length));
+    setHeadAcc(Math.floor(Math.random() * headAccList.length));
   };
 
   const handleReset = () => {
@@ -154,17 +154,18 @@ export default function AvatarSelection() {
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img
-        src="/img/V03-CERRITOS.jpg"
+        src="/img/fondoPrincipal.jpg"
         alt="Fondo"
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-start items-center">
         <button
-          onClick={() => navigate("/")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
+          aria-label={t("back")}
         >
-          ← {t("back")}
+          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
         </button>
       </div>
 
@@ -203,11 +204,10 @@ export default function AvatarSelection() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                activeTab === tab.key
-                  ? "bg-green-600 text-white"
-                  : "bg-white/80 text-black border border-gray-300"
-              }`}
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${activeTab === tab.key
+                ? "bg-green-600 text-white"
+                : "bg-white/80 text-black border border-gray-300"
+                }`}
             >
               {tab.label}
             </button>
@@ -228,7 +228,7 @@ export default function AvatarSelection() {
                   if (!el) return;
                   setShowArrow(
                     el.scrollWidth > el.clientWidth &&
-                      el.scrollLeft + el.clientWidth < el.scrollWidth - 10
+                    el.scrollLeft + el.clientWidth < el.scrollWidth - 10
                   );
                 };
                 checkScroll();
@@ -265,11 +265,10 @@ export default function AvatarSelection() {
                             }}
                             data-skip-sound-click="true"
                             aria-pressed={isCurrent}
-                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                              isCurrent
-                                ? "border-green-600"
-                                : "border-transparent"
-                            } bg-white overflow-hidden`}
+                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${isCurrent
+                              ? "border-green-600"
+                              : "border-transparent"
+                              } bg-white overflow-hidden`}
                           >
                             {opt ? (
                               <img

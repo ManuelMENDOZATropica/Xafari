@@ -167,7 +167,7 @@ export default function Register() {
             <button
               type="button"
               onClick={handleTermsClick}
-              className="underline decoration-2 underline-offset-2 font-semibold text-[#5CA7FF] hover:brightness-110"
+              className="px-4 py-1.5 bg-[#5CA7FF]/10 text-[#5CA7FF] rounded-full border border-[#5CA7FF]/30 backdrop-blur-md hover:bg-[#5CA7FF]/20 transition-all font-semibold uppercase tracking-widest text-[9px]"
             >
               {t("registerFlow.acceptTermsLink")}
             </button>

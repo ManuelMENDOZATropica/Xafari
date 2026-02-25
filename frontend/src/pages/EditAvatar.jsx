@@ -22,14 +22,14 @@ export default function AvatarSelection() {
   const navigate = useNavigate();
   const { playWardrobeSound } = useContext(XafariContext);
 
-let user = null;
-try {
-  const stored = localStorage.getItem("user");
-  user = stored ? JSON.parse(stored) : null;
-} catch (e) {
-  console.warn("❌ Error al parsear usuario:", e);
-  user = null;
-}
+  let user = null;
+  try {
+    const stored = localStorage.getItem("user");
+    user = stored ? JSON.parse(stored) : null;
+  } catch (e) {
+    console.warn("❌ Error al parsear usuario:", e);
+    user = null;
+  }
 
   const token = localStorage.getItem("token");
   const avatar = user?.avatar || {};
@@ -45,72 +45,72 @@ try {
 
   const [activeTab, setActiveTab] = useState("body");
 
- const handleSaveAvatar = async () => {
-  const newAvatar = {
-    bodyOptions: bodyIndex,
-    eyesOptions: eyesIndex,
-    hairOptions: hairIndex,
-    clothingOptions: clothingIndex,
-    shoeOptions: shoeIndex,
-    glassesAccessoryOptions: glassesIndex,
-    headAccessoryOptions: headAccessoryIndex,
-    bodyAccessoryOptions: bodyAccessoryIndex,
-  };
-
-  const rawUser = localStorage.getItem("user");
-  const rawToken = localStorage.getItem("token");
-
-  let currentUser = null;
-  try {
-    currentUser = rawUser ? JSON.parse(rawUser) : null;
-  } catch (e) {
-    console.warn("⚠️ Usuario inválido en localStorage");
-    currentUser = null;
-  }
-
-  if (!currentUser) {
-    const guestUser = {
-      name: "Invitado",
-      lastname: "",
-      email: "",
-      avatar: newAvatar,
+  const handleSaveAvatar = async () => {
+    const newAvatar = {
+      bodyOptions: bodyIndex,
+      eyesOptions: eyesIndex,
+      hairOptions: hairIndex,
+      clothingOptions: clothingIndex,
+      shoeOptions: shoeIndex,
+      glassesAccessoryOptions: glassesIndex,
+      headAccessoryOptions: headAccessoryIndex,
+      bodyAccessoryOptions: bodyAccessoryIndex,
     };
-    localStorage.setItem("user", JSON.stringify(guestUser));
-    console.warn("👤 Avatar guardado como invitado:", guestUser.avatar);
-    navigate("/treeoflife");
-    return;
-  }
 
-if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken === "null" || rawToken === "") {
-  const updatedUser = { ...currentUser, avatar: newAvatar };
-  localStorage.setItem("user", JSON.stringify(updatedUser));
-  console.warn("👤 Avatar actualizado localmente como invitado:", updatedUser.avatar);
-  navigate("/treeoflife");
-  return;
-}
+    const rawUser = localStorage.getItem("user");
+    const rawToken = localStorage.getItem("token");
+
+    let currentUser = null;
+    try {
+      currentUser = rawUser ? JSON.parse(rawUser) : null;
+    } catch (e) {
+      console.warn("⚠️ Usuario inválido en localStorage");
+      currentUser = null;
+    }
+
+    if (!currentUser) {
+      const guestUser = {
+        name: "Invitado",
+        lastname: "",
+        email: "",
+        avatar: newAvatar,
+      };
+      localStorage.setItem("user", JSON.stringify(guestUser));
+      console.warn("👤 Avatar guardado como invitado:", guestUser.avatar);
+      navigate("/treeoflife");
+      return;
+    }
+
+    if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken === "null" || rawToken === "") {
+      const updatedUser = { ...currentUser, avatar: newAvatar };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      console.warn("👤 Avatar actualizado localmente como invitado:", updatedUser.avatar);
+      navigate("/treeoflife");
+      return;
+    }
 
 
-  try {
-    const response = await fetch("https://xafari.rexmalebka.com/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${rawToken}`,
-      },
-      body: JSON.stringify({ ...currentUser, avatar: newAvatar }),
-    });
+    try {
+      const response = await fetch("https://xafari.rexmalebka.com/user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${rawToken}`,
+        },
+        body: JSON.stringify({ ...currentUser, avatar: newAvatar }),
+      });
 
-    if (!response.ok) throw new Error("Fallo al guardar el avatar");
+      if (!response.ok) throw new Error("Fallo al guardar el avatar");
 
-    const updatedUser = await response.json();
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    console.log("✅ Avatar guardado correctamente en backend");
-    navigate("/treeoflife");
-  } catch (err) {
-    alert("Error al guardar el avatar.");
-    console.error("❌ Error al guardar en backend:", err);
-  }
-};
+      const updatedUser = await response.json();
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      console.log("✅ Avatar guardado correctamente en backend");
+      navigate("/treeoflife");
+    } catch (err) {
+      alert("Error al guardar el avatar.");
+      console.error("❌ Error al guardar en backend:", err);
+    }
+  };
 
 
   const handleRandomize = () => {
@@ -119,8 +119,8 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
     setClothing(Math.floor(Math.random() * clothingList.length));
     setShoe(Math.floor(Math.random() * shoeList.length));
     setBody(Math.floor(Math.random() * bodyList.length));
-    
-    setHeadAcc(Math.floor(Math.random()* headAccList.length));
+
+    setHeadAcc(Math.floor(Math.random() * headAccList.length));
   };
 
   const handleReset = () => {
@@ -156,14 +156,15 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
-      <img src="/img/V03-CERRITOS.jpg" alt="Fondo Avatar" className="absolute inset-0 w-full h-full object-cover object-bottom z-0" />
+      <img src="/img/fondoPrincipal.jpg" alt="Fondo Avatar" className="absolute inset-0 w-full h-full object-cover object-bottom z-0" />
 
       <div className="absolute top-0 left-0 w-full z-20 px-4 pt-[env(safe-area-inset-top)] mt-4 pb-2 flex justify-start items-center">
         <button
-          onClick={() => navigate("/treeoflife")}
-          className="bg-white/80 backdrop-blur-sm text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-white"
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
+          aria-label={t("back")}
         >
-          ← {t("back")}
+          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
         </button>
       </div>
 
@@ -202,11 +203,10 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                activeTab === tab.key
-                  ? "bg-green-600 text-white"
-                  : "bg-white/80 text-black border border-gray-300"
-              }`}
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${activeTab === tab.key
+                ? "bg-green-600 text-white"
+                : "bg-white/80 text-black border border-gray-300"
+                }`}
             >
               {tab.label}
             </button>
@@ -261,9 +261,8 @@ if (!currentUser || currentUser.name === "Invitado" || !rawToken || rawToken ===
                             }}
                             data-skip-sound-click="true"
                             aria-pressed={isCurrent}
-                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${
-                              isCurrent ? "border-green-600" : "border-transparent"
-                            } bg-white overflow-hidden`}
+                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${isCurrent ? "border-green-600" : "border-transparent"
+                              } bg-white overflow-hidden`}
                           >
                             {opt ? (
                               <img
