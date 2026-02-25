@@ -21,8 +21,8 @@ export default function AvatarRender({ avatarData: avatarFromProps, className = 
         src={faceOptions[avatarData.faceOptions || 0]}
         alt="face"
         className={`absolute w-full h-full object-contain ${isChild
-            ? "scale-[0.35] -translate-y-[12%]"
-            : "scale-[0.4] -translate-y-[22%]"
+          ? "scale-[0.5] -translate-y-[5%]"
+          : "scale-[0.7] -translate-y-[20%] -translate-x-[-5%]"
           }`}
       />
     </div>

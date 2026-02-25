@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 
 const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
+const bodyIconOptions = ["/avatares/cuerpoNiñoIcono.png", "/avatares/cuerpoAdultoIcono.png"];
 const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
 
 function useSelection(options, initialIndex = 0) {
@@ -83,29 +84,10 @@ export default function AvatarSelection() {
     }
   };
 
-  const handleRandomize = () => {
-    setBody(Math.floor(Math.random() * bodyList.length));
-    setFace(Math.floor(Math.random() * faceList.length));
-  };
-
-  const handleReset = () => {
-    setBody(0);
-    setFace(0);
-  };
-
   const tabs = [
-    { key: "body", label: t("body"), set: setBody, list: bodyList, current: bodyIndex },
+    { key: "body", label: t("body"), set: setBody, list: bodyList, icons: bodyIconOptions, current: bodyIndex },
     { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
   ];
-
-  const zoomedKeys = {
-    eyes: { scale: "scale-[4]", translateY: "-translate-y-[-85%]" },
-    hair: { scale: "scale-[1.5]", translateY: "-translate-y-[-35%]" },
-    glasses: { scale: "scale-[2.5]", translateY: "-translate-y-[-60%]" },
-    headAccessory: { scale: "scale-[2.3]", translateY: "-translate-y-[-80%]" },
-    shoes: { scale: "scale-[2.5]", translateY: "translate-y-[-85%]" },
-    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-18%]" },
-  };
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
@@ -139,8 +121,8 @@ export default function AvatarSelection() {
             src={faceImg}
             alt="face"
             className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyIndex === 0
-                ? "scale-[0.35] -translate-y-[12%]"
-                : "scale-[0.4] -translate-y-[22%]"
+              ? "scale-[0.5] -translate-y-[5%]"
+              : "scale-[0.7] -translate-y-[20%] -translate-x-[-5%]"
               }`}
           />
         </div>
@@ -150,9 +132,9 @@ export default function AvatarSelection() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === tab.key
-                  ? "bg-green-600 text-white shadow-lg scale-105"
-                  : "bg-white/80 text-black border border-gray-300 hover:bg-white"
+              className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.key
+                  ? "bg-emerald-600/90 text-white shadow-lg scale-105 border border-emerald-500/50"
+                  : "bg-white/50 text-black border border-white/40 backdrop-blur-md hover:bg-white/60"
                 }`}
             >
               {tab.label}
@@ -217,9 +199,9 @@ export default function AvatarSelection() {
                           >
                             {opt ? (
                               <img
-                                src={opt}
+                                src={tab.icons ? tab.icons[i] : opt}
                                 alt={`${tab.key}_${i}`}
-                                className={`w-full h-full object-contain transform ${zoom.scale || ""} ${zoom.translateY || ""}`}
+                                className={`w-full h-full object-contain transform ${tab.icons ? "" : (zoom.scale || "")} ${tab.icons ? "" : (zoom.translateY || "")}`}
                               />
                             ) : (
                               <span className="text-xl font-bold text-gray-400">×</span>
@@ -239,24 +221,10 @@ export default function AvatarSelection() {
             })}
         </div>
 
-        <div className="flex gap-3 justify-center mb-4 w-full max-w-sm flex-nowrap">
-          <button
-            onClick={handleRandomize}
-            className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
-          >
-            {t("randomize")}
-          </button>
-          <button
-            onClick={handleReset}
-            className="bg-white text-black px-4 py-2 rounded-full shadow border border-gray-300 hover:bg-gray-100 whitespace-nowrap"
-          >
-            {t("reset")}
-          </button>
-        </div>
 
         <button
           onClick={handleSaveAvatar}
-          className="bg-green-600 text-white font-bold py-2 px-6 rounded-xl shadow hover:bg-green-700 w-full max-w-sm"
+          className="bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-[0.2em] py-3.5 px-8 rounded-full shadow-lg hover:bg-emerald-700 transition-all active:scale-95 w-full max-w-sm border border-emerald-500/30"
         >
           {t("saveAvatarAndContinue")}
         </button>
