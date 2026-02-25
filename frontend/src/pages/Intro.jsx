@@ -123,6 +123,20 @@ const Intro = () => {
     });
   };
 
+  const goToNextImage = () => {
+    clearTimeout(fadeOutTimeout.current);
+    clearTimeout(nextImageTimeout.current);
+
+    setIndex((prev) => {
+      const next = prev + 1;
+      if (next >= baseNames.length) {
+        return prev; // stays on last slide to show repeat option
+      }
+      setFade(true);
+      return next;
+    });
+  };
+
   const safeIndex = Math.min(index, baseNames.length - 1);
   const currentName = baseNames[safeIndex];
   const isLastImage = index === baseNames.length - 1;
@@ -227,7 +241,7 @@ const Intro = () => {
           to { opacity: 1; }
         }
 
-        .btn-repeat {
+        .btn-repeat, .btn-next {
            cursor: pointer;
            pointer-events: auto;
         }
@@ -248,7 +262,7 @@ const Intro = () => {
         <div className="tutorial-overlay">
           <img src="/iconos/icon_toqueBlanco.png" alt="Tutorial" className="tutorial-hand" />
           <p className="mt-8 text-lg font-medium tracking-widest uppercase opacity-80">
-            Mueve la luz para explorar
+            {t("intro.tutorial")}
           </p>
         </div>
       )}
@@ -266,6 +280,17 @@ const Intro = () => {
       >
         {t(`intro.${currentName}`)}
       </div>
+
+      {!isLastImage && (
+        <div className="absolute bottom-10 right-10 z-20">
+          <button
+            onClick={goToNextImage}
+            className="btn-next px-6 py-2 bg-white/20 text-white rounded-full border border-white/30 backdrop-blur-md hover:bg-white/40 transition-all font-semibold uppercase tracking-widest text-[10px]"
+          >
+            {t("next") || "Siguiente"}
+          </button>
+        </div>
+      )}
 
       {isLastImage && (
         <div className="absolute bottom-8 flex flex-col items-center gap-4 z-20">

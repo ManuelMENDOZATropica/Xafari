@@ -10,12 +10,12 @@ export default function IntroMaya() {
   const steps = useMemo(
     () => [
       {
-        image: "/maya/tutorial/1.png",
+        image: "/maya/1.png",
         alt: t("introMaya.slide1Alt"),
         text: t("introMaya.slide1Text"),
       },
       {
-        image: "/maya/tutorial/2.png",
+        image: "/maya/2.png",
         alt: t("introMaya.slide2Alt"),
         text: t("introMaya.slide2Text"),
       },
@@ -34,19 +34,23 @@ export default function IntroMaya() {
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden bg-[#0a0a0a] text-white font-apercu">
-      <div className="absolute inset-0 opacity-70" aria-hidden="true">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black" />
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/img/fondoPrincipal.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.4
+        }}
+      />
+
+      <div className="absolute inset-0 z-1 opacity-70" aria-hidden="true">
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
       </div>
 
       <div className="relative z-10 flex flex-col h-full min-h-screen px-6 py-6">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            type="button"
-            onClick={() => navigate("/welcome")}
-            className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-white/20"
-          >
-            {t("menu")}
-          </button>
+        <div className="flex items-center justify-end mb-6">
           <span className="text-sm text-white/70">{`${currentStep + 1}/${steps.length}`}</span>
         </div>
 
@@ -66,7 +70,7 @@ export default function IntroMaya() {
           <button
             type="button"
             onClick={goNext}
-            className="flex items-center gap-2 rounded-full bg-[#5CA7FF] px-6 py-3 text-lg font-semibold text-white shadow-xl transition hover:brightness-110"
+            className="rounded-full bg-white/20 px-6 py-2 text-[10px] font-semibold uppercase tracking-widest text-white border border-white/30 backdrop-blur-md transition hover:bg-white/40"
           >
             {t("next")}
           </button>

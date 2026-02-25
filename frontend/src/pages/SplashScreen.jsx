@@ -23,6 +23,7 @@ const ALL_ASSETS = [
   "/img/V03-CERRITOS.jpg",
   "/img/fondoArbolDeLaVida.png",
   "/img/fondoPrincipal.jpg",
+  "/img/xcaret.jpg",
   // Guardianes
   "/guardianes/GuardianBuho.png",
   "/guardianes/GuardianCoati.png",
@@ -99,8 +100,8 @@ const ALL_ASSETS = [
   "/arbol/guardianesÁrbol/serpiente.png",
   "/arbol/guardianesÁrbol/venado.png",
   // Tutorial
-  "/maya/tutorial/1.png",
-  "/maya/tutorial/2.png",
+  "/maya/1.png",
+  "/maya/2.png",
   // Intro
   "/intro/caverna (1).jpg",
   "/intro/caverna (2).jpg",
