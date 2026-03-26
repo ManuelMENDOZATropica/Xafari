@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import CloseIcon from "./CloseIcon";
 
 import pistaImg from "/instruccionesXecretos/pista.png";
 import escaneaImg from "/instruccionesXecretos/escanea.png";
@@ -51,7 +52,7 @@ export default function ModalInstruccionesXecretos({ show, onClose }) {
               className="absolute top-4 right-4 text-gray-600 hover:text-black bg-transparent border-none p-0 m-0"
               title={t("close")}
             >
-              ✕
+              <CloseIcon size={20} color="#4B5563" />
             </button>
 
             <h2 className="text-xl font-bold text-emerald-800 mb-6 text-center">

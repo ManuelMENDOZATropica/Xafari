@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import Welcome from "./pages/Welcome";
 import SplashScreen from "./pages/SplashScreen";
 import RegisterStep1 from "./pages/RegisterStep1";
@@ -15,10 +16,7 @@ import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XafariContext from "./components/XafariContext";
 import { useEffect, useMemo, useState } from "react";
-import SettingsMenu from "./components/SettingsMenu";
-import SoundMenu from "./components/SoundMenu";
 import useSoundController from "./hooks/useSoundController";
-import { useLocation } from "react-router-dom";
 import PrivacyNotice from "./pages/PrivacyNotice";
 import TermsConditions from "./pages/TermsConditions";
 
@@ -103,43 +101,31 @@ function App() {
     ]
   );
 
-  const hiddenSettingsRoutes = useMemo(
-    () =>
-      new Set([
-        "/",
-        "/welcome-animation",
-        "/welcome-animation-login",
-      ]),
-    []
-  );
-
-  const isTreeOfLife = location.pathname === "/treeoflife";
-  const shouldShowSettings = !hiddenSettingsRoutes.has(location.pathname);
-
   return (
     <XafariContext.Provider value={contextValue}>
-      {shouldShowSettings && (isTreeOfLife ? <SoundMenu /> : <SettingsMenu />)}
-      <Routes>
-        <Route path="/" element={<SplashScreen />} />
-        <Route path="/welcome" element={<Welcome />} />
-        <Route
-          path="/welcome-animation-login"
-          element={<WelcomeAnimationLogin />}
-        />
-        <Route path="/welcome-animation" element={<WelcomeAnimation />} />
-        <Route path="/intro-maya" element={<IntroMaya />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/register-step1" element={<RegisterStep1 />} />
-        <Route path="/register-step2" element={<RegisterStep2 />} />
-        <Route path="/create-avatar" element={<AvatarSelection />} />
-        <Route path="/treeoflife" element={<TreeOfLife />} />
-        <Route path="/intro" element={<Intro />} />
-        <Route path="/login" element={<LogIn />} />
-        <Route path="/edit-avatar" element={<EditAvatar />} />
-        <Route path="/minimalqr" element={<MinimalQr />} />
-        <Route path="/privacy" element={<PrivacyNotice />} />
-        <Route path="/terms" element={<TermsConditions />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<SplashScreen />} />
+          <Route path="/welcome" element={<Welcome />} />
+          <Route
+            path="/welcome-animation-login"
+            element={<WelcomeAnimationLogin />}
+          />
+          <Route path="/welcome-animation" element={<WelcomeAnimation />} />
+          <Route path="/intro-maya" element={<IntroMaya />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/register-step1" element={<RegisterStep1 />} />
+          <Route path="/register-step2" element={<RegisterStep2 />} />
+          <Route path="/create-avatar" element={<AvatarSelection />} />
+          <Route path="/treeoflife" element={<TreeOfLife />} />
+          <Route path="/intro" element={<Intro />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/edit-avatar" element={<EditAvatar />} />
+          <Route path="/minimalqr" element={<MinimalQr />} />
+          <Route path="/privacy" element={<PrivacyNotice />} />
+          <Route path="/terms" element={<TermsConditions />} />
+        </Routes>
+      </AnimatePresence>
     </XafariContext.Provider>
   );
 }

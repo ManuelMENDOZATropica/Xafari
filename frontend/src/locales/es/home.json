@@ -1,7 +1,11 @@
 {
   "welcome": "Descubre todas las sorpresas y aventuras que Xcaret México tiene para ti y tu familia.",
-  "newAdventure": "Empieza nueva aventura",
+  "tagline": "¡Descubre a los guardianes de la Vida!",
+  "newAdventure": "Nueva aventura",
   "alreadyUser": "Ya soy usuario",
   "whatIsXafari": "¿Qué es Xafari?",
-  "xafariDescription": "Xafari es una experiencia interactiva dentro del Hotel Xcaret México donde los huéspedes pueden explorar, descubrir secretos y ganar recompensas a través de dinámicas gamificadas."
+  "xafariP1": "Descubre Xafari, una aventura épica alrededor del Árbol de la Vida, el ser creador de todas las criaturas que ahora se marchita.",
+  "xafariP2": "Conviértete en un Buxcador y recorre selvas misteriosas, descubre animales sorprendentes y desata los secretos capaces de devolverle su poder.",
+  "xafariP3": "¡El destino de la naturaleza está en tus manos!",
+  "readyButton": "¡Estoy listo!"
 }

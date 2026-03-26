@@ -1,111 +1,130 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
 import XafariContext from "./XafariContext";
-
-const SOUND_ICONS = {
-  full: (
-    <img src="/iconos/icon_volumen3.svg" alt="Full Volume" className="h-6 w-6 object-contain" />
-  ),
-  medium: (
-    <img src="/iconos/icon_volumen2.svg" alt="Medium Volume" className="h-6 w-6 object-contain" />
-  ),
-  vibrate: (
-    <img src="/iconos/icon_volumen1.svg" alt="Vibrate" className="h-6 w-6 object-contain" />
-  ),
-  off: (
-    <img src="/iconos/icon_volumen0.png" alt="Muted" className="h-6 w-6 object-contain" />
-  ),
-};
+import CloseIcon from "./CloseIcon";
 
 const SOUND_OPTIONS = [
-  { value: "full", labelKey: "soundFull" },
-  { value: "medium", labelKey: "soundMedium" },
-  { value: "vibrate", labelKey: "soundVibrate" },
-  { value: "off", labelKey: "soundOff" },
+  { value: "full",    labelKey: "soundFull",    icon: "/iconos/icon_volumen3.svg" },
+  { value: "medium",  labelKey: "soundMedium",  icon: "/iconos/icon_volumen2.svg" },
+  { value: "vibrate", labelKey: "soundVibrate", icon: "/iconos/icon_volumen1.svg" },
+  { value: "off",     labelKey: "soundOff",     icon: "/iconos/icon_volumen0.png" },
 ];
 
-export default function SoundMenu() {
-  const { soundSetting, setSoundSetting, triggerClickFeedback } =
-    useContext(XafariContext);
+export default function SoundMenu({ className = "" }) {
+  const { soundSetting, setSoundSetting, triggerClickFeedback } = useContext(XafariContext);
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return undefined;
-    }
-
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
-
-  const handleSelect = (value) => {
-    setSoundSetting(value);
-    if (typeof triggerClickFeedback === "function") {
-      triggerClickFeedback(value);
-    }
-    setIsOpen(false);
-  };
-
-  const activeOption =
-    SOUND_OPTIONS.find((option) => option.value === soundSetting) ||
-    SOUND_OPTIONS[0];
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="pointer-events-none fixed right-4 top-4 z-40 flex flex-col items-end">
-      <div className="pointer-events-auto relative" ref={containerRef}>
-        <button
-          type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white hover:bg-gray-100"
-          aria-label={`${t("soundMenu")}: ${t(activeOption.labelKey)}`}
-          aria-haspopup="true"
-          aria-expanded={isOpen}
-        >
-          <span aria-hidden="true">{SOUND_ICONS[soundSetting]}</span>
-        </button>
+    <>
+      {/* ── Botón icono ─────────────────────────────────────────────── */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={t("soundMenu")}
+        className={`flex items-center justify-center w-[52px] h-[52px] bg-transparent border-none p-0 active:scale-90 transition-transform ${className}`}
+      >
+        <img
+          src="/iconos/menuSonido.png"
+          alt={t("soundMenu")}
+          className="w-[52px] h-[52px] object-contain"
+          aria-hidden
+        />
+      </button>
 
-        {isOpen && (
-          <div className="absolute right-0 mt-2 w-max rounded-2xl border border-gray-200 bg-white p-2 text-gray-800 shadow-lg">
-            <div role="group" aria-label={t("soundMenu")} className="flex items-center gap-2">
-              {SOUND_OPTIONS.map((option) => {
-                const isActive = soundSetting === option.value;
+      {/* ── Modal ───────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end justify-center"
+            style={{ backgroundColor: "rgba(0,0,0,0.45)", backdropFilter: "blur(3px)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              className="w-full max-w-md relative"
+              style={{
+                backgroundColor: "#F7F3EA",
+                borderRadius: "24px 24px 0 0",
+                padding: "32px 24px 48px",
+              }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Handle bar */}
+              <div
+                className="mx-auto mb-6 h-1 w-10 rounded-full"
+                style={{ backgroundColor: "#C5A27A" }}
+              />
 
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleSelect(option.value)}
-                    className={`flex h-10 w-10 items-center justify-center rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
-                        ? "bg-emerald-100 text-emerald-600 shadow-inner"
-                        : "bg-white text-gray-700 hover:bg-gray-100"
-                      }`}
-                    aria-label={`${t("soundMenu")}: ${t(option.labelKey)}`}
-                    title={t(option.labelKey)}
-                    aria-pressed={isActive}
-                    data-skip-sound-click="true"
-                  >
-                    <span aria-hidden="true">{SOUND_ICONS[option.value]}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+              {/* X cerrar */}
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="absolute top-6 right-6 flex items-center justify-center w-8 h-8 bg-transparent border-none cursor-pointer active:scale-90 transition-transform"
+                aria-label={t("close")}
+              >
+                <CloseIcon size={22} color="#233C15" />
+              </button>
+
+              {/* Título */}
+              <h2
+                className="text-center font-bold mb-8"
+                style={{ color: "#233C15", fontSize: "28px" }}
+              >
+                {t("soundMenu")}
+              </h2>
+
+              {/* Opciones de sonido */}
+              <div className="flex flex-col gap-3 mb-10">
+                {SOUND_OPTIONS.map((opt) => {
+                  const isActive = soundSetting === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setSoundSetting(opt.value);
+                        if (typeof triggerClickFeedback === "function") triggerClickFeedback(opt.value);
+                        setOpen(false);
+                      }}
+                      className="w-full font-bold uppercase transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                      style={{
+                        height: "60px",
+                        borderRadius: "30px",
+                        backgroundColor: isActive ? "#80A850" : "#F4E6C7",
+                        color: isActive ? "#F7F3EA" : "#4B3621",
+                        fontSize: "0.875rem",
+                        letterSpacing: "0.08em",
+                        border: "none",
+                        cursor: "pointer",
+                        boxShadow: isActive ? "2px 2px 4px rgba(0,0,0,0.2)" : "none",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <img
+                        src={opt.icon}
+                        alt=""
+                        className="w-5 h-5 object-contain"
+                        style={{ filter: isActive ? "brightness(0) invert(1)" : "none" }}
+                        aria-hidden
+                      />
+                      {t(opt.labelKey)}
+                    </button>
+                  );
+                })}
+              </div>
+
+            </motion.div>
+          </motion.div>
         )}
-      </div>
-    </div>
+      </AnimatePresence>
+    </>
   );
 }

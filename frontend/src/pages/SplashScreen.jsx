@@ -12,6 +12,9 @@ const ALL_ASSETS = [
   "/iconos/cambioIdioma.png",
   "/iconos/checklist.png",
   "/iconos/experiencias.png",
+  "/iconos/home.png",
+  "/iconos/menuIdioma.png",
+  "/iconos/menuSonido.png",
   "/iconos/icon_ajustes.svg",
   "/iconos/icon_regresar.svg",
   "/iconos/icon_toque.png",
@@ -32,6 +35,7 @@ const ALL_ASSETS = [
 
   // Imágenes de fondo y escenarios
   "/img/fondoPrincipal.jpg",
+  "/img/fondoHome.png",
   "/img/Fondo_Inicio_.jpg",
   "/img/Fondo_Paisaje_Ríos_Xcaret.jpg",
   "/img/Fondo_Selva_Con_Flores.jpg",

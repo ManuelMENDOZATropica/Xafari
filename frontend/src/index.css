@@ -182,15 +182,22 @@ button:focus-visible {
 }
 
 @font-face {
-  font-family: "Volume CT";
-  src: url("/fonts/VolumeCT-Scan-RusticSolid.otf") format("opentype");
+  font-family: "Volume TC";
+  src: url("/fonts/VolumeTC-RusticSolid.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Volume CT";
-  src: url("/fonts/VolumeCT-Scan-RusticSolidShadow.otf") format("opentype");
+  font-family: "Volume TC";
+  src: url("/fonts/VolumeTC-RusticSolidItalic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
+}
+
+@font-face {
+  font-family: "Volume TC Sans";
+  src: url("/fonts/VolumeTCSans-RusticSolid.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
 }

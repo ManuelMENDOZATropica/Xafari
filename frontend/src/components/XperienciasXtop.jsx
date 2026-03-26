@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
+import CloseIcon from "./CloseIcon";
 
 const xperiencias = [
   {
@@ -310,7 +310,7 @@ export default function XperienciasXtop({ onClose }) {
       className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
       aria-label="Cerrar"
     >
-      ✕
+      <CloseIcon size={20} color="#111827" />
     </button>
     <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
       <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">

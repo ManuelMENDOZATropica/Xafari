@@ -2,11 +2,11 @@ import { useEffect, useRef, useState, useContext } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
 import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import ModalMapa from "@/components/ModalMapa";
 import XafariContext from "./XafariContext";
+import CloseIcon from "./CloseIcon";
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
@@ -108,7 +108,7 @@ export default function XecretoRegister({ onClose }) {
         className="absolute top-[-10px] right-5 z-50 mt-[10px] rounded-full border-2 border-white/50 bg-white px-5 py-1.5 font-bold text-gray-900 shadow-lg transition-transform hover:scale-105"
         aria-label={t("close")}
       >
-        ✕
+        <CloseIcon size={20} color="#111827" />
       </button>
       <div className="relative h-full w-full rounded-[10px] bg-[#FFBB00] font-apercu text-black">
         <img

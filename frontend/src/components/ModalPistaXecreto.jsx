@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import CloseIcon from "./CloseIcon";
 
 const pistasKeys = {
   xecreto1: "pistas.xecreto1",
@@ -37,7 +38,7 @@ export default function ModalPistaXecreto({ show, onClose, scannedCodes }) {
   className="absolute top-4 right-4 text-gray-600 hover:text-black bg-transparent border-none p-0 m-0"
   title={t("close")}
 >
-  ✕
+  <CloseIcon size={20} color="#4B5563" />
 </button>
 
 
