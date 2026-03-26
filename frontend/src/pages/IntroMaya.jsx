@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function IntroMaya() {
   const { t, i18n } = useTranslation();
@@ -10,12 +11,12 @@ export default function IntroMaya() {
   const steps = useMemo(
     () => [
       {
-        image: "/maya/1.png",
+        image: "/maya/saltando.png",
         alt: t("introMaya.slide1Alt"),
         text: t("introMaya.slide1Text"),
       },
       {
-        image: "/maya/2.png",
+        image: "/maya/curiosa.png",
         alt: t("introMaya.slide2Alt"),
         text: t("introMaya.slide2Text"),
       },
@@ -23,58 +24,120 @@ export default function IntroMaya() {
     [t, i18n.language]
   );
 
-  const goNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-      return;
-    }
+  // Auto-avance: slide 0 → slide 1 a los 4 segundos
+  useEffect(() => {
+    if (currentStep !== 0) return;
+    const timer = setTimeout(() => setCurrentStep(1), 4000);
+    return () => clearTimeout(timer);
+  }, [currentStep]);
 
-    navigate("/register");
-  };
+  const isLast = currentStep === steps.length - 1;
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden bg-[#0a0a0a] text-white font-apercu">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('/img/fondoPrincipal.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          opacity: 0.4
-        }}
-      />
+    <div
+      className="relative flex flex-col items-center justify-center min-h-screen w-screen overflow-hidden font-apercu"
+      style={{ backgroundColor: "rgba(53, 36, 22, 1)" }}
+    >
+      <div className="flex flex-col items-center justify-center gap-8 px-6 w-full max-w-md">
 
-      <div className="absolute inset-0 z-1 opacity-70" aria-hidden="true">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
-      </div>
-
-      <div className="relative z-10 flex flex-col h-full min-h-screen px-6 py-6">
-        <div className="flex items-center justify-end mb-6">
-          <span className="text-sm text-white/70">{`${currentStep + 1}/${steps.length}`}</span>
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center gap-6">
-          <img
+        {/* Imagen personaje — centrada, sin sombra */}
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={`img-${currentStep}`}
             src={steps[currentStep].image}
             alt={steps[currentStep].alt}
-            className="max-h-[60vh] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.45)]"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.35 }}
+            style={{
+              maxHeight: "50vh",
+              objectFit: "contain",
+            }}
           />
+        </AnimatePresence>
 
-          <p className="max-w-md text-center text-lg leading-relaxed text-white/90">
-            {steps[currentStep].text}
-          </p>
+        {/* Contenedor de texto con imagen de fondo */}
+        <div
+          style={{
+            position: "relative",
+            width: "313px",
+            minHeight: "140px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src="/intro/contenedorTextoIntro.png"
+            alt=""
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "fill",
+            }}
+            draggable={false}
+          />
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`text-${currentStep}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                position: "relative",
+                zIndex: 1,
+                color: "#F7F3EA",
+                fontSize: "20px",
+                fontFamily: "'Volume TC', sans-serif",
+                fontWeight: 400,
+                lineHeight: "1",
+                letterSpacing: "0",
+                textAlign: "center",
+                margin: 0,
+                padding: "16px 24px",
+              }}
+            >
+              {steps[currentStep].text}
+            </motion.p>
+          </AnimatePresence>
         </div>
 
-        <div className="flex justify-end mt-8">
-          <button
-            type="button"
-            onClick={goNext}
-            className="rounded-full bg-white/20 px-6 py-2 text-[10px] font-semibold uppercase tracking-widest text-white border border-white/30 backdrop-blur-md transition hover:bg-white/40"
-          >
-            {t("next")}
-          </button>
-        </div>
+        {/* Botón solo en la última slide */}
+        <AnimatePresence>
+          {isLast && (
+            <motion.button
+              type="button"
+              onClick={() => navigate("/register")}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                width: "200px",
+                height: "60px",
+                borderRadius: "30px",
+                backgroundColor: "#80A850",
+                color: "#F7F3EA",
+                fontSize: "24px",
+                fontWeight: 700,
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "3.2px 3.2px 3.2px 0px rgba(0,0,0,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {t("intro.continue") || "Continuar"}
+            </motion.button>
+          )}
+        </AnimatePresence>
+
       </div>
     </div>
   );
