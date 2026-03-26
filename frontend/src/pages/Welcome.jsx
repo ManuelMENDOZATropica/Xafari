@@ -24,10 +24,6 @@ export default function Welcome() {
           className="h-full w-full object-cover object-center"
           draggable={false}
         />
-        {/* Gradiente oscuro en la parte superior para iconos + logotipo */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-transparent" />
-        {/* Gradiente oscuro en la parte inferior para los botones */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
       </div>
 
       {/* ── Barra superior ───────────────────────────────────────────────── */}
