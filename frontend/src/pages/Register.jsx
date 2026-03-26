@@ -40,6 +40,21 @@ const YEAR_OPTIONS = Array.from({ length: 100 }, (_, i) => ({
   label: String(currentYear - i),
 }));
 
+/* ── Textfield image wrapper (fuera del componente para evitar remount) ── */
+function TextfieldWrapper({ children }) {
+  return (
+    <div style={{ position: "relative", width: "303px", height: "44px" }}>
+      <img
+        src="/iconos/Textfield.png"
+        alt=""
+        draggable={false}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }}
+      />
+      {children}
+    </div>
+  );
+}
+
 export default function Register() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -97,19 +112,6 @@ export default function Register() {
     event.stopPropagation();
     navigate("/terms");
   };
-
-  /* ── Textfield image wrapper ──────────────────────────────────── */
-  const TextfieldWrapper = ({ children }) => (
-    <div style={{ position: "relative", width: "303px", height: "44px" }}>
-      <img
-        src="/iconos/Textfield.png"
-        alt=""
-        draggable={false}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }}
-      />
-      {children}
-    </div>
-  );
 
   /* ── Step renders ─────────────────────────────────────────────── */
   const renderFields = () => {
