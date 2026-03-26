@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import SoundMenu from "@/components/SoundMenu";
 
 const baseNames = [
   "caverna (1)",
@@ -27,8 +28,6 @@ const Intro = () => {
   const nextImageTimeout = useRef(null);
   const countdownInterval = useRef(null);
   const containerRef = useRef(null);
-  const introImageRef = useRef(null);
-  const introTextRef = useRef(null);
 
   const handleInteraction = () => {
     if (showTutorial) setShowTutorial(false);
@@ -49,14 +48,21 @@ const Intro = () => {
     setTimeout(() => navigate("/intro-maya"), 500);
   };
 
+  // Saltar: skip the whole intro
+  const skipIntro = () => {
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
+    clearTimeout(fadeOutTimeout.current);
+    clearTimeout(nextImageTimeout.current);
+    finishIntro();
+  };
+
   useEffect(() => {
     if (exitFade || showTutorial) return;
 
     const isLast = index === baseNames.length - 1;
 
     if (isLast) {
-      // Start countdown
-      setCountdown(5); // Reset countdown when entering the last slide
+      setCountdown(5);
       countdownInterval.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -68,15 +74,11 @@ const Intro = () => {
         });
       }, 1000);
     } else {
-      // Auto-progression logic
       fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
       nextImageTimeout.current = setTimeout(() => {
         setIndex((prev) => {
           const next = prev + 1;
-          if (next >= baseNames.length) {
-            // Stay on last image to show repeat option
-            return prev;
-          }
+          if (next >= baseNames.length) return prev;
           setFade(true);
           return next;
         });
@@ -90,48 +92,33 @@ const Intro = () => {
     };
   }, [index, exitFade, navigate, showTutorial]);
 
+  // Center torch on mount
   useEffect(() => {
     const centerTorch = () => {
       if (!containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      setTorchPos({
-        x: containerRect.width / 2,
-        y: containerRect.height / 2,
-      });
+      const r = containerRef.current.getBoundingClientRect();
+      setTorchPos({ x: r.width / 2, y: r.height / 2 });
     };
-
     setTimeout(centerTorch, 100);
     window.addEventListener("resize", centerTorch);
-
-    return () => {
-      window.removeEventListener("resize", centerTorch);
-    };
+    return () => window.removeEventListener("resize", centerTorch);
   }, []);
 
   const handleMove = (event) => {
     handleInteraction();
     if (!containerRef.current) return;
-
     const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     const clientY = event.touches ? event.touches[0].clientY : event.clientY;
-
-    const containerRect = containerRef.current.getBoundingClientRect();
-
-    setTorchPos({
-      x: clientX - containerRect.left,
-      y: clientY - containerRect.top,
-    });
+    const r = containerRef.current.getBoundingClientRect();
+    setTorchPos({ x: clientX - r.left, y: clientY - r.top });
   };
 
   const goToNextImage = () => {
     clearTimeout(fadeOutTimeout.current);
     clearTimeout(nextImageTimeout.current);
-
     setIndex((prev) => {
       const next = prev + 1;
-      if (next >= baseNames.length) {
-        return prev; // stays on last slide to show repeat option
-      }
+      if (next >= baseNames.length) return prev;
       setFade(true);
       return next;
     });
@@ -144,161 +131,243 @@ const Intro = () => {
   return (
     <div
       ref={containerRef}
-      className={`intro-container ${exitFade ? "exit-fade" : ""} font-apercu`}
+      className="font-apercu"
+      style={{
+        width: "100vw",
+        height: "100dvh",
+        backgroundColor: "#070707",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
+        position: "relative",
+        opacity: exitFade ? 0 : 1,
+        transition: "opacity 0.5s ease-in-out",
+        touchAction: "none",
+        cursor: "none",
+      }}
       onMouseMove={handleMove}
       onTouchMove={handleMove}
       onClick={handleInteraction}
     >
-      <style>{`
-        .intro-container {
-          width: 100vw;
-          height: 100dvh;
-          background-color: black;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          position: relative;
-          opacity: 1;
-          transition: opacity 0.5s ease-in-out;
-          touch-action: none; 
-          cursor: none;
-        }
-
-        .exit-fade {
-          opacity: 0;
-        }
-
-        .intro-image {
-          height: 100dvh;
-          width: auto;
-          position: absolute;
-          opacity: 0;
-          filter: brightness(1) saturate(1);
-          transition: opacity 0.5s ease-in-out, filter 0.2s ease;
-        }
-
-        .fade-in { opacity: 1; }
-        .fade-out { opacity: 0; }
-
-        .intro-text {
-          position: absolute;
-          top: 15%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          padding: 1rem;
-          border-radius: 1rem;
-          max-width: 80%;
-          width: 700px;
-          text-align: center;
-          font-size: 1.1rem;
-          color: white; 
-          z-index: 10;
-          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9);
-          transition: text-shadow 0.2s ease, filter 0.2s ease;
-        }
-
-        .intro-text.no-bg {
-          background-color: transparent;
-          box-shadow: none;
-        }
-
-        .light-overlay {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          transition: background-position 0.05s linear;
-          z-index: 14; 
-        }
-
-        .tutorial-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,0.4);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
-          color: white;
-          pointer-events: none;
-          animation: fadeIn 0.5s ease;
-        }
-
-        .tutorial-hand {
-          width: 80px;
-          height: auto;
-          animation: handMove 3s infinite ease-in-out;
-        }
-
-        @keyframes handMove {
-          0%, 100% { transform: translate(-50px, -20px); }
-          50% { transform: translate(50px, 20px) scale(0.9); }
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .btn-repeat, .btn-next {
-           cursor: pointer;
-           pointer-events: auto;
-        }
-      `}</style>
-
-      <div
-        className="light-overlay"
+      {/* ── Background image ───────────────────────────────────────── */}
+      <img
+        src={`/intro/${currentName}.jpg`}
+        alt={`intro-${currentName}`}
         style={{
-          background: `radial-gradient(circle at ${torchPos.x}px ${torchPos.y}px, 
-          transparent 0%, 
-          rgba(0,0,0,0.5) 25%, 
-          rgba(0,0,0,0.9) 45%, 
-          black 80%)`,
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          opacity: fade ? 1 : 0,
+          transition: "opacity 0.5s ease-in-out",
         }}
       />
 
+      {/* ── Torch overlay ──────────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          zIndex: 14,
+          background: `radial-gradient(circle at ${torchPos.x}px ${torchPos.y}px,
+            transparent 0%,
+            rgba(0,0,0,0.4) 38%,
+            rgba(0,0,0,0.85) 58%,
+            black 85%)`,
+        }}
+      />
+
+      {/* ── Sound icon — top right ─────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          top: "27px",
+          right: "27px",
+          zIndex: 30,
+          cursor: "auto",
+        }}
+      >
+        <SoundMenu />
+      </div>
+
+      {/* ── Story text box — imagen contenedorTextoIntro ─────────── */}
+      <div
+        onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
+        style={{
+          position: "absolute",
+          top: "94px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "313px",
+          minHeight: "140px",
+          zIndex: 10,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* Imagen de fondo del contenedor */}
+        <img
+          src="/intro/contenedorTextoIntro.png"
+          alt=""
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "fill",
+          }}
+          draggable={false}
+        />
+        {/* Texto encima de la imagen */}
+        <p
+          style={{
+            position: "relative",
+            zIndex: 1,
+            color: "#F7F3EA",
+            fontSize: "17px",
+            fontFamily: "'Volume TC', sans-serif",
+            fontWeight: 400,
+            lineHeight: "1.5",
+            textAlign: "center",
+            margin: 0,
+            padding: "16px 24px",
+            textShadow: "1px 1px 4px rgba(0,0,0,0.8)",
+          }}
+        >
+          {t(`intro.${currentName}`)}
+        </p>
+      </div>
+
+      {/* ── Tutorial overlay ──────────────────────────────────────── */}
       {showTutorial && (
-        <div className="tutorial-overlay">
-          <img src="/iconos/icon_toqueBlanco.png" alt="Tutorial" className="tutorial-hand" />
-          <p className="mt-8 text-lg font-medium tracking-widest uppercase opacity-80">
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+            color: "white",
+            pointerEvents: "none",
+            animation: "fadeIn 0.5s ease",
+          }}
+        >
+          <style>{`
+            @keyframes handMove {
+              0%, 100% { transform: translate(-50px, -20px); }
+              50% { transform: translate(50px, 20px) scale(0.9); }
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to   { opacity: 1; }
+            }
+            .tutorial-hand { animation: handMove 3s infinite ease-in-out; }
+          `}</style>
+          <img
+            src="/iconos/icon_toqueBlanco.png"
+            alt="Tutorial"
+            className="tutorial-hand"
+            style={{ width: "80px", height: "auto" }}
+          />
+          <p style={{ marginTop: "32px", fontSize: "18px", fontWeight: 500, letterSpacing: "0.15em", textTransform: "uppercase", opacity: 0.8 }}>
             {t("intro.tutorial")}
           </p>
         </div>
       )}
 
-      <img
-        ref={introImageRef}
-        src={`/intro/${currentName}.jpg`}
-        alt={`intro-${currentName}`}
-        className={`intro-image ${fade ? "fade-in" : "fade-out"}`}
-      />
-
-      <div
-        ref={introTextRef}
-        className={`intro-text no-bg`}
-      >
-        {t(`intro.${currentName}`)}
-      </div>
-
+      {/* ── Botón Saltar — Figma: 200×60px, #80A850, 24px bold ────── */}
       {!isLastImage && (
-        <div className="absolute bottom-10 right-10 z-20">
-          <button
-            onClick={goToNextImage}
-            className="btn-next px-6 py-2 bg-white/20 text-white rounded-full border border-white/30 backdrop-blur-md hover:bg-white/40 transition-all font-semibold uppercase tracking-widest text-[10px]"
-          >
-            {t("next") || "Siguiente"}
-          </button>
-        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
+          style={{
+            position: "absolute",
+            bottom: "96px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "200px",
+            height: "60px",
+            borderRadius: "30px",
+            backgroundColor: "#80A850",
+            color: "#F7F3EA",
+            fontSize: "24px",
+            fontWeight: 700,
+            border: "none",
+            cursor: "pointer",
+            zIndex: 20,
+            boxShadow: "3.2px 3.2px 3.2px 0px rgba(0,0,0,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {t("intro.skip") || "Saltar"}
+        </button>
       )}
 
+      {/* ── Última diapositiva ─────────────────────────────────────── */}
       {isLastImage && (
-        <div className="absolute bottom-8 flex flex-col items-center gap-4 z-20">
+        <div
+          style={{
+            position: "absolute",
+            bottom: "96px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+            zIndex: 20,
+          }}
+        >
           <button
-            onClick={repeatIntro}
-            className="btn-repeat px-8 py-3 bg-white/10 text-white rounded-full border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all font-semibold uppercase tracking-wider text-xs"
+            onClick={(e) => { e.stopPropagation(); finishIntro(); }}
+            style={{
+              width: "200px",
+              height: "60px",
+              borderRadius: "30px",
+              backgroundColor: "#80A850",
+              color: "#F7F3EA",
+              fontSize: "24px",
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "3.2px 3.2px 3.2px 0px rgba(0,0,0,0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            {t("intro.repeatIntro")} ({countdown}s)
+            {t("intro.continue") || "Continuar"}
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); repeatIntro(); }}
+            style={{
+              width: "200px",
+              height: "60px",
+              borderRadius: "30px",
+              backgroundColor: "#F4E6C7",
+              color: "#352416",
+              fontSize: "24px",
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "3.2px 3.2px 3.2px 0px rgba(0,0,0,0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {t("intro.repeatIntro")}
           </button>
         </div>
       )}
