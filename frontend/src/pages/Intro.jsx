@@ -152,7 +152,7 @@ const Intro = () => {
       <style>{`
         .intro-container {
           width: 100vw;
-          height: 100vh;
+          height: 100dvh;
           background-color: black;
           display: flex;
           justify-content: center;
@@ -170,7 +170,7 @@ const Intro = () => {
         }
 
         .intro-image {
-          height: 100vh;
+          height: 100dvh;
           width: auto;
           position: absolute;
           opacity: 0;

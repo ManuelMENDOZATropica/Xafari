@@ -113,7 +113,7 @@ export default function SettingsMenu() {
           aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label={buttonLabel}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-gray-300 text-gray-600 shadow-md p-0 transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-sky-300"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-white/40 text-gray-600 shadow-lg p-0 transition-all hover:bg-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-300"
         >
           <img
             src="/iconos/icon_ajustes.svg"
@@ -140,7 +140,7 @@ export default function SettingsMenu() {
                     aria-label={t("settingsLanguageTitle")}
                     className="space-y-2"
                   >
-                    <h3 className="text-sm font-semibold text-gray-800">
+                    <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
                       {t("settingsLanguageTitle")}
                     </h3>
 
@@ -152,16 +152,16 @@ export default function SettingsMenu() {
                             key={lang}
                             type="button"
                             onClick={() => handleLanguageSelect(lang)}
-                            className={`flex flex-col items-center justify-center gap-1 rounded-2xl border text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
-                              ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                              : "border-gray-200 bg-white/70 text-gray-700 shadow-sm hover:bg-white"
+                            className={`flex flex-col items-center justify-center gap-1 rounded-full border py-2.5 transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 ${isActive
+                              ? "border-emerald-500/50 bg-emerald-600/90 text-white shadow-lg scale-105"
+                              : "border-gray-200 bg-gray-50/50 text-gray-700 hover:bg-gray-100"
                               }`}
                             aria-pressed={isActive}
                           >
-                            <span className="text-2xl" aria-hidden="true">
+                            <span className="text-xl" aria-hidden="true">
                               {LANGUAGE_FLAGS[lang]}
                             </span>
-                            <span className="text-[0.65rem] leading-tight">
+                            <span className="text-[8px] font-bold uppercase tracking-widest leading-none">
                               {t(`languages.${lang}`)}
                             </span>
                           </button>
@@ -176,7 +176,7 @@ export default function SettingsMenu() {
                     aria-label={t("settingsSoundTitle")}
                     className="space-y-2"
                   >
-                    <h3 className="text-sm font-semibold text-gray-800">
+                    <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
                       {t("settingsSoundTitle")}
                     </h3>
 
@@ -188,28 +188,24 @@ export default function SettingsMenu() {
                             key={option.value}
                             type="button"
                             onClick={() => handleSoundSelect(option.value)}
-                            className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
-                              ? "border-sky-300 bg-sky-50 text-sky-800 shadow"
-                              : "border-gray-200 bg-white/70 text-gray-800 shadow-sm hover:bg-white"
+                            className={`flex w-full items-center justify-between rounded-full border px-4 py-2 transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 ${isActive
+                              ? "border-emerald-500/50 bg-emerald-600/10 text-emerald-800 shadow-sm"
+                              : "border-gray-200 bg-gray-50/30 text-gray-600 hover:bg-gray-100/50"
                               }`}
                             role="radio"
                             aria-checked={isActive}
-                            aria-label={`${t("soundMenu")}: ${t(
-                              option.labelKey
-                            )}`}
+                            aria-label={`${t("soundMenu")}: ${t(option.labelKey)}`}
                             data-skip-sound-click="true"
                           >
                             <div className="flex items-center gap-3">
                               <span
-                                className={`flex h-10 w-10 items-center justify-center rounded-full ${isActive
-                                  ? "bg-sky-100 text-sky-600"
-                                  : "bg-slate-100 text-slate-500"
+                                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${isActive ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-400"
                                   }`}
                                 aria-hidden="true"
                               >
                                 {SOUND_ICONS[option.icon]}
                               </span>
-                              <span className="text-sm font-medium">
+                              <span className="text-[10px] font-bold uppercase tracking-widest">
                                 {t(option.labelKey)}
                               </span>
                             </div>
@@ -235,22 +231,8 @@ export default function SettingsMenu() {
                   <Link
                     to="/privacy"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 rounded-full bg-white/80 backdrop-blur-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-800 shadow hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                    className="flex h-10 items-center justify-center gap-2 rounded-full bg-white/50 border border-gray-300 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-800 shadow-sm backdrop-blur-md transition-all hover:bg-white/80 active:scale-95"
                   >
-                    <svg
-                      aria-hidden="true"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 4h9a2 2 0 0 1 2 2v14l-6-3-6 3V6a2 2 0 0 1 2-2Z" />
-                      <path d="M9 9h6" />
-                      <path d="M9 13h3" />
-                    </svg>
                     <span>{t("settingsLegalButton")}</span>
                   </Link>
                 </div>

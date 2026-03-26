@@ -73,7 +73,7 @@ export default function Login() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-10 min-h-screen overflow-y-auto">
-        <div className="flex flex-col items-center justify-center flex-grow w-full gap-y-6 min-h-[calc(100vh-100px)]">
+        <div className="flex flex-col items-center justify-center flex-grow w-full gap-y-6 min-h-[calc(100dvh-100px)]">
           <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md w-full max-w-sm">
             <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
               {t("login")}

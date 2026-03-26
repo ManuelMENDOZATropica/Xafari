@@ -35,84 +35,87 @@ export default function PrivacyNotice() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-800 shadow-md transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-white/40 text-gray-800 shadow-lg transition-all hover:bg-white active:scale-90 focus:outline-none focus:ring-2 focus:ring-emerald-300"
             aria-label={t("back")}
           >
-            <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
+            <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-5 h-5" />
           </button>
-          <p className="hidden text-xs font-semibold uppercase tracking-[0.2em] text-sky-500 md:block">
+          <p className="hidden text-[9px] font-bold uppercase tracking-[0.2em] text-emerald-600/70 md:block">
             {t("privacy.updated")}
           </p>
         </div>
 
-        <header className="rounded-3xl border border-white/60 bg-gradient-to-br from-sky-500/80 via-blue-500/80 to-indigo-600/80 p-[1px] shadow-xl">
-          <div className="rounded-[calc(1.5rem-2px)] bg-white/95 p-6 text-center shadow-inner">
-            <h1 className="text-2xl font-bold text-sky-900 drop-shadow md:text-3xl">
+        <header className="rounded-full border border-white/60 bg-emerald-600/80 p-0.5 shadow-2xl">
+          <div className="rounded-full bg-white/95 py-6 px-10 text-center shadow-inner">
+            <h1 className="text-xl font-bold uppercase tracking-[0.1em] text-emerald-900 md:text-2xl">
               {t("privacy.title")}
             </h1>
-            <p className="mt-3 text-sm text-sky-700 md:text-base">
-              {t("privacy.intro")}
-            </p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-sky-500 md:hidden">
+            <p className="mt-1 text-xs font-bold uppercase tracking-widest text-emerald-600/60 md:hidden">
               {t("privacy.updated")}
             </p>
           </div>
         </header>
 
-        <section className="rounded-3xl border border-white/60 bg-white/90 p-6 shadow-lg backdrop-blur">
-          <h2 className="text-xl font-semibold text-emerald-700 md:text-2xl">
-            {t("privacy.privacyTitle")}
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm leading-relaxed md:text-base">
-            {privacyItems.map((item, index) => (
-              <li key={`${item}-${index}`} className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                  ●
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <p className="max-w-3xl mx-auto text-center text-sm leading-relaxed text-emerald-900/80 bg-white/40 backdrop-blur-md py-4 px-8 rounded-[2rem] border border-white/40">
+          {t("privacy.intro")}
+        </p>
 
-        <section className="rounded-3xl border border-white/60 bg-white/90 p-6 shadow-lg backdrop-blur">
-          <h2 className="text-xl font-semibold text-blue-700 md:text-2xl">
-            {t("privacy.cookiesTitle")}
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm leading-relaxed md:text-base">
-            {cookiesItems.map((item, index) => (
-              <li key={`${item}-${index}`} className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                  ●
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
+          <section className="rounded-[2.5rem] border border-white/60 bg-white/80 p-8 shadow-xl backdrop-blur-md">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-700 border-b border-emerald-100 pb-3 mb-6">
+              {t("privacy.privacyTitle")}
+            </h2>
+            <ul className="space-y-4 text-xs font-medium leading-relaxed text-emerald-900/80">
+              {privacyItems.map((item, index) => (
+                <li key={`${item}-${index}`} className="flex items-start gap-4">
+                  <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100/50 text-emerald-600 text-[8px]">
+                    ●
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-        <section className="rounded-3xl border border-white/60 bg-white/90 p-6 shadow-lg backdrop-blur">
-          <h2 className="text-xl font-semibold text-purple-700 md:text-2xl">
-            {t("privacy.dataUseTitle")}
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm leading-relaxed md:text-base">
-            {dataUseItems.map((item, index) => (
-              <li key={`${item}-${index}`} className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-600">
-                  ●
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+          <section className="rounded-[2.5rem] border border-white/60 bg-white/80 p-8 shadow-xl backdrop-blur-md">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-700 border-b border-emerald-100 pb-3 mb-6">
+              {t("privacy.cookiesTitle")}
+            </h2>
+            <ul className="space-y-4 text-xs font-medium leading-relaxed text-emerald-900/80">
+              {cookiesItems.map((item, index) => (
+                <li key={`${item}-${index}`} className="flex items-start gap-4">
+                  <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100/50 text-emerald-600 text-[8px]">
+                    ●
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-        <section className="mb-6 rounded-3xl border border-white/60 bg-gradient-to-r from-emerald-500/80 to-lime-500/80 p-[1px] shadow-xl">
-          <div className="rounded-[calc(1.5rem-2px)] bg-white/95 p-6 text-center shadow-inner">
-            <h3 className="text-lg font-semibold text-emerald-700 md:text-xl">
+          <section className="rounded-[2.5rem] border border-white/60 bg-white/80 p-8 shadow-xl backdrop-blur-md">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-700 border-b border-emerald-100 pb-3 mb-6">
+              {t("privacy.dataUseTitle")}
+            </h2>
+            <ul className="space-y-4 text-xs font-medium leading-relaxed text-emerald-900/80">
+              {dataUseItems.map((item, index) => (
+                <li key={`${item}-${index}`} className="flex items-start gap-4">
+                  <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100/50 text-emerald-600 text-[8px]">
+                    ●
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <section className="mb-6 rounded-full border border-white/60 bg-emerald-600/80 p-0.5 shadow-2xl">
+          <div className="rounded-full bg-white/95 py-6 px-10 text-center shadow-inner">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">
               {t("privacy.contactTitle")}
             </h3>
-            <p className="mt-3 text-sm text-emerald-800 md:text-base">
+            <p className="mt-1 text-[10px] font-medium text-emerald-800/80 uppercase tracking-widest">
               {t("privacy.contactDescription")}
             </p>
           </div>
