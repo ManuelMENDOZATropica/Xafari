@@ -40,32 +40,44 @@ export default function IntroMaya() {
     >
       <div className="flex flex-col items-center justify-center gap-8 px-6 w-full max-w-md">
 
-        {/* Imagen personaje — centrada, sin sombra */}
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={`img-${currentStep}`}
-            src={steps[currentStep].image}
-            alt={steps[currentStep].alt}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.35 }}
-            style={{
-              maxHeight: "50vh",
-              objectFit: "contain",
-            }}
-          />
-        </AnimatePresence>
+        {/* Contenedor FIJO de imagen — evita layout shift al cargar nueva imagen */}
+        <div style={{
+          position: "relative",
+          width: "100%",
+          height: "50vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={`img-${currentStep}`}
+              src={steps[currentStep].image}
+              alt={steps[currentStep].alt}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.35 }}
+              style={{
+                position: "absolute",
+                maxHeight: "100%",
+                maxWidth: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </AnimatePresence>
+        </div>
 
         {/* Contenedor de texto con imagen de fondo */}
         <div
           style={{
             position: "relative",
             width: "313px",
-            minHeight: "140px",
+            height: "140px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
           }}
         >
           <img

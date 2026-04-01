@@ -22,16 +22,16 @@
   "explorerFemale": "Exploradora",
   "registerComplete": "Registro concluído. Bem-vindo ao Xafari!",
   "registerFlow": {
-    "step1Title": "Nome",
-    "firstNamePlaceholder": "Escreva seu nome",
-    "lastNamePlaceholder": "Escreva seus sobrenomes",
-    "step2Title": "E-mail",
+    "step1Title": "Olá! Eu sou…",
+    "firstNamePlaceholder": "Nome",
+    "lastNamePlaceholder": "Sobrenome",
+    "step2Title": "Meu e-mail é…",
     "emailPlaceholder": "E-mail",
-    "step3Title": "Aniversário",
+    "step3Title": "Meu aniversário é…",
     "dayPlaceholder": "Dia",
     "monthPlaceholder": "Mês",
     "yearPlaceholder": "Ano",
-    "acceptTermsPrefix": "Aceito os",
+    "acceptTermsPrefix": "Concordo e aceito os",
     "acceptTermsLink": "termos e condições"
   }
 }
