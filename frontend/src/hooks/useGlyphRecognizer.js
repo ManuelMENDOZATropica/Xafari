@@ -28,12 +28,13 @@ const MOBILENET_URL     = "https://storage.googleapis.com/tfjs-models/tfjs/mobil
 const CNN_IMG_SIZE      = 48;
 const MN_IMG_SIZE       = 224;
 
-// ─── Detection thresholds (tune these to balance accuracy vs. false positives) ─
-const CONFIDENCE_THRESHOLD  = 0.92;  // softmax score must reach this to even consider (high = fewer false positives)
-const NONE_MAX_THRESHOLD    = 0.25;  // if "none" class exceeds this, reject regardless of top class
-const MARGIN_THRESHOLD      = 0.18;  // top-1 must beat top-2 by at least this margin
-const CONSECUTIVE_THRESHOLD = 6;     // # of consecutive frames required before triggering
-const SCAN_INTERVAL_MS      = 600;   // ms between frames (slower = more stable)
+// ─── Detection thresholds ─────────────────────────────────────────────────────────────────
+// The model uses SIGMOID output: each class gives an INDEPENDENT 0..1 probability.
+// "jaguar = 0.90" means "90% sure this IS a jaguar" — not relative to other classes.
+// A blank camera should give all values near 0.
+const CONFIDENCE_THRESHOLD  = 0.70;  // sigmoid score must exceed this to trigger
+const CONSECUTIVE_THRESHOLD = 5;     // frames in a row confirming same class
+const SCAN_INTERVAL_MS      = 500;
 
 // ─── Reference glyphs for MobileNet fallback ────────────────────────────────
 const GLYPH_REFS = [
@@ -277,24 +278,18 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
         results = await classifyWithMobileNet(video);
       }
 
-      // ── Sort descending ────────────────────────────────────────────────────
-      const sorted = [...results].sort((a, b) => b.confidence - a.confidence);
+      // ── Sort descending by sigmoid score ──────────────────────────────────
+      // Each score is INDEPENDENT: "jaguar=0.85" = 85% sure it's a jaguar.
+      // If no glyph is visible, all scores should be near 0.
+      const sorted = [...results]
+        .filter((r) => r.label !== "none")          // exclude none from candidates
+        .sort((a, b) => b.confidence - a.confidence);
       setAllPredictions(sorted);
 
-      const top     = sorted[0];
-      const second  = sorted[1];
-      const noneRes = results.find((r) => r.label === "none");
-      const noneScore = noneRes ? noneRes.confidence : 0;
+      const top = sorted[0];
 
-      // ── Multi-gate rejection ───────────────────────────────────────────────
-      const rejected =
-        !top                                           // no result
-        || top.label === "none"                        // top IS none
-        || top.confidence < CONFIDENCE_THRESHOLD       // not confident enough
-        || noneScore > NONE_MAX_THRESHOLD              // none class too high
-        || (second && (top.confidence - second.confidence) < MARGIN_THRESHOLD); // ambiguous
-
-      if (rejected) {
+      // Single gate: the top glyph class must independently exceed the threshold
+      if (!top || top.confidence < CONFIDENCE_THRESHOLD) {
         consecutiveRef.current = { label: null, count: 0 };
         return;
       }

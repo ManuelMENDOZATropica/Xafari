@@ -49,18 +49,23 @@ def load_dataset():
             labels.append(ci)
 
     X = np.stack(images)
-    y = np.array(labels, dtype=np.int32)
+    y_sparse = np.array(labels, dtype=np.int32)
+
+    # One-hot encode for binary_crossentropy
+    num_classes = len(classes)
+    y = np.eye(num_classes, dtype=np.float32)[y_sparse]
 
     # Shuffle
     idx = np.random.permutation(len(X))
-    X, y = X[idx], y[idx]
+    X, y, y_sparse = X[idx], y[idx], y_sparse[idx]
 
     split = int(len(X) * (1 - VALIDATION_SPLIT))
     X_train, X_val = X[:split], X[split:]
     y_train, y_val = y[:split], y[split:]
+    y_train_sparse = y_sparse[:split]  # for class weights
 
-    print(f"\n✅ Loaded: {len(X_train)} train, {len(X_val)} val")
-    return X_train, y_train, X_val, y_val, classes
+    print(f"\nLoaded: {len(X_train)} train, {len(X_val)} val")
+    return X_train, y_train, y_train_sparse, X_val, y_val, classes
 
 # ─── Build model ──────────────────────────────────────────────────────────────
 def build_model(num_classes):
@@ -84,12 +89,17 @@ def build_model(num_classes):
         tf.keras.layers.Dropout(0.4),
         tf.keras.layers.Dense(128, activation="relu"),
         tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(num_classes, activation="softmax"),
+
+        # SIGMOID (not softmax): each class independently outputs 0..1
+        # so "jaguar=0.95" means "95% sure this IS a jaguar"
+        # and a blank camera gives all classes near 0
+        tf.keras.layers.Dense(num_classes, activation="sigmoid"),
     ])
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(LEARNING_RATE),
-        loss="sparse_categorical_crossentropy",
+        # binary_crossentropy treats each output neuron independently
+        loss="binary_crossentropy",
         metrics=["accuracy"],
     )
     model.summary()
@@ -106,7 +116,7 @@ def train():
 
     print(f"🔧 TensorFlow {tf.__version__}\n")
 
-    X_train, y_train, X_val, y_val, classes = load_dataset()
+    X_train, y_train, y_train_sparse, X_val, y_val, classes = load_dataset()
     model = build_model(len(classes))
 
     callbacks = [
@@ -120,15 +130,15 @@ def train():
 
     print(f"\nTraining {EPOCHS} epochs, batch={BATCH_SIZE}, img={IMG_SIZE}px\n")
 
-    # Class weights: compensate for none having more samples
+    # Class weights
     from sklearn.utils.class_weight import compute_class_weight
     try:
-        cw = compute_class_weight("balanced", classes=np.unique(y_train), y=y_train)
-        class_weights = {i: w for i, w in enumerate(cw)}
-        print(f"Class weights: {class_weights}\n")
-    except ImportError:
+        cw = compute_class_weight("balanced", classes=np.unique(y_train_sparse), y=y_train_sparse)
+        class_weights = {i: float(w) for i, w in enumerate(cw)}
+        print(f"Class weights: { {classes[i]: f'{w:.2f}' for i,w in class_weights.items()} }\n")
+    except Exception:
         class_weights = None
-        print("sklearn not found, training without class weights\n")
+        print("No class weights\n")
 
     history = model.fit(
         X_train, y_train,
