@@ -231,8 +231,10 @@ function computeEdgeScore(ctx, size) {
   return edgeSum / count;  // fraction of pixels that are "edges"
 }
 
-// Minimum fraction of edge pixels required to run CNN (tune if needed)
-const EDGE_SCORE_THRESHOLD = 0.08;  // ~8% of pixels must be edges
+// Minimum fraction of pixels with sharp gradients to consider running CNN.
+// Face ~10-18%, plain wall ~2-5%, glyph medallion ~20-40%.
+// Raise this if you still get false positives; lower if real glyphs are rejected.
+const EDGE_SCORE_THRESHOLD = 0.20;
 
 async function classifyWithCNN(videoElement) {
   const canvas = document.createElement("canvas");
@@ -241,11 +243,10 @@ async function classifyWithCNN(videoElement) {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(videoElement, 0, 0, CNN_IMG_SIZE, CNN_IMG_SIZE);
 
-  // ── Pre-filter: reject frames without enough edge complexity ────────────────
   const edgeScore = computeEdgeScore(ctx, CNN_IMG_SIZE);
+
   if (edgeScore < EDGE_SCORE_THRESHOLD) {
-    // Not enough visual complexity — definitely not a glyph medallion
-    return null;  // caller will skip this frame
+    return { results: null, edgeScore };
   }
 
   const input  = normalizeCanvas(canvas, CNN_IMG_SIZE);
@@ -254,8 +255,12 @@ async function classifyWithCNN(videoElement) {
   input.dispose();
   output.dispose();
 
-  return _cnnLabels.map((label, i) => ({ label, confidence: probs[i] }));
+  return {
+    edgeScore,
+    results: _cnnLabels.map((label, i) => ({ label, confidence: probs[i] })),
+  };
 }
+
 
 async function classifyWithMobileNet(videoElement) {
   const canvas = document.createElement("canvas");
@@ -318,34 +323,40 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
 
     try {
       let results;
+      let frameEdgeScore = 0;
+
       if (_mode === "cnn") {
-        results = await classifyWithCNN(video);
+        const cnnOut = await classifyWithCNN(video);
+        results = cnnOut.results;
+        frameEdgeScore = cnnOut.edgeScore;
       } else {
         results = await classifyWithMobileNet(video);
+        frameEdgeScore = 1;
       }
 
-      // null = pre-filter rejected this frame (not enough edges to be a glyph)
+      setEdgeScore(frameEdgeScore);
+
+      // Pre-filter rejected this frame
       if (results === null) {
-        setEdgeScore(0);
         setAllPredictions([]);
         consecutiveRef.current = { label: null, count: 0 };
         return;
       }
+
       // ── Sort descending by sigmoid score ──────────────────────────────────
-      // Each score is INDEPENDENT: "jaguar=0.85" = 85% sure it's a jaguar.
-      // If no glyph is visible, all scores should be near 0.
       const sorted = [...results]
-        .filter((r) => r.label !== "none")          // exclude none from candidates
+        .filter((r) => r.label !== "none")
         .sort((a, b) => b.confidence - a.confidence);
       setAllPredictions(sorted);
 
       const top = sorted[0];
 
-      // Single gate: the top glyph class must independently exceed the threshold
+      // Single gate: top class must independently exceed sigmoid threshold
       if (!top || top.confidence < CONFIDENCE_THRESHOLD) {
         consecutiveRef.current = { label: null, count: 0 };
         return;
       }
+
 
       if (consecutiveRef.current.label === top.label) {
         consecutiveRef.current.count++;
