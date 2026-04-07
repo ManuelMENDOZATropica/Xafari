@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen-dataset": "node --max-old-space-size=4096 scripts/generate-dataset.mjs",
+    "train": "set PYTHONIOENCODING=utf-8 && set TF_ENABLE_ONEDNN_OPTS=0 && py -3.12 scripts/train_glyph_model.py",
+    "convert-model": "set PYTHONIOENCODING=utf-8 && set TF_ENABLE_ONEDNN_OPTS=0 && py -3.12 scripts/convert_to_tfjs.py"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@iconify/react": "^6.0.2",
+    "@tensorflow/tfjs": "^4.22.0",
     "@zxing/browser": "^0.1.5",
     "framer-motion": "^12.19.1",
     "html2canvas": "^1.4.1",
@@ -27,10 +31,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "canvas": "^3.2.3",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
