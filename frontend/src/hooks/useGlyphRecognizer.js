@@ -27,9 +27,13 @@ const MOBILENET_URL     = "https://storage.googleapis.com/tfjs-models/tfjs/mobil
 
 const CNN_IMG_SIZE      = 48;
 const MN_IMG_SIZE       = 224;
-const CONFIDENCE_THRESHOLD    = 0.80;  // minimum softmax/cosine score to consider
-const CONSECUTIVE_THRESHOLD   = 3;     // frames in a row to confirm detection
-const SCAN_INTERVAL_MS        = 500;
+
+// ─── Detection thresholds (tune these to balance accuracy vs. false positives) ─
+const CONFIDENCE_THRESHOLD  = 0.92;  // softmax score must reach this to even consider (high = fewer false positives)
+const NONE_MAX_THRESHOLD    = 0.25;  // if "none" class exceeds this, reject regardless of top class
+const MARGIN_THRESHOLD      = 0.18;  // top-1 must beat top-2 by at least this margin
+const CONSECUTIVE_THRESHOLD = 6;     // # of consecutive frames required before triggering
+const SCAN_INTERVAL_MS      = 600;   // ms between frames (slower = more stable)
 
 // ─── Reference glyphs for MobileNet fallback ────────────────────────────────
 const GLYPH_REFS = [
@@ -273,12 +277,24 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
         results = await classifyWithMobileNet(video);
       }
 
-      // Sort descending by confidence, exclude "none"
+      // ── Sort descending ────────────────────────────────────────────────────
       const sorted = [...results].sort((a, b) => b.confidence - a.confidence);
       setAllPredictions(sorted);
 
-      const top = sorted.find((r) => r.label !== "none");
-      if (!top || top.confidence < CONFIDENCE_THRESHOLD) {
+      const top     = sorted[0];
+      const second  = sorted[1];
+      const noneRes = results.find((r) => r.label === "none");
+      const noneScore = noneRes ? noneRes.confidence : 0;
+
+      // ── Multi-gate rejection ───────────────────────────────────────────────
+      const rejected =
+        !top                                           // no result
+        || top.label === "none"                        // top IS none
+        || top.confidence < CONFIDENCE_THRESHOLD       // not confident enough
+        || noneScore > NONE_MAX_THRESHOLD              // none class too high
+        || (second && (top.confidence - second.confidence) < MARGIN_THRESHOLD); // ambiguous
+
+      if (rejected) {
         consecutiveRef.current = { label: null, count: 0 };
         return;
       }

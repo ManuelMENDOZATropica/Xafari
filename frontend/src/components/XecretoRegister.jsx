@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState, useContext } from "react";
-import { BrowserQRCodeReader } from "@zxing/browser";
+import { useEffect, useRef, useState, useContext, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
@@ -7,6 +6,21 @@ import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import ModalMapa from "@/components/ModalMapa";
 import XafariContext from "./XafariContext";
 import CloseIcon from "./CloseIcon";
+import useGlyphRecognizer from "@/hooks/useGlyphRecognizer";
+
+// ─── Glyph label → xecreto key mapping ─────────────────────────────────────
+const GLYPH_TO_XECRETO = {
+  mono:      "xecreto1",
+  rana:      "xecreto2",
+  jaguar:    "xecreto3",
+  // guacamaya: "xecreto4", // No glyph SVG yet
+  serpiente: "xecreto5",
+  venado:    "xecreto6",
+  buho:      "xecreto7",
+  mariposa:  "xecreto8",
+  flamenco:  "xecreto9",
+  coati:     "xecreto10",
+};
 
 export default function XecretoRegister({ onClose }) {
   const videoRef = useRef(null);
@@ -41,64 +55,94 @@ export default function XecretoRegister({ onClose }) {
   const [showInstrucciones, setShowInstrucciones] = useState(false);
   const [showPista, setShowPista] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
-  useEffect(() => {
-    const codeReader = new BrowserQRCodeReader();
-    let isMounted = true;
+  const [detectedLabel, setDetectedLabel] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-    const startScan = async () => {
+  // ─── Handle glyph detection ─────────────────────────────────────────────
+  const handleGlyphDetection = useCallback((glyphLabel, confidence) => {
+    if (isProcessing) return;
+
+    const xecretoKey = GLYPH_TO_XECRETO[glyphLabel];
+    if (!xecretoKey || !qrData[xecretoKey]) return;
+
+    setIsProcessing(true);
+    setDetectedLabel(glyphLabel);
+
+    const code = xecretoKey;
+
+    if (!scannedCodes[code]) {
+      const updated = { ...scannedCodes, [code]: true };
+      setScannedCodes(updated);
+      localStorage.setItem("xecretos", JSON.stringify(updated));
+      if (typeof playSuccessSound === "function") {
+        playSuccessSound();
+      }
+    }
+
+    setLastScanned(code);
+    setInsigniaKey((prev) => prev + 1);
+    setShowInsignia(false);
+    setTimeout(() => setShowInsignia(true), 50);
+
+    setTimeout(() => {
+      setShowInsignia(false);
+      setIsProcessing(false);
+      onClose();
+    }, 6000);
+  }, [isProcessing, scannedCodes, playSuccessSound, onClose]);
+
+  // ─── Glyph recognizer hook ──────────────────────────────────────────────
+  const {
+    isModelLoaded,
+    isScanning,
+    allPredictions,
+  } = useGlyphRecognizer(videoRef, {
+    active: !isProcessing,
+    onDetection: handleGlyphDetection,
+  });
+
+  // ─── Camera setup ───────────────────────────────────────────────────────
+  useEffect(() => {
+    let stream = null;
+    let mounted = true;
+
+    const startCamera = async () => {
       try {
         if (!videoRef.current) {
-          setTimeout(startScan, 200);
+          setTimeout(startCamera, 200);
           return;
         }
 
-        setScannerReady(true);
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "environment",
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+          },
+        });
 
-        await codeReader.decodeFromVideoDevice(
-          undefined,
-          videoRef.current,
-          (result) => {
-            if (!isMounted || !result) return;
-            const code = result.getText();
-            if (!qrData[code]) return;
-
-            if (!scannedCodes[code]) {
-              const updated = { ...scannedCodes, [code]: true };
-              setScannedCodes(updated);
-              localStorage.setItem("xecretos", JSON.stringify(updated));
-              if (typeof playSuccessSound === "function") {
-                playSuccessSound();
-              }
-            }
-
-            setLastScanned(code);
-            setInsigniaKey((prev) => prev + 1);
-            setShowInsignia(false);
-            setTimeout(() => setShowInsignia(true), 50);
-
-            setTimeout(() => {
-              setShowInsignia(false);
-              onClose();
-            }, 6000);
-          }
-        );
+        if (mounted && videoRef.current) {
+          videoRef.current.srcObject = stream;
+          setScannerReady(true);
+        }
       } catch (err) {
         console.error("Error al acceder a la cámara:", err);
         setCameraError(`${err.name}: ${err.message}`);
       }
     };
 
-    startScan();
+    startCamera();
 
     return () => {
-      isMounted = false;
-      try {
-        codeReader.reset();
-      } catch (e) {
-        console.warn("No se pudo resetear el lector:", e.message);
+      mounted = false;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
+
+  // Top predictions for UI display (sorted, including none)
+  const topPrediction = allPredictions.find((p) => p.label !== "none" && p.confidence > 0.5);
 
   return (
     <div className="w-full h-full min-h-screen mt-[22px] overflow-y-auto px-4">
@@ -150,6 +194,12 @@ export default function XecretoRegister({ onClose }) {
           <h1 className="text-xl font-bold text-emerald-800 drop-shadow">
             {t("scan_title")}
           </h1>
+          {/* Model loading status */}
+          {!isModelLoaded && (
+            <p className="text-xs text-amber-600 mt-1 animate-pulse">
+              {t("loading_model") || "Cargando reconocimiento..."}
+            </p>
+          )}
         </div>
       </div>
 
@@ -158,6 +208,8 @@ export default function XecretoRegister({ onClose }) {
           {cameraError}
         </div>
       )}
+
+      {/* Camera viewport */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-video bg-white/80 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden z-10">
         <video
           ref={videoRef}
@@ -166,6 +218,55 @@ export default function XecretoRegister({ onClose }) {
           muted
           className="w-full h-full object-cover rounded-2xl"
         />
+
+        {/* Scanning overlay — animated circular frame */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div
+            className={`w-48 h-48 rounded-full border-4 transition-colors duration-300 ${
+              topPrediction && topPrediction.confidence > 0.6
+                ? "border-emerald-400 shadow-[0_0_30px_rgba(52,211,153,0.4)]"
+                : "border-white/50"
+            }`}
+            style={{
+              animation: isScanning ? "pulse-ring 2s ease-in-out infinite" : "none",
+            }}
+          />
+        </div>
+
+        {/* Real-time confidence bar — shows top-3 predictions */}
+        {allPredictions.length > 0 && (
+          <div className="absolute bottom-2 left-2 right-2 flex flex-col gap-0.5 pointer-events-none">
+            {allPredictions
+              .filter((p) => p.label !== "none" && p.confidence > 0.15)
+              .slice(0, 3)
+              .map((p) => (
+                <div key={p.label} className="flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5">
+                  <div
+                    className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{
+                      backgroundColor:
+                        p.confidence > 0.92 ? "#34d399"
+                        : p.confidence > 0.70 ? "#fbbf24"
+                        : "#f87171",
+                    }}
+                  />
+                  <span className="text-white text-xs capitalize flex-1">{p.label}</span>
+                  <span className="text-white/70 text-xs font-mono">{Math.round(p.confidence * 100)}%</span>
+                  <div className="h-1 rounded-full overflow-hidden" style={{ width: "60px", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-200"
+                      style={{
+                        width: `${Math.round(p.confidence * 100)}%`,
+                        backgroundColor: p.confidence > 0.92 ? "#34d399" : p.confidence > 0.70 ? "#fbbf24" : "#f87171",
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+
+        {/* Scanning line animation */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute w-full h-0.5 bg-green-500 animate-scan" />
         </div>
@@ -193,10 +294,6 @@ export default function XecretoRegister({ onClose }) {
           {t("open_map")}
         </button>
       </div>
-
-
-
-      
 
       <ModalInstruccionesXecretos show={showInstrucciones} onClose={() => setShowInstrucciones(false)} />
       <ModalPistaXecreto
@@ -259,6 +356,10 @@ export default function XecretoRegister({ onClose }) {
         }
         .animate-scan {
           animation: scan 3s ease-in-out infinite;
+        }
+        @keyframes pulse-ring {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.7; }
         }
       `}</style>
         </div>
