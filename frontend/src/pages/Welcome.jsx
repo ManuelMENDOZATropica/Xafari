@@ -7,7 +7,12 @@ import SoundMenu from "@/components/SoundMenu";
 import CloseIcon from "@/components/CloseIcon";
 import PrivacyNotice from "@/pages/PrivacyNotice";
 
-const IS_DEV = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const IS_DEV =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.port === "5173" ||
+  window.location.port === "5174" ||
+  /^192\.168\.|^10\.|^172\.(1[6-9]|2\d|3[01])\./.test(window.location.hostname);
 
 
 export default function Welcome() {
