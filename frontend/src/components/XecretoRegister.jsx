@@ -96,6 +96,7 @@ export default function XecretoRegister({ onClose }) {
     isModelLoaded,
     isScanning,
     allPredictions,
+    edgeScore,
   } = useGlyphRecognizer(videoRef, {
     active: !isProcessing,
     onDetection: handleGlyphDetection,
@@ -245,8 +246,8 @@ export default function XecretoRegister({ onClose }) {
                     className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                     style={{
                       backgroundColor:
-                        p.confidence > 0.92 ? "#34d399"
-                        : p.confidence > 0.70 ? "#fbbf24"
+                        p.confidence > 0.70 ? "#34d399"
+                        : p.confidence > 0.40 ? "#fbbf24"
                         : "#f87171",
                     }}
                   />
@@ -257,12 +258,27 @@ export default function XecretoRegister({ onClose }) {
                       className="h-full rounded-full transition-all duration-200"
                       style={{
                         width: `${Math.round(p.confidence * 100)}%`,
-                        backgroundColor: p.confidence > 0.92 ? "#34d399" : p.confidence > 0.70 ? "#fbbf24" : "#f87171",
+                        backgroundColor: p.confidence > 0.70 ? "#34d399" : p.confidence > 0.40 ? "#fbbf24" : "#f87171",
                       }}
                     />
                   </div>
                 </div>
               ))}
+            {/* Edge score indicator — shows pre-filter status */}
+            <div className="flex items-center gap-2 bg-black/70 backdrop-blur-sm rounded-full px-2 py-0.5 mt-0.5">
+              <div
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{ backgroundColor: edgeScore >= 0.08 ? "#34d399" : "#f87171" }}
+              />
+              <span className="text-white/60 text-xs font-mono flex-1">edges</span>
+              <span className="text-white/70 text-xs font-mono">{Math.round(edgeScore * 100)}%</span>
+              <div className="h-1 rounded-full overflow-hidden" style={{ width: "60px", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${Math.min(100, Math.round(edgeScore * 500))}%`, backgroundColor: edgeScore >= 0.08 ? "#34d399" : "#f87171" }}
+                />
+              </div>
+            </div>
           </div>
         )}
 

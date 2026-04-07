@@ -197,11 +197,56 @@ export async function preloadGlyphModel() {
 
 // ─── Classification functions ─────────────────────────────────────────────────
 
+/**
+ * Pre-filter: checks if the frame has enough edge complexity to plausibly contain a glyph.
+ * Returns a score 0..1. Glyph SVGs have dense, high-contrast linework.
+ * Faces, walls, and plain backgrounds score very low.
+ */
+function computeEdgeScore(ctx, size) {
+  const data = ctx.getImageData(0, 0, size, size).data;
+  let edgeSum = 0;
+  const count = size * size;
+
+  for (let y = 1; y < size - 1; y++) {
+    for (let x = 1; x < size - 1; x++) {
+      const i = (y * size + x) * 4;
+      const iL = (y * size + (x - 1)) * 4;
+      const iR = (y * size + (x + 1)) * 4;
+      const iU = ((y - 1) * size + x) * 4;
+      const iD = ((y + 1) * size + x) * 4;
+
+      // Grayscale of center and neighbors
+      const c = (data[i]     * 0.299 + data[i + 1]  * 0.587 + data[i + 2]  * 0.114);
+      const l = (data[iL]    * 0.299 + data[iL + 1] * 0.587 + data[iL + 2] * 0.114);
+      const r = (data[iR]    * 0.299 + data[iR + 1] * 0.587 + data[iR + 2] * 0.114);
+      const u = (data[iU]    * 0.299 + data[iU + 1] * 0.587 + data[iU + 2] * 0.114);
+      const d = (data[iD]    * 0.299 + data[iD + 1] * 0.587 + data[iD + 2] * 0.114);
+
+      // Sobel approximation
+      const mag = Math.abs(r - l) + Math.abs(d - u);
+      if (mag > 30) edgeSum++;  // count pixels with significant gradient
+    }
+  }
+
+  return edgeSum / count;  // fraction of pixels that are "edges"
+}
+
+// Minimum fraction of edge pixels required to run CNN (tune if needed)
+const EDGE_SCORE_THRESHOLD = 0.08;  // ~8% of pixels must be edges
+
 async function classifyWithCNN(videoElement) {
   const canvas = document.createElement("canvas");
   canvas.width  = CNN_IMG_SIZE;
   canvas.height = CNN_IMG_SIZE;
-  canvas.getContext("2d").drawImage(videoElement, 0, 0, CNN_IMG_SIZE, CNN_IMG_SIZE);
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(videoElement, 0, 0, CNN_IMG_SIZE, CNN_IMG_SIZE);
+
+  // ── Pre-filter: reject frames without enough edge complexity ────────────────
+  const edgeScore = computeEdgeScore(ctx, CNN_IMG_SIZE);
+  if (edgeScore < EDGE_SCORE_THRESHOLD) {
+    // Not enough visual complexity — definitely not a glyph medallion
+    return null;  // caller will skip this frame
+  }
 
   const input  = normalizeCanvas(canvas, CNN_IMG_SIZE);
   const output = _cnnModel.predict(input);
@@ -248,6 +293,7 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
   const [lastPrediction, setLastPrediction] = useState(null);
   const [allPredictions, setAllPredictions] = useState([]);
   const [recognizerMode, setRecognizerMode] = useState(_mode);
+  const [edgeScore, setEdgeScore]           = useState(0);  // pre-filter score 0..1
 
   const scanIntervalRef  = useRef(null);
   const consecutiveRef   = useRef({ label: null, count: 0 });
@@ -278,6 +324,13 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
         results = await classifyWithMobileNet(video);
       }
 
+      // null = pre-filter rejected this frame (not enough edges to be a glyph)
+      if (results === null) {
+        setEdgeScore(0);
+        setAllPredictions([]);
+        consecutiveRef.current = { label: null, count: 0 };
+        return;
+      }
       // ── Sort descending by sigmoid score ──────────────────────────────────
       // Each score is INDEPENDENT: "jaguar=0.85" = 85% sure it's a jaguar.
       // If no glyph is visible, all scores should be near 0.
@@ -337,6 +390,7 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
     isScanning,
     lastPrediction,
     allPredictions,
-    recognizerMode,   // "cnn" | "mobilenet" | null — useful for debug UI
+    recognizerMode,
+    edgeScore,       // 0..1, debug: how much edge complexity was in the last frame
   };
 }
