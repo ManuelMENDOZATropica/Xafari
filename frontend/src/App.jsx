@@ -14,6 +14,7 @@ import LogIn from "./pages/LogIn";
 import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
+import XecretoRegister from "./components/XecretoRegister";
 import XafariContext from "./components/XafariContext";
 import { useEffect, useMemo, useState } from "react";
 import useSoundController from "./hooks/useSoundController";
@@ -124,6 +125,15 @@ function App() {
           <Route path="/minimalqr" element={<MinimalQr />} />
           <Route path="/privacy" element={<PrivacyNotice />} />
           <Route path="/terms" element={<TermsConditions />} />
+          {/* Debug route — direct access to glyph scanner */}
+          <Route
+            path="/debug-scan"
+            element={
+              <div className="fixed inset-0 z-50 bg-black">
+                <XecretoRegister onClose={() => window.history.back()} />
+              </div>
+            }
+          />
         </Routes>
       </AnimatePresence>
     </XafariContext.Provider>

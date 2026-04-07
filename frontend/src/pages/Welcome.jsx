@@ -7,6 +7,9 @@ import SoundMenu from "@/components/SoundMenu";
 import CloseIcon from "@/components/CloseIcon";
 import PrivacyNotice from "@/pages/PrivacyNotice";
 
+const IS_DEV = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+
 export default function Welcome() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -182,6 +185,25 @@ export default function Welcome() {
           {t("whatIsXafari")}
         </button>
       </div>
+
+      {/* ── [DEV] Debug — acceso directo al escáner ─────────────────────── */}
+      {IS_DEV && (
+        <button
+          type="button"
+          onClick={() => navigate("/debug-scan")}
+          className="fixed bottom-4 left-4 z-[9999] flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.65)",
+            color: "#00ff88",
+            border: "1px solid rgba(0,255,136,0.4)",
+            backdropFilter: "blur(6px)",
+            boxShadow: "0 0 12px rgba(0,255,136,0.2)",
+          }}
+        >
+          <span style={{ fontSize: "10px" }}>📷</span>
+          debug scan
+        </button>
+      )}
 
       {/* ── Overlay Aviso de Privacidad ── */}
       <AnimatePresence>
