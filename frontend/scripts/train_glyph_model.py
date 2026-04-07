@@ -119,12 +119,24 @@ def train():
     ]
 
     print(f"\nTraining {EPOCHS} epochs, batch={BATCH_SIZE}, img={IMG_SIZE}px\n")
+
+    # Class weights: compensate for none having more samples
+    from sklearn.utils.class_weight import compute_class_weight
+    try:
+        cw = compute_class_weight("balanced", classes=np.unique(y_train), y=y_train)
+        class_weights = {i: w for i, w in enumerate(cw)}
+        print(f"Class weights: {class_weights}\n")
+    except ImportError:
+        class_weights = None
+        print("sklearn not found, training without class weights\n")
+
     history = model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
         batch_size=BATCH_SIZE,
         epochs=EPOCHS,
         callbacks=callbacks,
+        class_weight=class_weights,
     )
 
     best_val_acc = max(history.history["val_accuracy"])
