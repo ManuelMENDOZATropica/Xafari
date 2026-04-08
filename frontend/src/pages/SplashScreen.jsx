@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { preloadGlyphModel } from "@/hooks/useGlyphRecognizer";
 
 // ─── Inventario completo de assets gráficos ─────────────────────────────────
 const ALL_ASSETS = [
@@ -308,6 +309,11 @@ export default function SplashScreen() {
       // Preload de fuentes
       const fontReady = document.fonts?.ready ?? Promise.resolve();
 
+      // Preload del modelo de reconocimiento de glifos (en paralelo)
+      const glyphModelReady = preloadGlyphModel().catch((err) => {
+        console.warn("⚠️ Glyph model preload failed (will retry later):", err.message);
+      });
+
       // Lanzar todos los preloads en paralelo, actualizando el progreso
       const assetPromises = ALL_ASSETS.map((src) => {
         const isAudio = /\.(mp3|wav|ogg|aac)$/i.test(src);
@@ -320,7 +326,7 @@ export default function SplashScreen() {
         });
       });
 
-      await Promise.all([fontReady, ...assetPromises]);
+      await Promise.all([fontReady, glyphModelReady, ...assetPromises]);
 
       const elapsed = Date.now() - startTime;
       const remaining = Math.max(0, MIN_DISPLAY - elapsed);

@@ -396,7 +396,7 @@ const mapaXtop = {
 export default function TreeCanvasFamilia({ insigniaReciente }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
-  const initialScale = 0.22;
+  const initialScale = 0.15;
   const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
 
@@ -488,8 +488,8 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
         tipo === "xecretos"
           ? "/arbol/guardianesÁrbol/"
           : tipo === "checklist"
-          ? "/arbol/checklist/"
-          : "/arbol/xtopÁrbol/";
+            ? "/arbol/checklist/"
+            : "/arbol/xtopÁrbol/";
 
       const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
 
@@ -529,7 +529,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
           className="relative"
         >
           <img
-            src="/arbol/baseArbolv3.png"
+            src="/arbol/Arbol de la vida 1.png"
             alt=""
             className="w-full h-full object-contain"
           />

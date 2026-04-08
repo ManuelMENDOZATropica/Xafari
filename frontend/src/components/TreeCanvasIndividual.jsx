@@ -13,7 +13,7 @@ export default function TreeCanvasIndividual({
 }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
-  const initialScale = 0.22;
+  const initialScale = 0.15;
 
   const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
@@ -148,7 +148,7 @@ export default function TreeCanvasIndividual({
           className="relative"
         >
           <img
-            src="/arbol/baseArbolv3.png"
+            src="/arbol/Arbol de la vida 1.png"
             alt="árbol"
             className="w-full h-full object-contain"
           />
@@ -170,7 +170,7 @@ export default function TreeCanvasIndividual({
             ) : null
           )}
 
-          
+
 
           {Object.entries(xtopProgreso || {}).map(([k, v]) =>
             v && Object.values(mapaXtop).includes(k) ? (
