@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import WelcomeAnimation from "./pages/WelcomeAnimation";
 import AvatarSelection from "./pages/AvatarSelection";
 import TreeOfLife from "./pages/TreeOfLife";
+import BienvenidaGuacamaya from "./pages/BienvenidaGuacamaya";
+import TutorialArbol from "./pages/TutorialArbol";
 import Intro from "./pages/Intro";
 import IntroMaya from "./pages/IntroMaya";
 import LogIn from "./pages/LogIn";
@@ -118,6 +120,8 @@ function App() {
           <Route path="/register-step1" element={<RegisterStep1 />} />
           <Route path="/register-step2" element={<RegisterStep2 />} />
           <Route path="/create-avatar" element={<AvatarSelection />} />
+          <Route path="/bienvenida" element={<BienvenidaGuacamaya />} />
+          <Route path="/tutorial" element={<TutorialArbol />} />
           <Route path="/treeoflife" element={<TreeOfLife />} />
           <Route path="/intro" element={<Intro />} />
           <Route path="/login" element={<LogIn />} />

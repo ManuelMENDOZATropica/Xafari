@@ -46,5 +46,12 @@
     "es": "Spanish",
     "en": "English",
     "pt": "Portuguese"
+  },
+  "bienvenida": {
+    "mensaje": "The macaw congratulates you on your registration and your effort"
+  },
+  "tutorial": {
+    "arbol": "This is the tree of life!",
+    "tap": "Tap to continue"
   }
 }

@@ -40,7 +40,7 @@ export default function AvatarSelection() {
   }, [setUser, bodyIndex, faceIndex]);
 
   const handleSaveAvatar = useCallback(() => {
-    if (!token) return navigate("/treeoflife");
+    if (!token) return navigate("/bienvenida");
 
     (async () => {
       try {
@@ -66,7 +66,7 @@ export default function AvatarSelection() {
           console.log("✅ Avatar actualizado en backend:", data.user.avatar);
         }
 
-        navigate("/treeoflife");
+        navigate("/bienvenida");
       } catch (err) {
         console.error("🔥 Error al guardar en backend:", err);
         alert("Error al guardar el avatar.");

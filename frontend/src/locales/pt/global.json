@@ -46,5 +46,12 @@
     "es": "Espanhol",
     "en": "Inglês",
     "pt": "Português"
+  },
+  "bienvenida": {
+    "mensaje": "A arara te parabeniza pelo seu cadastro e esforço"
+  },
+  "tutorial": {
+    "arbol": "Esta é a árvore da vida!",
+    "tap": "Toque para continuar"
   }
 }
