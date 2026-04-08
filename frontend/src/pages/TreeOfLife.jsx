@@ -270,7 +270,7 @@ export default function TreeOfLife() {
   return (
     <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/arbol/fondoArbol.png')] bg-cover bg-center flex flex-col">
 
-      <div className="absolute top-[65%] left-1/2 -translate-x-1/2 translate-y-[-700px] w-full max-w-5xl h-[55vh] flex items-center justify-center z-10 pointer-events-none">
+      <div className="absolute inset-0 pb-[calc(10vh+4.5rem)] pt-14 w-full flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
             <TreeCanvasFamilia

@@ -1,7 +1,26 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import AvatarRender from "@/components/AvatarRender";
 import { motion } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
+
+// ─── constantes del canvas ────────────────────────────────────────────────────
+const CANVAS_WIDTH  = 2450;
+const CANVAS_HEIGHT = 4200;
+const INITIAL_SCALE = 0.17;
+const MIN_SCALE     = 0.15;
+const MAX_SCALE     = 0.40;
+
+function calcInitialPos() {
+  const vw           = window.innerWidth;
+  const vh           = window.innerHeight;
+  const topOffset    = 56;
+  const bottomOffset = vh * 0.10 + 72;
+  const availableH   = vh - topOffset - bottomOffset;
+  return {
+    x: (vw - CANVAS_WIDTH  * INITIAL_SCALE) / 2,
+    y: topOffset + (availableH - CANVAS_HEIGHT * INITIAL_SCALE) / 2,
+  };
+}
 
 const positionsById = {
   1: { x: 1450, y: 3000 },
@@ -394,11 +413,7 @@ const mapaXtop = {
 };
 
 export default function TreeCanvasFamilia({ insigniaReciente }) {
-  const CANVAS_WIDTH = 2450;
-  const CANVAS_HEIGHT = 4200;
-  const initialScale = 0.17;
-  const transformUtilsRef = useRef(null);
-  const initialOffset = useRef({ x: 0, y: 0 });
+  const initialPos = useRef(calcInitialPos());
 
   const [jugador, setJugador] = useState(() =>
     JSON.parse(localStorage.getItem("user") || "{}")
@@ -429,51 +444,20 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
     return 0.25;
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (transformUtilsRef.current) {
-        const { setTransform } = transformUtilsRef.current;
-        const { x, y } = initialOffset.current;
-        setTransform(x, y, initialScale);
-      }
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
-    const checkBoundaries = () => {
-      if (!transformUtilsRef.current) return;
-      const { state, setTransform } = transformUtilsRef.current;
-      const { positionX: posX, positionY: posY, scale } = state;
-
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const scaledWidth = CANVAS_WIDTH * scale;
-      const scaledHeight = CANVAS_HEIGHT * scale;
-
-      const visibleX =
-        Math.max(0, Math.min(vw, scaledWidth + posX)) -
-        Math.max(0, Math.min(vw, posX));
-      const visibleY =
-        Math.max(0, Math.min(vh, scaledHeight + posY)) -
-        Math.max(0, Math.min(vh, posY));
-
-      const visibleXRatio = visibleX / vw;
-      const visibleYRatio = visibleY / vh;
-
-      if (
-        scale < 0.15 ||
-        scale > 0.35 ||
-        visibleXRatio < 0.8 ||
-        visibleYRatio < 0.9
-      ) {
-        const { x, y } = initialOffset.current;
-        setTransform(x, y, initialScale);
-      }
-    };
-
-    const interval = setInterval(checkBoundaries, 1000);
-    return () => clearInterval(interval);
+  const checkAndReset = useCallback((ref) => {
+    const { scale, positionX: posX, positionY: posY } = ref.state;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scaledW = CANVAS_WIDTH  * scale;
+    const scaledH = CANVAS_HEIGHT * scale;
+    const visibleX =
+      Math.max(0, Math.min(vw, scaledW + posX)) - Math.max(0, Math.min(vw, posX));
+    const visibleY =
+      Math.max(0, Math.min(vh, scaledH + posY)) - Math.max(0, Math.min(vh, posY));
+    if (visibleX / vw < 0.4 || visibleY / vh < 0.4) {
+      const { x, y } = initialPos.current;
+      ref.setTransform(x, y, INITIAL_SCALE, 380, "easeOut");
+    }
   }, []);
 
   const renderInsignias = (mapaTipo, tipo) => {
@@ -508,20 +492,26 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
 
   return (
     <TransformWrapper
-      initialScale={initialScale}
-      minScale={0.1}
-      maxScale={0.4}
-      wheel={{ step: 50 }}
-      doubleClick={{ disabled: true }}
+      initialScale={INITIAL_SCALE}
+      initialPositionX={initialPos.current.x}
+      initialPositionY={initialPos.current.y}
+      minScale={MIN_SCALE}
+      maxScale={MAX_SCALE}
       limitToBounds={false}
-      onInit={(utils) => {
-        transformUtilsRef.current = utils;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const offsetX = (vw - CANVAS_WIDTH * initialScale) / 2;
-        const offsetY = (vh - CANVAS_HEIGHT * initialScale) / 2;
-        initialOffset.current = { x: offsetX, y: offsetY };
+      wheel={{ step: 40 }}
+      doubleClick={{ disabled: true }}
+      panning={{
+        velocityDisabled: false,
+        velocityAlignmentTime: 180,
       }}
+      alignmentAnimation={{
+        sizeX: 80,
+        sizeY: 80,
+        velocityAlignmentTime: 380,
+      }}
+      onPanningStop={checkAndReset}
+      onPinchingStop={checkAndReset}
+      onZoomStop={checkAndReset}
     >
       <TransformComponent>
         <div
