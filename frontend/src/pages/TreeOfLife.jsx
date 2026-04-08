@@ -324,8 +324,8 @@ export default function TreeOfLife() {
         </span>
       </button>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 pb-5 pt-3 bg-transparent pointer-events-none">
-        <div className="flex flex-col items-center gap-3 px-4 pointer-events-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-30 pb-16 pt-3 bg-transparent pointer-events-none">
+        <div className="flex flex-col items-center gap-3 px-3 pointer-events-auto w-full">
           <AnimatePresence>
             {showArbolMenu && (
               <motion.div
@@ -380,50 +380,53 @@ export default function TreeOfLife() {
             )}
           </AnimatePresence>
 
-          <div className="grid grid-cols-4 gap-3 w-full max-w-4xl">
+          <div className="grid grid-cols-4 gap-2 w-full">
             {[
               {
                 key: "arbol",
                 label: "Árbol",
-                icon: "/iconos/menuArbol.png",
-                color: "#f36c12",
+                icon: "/iconos/icono arbol.png",
+                active: showArbolMenu,
                 onClick: handleToggleArbolMenu,
               },
               {
                 key: "mapa",
                 label: "Mapa",
-                icon: "/iconos/menuMapa.png",
-                color: "#0b932b",
+                icon: "/iconos/icono Mapa.png",
+                active: showMapaModal,
                 onClick: handleOpenMapa,
               },
               {
                 key: "podio",
                 label: "Podio",
-                icon: "/iconos/menuPodio.png",
-                color: "#f5a300",
+                icon: "/iconos/icono Podio.png",
+                active: showPodiumModal,
                 onClick: handleOpenPodio,
               },
               {
                 key: "ajustes",
                 label: "Ajustes",
-                icon: "/iconos/icon_ajustes.svg",
-                color: "#00b6e9",
+                icon: "/iconos/icono Ajustes.png",
+                active: showSettingsModal,
                 onClick: handleOpenSettings,
               },
-            ].map(({ key, label, icon, color, onClick }) => (
+            ].map(({ key, label, icon, active, onClick }) => (
               <button
                 type="button"
                 key={key}
                 onClick={onClick}
-                className="flex flex-col items-center justify-center gap-2 py-3 rounded-2xl shadow-lg text-white transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: color }}
+                className="flex flex-col items-center shadow-lg text-white transition-all duration-200 w-full"
+                style={{ backgroundColor: active ? "#3D5A2A" : "#80A850", aspectRatio: "1 / 1.38", borderRadius: "10px", paddingTop: "6px", paddingLeft: "6px", paddingRight: "6px" }}
               >
-                <img
-                  src={icon}
-                  alt={label}
-                  className="w-7 h-7 object-contain"
-                />
-                <span className="text-sm font-volume">{label}</span>
+                <div className="flex flex-1 items-center justify-center w-full">
+                  <img
+                    src={icon}
+                    alt={label}
+                    className="w-full object-contain"
+                    style={{ maxHeight: "85%" }}
+                  />
+                </div>
+                <span style={{ fontSize: "14px", lineHeight: "1", paddingBottom: "4px" }} className="font-volume w-full text-center">{label}</span>
               </button>
             ))}
           </div>

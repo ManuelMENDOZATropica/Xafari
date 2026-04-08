@@ -396,7 +396,7 @@ const mapaXtop = {
 export default function TreeCanvasFamilia({ insigniaReciente }) {
   const CANVAS_WIDTH = 2450;
   const CANVAS_HEIGHT = 4200;
-  const initialScale = 0.15;
+  const initialScale = 0.17;
   const transformUtilsRef = useRef(null);
   const initialOffset = useRef({ x: 0, y: 0 });
 
