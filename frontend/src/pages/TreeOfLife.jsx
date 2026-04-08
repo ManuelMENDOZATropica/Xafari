@@ -13,6 +13,7 @@ import TreeCanvasIndividual from "@/components/TreeCanvasIndividual";
 import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
 import ModalMapa from "@/components/ModalMapa";
 import Xelfies from "@/components/xelfies";
+import SoundMenu from "@/components/SoundMenu";
 
 const FamilyIcon = (props) => (
   <svg
@@ -267,7 +268,7 @@ export default function TreeOfLife() {
   }, [showXperienciasModal, showXecretoModal, showXelfiesModal]);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/img/fondoArbolDeLaVida.png')] bg-contain bg-no-repeat bg-center flex flex-col">
+    <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/arbol/fondoArbol.png')] bg-cover bg-center flex flex-col">
 
       <div className="absolute top-[65%] left-1/2 -translate-x-1/2 translate-y-[-700px] w-full max-w-5xl h-[55vh] flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
@@ -290,36 +291,37 @@ export default function TreeOfLife() {
         </div>
       </div>
 
+      {/* Botón de sonido — esquina superior derecha */}
+      <div className="absolute top-4 right-4 z-40">
+        <SoundMenu />
+      </div>
 
       <button
         type="button"
         onClick={() => setModoFamilia((prev) => !prev)}
         aria-pressed={modoFamilia}
-        className="absolute top-4 left-4 z-40 flex flex-col items-center gap-0 text-gray-700 bg-transparent border-0 p-0 appearance-none shadow-none"
+        className="absolute top-4 left-4 z-40 flex items-center bg-[#80A850] rounded-full px-1.5 py-1.5 shadow-md gap-0 font-volume"
       >
-        <div className="flex flex-col items-center gap-1 bg-[#C8C5C5] backdrop-blur-md rounded-2xl px-4 py-2 shadow-lg">
-          <div className="flex items-center gap-3">
-            <span
-              className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
-        ${modoFamilia
-                  ? "bg-[#939393] text-black shadow-inner"
-                  : "bg-[#C8C5C5] text-black"
-                }`}
-            >
-              Familia
-            </span>
-
-            <span
-              className={`flex h-10 w-16 items-center justify-center rounded-[6px] transition-all duration-200 text-sm font-semibold
-        ${modoFamilia
-                  ? "bg-[#C8C5C5] text-black"
-                  : "bg-[#939393] text-black shadow-inner"
-                }`}
-            >
-              Solo
-            </span>
-          </div>
-        </div>
+        {/* Solo tab */}
+        <span
+          className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200
+            ${!modoFamilia
+              ? "bg-[#C9DCB5] text-[#233C15] shadow-sm"
+              : "bg-transparent text-white"
+            }`}
+        >
+          Solo
+        </span>
+        {/* Familia tab */}
+        <span
+          className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200
+            ${modoFamilia
+              ? "bg-[#C9DCB5] text-[#233C15] shadow-sm"
+              : "bg-transparent text-white"
+            }`}
+        >
+          Familia
+        </span>
       </button>
 
       <div className="fixed bottom-0 left-0 right-0 z-30 pb-5 pt-3 bg-transparent pointer-events-none">
@@ -421,7 +423,7 @@ export default function TreeOfLife() {
                   alt={label}
                   className="w-7 h-7 object-contain"
                 />
-                <span className="text-sm font-semibold">{label}</span>
+                <span className="text-sm font-volume">{label}</span>
               </button>
             ))}
           </div>

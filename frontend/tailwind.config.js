@@ -81,7 +81,7 @@ export default {
       // ─── Tipografía ──────────────────────────────────────────────────
       fontFamily: {
         apercu: ['"Apercu Pro"', "sans-serif"],
-        volume: ['"Volume CT"', "sans-serif"],
+        volume: ['"Volume TC"', "sans-serif"],
       },
 
       // ─── Animaciones ─────────────────────────────────────────────────
