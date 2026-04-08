@@ -3,15 +3,7 @@ import CloseIcon from "./CloseIcon";
 export default function Xelfies({ onClose }) {
   return (
     <div className="w-full h-full mt-[22px] ">
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
-        aria-label="Cerrar"
-      >
-        <CloseIcon size={20} color="#111827" />
-      </button>
-      <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
+      <div className="relative w-full h-full font-apercu text-white bg-[#7b5226] rounded-[10px]">
         <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
           <div className="flex flex-col items-center gap-4 px-8 py-10 text-center text-gray-800 h-full justify-center">
             <img

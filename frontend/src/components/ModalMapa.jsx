@@ -1,34 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import CloseIcon from "./CloseIcon";
 
 export default function ModalMapa({ onClose }) {
   const { t } = useTranslation();
+  const [activeFilter, setActiveFilter] = useState("xperiencias");
+
   return (
-    <div className="w-full h-full min-h-screen mt-[22px] overflow-y-auto px-4">
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-[-10px] right-5 z-50 mt-[10px] rounded-full border-2 border-white/50 bg-white px-5 py-1.5 font-bold text-gray-900 shadow-lg transition-transform hover:scale-105"
-        aria-label={t("close")}
+    <div className="w-full h-full flex flex-col overflow-hidden rounded-3xl">
+      {/* Mapa — ocupa todo el espacio disponible */}
+      <div className="flex-1 relative overflow-hidden p-3">
+        <img
+          src="/mapa/placeholderMapa.png"
+          alt="Mapa del lugar"
+          className="w-full h-full object-cover rounded-2xl"
+        />
+      </div>
+
+      {/* Barra inferior con filtros */}
+      <div
+        className="flex-shrink-0 flex items-center gap-2 px-3 py-2"
+        style={{ backgroundColor: "#7b5226" }}
       >
-        <CloseIcon size={20} color="#111827" />
-      </button>
-      <div className="relative h-full w-full rounded-[10px] bg-[#FFBB00] font-apercu text-black">
-        <div className="absolute inset-0 z-10 flex h-full w-full flex-col overflow-hidden bg-white/0">
-          <div className="flex h-full items-center justify-center p-4">
-            <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-full border border-gray-200 bg-white shadow-inner">
-              <div className="absolute inset-0 overflow-scroll rounded-full">
-                <img
-                  src="/mapa/mapa.png"
-                  alt="Mapa del lugar"
-                  className="w-full h-auto min-w-[300%] min-h-[300%] object-contain"
-                  style={{ transformOrigin: "center center" }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() => setActiveFilter("xperiencias")}
+          className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+          style={{
+            backgroundColor: activeFilter === "xperiencias" ? "#4a2e0e" : "rgba(242,232,218,1)",
+            color: activeFilter === "xperiencias" ? "rgba(242,232,218,1)" : "#3D1A00",
+            border: "none",
+          }}
+        >
+          {t("xperiencias") || "Xperiencias"}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter("xelfies")}
+          className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+          style={{
+            backgroundColor: activeFilter === "xelfies" ? "#4a2e0e" : "rgba(242,232,218,1)",
+            color: activeFilter === "xelfies" ? "rgba(242,232,218,1)" : "#3D1A00",
+            border: "none",
+          }}
+        >
+          {t("xelfies") || "Xelfies"}
+        </button>
       </div>
     </div>
   );

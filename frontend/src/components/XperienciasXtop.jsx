@@ -261,6 +261,7 @@ export default function XperienciasXtop({ onClose }) {
         playSuccessSound();
       }
       const nuevo = { ...respuestas, [clave]: opcion };
+      setRespuestas(nuevo);                              // ← actualiza estado inmediatamente (aparece palomita con el sonido)
       localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
       setShowCopy(idx);
       setRespuestaReciente(clave);
@@ -303,186 +304,139 @@ export default function XperienciasXtop({ onClose }) {
   const progreso = Math.round((respondidas / total) * 100);
 
   return (
-  <div className="w-full h-full mt-[22px] ">
-  <button
-      type="button"
-      onClick={onClose}
-      className="absolute top-[-10px] right-5 z-50 px-5 py-1.5 rounded-full bg-white text-gray-900 font-bold border-2 border-white/50 shadow-lg hover:scale-105 transition-transform mt-[10px]"
-      aria-label="Cerrar"
-    >
-      <CloseIcon size={20} color="#111827" />
-    </button>
-    <div className="relative w-full h-full font-apercu text-black bg-[#FFBB00] rounded-[10px]">
-      <div className="absolute inset-0 w-full h-full bg-white/0 overflow-hidden flex flex-col z-10">
-        <div className="px-6 pt-3 pb-1">
-          <div className="w-full max-w-md mx-auto mt-3 bg-white/80 rounded-full overflow-hidden">
-            <div
-              className="bg-green-500 text-white text-xs font-semibold text-center py-1 transition-all"
-              style={{ width: `${progreso}%` }}
-            >
-              {progreso}%
-            </div>
-          </div>
-        </div>
+  <div className="w-full h-full">
+    <div className="relative w-full h-full font-apercu bg-[#7b5226] rounded-[10px]">
+      <div className="absolute inset-0 w-full h-full overflow-hidden flex flex-col z-10">
 
-        <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
-          <div className="grid gap-6">
+        <div className="flex-1 overflow-y-auto px-3 pb-[75px] pt-3">
+          <div className="grid gap-3">
             {xperiencias.map((xp, idx) => {
               const clave = xp.insignia;
               const yaRespondida = respuestas[clave] === xp.respuestaCorrecta;
-
               const estaBloqueado = tiempos[clave] > 0;
               const minutos = Math.floor((tiempos[clave] || 0) / 60);
               const segundos = (tiempos[clave] || 0) % 60;
-              const anteriorRespondida =
-                idx === 0 || respuestas[xperiencias[idx - 1].insignia];
+              const anteriorRespondida = idx === 0 || respuestas[xperiencias[idx - 1].insignia];
               const estaBloqueadaPorOrden = !anteriorRespondida;
-
-              const deshabilitado =
-                yaRespondida || estaBloqueado || estaBloqueadaPorOrden;
+              const deshabilitado = yaRespondida || estaBloqueado || estaBloqueadaPorOrden;
 
               return (
                 <div key={idx} className="relative">
+                  {/* Blocked overlay */}
                   {(estaBloqueado || estaBloqueadaPorOrden) && (
-                    <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center text-red-600 font-semibold text-center rounded-2xl px-4">
-                      <div className="text-2xl mb-1">{t("blocked")}</div>
+                    <div className="absolute inset-0 z-20 bg-[#5a3a18]/80 backdrop-blur-sm flex flex-col items-center justify-center text-white font-semibold text-center rounded-2xl px-4">
+                      <div className="text-xl mb-1">🔒</div>
                       {estaBloqueado && (
-                        <div className="text-sm text-red-700">
-                          {t("retry_in")} {minutos}:
-                          {segundos.toString().padStart(2, "0")}
-                        </div>
+                        <div className="text-sm">{t("retry_in")} {minutos}:{segundos.toString().padStart(2, "00")}</div>
                       )}
                     </div>
                   )}
 
-                  {yaRespondida && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-green-100 px-4 py-1 rounded-full text-green-800 text-sm font-semibold shadow"
-                    >
-                      ✅ {t("logrado")}
-                    </motion.div>
-                  )}
-
-                  <div
-                    className={`relative bg-[#E8F100] p-4 md:p-6 rounded-2xl shadow-md border transition-all ${
-                      yaRespondida
-                        ? " "
-                        : estaBloqueado || estaBloqueadaPorOrden
-                        ? "border-gray-300 bg-gray-100/70 grayscale opacity-60"
-                        : "border-gray-300 bg-white/90 backdrop-blur-md"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                  {/* Card */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-md" style={{ backgroundColor: "rgba(242, 232, 218, 1)" }}>
+                    {/* Header row: title + checkbox */}
+                    <div className="flex items-start justify-between px-4 pt-4 pb-1">
+                      <h2 className="flex-1 pr-3 text-sm font-bold leading-tight" style={{ color: "#3D1A00" }}>
                         {xp.lugar}
                       </h2>
-
-                      <motion.img
-                        src={`/insigniasXtop/${xp.insignia}.png`}
-                        alt="insignia"
-                        className="w-10 h-10 object-contain"
-                        initial={{ opacity: 0.2, scale: 0.8 }}
-                        animate={
-                          showCopy === idx
-                            ? {
-                                opacity: 1,
-                                scale: [1, 1.3, 1],
-                                transition: { duration: 0.6 },
-                              }
-                            : yaRespondida
-                            ? {
-                                opacity: 1,
-                                scale: 1,
-                                transition: { duration: 0.4 },
-                              }
-                            : { opacity: 0.2, scale: 0.8 }
-                        }
-                      />
+                      <div className="relative flex-shrink-0 w-[34px] h-[34px]">
+                        {/* Checkbox base — siempre visible */}
+                        <img
+                          src="/iconos/checkXperiencias.png"
+                          alt="Pendiente"
+                          className="w-full h-full object-contain"
+                        />
+                        {/* Palomita — aparece encima al contestar bien */}
+                        {yaRespondida && (
+                          <div className="absolute" style={{ inset: "10%" }}>
+                            <motion.img
+                              src="/iconos/correctXperiencias.png"
+                              alt="Completado"
+                              className="w-full h-full object-contain"
+                              initial={{ opacity: 0, scale: 0.4 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ duration: 0.4, ease: "backOut" }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    <p className="text-sm text-gray-700 leading-snug">
+                    {/* Description */}
+                    <p className="text-xs px-4 pb-2 leading-relaxed" style={{ color: "#3D1A00" }}>
                       {t(xp.actividad)}
                     </p>
 
-                    <div className="mt-4">
-                      <p className="font-medium text-gray-800 mb-2">
+                    {/* Question + Options + Insignia inline */}
+                    <div className="px-4 pb-3">
+                      <p className="text-xs font-semibold mb-2" style={{ color: "#3D1A00" }}>
                         {t(xp.pregunta)}
                       </p>
-                      <div className="flex flex-row gap-2 w-full ">
-                        {xp.opciones.map((op, i) => {
-                          const esCorrecta = op === xp.respuestaCorrecta;
-                          const fueRespondida = respuestas[clave] !== undefined;
-                          const esLaElegida =
-                            respuestas[clave] && op === respuestas[clave];
 
-                          return (
-                            <motion.button
-                              key={i}
-                              onClick={() => handleRespuesta(idx, op)}
-                              disabled={deshabilitado}
-                              initial={false}
-                              animate={
-                                respuestaReciente === clave &&
-                                esCorrecta &&
-                                op === xp.respuestaCorrecta
-                                  ? {
-                                      scale: [1, 1.2, 1],
-                                    }
-                                  : {}
-                              }
-                              transition={{ duration: 0.5 }}
-                              className={`px-4 py-2 bg text-sm font-medium shadow-sm transition-all border bg-[#FBFF98]
-    ${
-      yaRespondida
-        ? esCorrecta
-          ? "bg-green-100 text-green-800 border-green-400"
-          : "bg-white text-gray-500 border-gray-300"
-        : "bg-[#FBFF98] text-gray-800 border-gray-300 hover:brightness-95"
-    }
-    ${
-      respuestas[clave] === op && !esCorrecta
-        ? "!bg-red-100 !text-red-800 !border-red-400"
-        : ""
-    }
-    disabled:opacity-100 `}
-                            >
-                              {t(`options.${xp.pregunta}.${op.toUpperCase()}`)}
-                              {yaRespondida && esCorrecta && " ✅"}
-                              {respuestas[clave] === op && !esCorrecta && " ✖️"}
-                            </motion.button>
-                          );
-                        })}
+                      <div className="flex items-start gap-2">
+                        {/* Botones de opciones (-10%) */}
+                        <div className="flex flex-row gap-1 flex-1">
+                          {xp.opciones.map((op, i) => {
+                            const esCorrecta = op === xp.respuestaCorrecta;
+                            return (
+                              <motion.button
+                                key={i}
+                                onClick={() => handleRespuesta(idx, op)}
+                                disabled={deshabilitado}
+                                initial={false}
+                                animate={
+                                  respuestaReciente === clave && esCorrecta && op === xp.respuestaCorrecta
+                                    ? { scale: [1, 1.08, 1] }
+                                    : {}
+                                }
+                                transition={{ duration: 0.4 }}
+                                className="flex-1 py-[7px] px-1 text-[11px] font-medium rounded-xl text-center transition-all disabled:opacity-100"
+                                style={{
+                                  backgroundColor:
+                                    yaRespondida && esCorrecta ? "rgba(134,239,172,0.9)"
+                                    : respuestas[clave] === op && !esCorrecta ? "rgba(252,165,165,0.9)"
+                                    : "rgba(255,255,255,0.85)",
+                                  color:
+                                    yaRespondida && esCorrecta ? "#166534"
+                                    : respuestas[clave] === op && !esCorrecta ? "#991b1b"
+                                    : "#3D1A00",
+                                  border: "1.5px solid rgba(61,26,0,0.15)",
+                                }}
+                              >
+                                {t(`options.${xp.pregunta}.${op.toUpperCase()}`)}
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Insignia — inline, siempre a la misma altura que los botones, subida 5% */}
+                        <motion.img
+                          src={`/insigniasXtop/${xp.insignia}.png`}
+                          alt="insignia"
+                          className="flex-shrink-0 w-14 h-14 object-contain pointer-events-none"
+                          style={{ marginTop: "-5%" }}
+                          initial={{ opacity: 0.25, scale: 0.85 }}
+                          animate={
+                            showCopy === idx
+                              ? { opacity: 1, scale: [1, 1.25, 1], transition: { duration: 0.5 } }
+                              : yaRespondida
+                              ? { opacity: 1, scale: 1, transition: { duration: 0.4 } }
+                              : { opacity: 0.25, scale: 0.85 }
+                          }
+                        />
                       </div>
 
+                      {/* Estrellas — debajo de los botones; insignia no se desplaza */}
                       {yaRespondida && (
-                        <div className="mt-4">
-                          <p className="text-sm text-green-700 font-semibold">
-                            {t("correct")} {t("next_unlocked")}
-                          </p>
-                          <p className="text-sm font-medium text-gray-700 mt-3">
-                            {t("rateExperience")}
-                          </p>
-                          <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span
-                                key={star}
-                                role="button"
-                                onClick={() =>
-                                  handleSetRating(xp.insignia, star)
-                                }
-                                className={`text-xl cursor-pointer transition-transform ${
-                                  ratings[xp.insignia] >= star
-                                    ? "text-yellow-400"
-                                    : "text-gray-300"
-                                }`}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
+                        <div className="mt-2 flex gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                              key={star}
+                              role="button"
+                              onClick={() => handleSetRating(xp.insignia, star)}
+                              className={`text-lg cursor-pointer transition-transform ${ratings[xp.insignia] >= star ? "text-yellow-400" : "text-[#3D1A00]/30"}`}
+                            >★</span>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -498,3 +452,4 @@ export default function XperienciasXtop({ onClose }) {
 );
 
 }
+

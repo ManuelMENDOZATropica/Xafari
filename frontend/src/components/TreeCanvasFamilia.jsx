@@ -14,7 +14,7 @@ function calcInitialPos() {
   const vw           = window.innerWidth;
   const vh           = window.innerHeight;
   const topOffset    = 56;
-  const bottomOffset = vh * 0.10 + 72;
+  const bottomOffset = vh * 0.02 + 210;   // 2vh margen + botones(~118px) + gap(12px) + submenu(~68px) + pt-3(12px)
   const availableH   = vh - topOffset - bottomOffset;
   return {
     x: (vw - CANVAS_WIDTH  * INITIAL_SCALE) / 2,

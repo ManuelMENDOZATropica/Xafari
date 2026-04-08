@@ -210,22 +210,29 @@ export default function TreeOfLife() {
     setShowArbolMenu((prev) => !prev);
   };
 
+  // Clave activa derivada del estado de modales (sin estado extra)
+  const activeSubmenuKey = showXperienciasModal
+    ? "xperiencias"
+    : showXelfiesModal
+    ? "xelfies"
+    : showXecretoModal
+    ? "xecretos"
+    : null;
+
   const handleOpenXperiencias = () => {
     closePrimaryModals();
     setShowXperienciasModal(true);
-    setShowArbolMenu(false);
+    // No cerramos el submenu: setShowArbolMenu(false) removido
   };
 
   const handleOpenXecretos = () => {
     closePrimaryModals();
     setShowXecretoModal(true);
-    setShowArbolMenu(false);
   };
 
   const handleOpenXelfies = () => {
     closePrimaryModals();
     setShowXelfiesModal(true);
-    setShowArbolMenu(false);
   };
 
   const handleOpenMapa = () => {
@@ -261,16 +268,12 @@ export default function TreeOfLife() {
     setShowSettingsModal(false);
   };
 
-  useEffect(() => {
-    if (showXperienciasModal || showXecretoModal || showXelfiesModal) {
-      setShowArbolMenu(false);
-    }
-  }, [showXperienciasModal, showXecretoModal, showXelfiesModal]);
+  // El submenu (Xperiencias/Xelfies/Xecretos) ya NO se cierra al abrir sus modales.
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/arbol/fondoArbol.png')] bg-cover bg-center flex flex-col">
 
-      <div className="absolute inset-0 pb-[calc(10vh+4.5rem)] pt-14 w-full flex items-center justify-center z-10 pointer-events-none">
+      <div className="absolute inset-0 pb-[calc(2vh+210px)] pt-14 w-full flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
             <TreeCanvasFamilia
@@ -324,7 +327,7 @@ export default function TreeOfLife() {
         </span>
       </button>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 pb-16 pt-3 bg-transparent pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 z-30 pb-[2vh] pt-3 bg-transparent pointer-events-none">
         <div className="flex flex-col items-center gap-3 px-3 pointer-events-auto w-full">
           <AnimatePresence>
             {showArbolMenu && (
@@ -335,7 +338,7 @@ export default function TreeOfLife() {
                 transition={{ duration: 0.2 }}
                 className="w-full flex justify-center"
               >
-                <div className="flex items-stretch gap-3 rounded-2xl bg-[#7b5226] text-white px-4 py-3 shadow-xl max-w-3xl w-full justify-center">
+                <div className="flex items-stretch gap-0 rounded-2xl bg-[#7b5226] text-white shadow-xl max-w-3xl w-full justify-center overflow-hidden">
                   {[
                     {
                       key: "xperiencias",
@@ -360,12 +363,18 @@ export default function TreeOfLife() {
                       type="button"
                       key={key}
                       onClick={onClick}
-                      className="flex flex-col items-center justify-center gap-2 px-6 py-2 text-white"
+                      className="flex flex-1 flex-col items-center justify-center gap-1 px-4 py-2 text-white transition-colors duration-200"
+                      style={{
+                        backgroundColor: activeSubmenuKey === key
+                          ? "rgba(0,0,0,0.30)"
+                          : "transparent",
+                      }}
                     >
                       <img
                         src={icon}
                         alt={label}
-                        className="w-12 h-12 object-contain"
+                        className="object-contain"
+                        style={{ width: "34px", height: "34px" }}
                       />
                       <span
                         style={{ fontFamily: "'Volume TC Sans', sans-serif" }}
@@ -416,7 +425,7 @@ export default function TreeOfLife() {
                 key={key}
                 onClick={onClick}
                 className="flex flex-col items-center shadow-lg text-white transition-all duration-200 w-full"
-                style={{ backgroundColor: active ? "#3D5A2A" : "#80A850", aspectRatio: "1 / 1.38", borderRadius: "10px", paddingTop: "6px", paddingLeft: "6px", paddingRight: "6px" }}
+                style={{ backgroundColor: active ? "rgba(35, 60, 21, 1)" : "#80A850", aspectRatio: "1 / 1.38", borderRadius: "10px", paddingTop: "6px", paddingLeft: "6px", paddingRight: "6px" }}
               >
                 <div className="flex flex-1 items-center justify-center w-full">
                   <img
@@ -426,7 +435,7 @@ export default function TreeOfLife() {
                     style={{ maxHeight: "85%" }}
                   />
                 </div>
-                <span style={{ fontSize: "14px", lineHeight: "1", paddingBottom: "4px" }} className="font-volume w-full text-center">{label}</span>
+                <span style={{ fontFamily: "'Volume TC Sans', sans-serif", fontSize: "14px", lineHeight: "1", paddingBottom: "4px" }} className="w-full text-center">{label}</span>
               </button>
             ))}
           </div>
@@ -436,14 +445,14 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showSettingsModal && (
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden bg-white/90 backdrop-blur-lg shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/80 to-white" />
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
+
 
                 <div className="relative flex h-full flex-col overflow-hidden">
                   <div className="flex items-center justify-between px-6 pt-5 pb-2">
@@ -569,13 +578,13 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXecretoModal && (
           <motion.div
-            className="fixed inset-0 z-50 "
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden">
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XecretoRegister
                   onClose={() => {
                     const prev = xecretos;
@@ -599,13 +608,13 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXperienciasModal && (
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden ">
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XperienciasXtop
                   onClose={() => {
                     const prev = respuestasCorrectas;
@@ -655,13 +664,13 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showPodiumModal && (
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden">
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
                 <PodiumModal onClose={() => setShowPodiumModal(false)} />
               </div>
             </div>
@@ -672,13 +681,13 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showMapaModal && (
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden">
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
                 <ModalMapa onClose={() => setShowMapaModal(false)} />
               </div>
             </div>
@@ -689,13 +698,13 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXelfiesModal && (
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[13%] left-[5%] right-[5%] bottom-[20%]">
-              <div className="relative h-full w-full rounded-3xl overflow-hidden">
+            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+              <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <Xelfies onClose={() => setShowXelfiesModal(false)} />
               </div>
             </div>

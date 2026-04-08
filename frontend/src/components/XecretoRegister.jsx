@@ -146,16 +146,7 @@ export default function XecretoRegister({ onClose }) {
   const topPrediction = allPredictions.find((p) => p.label !== "none" && p.confidence > 0.5);
 
   return (
-    <div className="w-full h-full min-h-screen mt-[22px] overflow-y-auto px-4">
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-[-10px] right-5 z-50 mt-[10px] rounded-full border-2 border-white/50 bg-white px-5 py-1.5 font-bold text-gray-900 shadow-lg transition-transform hover:scale-105"
-        aria-label={t("close")}
-      >
-        <CloseIcon size={20} color="#111827" />
-      </button>
-      <div className="relative h-full w-full rounded-[10px] bg-[#FFBB00] font-apercu text-black">
+    <div className="relative h-full w-full rounded-[10px] bg-[#7b5226] font-apercu text-white">
         <img
           src="/img/V03-CERRITOS.jpg"
           alt={t("genericBackgroundAlt")}
@@ -380,6 +371,5 @@ export default function XecretoRegister({ onClose }) {
       `}</style>
         </div>
       </div>
-    </div>
   );
 }
