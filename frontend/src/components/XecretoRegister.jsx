@@ -22,7 +22,7 @@ const GLYPH_TO_XECRETO = {
   coati:     "xecreto10",
 };
 
-export default function XecretoRegister({ onClose }) {
+export default function XecretoRegister({ onClose, previewOnly = false }) {
   const videoRef = useRef(null);
   const { t } = useTranslation();
   const { playSuccessSound } = useContext(XafariContext);
@@ -98,12 +98,13 @@ export default function XecretoRegister({ onClose }) {
     allPredictions,
     edgeScore,
   } = useGlyphRecognizer(videoRef, {
-    active: !isProcessing,
+    active: !isProcessing && !previewOnly,
     onDetection: handleGlyphDetection,
   });
 
   // ─── Camera setup ───────────────────────────────────────────────────────
   useEffect(() => {
+    if (previewOnly) return;
     let stream = null;
     let mounted = true;
 

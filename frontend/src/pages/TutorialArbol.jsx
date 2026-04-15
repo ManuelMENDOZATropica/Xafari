@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import TreeOfLife from "./TreeOfLife";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import Xelfies from "@/components/xelfies";
+import XecretoRegister from "@/components/XecretoRegister";
 
 export default function TutorialArbol() {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ export default function TutorialArbol() {
   const [step, setStep] = useState(0);
 
   const handleTap = () => {
-    if (step < 2) {
+    if (step < 3) {
       setStep(step + 1);
     } else {
       navigate("/treeoflife");
@@ -83,6 +84,46 @@ export default function TutorialArbol() {
               }}>
                 {t("tutorial.arbol") || "¡Este es el árbol de la vida!"}
               </p>
+            </div>
+
+            {/* ── Barra nav (con opacidad) ── */}
+            <div
+              className="fixed bottom-0 left-0 right-0 pb-[2vh] pt-3 bg-transparent"
+              style={{ zIndex: 62 }}
+            >
+              <div className="flex flex-col items-center gap-3 px-3 w-full">
+                <div className="grid grid-cols-4 gap-2 w-full" style={{ opacity: 0.5 }}>
+                  {[
+                    { key: "arbol",   label: "Árbol",   icon: "/iconos/icono arbol.png",   active: false },
+                    { key: "mapa",    label: "Mapa",    icon: "/iconos/icono Mapa.png",    active: false },
+                    { key: "podio",   label: "Podio",   icon: "/iconos/icono Podio.png",   active: false },
+                    { key: "ajustes", label: "Ajustes", icon: "/iconos/icono Ajustes.png", active: false },
+                  ].map(({ key, label, icon, active }) => (
+                    <div
+                      key={key}
+                      className="flex flex-col items-center shadow-lg text-white w-full"
+                      style={{
+                        backgroundColor: active ? "rgba(35, 60, 21, 1)" : "#80A850",
+                        aspectRatio: "1 / 1.38",
+                        borderRadius: "10px",
+                        paddingTop: "6px",
+                        paddingLeft: "6px",
+                        paddingRight: "6px",
+                      }}
+                    >
+                      <div className="flex flex-1 items-center justify-center w-full">
+                        <img src={icon} alt={label} className="w-full object-contain" style={{ maxHeight: "85%" }} />
+                      </div>
+                      <span
+                        style={{ fontFamily: "'Volume TC Sans', sans-serif", fontSize: "14px", lineHeight: "1", paddingBottom: "4px" }}
+                        className="w-full text-center"
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -348,6 +389,137 @@ export default function TutorialArbol() {
             </div>
           </motion.div>
         )}
+
+        {/* ════════════════════════════════════════════════════════════
+            PASO 3 — Modal Xecretos + submenú + nav
+            ════════════════════════════════════════════════════════════ */}
+        {step === 3 && (
+          <motion.div
+            key="step-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ position: "absolute", inset: 0, zIndex: 60, pointerEvents: "none" }}
+          >
+            {/* ── Panel modal Xecretos ── */}
+            <div
+              className="absolute top-[8%] left-[12px] right-[12px]"
+              style={{ bottom: "calc(2vh + 160px)" }}
+            >
+              <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
+                <XecretoRegister onClose={() => {}} previewOnly />
+              </div>
+            </div>
+
+            {/* ── Barra inferior: submenú + nav ── */}
+            <div
+              className="fixed bottom-0 left-0 right-0 pb-[2vh] pt-3 bg-transparent"
+              style={{ zIndex: 62 }}
+            >
+              <div className="flex flex-col items-center gap-3 px-3 w-full">
+
+                {/* Submenú: Xecretos seleccionado */}
+                <div className="w-full flex justify-center">
+                  <div className="flex items-stretch gap-0 rounded-2xl bg-[#7b5226] text-white shadow-xl max-w-3xl w-full justify-center overflow-hidden">
+                    {[
+                      { key: "xperiencias", label: "Xperiencias", icon: "/iconos/xperiencias.png", selected: false },
+                      { key: "xelfies",     label: "Xelfies",     icon: "/iconos/xelfies.png",     selected: false },
+                      { key: "xecretos",    label: "Xecretos",    icon: "/iconos/xecretos.png",    selected: true },
+                    ].map(({ key, label, icon, selected }) => (
+                      <div
+                        key={key}
+                        className="flex flex-1 flex-col items-center justify-center gap-1 px-4 py-2 text-white"
+                        style={{ backgroundColor: selected ? "rgba(0,0,0,0.30)" : "transparent" }}
+                      >
+                        <img src={icon} alt={label} className="object-contain" style={{ width: "34px", height: "34px" }} />
+                        <span style={{ fontFamily: "'Volume TC Sans', sans-serif" }} className="text-sm tracking-wide">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Nav con opacidad */}
+                <div className="grid grid-cols-4 gap-2 w-full" style={{ opacity: 0.5 }}>
+                  {[
+                    { key: "arbol",   label: "Árbol",   icon: "/iconos/icono arbol.png",   active: true },
+                    { key: "mapa",    label: "Mapa",    icon: "/iconos/icono Mapa.png",    active: false },
+                    { key: "podio",   label: "Podio",   icon: "/iconos/icono Podio.png",   active: false },
+                    { key: "ajustes", label: "Ajustes", icon: "/iconos/icono Ajustes.png", active: false },
+                  ].map(({ key, label, icon, active }) => (
+                    <div
+                      key={key}
+                      className="flex flex-col items-center shadow-lg text-white w-full"
+                      style={{
+                        backgroundColor: active ? "rgba(35, 60, 21, 1)" : "#80A850",
+                        aspectRatio: "1 / 1.38",
+                        borderRadius: "10px",
+                        paddingTop: "6px",
+                        paddingLeft: "6px",
+                        paddingRight: "6px",
+                      }}
+                    >
+                      <div className="flex flex-1 items-center justify-center w-full">
+                        <img src={icon} alt={label} className="w-full object-contain" style={{ maxHeight: "85%" }} />
+                      </div>
+                      <span
+                        style={{ fontFamily: "'Volume TC Sans', sans-serif", fontSize: "14px", lineHeight: "1", paddingBottom: "4px" }}
+                        className="w-full text-center"
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+
+            {/* ── Rectángulo descriptivo centrado ── */}
+            <div style={{
+              position: "absolute",
+              top: "8%",
+              left: "12px",
+              right: "12px",
+              bottom: "calc(2vh + 160px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 65,
+            }}>
+              <div style={{
+                backgroundColor: "rgba(0,0,0,0.92)",
+                borderRadius: 0,
+                padding: "28px 24px",
+                width: "100%",
+              }}>
+                <p style={{
+                  color: "#F7F3EA",
+                  fontSize: "16px",
+                  fontFamily: "'Volume TC', sans-serif",
+                  fontWeight: 400,
+                  lineHeight: "1.5",
+                  margin: 0,
+                  marginBottom: "16px",
+                }}>
+                  Texto descriptivo sobre las actividades que se encuentran aquí y la mecánica para obtenerlos.
+                </p>
+                <p style={{
+                  color: "#F7F3EA",
+                  fontSize: "16px",
+                  fontFamily: "'Volume TC', sans-serif",
+                  fontWeight: 600,
+                  lineHeight: "1.5",
+                  margin: 0,
+                }}>
+                  Call to Action.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* ── Capa interactiva: tuto + tap ───────────────────────── */}
@@ -359,7 +531,8 @@ export default function TutorialArbol() {
         <div style={{
           position: "absolute", bottom: step === 1 ? "-18%" : "-2%",
           left: 0, right: 0,
-          display: "flex", justifyContent: step === 2 ? "flex-end" : "center",
+          display: "flex",
+          justifyContent: step === 2 ? "flex-end" : step === 3 ? "flex-start" : "center",
           pointerEvents: "none", zIndex: 110,
         }}>
           <AnimatePresence mode="wait">
@@ -372,10 +545,12 @@ export default function TutorialArbol() {
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.5, delay: 0.15 }}
               style={{
-                width: step === 2 ? "59%" : "80%",
-                maxWidth: step === 2 ? "252px" : "340px",
+                width: step >= 2 ? "59%" : "80%",
+                maxWidth: step >= 2 ? "252px" : "340px",
                 objectFit: "contain",
                 marginRight: step === 2 ? "-15%" : undefined,
+                marginLeft: step === 3 ? "-15%" : undefined,
+                transform: step === 3 ? "scaleX(-1)" : undefined,
               }}
             />
           </AnimatePresence>
