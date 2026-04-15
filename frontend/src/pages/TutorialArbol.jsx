@@ -6,6 +6,7 @@ import TreeOfLife from "./TreeOfLife";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import Xelfies from "@/components/xelfies";
 import XecretoRegister from "@/components/XecretoRegister";
+import SoundMenu from "@/components/SoundMenu";
 
 export default function TutorialArbol() {
   const { t } = useTranslation();
@@ -40,6 +41,11 @@ export default function TutorialArbol() {
         zIndex: 50,
         pointerEvents: "none",
       }} />
+
+      {/* ── Botón de sonido — esquina superior derecha ──────────── */}
+      <div className="absolute top-4 right-4" style={{ zIndex: 55, opacity: 0.5, pointerEvents: "none" }}>
+        <SoundMenu />
+      </div>
 
       {/* ════════════════════════════════════════════════════════════
           PASO 0 — Árbol destacado + texto
@@ -529,30 +535,39 @@ export default function TutorialArbol() {
       >
         {/* Guacamaya */}
         <div style={{
-          position: "absolute", bottom: step === 1 ? "-18%" : "-2%",
-          left: 0, right: 0,
-          display: "flex",
-          justifyContent: step === 2 ? "flex-end" : step === 3 ? "flex-start" : "center",
+          position: "absolute", inset: 0,
           pointerEvents: "none", zIndex: 110,
+          overflow: "hidden",
         }}>
           <AnimatePresence mode="wait">
-            <motion.img
+            <motion.div
               key={`tuto${step + 1}`}
-              src={`/img/tuto${step + 1}.png`}
-              alt="Guacamaya"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
+              exit={{ opacity: 0, transition: { duration: 0.25 } }}
               transition={{ duration: 0.5, delay: 0.15 }}
               style={{
+                position: "absolute",
+                bottom: step === 1 ? "-18%" : "-2%",
+                left: 0, right: 0,
+                display: "flex",
+                justifyContent: step === 2 ? "flex-end" : step === 3 ? "flex-start" : "center",
+              }}
+            >
+              <div style={{
                 width: step >= 2 ? "59%" : "80%",
                 maxWidth: step >= 2 ? "252px" : "340px",
-                objectFit: "contain",
                 marginRight: step === 2 ? "-15%" : undefined,
                 marginLeft: step === 3 ? "-15%" : undefined,
                 transform: step === 3 ? "scaleX(-1)" : undefined,
-              }}
-            />
+              }}>
+                <img
+                  src={`/img/tuto${step + 1}.png`}
+                  alt="Guacamaya"
+                  style={{ width: "100%", objectFit: "contain" }}
+                />
+              </div>
+            </motion.div>
           </AnimatePresence>
         </div>
 
