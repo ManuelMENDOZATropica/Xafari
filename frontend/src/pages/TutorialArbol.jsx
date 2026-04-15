@@ -13,7 +13,8 @@ export default function TutorialArbol() {
     <div style={{ position: "relative", width: "100vw", height: "100dvh", overflow: "hidden" }}>
 
       {/* ── TreeOfLife real, no interactivo (fondo) ─────────────── */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      <div className="tutorial-tree-bg" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+        <style>{`.tutorial-tree-bg .z-10 { display: none !important; }`}</style>
         <TreeOfLife />
       </div>
 
@@ -31,7 +32,7 @@ export default function TutorialArbol() {
         alt="Árbol de la vida"
         style={{
           position: "absolute",
-          top: "5%",
+          top: "10%",
           left: "50%",
           transform: "translateX(-50%)",
           width: "92%",
@@ -49,7 +50,7 @@ export default function TutorialArbol() {
       >
         {/* Texto "Este es el árbol de la vida" — sobre el árbol */}
         <div style={{
-          position: "absolute", top: "56%",
+          position: "absolute", top: "12%",
           left: 0, right: 0,
           display: "flex", justifyContent: "center",
         }}>
