@@ -199,7 +199,7 @@ const xperiencias = [
 
 export default function XperienciasXtop({ onClose }) {
   const { t } = useTranslation();
-  const { playSuccessSound, playErrorSound } = useContext(XafariContext);
+  const { playSuccessSound, playErrorSound, registerActivityCompleted, saveActivityRating } = useContext(XafariContext);
 
   const [ratings, setRatings] = useState(() => {
     const saved = localStorage.getItem("calificacionesXperiencias");
@@ -210,6 +210,17 @@ export default function XperienciasXtop({ onClose }) {
     const saved = localStorage.getItem("progresoXperiencias");
     return saved ? JSON.parse(saved) : {};
   });
+
+  useEffect(() => {
+    const reloadLocalState = () => {
+      const savedRespuestas = localStorage.getItem("progresoXperiencias");
+      if (savedRespuestas) setRespuestas(JSON.parse(savedRespuestas));
+      const savedRatings = localStorage.getItem("calificacionesXperiencias");
+      if (savedRatings) setRatings(JSON.parse(savedRatings));
+    };
+    window.addEventListener("progression_synced", reloadLocalState);
+    return () => window.removeEventListener("progression_synced", reloadLocalState);
+  }, []);
 
   const [bloqueados, setBloqueados] = useState(() => {
     const saved = localStorage.getItem("tiemposBloqueoXperiencias");
@@ -261,8 +272,8 @@ export default function XperienciasXtop({ onClose }) {
         playSuccessSound();
       }
       const nuevo = { ...respuestas, [clave]: opcion };
-      setRespuestas(nuevo);                              // ← actualiza estado inmediatamente (aparece palomita con el sonido)
-      localStorage.setItem("progresoXperiencias", JSON.stringify(nuevo));
+      setRespuestas(nuevo);
+      registerActivityCompleted(clave);
       setShowCopy(idx);
       setRespuestaReciente(clave);
       setTimeout(() => {
@@ -290,10 +301,7 @@ export default function XperienciasXtop({ onClose }) {
   const handleSetRating = (clave, valor) => {
     const actualizado = { ...ratings, [clave]: valor };
     setRatings(actualizado);
-    localStorage.setItem(
-      "calificacionesXperiencias",
-      JSON.stringify(actualizado)
-    );
+    saveActivityRating(clave, valor);
   };
 
   const total = xperiencias.length;

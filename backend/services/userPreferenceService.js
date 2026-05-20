@@ -22,18 +22,36 @@ exports.addPreference = async (
       throw new ResourceNotFoundError("Activity not found");
     }
 
-    const userPreference = await UserPreference.create(
-      {
-        userID: user.id,
-        activityId: activity.id,
-        isFavorite,
-        comment,
-        rating,
-      },
-      {
-        transaction,
-      }
-    );
+    let userPreference = await UserPreference.findOne({
+      where: { userID: user.id, activityId: activity.id },
+      transaction,
+    });
+
+    if (userPreference) {
+      await userPreference.update(
+        {
+          isFavorite,
+          comment,
+          rating,
+        },
+        {
+          transaction,
+        }
+      );
+    } else {
+      userPreference = await UserPreference.create(
+        {
+          userID: user.id,
+          activityId: activity.id,
+          isFavorite,
+          comment,
+          rating,
+        },
+        {
+          transaction,
+        }
+      );
+    }
 
     if (!trans) await transaction.commit();
 

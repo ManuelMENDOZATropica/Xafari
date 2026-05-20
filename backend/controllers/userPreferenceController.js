@@ -64,7 +64,7 @@ exports.updatePreference = async (req, res, next) => {
       newUserPreferenceData
     );
 
-    if (!newUser)
+    if (!newUserPreference)
       return next(new ResourceNotFoundError("User Preference not found"));
 
     res.status(200).json(toUserPreferenceDTO(newUserPreference));

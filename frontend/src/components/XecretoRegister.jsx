@@ -25,7 +25,7 @@ const GLYPH_TO_XECRETO = {
 export default function XecretoRegister({ onClose, previewOnly = false }) {
   const videoRef = useRef(null);
   const { t } = useTranslation();
-  const { playSuccessSound } = useContext(XafariContext);
+  const { playSuccessSound, registerActivityCompleted } = useContext(XafariContext);
   const qrData = {
     xecreto1: { guardian: "Mono", maya: "/maya/GuardianMono.png", arbol: "/guardianes/Mono Casa Vida.png" },
     xecreto2: { guardian: "Rana", maya: "/maya/GuardianRana.png", arbol: "/guardianes/Rana Casa Agua.png" },
@@ -46,6 +46,17 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
     }, {});
     return saved ? { ...defaultState, ...JSON.parse(saved) } : defaultState;
   });
+
+  useEffect(() => {
+    const reloadLocalState = () => {
+      const saved = localStorage.getItem("xecretos");
+      if (saved) {
+        setScannedCodes((prev) => ({ ...prev, ...JSON.parse(saved) }));
+      }
+    };
+    window.addEventListener("progression_synced", reloadLocalState);
+    return () => window.removeEventListener("progression_synced", reloadLocalState);
+  }, []);
 
   const [lastScanned, setLastScanned] = useState(null);
   const [insigniaKey, setInsigniaKey] = useState(0);
@@ -73,7 +84,7 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
     if (!scannedCodes[code]) {
       const updated = { ...scannedCodes, [code]: true };
       setScannedCodes(updated);
-      localStorage.setItem("xecretos", JSON.stringify(updated));
+      registerActivityCompleted(code);
       if (typeof playSuccessSound === "function") {
         playSuccessSound();
       }

@@ -29,7 +29,7 @@ const checklistItems = [
 
 export default function ChecklistGastro({ onClose }) {
   const { t } = useTranslation();
-  const { playSuccessSound } = useContext(XafariContext);
+  const { playSuccessSound, registerActivityCompleted, saveActivityRating } = useContext(XafariContext);
   const getItemField = (itemKey, field) =>
     t(`gastroChecklist.items.${itemKey}.${field}`);
 
@@ -43,13 +43,21 @@ export default function ChecklistGastro({ onClose }) {
     return saved ? JSON.parse(saved) : {};
   });
 
+  useEffect(() => {
+    const reloadLocalState = () => {
+      const savedEstado = localStorage.getItem("progresoChecklistGastro");
+      if (savedEstado) setEstado(JSON.parse(savedEstado));
+      const savedRatings = localStorage.getItem("calificacionesChecklistGastro");
+      if (savedRatings) setRatings(JSON.parse(savedRatings));
+    };
+    window.addEventListener("progression_synced", reloadLocalState);
+    return () => window.removeEventListener("progression_synced", reloadLocalState);
+  }, []);
+
   const handleCheck = (clave) => {
     const actualizado = { ...estado, [clave]: true };
     setEstado(actualizado);
-    localStorage.setItem(
-      "progresoChecklistGastro",
-      JSON.stringify(actualizado)
-    );
+    registerActivityCompleted(clave);
 
     if (typeof playSuccessSound === "function") {
       playSuccessSound();
@@ -63,10 +71,7 @@ export default function ChecklistGastro({ onClose }) {
   const handleSetRating = (clave, valor) => {
     const actualizado = { ...ratings, [clave]: valor };
     setRatings(actualizado);
-    localStorage.setItem(
-      "calificacionesChecklistGastro",
-      JSON.stringify(actualizado)
-    );
+    saveActivityRating(clave, valor);
   };
 
   const completadas = Object.values(estado).filter((v) => v === true).length;

@@ -141,13 +141,22 @@ export default function TreeOfLife() {
   const currentLanguage = i18n.language?.split("-")[0] ?? "es";
 
   useEffect(() => {
-    setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
-    setRespuestasCorrectas(
-      JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
-    );
-    setChecklistProgreso(
-      JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
-    );
+    const loadProgression = () => {
+      setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
+      setRespuestasCorrectas(
+        JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
+      );
+      setChecklistProgreso(
+        JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
+      );
+    };
+
+    loadProgression();
+
+    window.addEventListener("progression_synced", loadProgression);
+    return () => {
+      window.removeEventListener("progression_synced", loadProgression);
+    };
   }, []);
 
   useEffect(() => {

@@ -40,7 +40,20 @@ function App() {
       bodyAccessoryOptions: 0,
     },
   });
-  const [token, setToken] = useState(localStorage.getItem(null) || null);
+  const [token, setToken] = useState(() => {
+    try {
+      const stored = localStorage.getItem("token");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (_) {
+          return stored;
+        }
+      }
+    } catch (_e) {}
+    return null;
+  });
+  const [activitiesMap, setActivitiesMap] = useState({});
   const [soundSetting, setSoundSetting] = useState(() => {
     if (typeof window === "undefined") {
       return "full";
@@ -64,12 +77,198 @@ function App() {
     }
   }, []);
 
+  // Fetch all activities on start
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "/api";
+        const res = await fetch(`${apiUrl}/activities`);
+        if (res.ok) {
+          const data = await res.json();
+          const map = {};
+          data.forEach((act) => {
+            map[act.name] = { id: act.id, type: act.type };
+          });
+          setActivitiesMap(map);
+        }
+      } catch (err) {
+        console.error("Error fetching activities:", err);
+      }
+    };
+    fetchActivities();
+  }, []);
+
+  // Fetch user profile and progress if token exists
+  useEffect(() => {
+    if (!token || !user?.id) return;
+    const syncUserProgress = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "/api";
+        const res = await fetch(`${apiUrl}/users/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const dbUser = data.user || data;
+
+          // Update user state without overwriting local changes completely
+          setUser((old) => ({ ...old, ...dbUser }));
+
+          const dbActivities = dbUser.activities || [];
+          const dbPreferences = dbUser.preferredActivities || [];
+
+          const progresoXperiencias = {};
+          const xecretos = {};
+          const progresoChecklistGastro = {};
+
+          dbActivities.forEach((act) => {
+            const isCompleted = act.userActivity && act.userActivity.completedAt;
+            if (isCompleted) {
+              if (act.type === "Xperiencia") {
+                const answersMap = {
+                  kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+                  conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+                  patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a"
+                };
+                progresoXperiencias[act.name] = answersMap[act.name] || "a";
+              } else if (act.type === "Xecreto") {
+                xecretos[act.name] = true;
+              } else if (act.type === "Event") {
+                progresoChecklistGastro[act.name] = true;
+              }
+            }
+          });
+
+          const calificacionesXperiencias = {};
+          const calificacionesChecklistGastro = {};
+          dbPreferences.forEach((pref) => {
+            const rating = pref.userPreference ? pref.userPreference.rating : null;
+            if (rating) {
+              if (pref.type === "Xperiencia") {
+                calificacionesXperiencias[pref.name] = rating;
+              } else if (pref.type === "Event") {
+                calificacionesChecklistGastro[pref.name] = rating;
+              }
+            }
+          });
+
+          localStorage.setItem("progresoXperiencias", JSON.stringify(progresoXperiencias));
+          localStorage.setItem("xecretos", JSON.stringify(xecretos));
+          localStorage.setItem("progresoChecklistGastro", JSON.stringify(progresoChecklistGastro));
+          localStorage.setItem("calificacionesXperiencias", JSON.stringify(calificacionesXperiencias));
+          localStorage.setItem("calificacionesChecklistGastro", JSON.stringify(calificacionesChecklistGastro));
+
+          window.dispatchEvent(new Event("progression_synced"));
+        }
+      } catch (err) {
+        console.error("Error syncing user progress:", err);
+      }
+    };
+    syncUserProgress();
+  }, [token, user?.id]);
+
+  const registerActivityCompleted = async (activityName) => {
+    // 1. Update local storage immediately for fast UI response
+    const activity = activitiesMap[activityName];
+    if (activity) {
+      if (activity.type === "Xperiencia") {
+        const saved = JSON.parse(localStorage.getItem("progresoXperiencias") || "{}");
+        const answersMap = {
+          kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+          conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+          patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a"
+        };
+        saved[activityName] = answersMap[activityName] || "a";
+        localStorage.setItem("progresoXperiencias", JSON.stringify(saved));
+      } else if (activity.type === "Xecreto") {
+        const saved = JSON.parse(localStorage.getItem("xecretos") || "{}");
+        saved[activityName] = true;
+        localStorage.setItem("xecretos", JSON.stringify(saved));
+      } else if (activity.type === "Event") {
+        const saved = JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}");
+        saved[activityName] = true;
+        localStorage.setItem("progresoChecklistGastro", JSON.stringify(saved));
+      }
+      window.dispatchEvent(new Event("progression_synced"));
+    }
+
+    // 2. Call backend if authenticated
+    if (!token || !user?.id) return;
+    if (!activity) return;
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "/api";
+      const res = await fetch(`${apiUrl}/users/${user.id}/activity`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ activityId: activity.id }),
+      });
+      if (res.ok) {
+        console.log(`Backend: Registered activity completion for ${activityName}`);
+      }
+    } catch (err) {
+      console.error("Error registering activity completion on backend:", err);
+    }
+  };
+
+  const saveActivityRating = async (activityName, rating) => {
+    // 1. Update local storage immediately
+    const activity = activitiesMap[activityName];
+    if (activity) {
+      if (activity.type === "Xperiencia") {
+        const saved = JSON.parse(localStorage.getItem("calificacionesXperiencias") || "{}");
+        saved[activityName] = rating;
+        localStorage.setItem("calificacionesXperiencias", JSON.stringify(saved));
+      } else if (activity.type === "Event") {
+        const saved = JSON.parse(localStorage.getItem("calificacionesChecklistGastro") || "{}");
+        saved[activityName] = rating;
+        localStorage.setItem("calificacionesChecklistGastro", JSON.stringify(saved));
+      }
+      window.dispatchEvent(new Event("progression_synced"));
+    }
+
+    // 2. Call backend if authenticated
+    if (!token || !user?.id) return;
+    if (!activity) return;
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "/api";
+      const res = await fetch(`${apiUrl}/user-preferences`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          activityId: activity.id,
+          rating,
+          comment: "Calificación desde la App",
+        }),
+      });
+      if (res.ok) {
+        console.log(`Backend: Saved rating for ${activityName}`);
+      }
+    } catch (err) {
+      console.error("Error saving rating on backend:", err);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem("token", JSON.stringify(token));
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
   }, [token]);
 
   useEffect(() => {
@@ -86,6 +285,9 @@ function App() {
       setUser,
       token,
       setToken,
+      activitiesMap,
+      registerActivityCompleted,
+      saveActivityRating,
       soundSetting,
       setSoundSetting,
       triggerClickFeedback,
@@ -96,6 +298,7 @@ function App() {
     [
       user,
       token,
+      activitiesMap,
       soundSetting,
       triggerClickFeedback,
       playWardrobeSound,

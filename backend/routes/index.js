@@ -21,6 +21,7 @@ const userAvatarRoutes = require("./userAvatarRoutes")
 const userXelfiesRoutes = require("./userXelfieRoutes");
 const userPreferenceRoutes = require("./userPreferenceRoutes");
 const userAchievementRoutes = require("./userAchievementRoutes");
+const activityRoutes = require("./activityRoutes");
 const docsRoutes = require("./docsRoutes")
 const userController = require("../controllers/userController");
 const errorMiddleware = require("../middleware/errorHandler");
@@ -65,6 +66,9 @@ router.use("/user-xelfie", userXelfiesRoutes);
 
 router.use("/user-preferences", userPreferenceRoutes);
 router.use("/user-preference", userPreferenceRoutes);
+
+router.use("/activities", activityRoutes);
+router.use("/activity", activityRoutes);
 
 router.use("/", userAchievementRoutes);
 
