@@ -10,6 +10,16 @@ exports.createFamilyTree = async (req, res, next) => {
 
   if (admin.familyTreeId != null)
     return next(new BadRequestError("User already belongs to a family tree"));
+};
 
+exports.getFamilyTree = async (req, res, next) => {
+  res.status(501).json({ error: "Not implemented" });
+};
 
+exports.updateFamilyTree = async (req, res, next) => {
+  res.status(501).json({ error: "Not implemented" });
+};
+
+exports.deleteFamilyTree = async (req, res, next) => {
+  res.status(501).json({ error: "Not implemented" });
 };

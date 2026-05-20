@@ -3,6 +3,10 @@ const { handleSequelizeError } = require("../utils/errors");
 const express = require("express");
 const router = express.Router();
 
+router.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
 const usersRoutes = require("./userRoutes");
 const housesRoutes = require("./houseRoutes");
 const xecretoRoutes = require("./xecretoRoutes");

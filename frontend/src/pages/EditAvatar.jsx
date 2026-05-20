@@ -64,7 +64,7 @@ export default function AvatarSelection() {
     }
 
     try {
-      const response = await fetch("https://xafari.rexmalebka.com/user", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || "/api"}/user`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

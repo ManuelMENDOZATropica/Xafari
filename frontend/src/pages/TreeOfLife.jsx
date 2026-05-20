@@ -214,10 +214,10 @@ export default function TreeOfLife() {
   const activeSubmenuKey = showXperienciasModal
     ? "xperiencias"
     : showXelfiesModal
-    ? "xelfies"
-    : showXecretoModal
-    ? "xecretos"
-    : null;
+      ? "xelfies"
+      : showXecretoModal
+        ? "xecretos"
+        : null;
 
   const handleOpenXperiencias = () => {
     closePrimaryModals();
