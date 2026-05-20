@@ -81,7 +81,7 @@ exports.getFamilyTree = async (id, transaction) => {
 exports.deleteFamilyTree = async (id) => {
   const familyTree = await this.getFamilyTree(id);
 
-  if (familyTree == null) throw new ResourceNotFoundError("Resource not found");
+  if (familyTree == null) throw new ResourceNotFoundError("FamilyTree not found");
   const destroyed = await familyTree.destroy();
   return destroyed;
 };

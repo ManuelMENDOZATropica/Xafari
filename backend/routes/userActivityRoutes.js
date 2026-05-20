@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 const userActivityController = require("../controllers/userActivityController");
 const {
@@ -14,12 +14,26 @@ router.get("/:id", userIdParam, userActivityController.getUserActivity);
 
 router.post(
   "/",
+  (req, res, next) => {
+    if (req.params.userId && !req.body.userId) {
+      req.body.userId = req.params.userId;
+    }
+    next();
+  },
   createUserActivityValidation,
   validateRequest,
   userActivityController.addUserActivity
 );
 
 router.put(
+  "/:id",
+  userActivityIdParam,
+  updateUserActivityValidation,
+  validateRequest,
+  userActivityController.updateUserActivity
+);
+
+router.post(
   "/:id",
   userActivityIdParam,
   updateUserActivityValidation,

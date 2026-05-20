@@ -21,7 +21,7 @@ router.post(
   validateRequest,
   eventController.createEvent
 );
-router.put(
+router.post(
   "/:id",
   eventIdParam,
   updateActivityValidation,

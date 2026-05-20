@@ -2,6 +2,7 @@ const database = require("../config/database");
 
 const userService = require("./userService");
 const { Activity, UserPreference } = require("../models");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.addPreference = async (
   { userId, activityId, isFavorite, comment, rating },
@@ -67,9 +68,24 @@ exports.deletePreference = async (id) => {
 };
 
 exports.updatePreference = async (id, newData) => {
-  const user = await exports.getUser(id);
+  const transaction = await database.transaction();
 
-  if (user == null) throw new ResourceNotFoundError("Resource not found");
-  const updated = await UserPreference.update(newData);
-  return updated;
+  try {
+    const userPreference = await UserPreference.findByPk(id, {
+      transaction,
+    });
+
+    if (!userPreference)
+      throw new ResourceNotFoundError("UserPreference not found");
+
+    const updated = await userPreference.update(newData, {
+      transaction,
+    });
+    await transaction.commit();
+
+    return updated;
+  } catch (err) {
+    await transaction.rollback();
+    throw err;
+  }
 };

@@ -3,7 +3,7 @@ exports.toUserActivityDTO = (act) => {
     id: act.id,
     startedAt: act.startedAt,
     completedAt: act.completedAt,
-    userId: act.user.id,
-    activityId: act.activity.id,
+    userId: act.user ? act.user.id : act.userId,
+    activityId: act.activity ? act.activity.id : act.activityId,
   };
 };

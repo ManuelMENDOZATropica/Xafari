@@ -5,71 +5,75 @@ exports.createEventValidation = [
     .isString()
     .notEmpty()
     .isISO8601()
+    .withMessage("Date values are invalid")
     .custom((value, { req }) => {
       const endDate = new Date(req.body.endDate);
 
       if (new Date(value) == "Invalid Date" || endDate < new Date(value)) {
-        return false;
+        throw new Error("Date values are invalid");
       }
 
       req.body.startDate = new Date(value);
       return true;
     })
-    .withMessage("startDate is not valid"),
+    .withMessage("Date values are invalid"),
   body("endDate")
     .isString()
     .notEmpty()
     .isISO8601()
+    .withMessage("Date values are invalid")
     .custom((value, { req }) => {
       const endDate = new Date(value);
 
       if (endDate == "Invalid Date") {
-        return false;
+        throw new Error("Date values are invalid");
       }
 
       req.body.endDate = endDate;
       return true;
     })
-    .withMessage("startDate is not valid"),
+    .withMessage("Date values are invalid"),
 ];
 
 exports.updateEventValidation = [
-  param("id").isUUID().withMessage("Valid event ID is required"),
+  param("id").notEmpty().withMessage("Valid event ID is required"),
   body("startDate")
     .optional()
     .isString()
     .notEmpty()
     .isISO8601()
+    .withMessage("Date values are invalid")
     .custom((value, { req }) => {
       const endDate = new Date(req.body.endDate);
 
       if (new Date(value) == "Invalid Date" || endDate < new Date(value)) {
-        return false;
+        throw new Error("Date values are invalid");
       }
 
       req.body.startDate = new Date(value);
       return true;
     })
-    .withMessage("startDate is not valid"),
+    .withMessage("Date values are invalid"),
 
   body("endDate")
     .optional()
     .isString()
     .notEmpty()
     .isISO8601()
+    .withMessage("Date values are invalid")
     .custom((value, { req }) => {
       const endDate = new Date(value);
 
       if (endDate == "Invalid Date") {
-        return false;
+        throw new Error("Date values are invalid");
       }
 
       req.body.endDate = endDate;
       return true;
     })
-    .withMessage("startDate is not valid"),
+    .withMessage("Date values are invalid"),
 ];
 
 exports.eventIdParam = [
-  param("id").isUUID().withMessage("Valid event ID is required"),
+  param("id").notEmpty().withMessage("Valid event ID is required"),
 ];

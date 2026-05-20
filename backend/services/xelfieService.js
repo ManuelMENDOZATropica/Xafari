@@ -1,5 +1,6 @@
 const Activity = require("../models/activity");
 const Xelfie = require("../models/xelfie");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createXelfie = async ({ ...activityParams }) => {
   const xelfie = await Xelfie.create(
@@ -34,7 +35,7 @@ exports.getAllXelfies = async () => {
 exports.deleteXelfie = async (id) => {
   const xelfie = await this.getXelfie(id);
 
-  if (xelfie == null) throw new ResourceNotFoundError("Resource not found");
+  if (xelfie == null) throw new ResourceNotFoundError("Xelfie not found");
 
   const destroyed = await xelfie.destroy();
   return destroyed;
@@ -43,7 +44,7 @@ exports.deleteXelfie = async (id) => {
 exports.updateXelfie = async (id, newData) => {
   const xelfie = await this.getXelfie(id);
 
-  if (xelfie == null) throw new ResourceNotFoundError("Resource not found");
+  if (xelfie == null) throw new ResourceNotFoundError("Xelfie not found");
 
   const updated = await xelfie.update(newData);
 

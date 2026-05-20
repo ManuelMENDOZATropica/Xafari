@@ -30,7 +30,7 @@ router.post(
   xperienciaController.createXperiencia
 );
 
-router.put(
+router.post(
   "/:id",
   xperienciaIdParam,
   updateActivityValidation,

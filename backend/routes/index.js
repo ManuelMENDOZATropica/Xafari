@@ -20,26 +20,55 @@ const userActivityRoutes = require("./userActivityRoutes");
 const userAvatarRoutes = require("./userAvatarRoutes")
 const userXelfiesRoutes = require("./userXelfieRoutes");
 const userPreferenceRoutes = require("./userPreferenceRoutes");
+const userAchievementRoutes = require("./userAchievementRoutes");
 const docsRoutes = require("./docsRoutes")
+const userController = require("../controllers/userController");
 const errorMiddleware = require("../middleware/errorHandler");
 const authMiddleware = require("../middleware/authHandler");
 
 // router.use(authMiddleware)
 
-router.use("/users", usersRoutes);
-router.use("/houses", housesRoutes);
-router.use("/xecretos", xecretoRoutes);
-router.use("/xelfies", xelfieRoutes);
-router.use("/xperiencias", xperienciaRoutes);
-router.use("/events", eventsRoutes);
-router.use("/family-trees", familyTreeRoutes);
-router.use("/achievements", achievementRoutes);
-router.use("/user-avatar", userAvatarRoutes);
-router.use("/user-activities", userActivityRoutes);
-router.use("/user-xelfies", userXelfiesRoutes);
-router.use("/user-preferences", userPreferenceRoutes);
-router.use("/docs", docsRoutes)
+router.post("/login", userController.login);
+router.put("/user", authMiddleware, userController.updateCurrentUser);
 
+router.use("/users", usersRoutes);
+router.use("/user", usersRoutes);
+
+router.use("/houses", housesRoutes);
+router.use("/house", housesRoutes);
+
+router.use("/xecretos", xecretoRoutes);
+router.use("/xecreto", xecretoRoutes);
+
+router.use("/xelfies", xelfieRoutes);
+router.use("/xelfie", xelfieRoutes);
+
+router.use("/xperiencias", xperienciaRoutes);
+router.use("/xperiencia", xperienciaRoutes);
+
+router.use("/events", eventsRoutes);
+router.use("/event", eventsRoutes);
+
+router.use("/family-trees", familyTreeRoutes);
+router.use("/familyTree", familyTreeRoutes);
+
+router.use("/achievements", achievementRoutes);
+router.use("/achievement", achievementRoutes);
+
+router.use("/user-avatar", userAvatarRoutes);
+
+router.use("/user-activities", userActivityRoutes);
+router.use("/user-activity", userActivityRoutes);
+
+router.use("/user-xelfies", userXelfiesRoutes);
+router.use("/user-xelfie", userXelfiesRoutes);
+
+router.use("/user-preferences", userPreferenceRoutes);
+router.use("/user-preference", userPreferenceRoutes);
+
+router.use("/", userAchievementRoutes);
+
+router.use("/docs", docsRoutes)
 
 router.use(errorMiddleware);
 

@@ -1,6 +1,7 @@
 const House = require("../models/house");
 
 const { Activity, Achievement } = require("../models");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createHouse = async ({ name, element, animal }) => {
   const house = await House.create({
@@ -31,7 +32,7 @@ exports.getAllHouses = async () => {
 exports.deleteHouse = async (id) => {
   const house = await this.getHouse(id);
 
-  if (house == null) throw new ResourceNotFoundError("Resource not found");
+  if (house == null) throw new ResourceNotFoundError("House not found");
 
   const destroyed = await house.destroy();
 
@@ -41,7 +42,7 @@ exports.deleteHouse = async (id) => {
 exports.updateHouse = async (id, newData) => {
   const house = await this.getHouse(id);
 
-  if (house == null) throw new ResourceNotFoundError("Resource not found");
+  if (house == null) throw new ResourceNotFoundError("House not found");
   const updated = await house.update(newData);
 
   return updated;

@@ -19,12 +19,11 @@ router.get(
 );
 router.post(
   "/",
-  xecretoIdParam,
   createXecretoValidation,
   validateRequest,
   xecretoController.createXecreto
 );
-router.put(
+router.post(
   "/:id",
   xecretoIdParam,
   updateXecretoValidation,

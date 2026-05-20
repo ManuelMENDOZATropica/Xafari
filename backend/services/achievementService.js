@@ -45,7 +45,7 @@ exports.createAchievement = async ({
 
     await transaction.commit();
 
-    return achievement;
+    return await this.getAchievement(achievement.id);
   } catch (err) {
     await transaction.rollback();
     throw err;
@@ -72,7 +72,7 @@ exports.deleteAchievement = async (id) => {
   const achievement = await this.getAchievement(id);
 
   if (achievement == null)
-    throw new ResourceNotFoundError("Resource not found");
+    throw new ResourceNotFoundError("Achievement not found");
 
   const destroyed = await achievement.destroy();
   return destroyed;

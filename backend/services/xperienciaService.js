@@ -1,6 +1,7 @@
 const Activity = require("../models/activity");
 const Xperiencia = require("../models/xperiencia");
 const House = require("../models/house");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createXperiencia = async ({
   qrCode,
@@ -40,7 +41,7 @@ exports.getAllXperiencias = async () => {
 exports.deleteXperiencia = async (id) => {
   const xperiencia = await this.getXperiencia(id);
 
-  if (xperiencia == null) throw new ResourceNotFoundError("Resource not found");
+  if (xperiencia == null) throw new ResourceNotFoundError("Xperiencia not found");
 
   const destroyed = await xperiencia.destroy();
   return destroyed;
@@ -49,7 +50,7 @@ exports.deleteXperiencia = async (id) => {
 exports.updateXperiencia = async (id, newData) => {
   const xperiencia = await this.getXperiencia(id);
 
-  if (xperiencia == null) throw new ResourceNotFoundError("Resource not found");
+  if (xperiencia == null) throw new ResourceNotFoundError("Xperiencia not found");
   const updated = await xperiencia.update(newData);
   if (updated != null) {
     await xperiencia.activity.update(newData);

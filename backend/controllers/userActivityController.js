@@ -7,7 +7,7 @@ const {
 } = require("../utils/errors");
 
 exports.addUserActivity = async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.params.userId || req.params.id || req.body.userId;
   const { activityId } = req.body;
 
   try {
@@ -19,7 +19,7 @@ exports.addUserActivity = async (req, res, next) => {
       return next(BadRequestError("Error adding activity"));
     }
 
-    res.status(200).json(toUserActivityDTO(userActivity));
+    res.status(200).json({ userActivity: toUserActivityDTO(userActivity) });
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -37,7 +37,7 @@ exports.getUserActivity = async (req, res, next) => {
     if (!userActivity)
       return next(new ResourceNotFoundError("UserActivity not found"));
 
-    res.status(200).json(toUserActivityDTO(userActivity));
+    res.status(200).json({ userActivity: toUserActivityDTO(userActivity) });
   } catch (err) {
     logger.error(err);
     next(handleSequelizeError(err, "UserActivity"));
@@ -46,14 +46,15 @@ exports.getUserActivity = async (req, res, next) => {
 
 exports.deleteUserActivity = async (req, res, next) => {
   const { id } = req.params;
+  const userId = req.params.userId;
 
   try {
-    const userActivity = await userActivityService.deleteUserActivity(id);
+    const userActivity = await userActivityService.deleteUserActivity(id, userId);
     if (!userActivity) {
       return next(BadRequestError("Error adding activity"));
     }
 
-    res.status(200).json(toUserActivityDTO(userActivity));
+    res.status(200).json({ userActivity: toUserActivityDTO(userActivity) });
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);
@@ -65,6 +66,7 @@ exports.deleteUserActivity = async (req, res, next) => {
 
 exports.updateUserActivity = async (req, res, next) => {
   const { id } = req.params;
+  const userId = req.params.userId;
 
   try {
     const newUserActivityData = {
@@ -74,14 +76,15 @@ exports.updateUserActivity = async (req, res, next) => {
 
     const newUserActivity = await userActivityService.updateUserActivity(
       id,
-      newUserActivityData
+      newUserActivityData,
+      userId
     );
 
     if (!newUserActivity) {
       return next(new ResourceNotFoundError("UserActivity not found"));
     }
 
-    res.status(200).json(toUserActivityDTO(newUserActivity));
+    res.status(200).json({ userActivity: toUserActivityDTO(newUserActivity) });
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return next(err);

@@ -18,7 +18,11 @@ exports.createEvent = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.status(200).json(toEventDTO(event));
+    const eventDTO = toEventDTO(event);
+    res.status(200).json({
+      event: eventDTO,
+      ...eventDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -31,7 +35,11 @@ exports.getEvent = async (req, res, next) => {
 
     if (!event) return next(new ResourceNotFoundError("Event not found"));
 
-    res.status(200).json(toEventDTO(event));
+    const eventDTO = toEventDTO(event);
+    res.status(200).json({
+      event: eventDTO,
+      ...eventDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -44,7 +52,11 @@ exports.deleteEvent = async (req, res, next) => {
 
     if (!event) return next(new ResourceNotFoundError("Event not found"));
 
-    res.status(200).json(toEventDTO(event));
+    const eventDTO = toEventDTO(event);
+    res.status(200).json({
+      event: eventDTO,
+      ...eventDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }
@@ -70,7 +82,11 @@ exports.updateEvent = async (req, res, next) => {
 
     if (!newEvent) return next(new ResourceNotFoundError("Event not found"));
 
-    res.status(200).json(toEventDTO(newEvent));
+    const eventDTO = toEventDTO(newEvent);
+    res.status(200).json({
+      event: eventDTO,
+      ...eventDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Event"));
   }

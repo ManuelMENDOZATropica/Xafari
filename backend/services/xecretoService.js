@@ -1,11 +1,12 @@
 const Clue = require("../models/clue");
 const Activity = require("../models/activity");
 const Xecreto = require("../models/xecreto");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createXecreto = async ({ clues, ...activityParams }) => {
   const xecreto = await Xecreto.create(
     {
-      clues,
+      clues: clues || [],
       activity: activityParams,
     },
     {
@@ -13,6 +14,7 @@ exports.createXecreto = async ({ clues, ...activityParams }) => {
     }
   );
 
+  await xecreto.reload({ include: [Activity, Clue] });
   return xecreto;
 };
 
@@ -35,7 +37,7 @@ exports.getAllXecretos = async () => {
 exports.deleteXecreto = async (id) => {
   const xecreto = await this.getXecreto(id);
 
-  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
+  if (xecreto == null) throw new ResourceNotFoundError("Xecreto not found");
 
   const destroyed = await xecreto.destroy();
   return destroyed;
@@ -44,17 +46,50 @@ exports.deleteXecreto = async (id) => {
 exports.updateXecreto = async (id, newData) => {
   const xecreto = await this.getXecreto(id);
 
-  if (xecreto == null) throw new ResourceNotFoundError("Resource not found");
+  if (xecreto == null) throw new ResourceNotFoundError("Xecreto not found");
 
   if (newData.clues) {
-    for (const clue of xecreto.clues) {
-      await clue.destroy();
+    const existingClues = xecreto.clues || [];
+    let cluesChanged = false;
+    if (existingClues.length !== newData.clues.length) {
+      cluesChanged = true;
+    } else {
+      for (let i = 0; i < existingClues.length; i++) {
+        if (
+          existingClues[i].text !== newData.clues[i].text ||
+          existingClues[i].correctAnswer !== newData.clues[i].correctAnswer
+        ) {
+          cluesChanged = true;
+          break;
+        }
+      }
+    }
+
+    if (cluesChanged) {
+      for (const clue of existingClues) {
+        await clue.destroy();
+      }
+      const newClues = [];
+      for (let i = 0; i < newData.clues.length; i++) {
+        const clueData = newData.clues[i];
+        const clue = await Clue.create({
+          ...clueData,
+          order: clueData.order !== undefined ? clueData.order : i,
+          xecretoId: xecreto.id,
+        });
+        newClues.push(clue);
+      }
+      xecreto.clues = newClues;
     }
   }
 
   const updated = await xecreto.update(newData);
 
-  await xecreto.activity.update(newData);
+  if (xecreto.activity) {
+    await xecreto.activity.update(newData);
+  }
 
-  return updated;
+  await xecreto.reload({ include: [Activity, Clue] });
+
+  return xecreto;
 };

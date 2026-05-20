@@ -16,7 +16,11 @@ exports.createXperiencia = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.status(200).json(toXperienciaDTO(xperiencia));
+    const xperienciaDTO = toXperienciaDTO(xperiencia);
+    res.status(200).json({
+      xperiencia: xperienciaDTO,
+      ...xperienciaDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -30,7 +34,11 @@ exports.getXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.status(200).json(toXperienciaDTO(xperiencia));
+    const xperienciaDTO = toXperienciaDTO(xperiencia);
+    res.status(200).json({
+      xperiencia: xperienciaDTO,
+      ...xperienciaDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -57,7 +65,11 @@ exports.deleteXperiencia = async (req, res, next) => {
     if (!xperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.status(200).json(toXperienciaDTO(xperiencia));
+    const xperienciaDTO = toXperienciaDTO(xperiencia);
+    res.status(200).json({
+      xperiencia: xperienciaDTO,
+      ...xperienciaDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }
@@ -87,7 +99,11 @@ exports.updateXperiencia = async (req, res, next) => {
     if (!newXperiencia)
       return next(new ResourceNotFoundError("Xperiencia not found"));
 
-    res.status(200).json(toXperienciaDTO(newXperiencia));
+    const xperienciaDTO = toXperienciaDTO(newXperiencia);
+    res.status(200).json({
+      xperiencia: xperienciaDTO,
+      ...xperienciaDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xperiencia"));
   }

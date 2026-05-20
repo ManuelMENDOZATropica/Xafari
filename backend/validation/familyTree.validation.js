@@ -1,7 +1,11 @@
 const { body, param } = require("express-validator");
 
 exports.createFamilyTreeValidation = [
-  body("name").isString().notEmpty().withMessage("Name is required"),
+  body("name")
+    .notEmpty()
+    .withMessage("Name cannot be empty")
+    .isString()
+    .withMessage("Name cannot be empty"),
   body("members").isArray().optional(),
   body("members.*")
     .isString()
@@ -11,8 +15,13 @@ exports.createFamilyTreeValidation = [
 ];
 
 exports.updateFamilyTreeValidation = [
-  param("id").isUUID().withMessage("Valid event ID is required"),
-  body("name").isString().optional().notEmpty().withMessage("Name is required"),
+  param("familyId").notEmpty().withMessage("Valid family tree ID is required"),
+  body("name")
+    .optional()
+    .notEmpty()
+    .withMessage("Name cannot be empty")
+    .isString()
+    .withMessage("Name cannot be empty"),
   body("members").isArray().optional(),
   body("members.*")
     .isString()
@@ -22,5 +31,5 @@ exports.updateFamilyTreeValidation = [
 ];
 
 exports.familyTreeIdParam = [
-  param("id").isUUID().withMessage("Valid family tree ID is required"),
+  param("familyId").notEmpty().withMessage("Valid family tree ID is required"),
 ];

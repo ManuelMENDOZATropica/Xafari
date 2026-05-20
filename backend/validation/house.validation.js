@@ -1,18 +1,17 @@
 const { body, param } = require("express-validator");
 
 exports.createHouseValidation = [
-  body("name").isString().notEmpty().withMessage("Name is required"),
-  body("animal").isString().notEmpty().withMessage("Animal is required"),
-  body("element").isString().notEmpty().withMessage("Animal is required"),
+  body("name").trim().notEmpty().withMessage("Name cannot be empty"),
+  body("animal").trim().notEmpty().withMessage("Animal cannot be empty"),
+  body("element").trim().notEmpty().withMessage("Element cannot be empty"),
 ];
 
 exports.updateHouseValidation = [
-  param("id").isUUID().withMessage("Valid house ID is required"),
-  body("name").isString().notEmpty().withMessage("Name is required"),
-  body("animal").isString().notEmpty().withMessage("Animal is required"),
-  body("element").isString().notEmpty().withMessage("Animal is required"),
+  body("name").optional().trim().notEmpty().withMessage("Name cannot be empty"),
+  body("animal").optional().trim().notEmpty().withMessage("Animal cannot be empty"),
+  body("element").optional().trim().notEmpty().withMessage("Element cannot be empty"),
 ];
 
 exports.houseIdParam = [
-  param("id").isUUID().withMessage("Valid house ID is required"),
+  param("id").notEmpty().withMessage("Valid house ID is required"),
 ];

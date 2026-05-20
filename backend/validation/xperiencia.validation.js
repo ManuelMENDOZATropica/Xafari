@@ -6,7 +6,7 @@ exports.createXperienciaValidation = [
 ];
 
 exports.updateXperienciaValidation = [
-  param("id").isUUID().withMessage("Valid xperiencia ID is required"),
+  param("id").notEmpty().withMessage("Valid xperiencia ID is required"),
   body("qrCode").optional().isString(),
   body("isValidable")
     .optional()
@@ -15,5 +15,5 @@ exports.updateXperienciaValidation = [
 ];
 
 exports.xperienciaIdParam = [
-  param("id").isUUID().withMessage("Valid xperiencia ID is required"),
+  param("id").notEmpty().withMessage("Valid xperiencia ID is required"),
 ];

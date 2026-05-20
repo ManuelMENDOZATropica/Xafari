@@ -15,7 +15,8 @@ const user = database.define(
     },
     lastname: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: "",
     },
     email: {
       type: DataTypes.STRING,
@@ -39,7 +40,8 @@ const user = database.define(
     },
     pronouns: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: "",
     },
     avatar: {
       type: DataTypes.STRING,

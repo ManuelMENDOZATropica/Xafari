@@ -11,7 +11,8 @@ class ValidationError extends Error {
   constructor(message = "Validation failed", details = []) {
     super(message);
     this.name = "ValidationError";
-    this.statusCode = 422;
+    this.statusCode = 400;
+    this.status = 400;
     this.details = details;
   }
 }
@@ -21,6 +22,7 @@ class AuthenticationError extends Error {
     super(message);
     this.name = "AuthenticationError";
     this.statusCode = 401;
+    this.status = 401;
   }
 }
 
@@ -28,6 +30,7 @@ class ResourceNotFoundError extends Error {
   constructor(message = "Not Found") {
     super(message);
     this.name = "ResourceNotFoundError";
+    this.statusCode = 404;
     this.status = 404;
   }
 }
@@ -36,6 +39,7 @@ class BadRequestError extends Error {
   constructor(message = "Bad Request") {
     super(message);
     this.name = "BadRequestError";
+    this.statusCode = 400;
     this.status = 400;
   }
 }
@@ -45,6 +49,7 @@ class ResourceConflictError extends Error {
     super(message);
     this.name = "ResourceConflictError";
     this.statusCode = 409;
+    this.status = 409;
   }
 }
 
@@ -53,10 +58,24 @@ class DatabaseError extends Error {
     super(message);
     this.name = "DatabaseError";
     this.statusCode = 500;
+    this.status = 500;
   }
 }
 
 function handleSequelizeError(error, resource) {
+  if (
+    error.statusCode ||
+    error.status ||
+    error.name === "ResourceNotFoundError" ||
+    error.name === "ValidationError" ||
+    error.name === "AuthenticationError" ||
+    error.name === "BadRequestError" ||
+    error.name === "ResourceConflictError" ||
+    error.name === "DatabaseError"
+  ) {
+    return error;
+  }
+
   console.log("AAAA", error)
   logger.error(error);
   if (error instanceof UniqueConstraintError) {

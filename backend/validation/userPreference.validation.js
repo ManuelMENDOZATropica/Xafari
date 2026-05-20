@@ -8,7 +8,7 @@ exports.createUserPreferenceValidation = [
 ];
 
 exports.updateUserPreferenceValidation = [
-  param("id").isUUID().withMessage("Valid user preference ID is required"),
+  param("id").notEmpty().withMessage("Valid user preference ID is required"),
   body("comment")
     .optional()
     .isString()
@@ -21,5 +21,5 @@ exports.updateUserPreferenceValidation = [
 ];
 
 exports.userPreferenceParamValidation = [
-  param("id").isUUID().withMessage("Valid user Preference ID is required"),
+  param("id").notEmpty().withMessage("Valid user Preference ID is required"),
 ];

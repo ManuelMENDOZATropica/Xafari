@@ -24,6 +24,13 @@ router.put(
   validateRequest,
   houseController.updateHouse
 );
+router.post(
+  "/:id",
+  houseIdParam,
+  updateHouseValidation,
+  validateRequest,
+  houseController.updateHouse
+);
 router.delete(
   "/:id",
   houseIdParam,

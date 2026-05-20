@@ -21,16 +21,20 @@ const UserPreference = require("./userPreference");
 
 User.belongsToMany(Activity, {
   through: UserActivity,
+  as: "activities",
 });
 Activity.belongsToMany(User, {
   through: UserActivity,
+  as: "users",
 });
 
 User.belongsToMany(Activity, {
   through: UserPreference,
+  as: "preferredActivities",
 });
 Activity.belongsToMany(User, {
   through: UserPreference,
+  as: "preferringUsers",
 });
 
 User.belongsToMany(Xelfie, {

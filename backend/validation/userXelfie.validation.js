@@ -1,7 +1,7 @@
 const { body, param } = require("express-validator");
 
 exports.createUserXelfieValidation = [
-  param("userId").isUUID().withMessage("Valid user ID is required"),
+  param("userId").notEmpty().withMessage("Valid user ID is required"),
   body("xelfieId").isUUID().withMessage("Valid xelfie ID is required"),
   body("xelfieUrl").isURL().withMessage("Valid image url is required"),
 ];
@@ -14,5 +14,5 @@ exports.updateUserXelfieValidation = [
 ];
 
 exports.userXelfieParamValidation = [
-  param("id").isUUID().withMessage("Valid user xelfie ID is required"),
+  param("id").notEmpty().withMessage("Valid user xelfie ID is required"),
 ];

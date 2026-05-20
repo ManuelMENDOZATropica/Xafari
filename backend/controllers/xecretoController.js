@@ -17,7 +17,11 @@ exports.createXecreto = async (req, res, next) => {
       ...activityParams,
     });
 
-    res.status(200).json(toXecretoDTO(xecreto));
+    const xecretoDTO = toXecretoDTO(xecreto);
+    res.status(200).json({
+      xecreto: xecretoDTO,
+      ...xecretoDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -30,7 +34,11 @@ exports.getXecreto = async (req, res, next) => {
 
     if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.status(200).json(toXecretoDTO(xecreto));
+    const xecretoDTO = toXecretoDTO(xecreto);
+    res.status(200).json({
+      xecreto: xecretoDTO,
+      ...xecretoDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -54,7 +62,11 @@ exports.deleteXecreto = async (req, res, next) => {
 
     if (!xecreto) return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.status(200).json(toXecretoDTO(xecreto));
+    const xecretoDTO = toXecretoDTO(xecreto);
+    res.status(200).json({
+      xecreto: xecretoDTO,
+      ...xecretoDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }
@@ -87,7 +99,11 @@ exports.updateXecreto = async (req, res, next) => {
     if (!newXecreto)
       return next(new ResourceNotFoundError("Xecreto not found"));
 
-    res.status(200).json(toXecretoDTO(newXecreto));
+    const xecretoDTO = toXecretoDTO(newXecreto);
+    res.status(200).json({
+      xecreto: xecretoDTO,
+      ...xecretoDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "Xecreto"));
   }

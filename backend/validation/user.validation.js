@@ -1,35 +1,37 @@
 const { body, param } = require("express-validator");
 
 exports.createUserValidation = [
-  body("name").isString().notEmpty().withMessage("Name is required"),
-  body("lastname").isString().notEmpty().withMessage("Last name is required"),
-  body("email").isEmail().withMessage("Valid email is required"),
+  body("name").trim().notEmpty().withMessage("Name cannot be empty"),
+  body("lastname").optional().isString(),
+  body("email").trim().isEmail().withMessage("Email is not valid"),
   body("password")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters"),
+    .notEmpty()
+    .withMessage("Password cannot be empty"),
   body("birthdate")
+    .trim()
     .isISO8601()
     .toDate()
-    .withMessage("Valid birthdate is required"),
+    .withMessage("Birthdate must be a valid ISO 8601 date"),
   body("reservationNumber")
-    .isString()
-    .withMessage("Reservation number is required"),
-  body("pronouns").isString().withMessage("Valid pronouns is required"),
+    .trim()
+    .notEmpty()
+    .withMessage("Reservation number cannot be empty"),
+  body("pronouns").optional().isString(),
   body("avatar").optional().isObject(),
 ];
 
 exports.updateUserValidation = [
-  param("id").isUUID().withMessage("Valid user ID is required"),
-  body("name").optional().isString(),
+  param("id").notEmpty().withMessage("Valid user ID is required"),
+  body("name").optional().trim().notEmpty().withMessage("Name cannot be empty"),
   body("lastname").optional().isString(),
-  body("email").optional().isEmail(),
-  body("password").optional().isLength({ min: 6 }),
-  body("birthdate").optional().isISO8601().toDate(),
-  body("reservationNumber").optional().isString(),
+  body("email").optional().trim().isEmail().withMessage("Email is not valid"),
+  body("password").optional().notEmpty().withMessage("Password cannot be empty"),
+  body("birthdate").optional().trim().isISO8601().toDate().withMessage("Birthdate must be a valid ISO 8601 date"),
+  body("reservationNumber").optional().trim().notEmpty().withMessage("Reservation number cannot be empty"),
   body("pronouns").optional().isString(),
   body("avatar").optional().isObject(),
 ];
 
 exports.userIdParam = [
-  param("id").isUUID().withMessage("Valid user ID is required"),
+  param("id").notEmpty().withMessage("Valid user ID is required"),
 ];

@@ -1,5 +1,6 @@
 const Activity = require("../models/activity");
 const EventModel = require("../models/event");
+const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createEvent = async ({ startDate, endDate, ...activityParams }) => {
   const event = await EventModel.create(
@@ -35,7 +36,7 @@ exports.getAllEvents = async () => {
 exports.deleteEvent = async (id) => {
   const event = await this.getEvent(id);
 
-  if (event == null) throw new ResourceNotFoundError("Resource not found");
+  if (event == null) throw new ResourceNotFoundError("Event not found");
 
   const destroyed = await event.destroy();
   return destroyed;
@@ -44,7 +45,7 @@ exports.deleteEvent = async (id) => {
 exports.updateEvent = async (id, newData) => {
   const event = await this.getEvent(id);
 
-  if (event == null) throw new ResourceNotFoundError("Resource not found");
+  if (event == null) throw new ResourceNotFoundError("Event not found");
 
   const updated = await event.update(newData);
   if (updated != null) {

@@ -375,11 +375,14 @@ describe("FamilyTree route", () => {
         });
 
       const expectedUsers = [
-        Object.fromEntries(
-          Object.entries(responseAdmin.body.user).filter(
-            ([key, value]) => key != "updatedAt"
-          )
-        ),
+        {
+          ...Object.fromEntries(
+            Object.entries(responseAdmin.body.user).filter(
+              ([key, value]) => key != "updatedAt"
+            )
+          ),
+          familyTreeId: responseFamily.body.familyTree.id,
+        },
         ...responseNewMembers.map((m) => ({
           ...Object.fromEntries(
             Object.entries(m.body.user).filter(

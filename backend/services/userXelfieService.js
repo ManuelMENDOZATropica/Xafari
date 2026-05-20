@@ -30,7 +30,7 @@ exports.addXelfie = async (userId, xelfieId, xelfieUrl) => {
     );
 
     if (!user.activities.find((a) => a.id == xelfie.activity.id)) {
-      await UserActivityService.addActivity(
+      await UserActivityService.addUserActivity(
         user.id,
         xelfie.activity.id,
         transaction
@@ -93,9 +93,7 @@ exports.updateUserXelfie = async (userId, xelfieId, newData) => {
 
     if (!user) throw new ResourceNotFoundError("User not found");
 
-    const xelfie = await Xelfie.findByPk(xelfieId, {
-      transaction,
-    });
+    const xelfie = await xelfieService.getXelfie(xelfieId, transaction);
 
     if (!xelfie) {
       throw new ResourceNotFoundError("Xelfie not found");

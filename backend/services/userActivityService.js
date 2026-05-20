@@ -37,15 +37,22 @@ exports.addUserActivity = async (userId, activityId, trans) => {
   }
 };
 
-exports.deleteUserActivity = async (id) => {
+exports.deleteUserActivity = async (id, userId) => {
   const transaction = await database.transaction();
 
   try {
+    if (userId) {
+      const user = await userService.getUser(userId, transaction);
+      if (!user) throw new ResourceNotFoundError("User not found");
+
+      const activity = await Activity.findByPk(id, { transaction });
+      if (!activity) throw new ResourceNotFoundError("Activity not found");
+    }
+
+    const whereClause = userId ? { userId, activityId: id } : { id };
     const userActivity = await UserActivity.findOne(
       {
-        where: {
-          id,
-        },
+        where: whereClause,
       },
       {
         transaction,
@@ -77,15 +84,22 @@ exports.getUserActivity = async (id) => {
   return userActivity;
 };
 
-exports.updateUserActivity = async (id, newData) => {
+exports.updateUserActivity = async (id, newData, userId) => {
   const transaction = await database.transaction();
 
   try {
+    if (userId) {
+      const user = await userService.getUser(userId, transaction);
+      if (!user) throw new ResourceNotFoundError("User not found");
+
+      const activity = await Activity.findByPk(id, { transaction });
+      if (!activity) throw new ResourceNotFoundError("Activity not found");
+    }
+
+    const whereClause = userId ? { userId, activityId: id } : { id };
     const userActivity = await UserActivity.findOne(
       {
-        where: {
-          id,
-        },
+        where: whereClause,
       },
       {
         transaction,

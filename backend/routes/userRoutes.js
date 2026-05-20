@@ -11,9 +11,7 @@ const userController = require("../controllers/userController");
 
 const { validateRequest } = require("../middleware/validateRequest");
 
-router.get("/:id", userController.getUser);
-
-console.debug(validateRequest);
+router.get("/:id", userIdParam, validateRequest, userController.getUser);
 
 router.post(
   "/",
@@ -22,12 +20,28 @@ router.post(
   userController.createUser
 );
 
-router.put(
+router.post(
   "/:id",
-  ...updateUserValidation,
+  updateUserValidation,
   validateRequest,
   userController.updateUser
 );
-router.delete("/:id", userIdParam, userController.deleteUser);
+
+router.put(
+  "/:id",
+  updateUserValidation,
+  validateRequest,
+  userController.updateUser
+);
+
+router.delete("/:id", userIdParam, validateRequest, userController.deleteUser);
+
+const userActivityRoutes = require("./userActivityRoutes");
+const userXelfieRoutes = require("./userXelfieRoutes");
+const userAchievementRoutes = require("./userAchievementRoutes");
+
+router.use("/:userId/activity", userActivityRoutes);
+router.use("/:userId/xelfie", userXelfieRoutes);
+router.use("/:userId/achievement", userAchievementRoutes);
 
 module.exports = router;

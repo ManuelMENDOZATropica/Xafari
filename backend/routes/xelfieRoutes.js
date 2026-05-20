@@ -17,7 +17,7 @@ router.post(
   validateRequest,
   xelfieController.createXelfie
 );
-router.put(
+router.post(
   "/:id",
   xelfieIdParam,
   updateActivityValidation,

@@ -16,7 +16,11 @@ exports.createHouse = async (req, res, next) => {
       animal,
     });
 
-    res.status(200).json(toHouseDTO(house));
+    const houseDTO = toHouseDTO(house);
+    res.status(200).json({
+      house: houseDTO,
+      ...houseDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "House"));
   }
@@ -29,7 +33,11 @@ exports.getHouse = async (req, res, next) => {
 
     if (!house) return next(new ResourceNotFoundError("House not found"));
 
-    res.status(200).json(toHouseDTO(house));
+    const houseDTO = toHouseDTO(house);
+    res.status(200).json({
+      house: houseDTO,
+      ...houseDTO
+    });
   } catch (err) {
     logger.error(err);
     next(handleSequelizeError(err, "House"));
@@ -54,7 +62,11 @@ exports.deleteHouse = async (req, res, next) => {
 
     if (!house) return next(new ResourceNotFoundError("House not found"));
 
-    res.status(200).json(toHouseDTO(house));
+    const houseDTO = toHouseDTO(house);
+    res.status(200).json({
+      house: houseDTO,
+      ...houseDTO
+    });
   } catch (err) {
     next(handleSequelizeError(err, "House"));
   }
@@ -73,7 +85,11 @@ exports.updateHouse = async (req, res, next) => {
 
     if (!newHouse) return next(new ResourceNotFoundError("House not found"));
 
-    res.status(200).json(toHouseDTO(newHouse));
+    const houseDTO = toHouseDTO(newHouse);
+    res.status(200).json({
+      house: houseDTO,
+      ...houseDTO
+    });
   } catch (err) {
     logger.error(err);
     next(handleSequelizeError(err, "House"));

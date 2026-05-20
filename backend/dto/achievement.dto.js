@@ -5,14 +5,17 @@ exports.toAchievementDTO = (a) => {
     description: a.description,
     type: a.type,
     imageUrl: a.imageUrl,
-    houseId: a.house.id,
-    activityId: a.activity.id,
+    houseId: a.house ? a.house.id : (a.houseId || null),
+    activityId: a.activity ? a.activity.id : (a.activityId || null),
   };
 };
 
 exports.toUserAchievementDTO = (ua) => {
   return {
-    achievementId: ua.achievementId.toString(),
-    earnedAt: ua.earnedAt,
+    id: ua.id,
+    amount: ua.amount,
+    completedAt: ua.completedAt,
+    userId: ua.user ? ua.user.id : ua.userId,
+    achievementId: ua.achievement ? ua.achievement.id : ua.achievementId,
   };
 };
