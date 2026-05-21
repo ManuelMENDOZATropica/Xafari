@@ -37,4 +37,7 @@ router.delete(
   familyTreeController.deleteFamilyTree
 );
 
+router.post("/:familyId/join", familyTreeIdParam, validateRequest, familyTreeController.joinFamilyTree);
+router.post("/leave", familyTreeController.leaveFamilyTree);
+
 module.exports = router;

@@ -14,6 +14,7 @@ import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
 import ModalMapa from "@/components/ModalMapa";
 import Xelfies from "@/components/xelfies";
 import SoundMenu from "@/components/SoundMenu";
+import ModalFamilia from "@/components/ModalFamilia";
 import ModalAjustes from "@/components/ModalAjustes";
 
 const FamilyIcon = (props) => (
@@ -124,6 +125,7 @@ export default function TreeOfLife() {
     useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
+  const [showFamiliaModal, setShowFamiliaModal] = useState(false);
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
   const [showXecretoModal, setShowXecretoModal] = useState(false);
@@ -273,8 +275,34 @@ export default function TreeOfLife() {
       </div>
 
       {/* Botón de sonido — esquina superior derecha */}
-      <div className="absolute top-4 right-4 z-40">
+      <div className="absolute top-4 right-4 z-40 flex flex-col items-end gap-2">
         <SoundMenu />
+        {/* Botón familia — aparece cuando modoFamilia está activo */}
+        <AnimatePresence>
+          {modoFamilia && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setShowFamiliaModal(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full shadow-md active:scale-95 transition-all"
+              style={{ backgroundColor: "#3D1A00" }}
+            >
+              {/* QR icon */}
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
+              </svg>
+              {/* + icon */}
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       <button
@@ -433,6 +461,23 @@ export default function TreeOfLife() {
 
 
                 <ModalAjustes onClose={handleCloseSettingsModal} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showFamiliaModal && (
+          <motion.div
+            className="fixed inset-0 z-40 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 221px)" }}>
+              <div className="relative h-full w-full rounded-3xl overflow-hidden">
+                <ModalFamilia onClose={() => setShowFamiliaModal(false)} />
               </div>
             </div>
           </motion.div>

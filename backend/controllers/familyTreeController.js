@@ -80,3 +80,27 @@ exports.deleteFamilyTree = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.joinFamilyTree = async (req, res, next) => {
+  const { familyId } = req.params;
+  const { userId } = req.body;
+  try {
+    if (!userId) return next(new BadRequestError("userId is required"));
+    const familyTree = await familyTreeService.joinFamilyTree(familyId, userId);
+    const dto = toFamilyTreeDTO(familyTree);
+    res.status(200).json({ familyTree: dto, ...dto });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.leaveFamilyTree = async (req, res, next) => {
+  const { userId } = req.body;
+  try {
+    if (!userId) return next(new BadRequestError("userId is required"));
+    const result = await familyTreeService.leaveFamilyTree(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+};

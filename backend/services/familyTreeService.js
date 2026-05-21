@@ -43,8 +43,8 @@ exports.createFamilyTree = async ({ name, admin, members }) => {
         );
       }
 
-      if (users.length > 7) {
-        throw new BadRequestError("Family cannot exceed 8 members");
+      if (users.length > 5) {
+        throw new BadRequestError("Family cannot exceed 6 members");
       }
 
       await User.update(
@@ -123,8 +123,8 @@ exports.updateFamilyTree = async (id, newData) => {
         ]),
       ];
 
-      if (enforcedMembers.length > 8) {
-        throw new BadRequestError("Family cannot exceed 8 members");
+      if (enforcedMembers.length > 6) {
+        throw new BadRequestError("Family cannot exceed 6 members");
       }
 
       // Verify all members exist and are available
@@ -177,4 +177,47 @@ exports.updateFamilyTree = async (id, newData) => {
     await transaction.rollback();
     throw err;
   }
+};
+exports.joinFamilyTree = async (familyId, userId) => {
+  const transaction = await database.transaction();
+  try {
+    const familyTree = await FamilyTree.findByPk(familyId, {
+      include: [User],
+      transaction,
+    });
+    if (!familyTree) throw new ResourceNotFoundError("FamilyTree not found");
+
+    const user = await User.findByPk(userId, { transaction });
+    if (!user) throw new ResourceNotFoundError("User not found");
+
+    // Leave current family if any
+    if (user.familyTreeId && user.familyTreeId !== familyId) {
+      await user.update({ familyTreeId: null }, { transaction });
+    }
+
+    if (user.familyTreeId === familyId) {
+      // Already a member — no-op
+      await transaction.commit();
+      return await FamilyTree.findByPk(familyId, { include: [User] });
+    }
+
+    if (familyTree.users.length >= 6) {
+      throw new BadRequestError("Family is full (max 6 members)");
+    }
+
+    await user.update({ familyTreeId: familyId }, { transaction });
+    await transaction.commit();
+    return await FamilyTree.findByPk(familyId, { include: [User] });
+  } catch (err) {
+    await transaction.rollback();
+    throw err;
+  }
+};
+
+exports.leaveFamilyTree = async (userId) => {
+  const user = await User.findByPk(userId);
+  if (!user) throw new ResourceNotFoundError("User not found");
+  if (!user.familyTreeId) throw new BadRequestError("User is not in a family");
+  await user.update({ familyTreeId: null });
+  return { message: "Left family successfully" };
 };
