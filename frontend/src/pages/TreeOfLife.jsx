@@ -209,9 +209,10 @@ export default function TreeOfLife() {
   };
 
   const handleOpenMapa = (filter = "xperiencias") => {
-    closePrimaryModals();
+    const fromXelfies = filter === "xelfies";
+    if (!fromXelfies) closePrimaryModals(); // No cerrar Xelfies si venimos de ahí
     setMapaFilter(filter);
-    setMapaFromXelfies(filter === "xelfies");
+    setMapaFromXelfies(fromXelfies);
     setShowMapaModal(true);
     setShowArbolMenu(false);
   };
@@ -535,7 +536,7 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showMapaModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className={`fixed inset-0 ${mapaFromXelfies ? "z-30" : "z-20"}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -547,7 +548,7 @@ export default function TreeOfLife() {
                   fromXelfies={mapaFromXelfies}
                   onClose={() => {
                     setShowMapaModal(false);
-                    if (mapaFromXelfies) setShowXelfiesModal(true);
+                    // Xelfies sigue montado — NO necesitamos setShowXelfiesModal(true)
                   }}
                 />
               </div>
