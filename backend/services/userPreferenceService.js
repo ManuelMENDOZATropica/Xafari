@@ -23,33 +23,25 @@ exports.addPreference = async (
     }
 
     let userPreference = await UserPreference.findOne({
-      where: { userID: user.id, activityId: activity.id },
+      where: { userId: user.id, activityId: activity.id },
       transaction,
     });
 
     if (userPreference) {
       await userPreference.update(
-        {
-          isFavorite,
-          comment,
-          rating,
-        },
-        {
-          transaction,
-        }
+        { isFavorite, comment, rating },
+        { transaction }
       );
     } else {
       userPreference = await UserPreference.create(
         {
-          userID: user.id,
+          userId: user.id,
           activityId: activity.id,
           isFavorite,
           comment,
           rating,
         },
-        {
-          transaction,
-        }
+        { transaction }
       );
     }
 

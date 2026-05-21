@@ -119,7 +119,8 @@ const SOUND_ICONS = {
 
 export default function TreeOfLife() {
   const { t, i18n } = useTranslation();
-  const { soundSetting, setSoundSetting, triggerClickFeedback } =
+  const { soundSetting, setSoundSetting, triggerClickFeedback, token,
+          xecretos, progresoXperiencias: respuestasCorrectas, progresoChecklist: checklistProgreso } =
     useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
@@ -132,33 +133,12 @@ export default function TreeOfLife() {
   const [showArbolMenu, setShowArbolMenu] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  const [xecretos, setXecretos] = useState({});
-  const [respuestasCorrectas, setRespuestasCorrectas] = useState({});
-  const [checklistProgreso, setChecklistProgreso] = useState({});
   const [insigniaReciente, setInsigniaReciente] = useState(null);
   const [checklistReciente, setChecklistReciente] = useState(null);
   const [guardianReciente, setGuardianReciente] = useState(null);
 
   const currentLanguage = i18n.language?.split("-")[0] ?? "es";
 
-  useEffect(() => {
-    const loadProgression = () => {
-      setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
-      setRespuestasCorrectas(
-        JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
-      );
-      setChecklistProgreso(
-        JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
-      );
-    };
-
-    loadProgression();
-
-    window.addEventListener("progression_synced", loadProgression);
-    return () => {
-      window.removeEventListener("progression_synced", loadProgression);
-    };
-  }, []);
 
   useEffect(() => {
     if (insigniaReciente || checklistReciente || guardianReciente) {
@@ -166,7 +146,7 @@ export default function TreeOfLife() {
         setInsigniaReciente(null);
         setChecklistReciente(null);
         setGuardianReciente(null);
-      }, 1000);
+      }, 4000);   // 4s para que la animación sea visible
       return () => clearTimeout(timeout);
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
@@ -178,16 +158,14 @@ export default function TreeOfLife() {
     "teatro", "tobogan", "tv", "vinil", "xpiral", "xorbeteria",
   ];
 
-  // Derived reactively from respuestasCorrectas state (updates when xperiencias complete)
+  // Derived from context (BD) — reactive
   const xtopProgreso = {};
   const xperienciasProgreso = {};
   Object.entries(respuestasCorrectas).forEach(([k]) => {
-    if (xtopNombres.includes(k)) {
-      xtopProgreso[k] = true;
-    } else if (k.startsWith("x")) {
-      xperienciasProgreso[k] = true;
-    }
+    if (xtopNombres.includes(k)) xtopProgreso[k] = true;
+    else if (k.startsWith("x")) xperienciasProgreso[k] = true;
   });
+
 
   const closePrimaryModals = () => {
     setShowXecretoModal(false);
@@ -495,16 +473,9 @@ export default function TreeOfLife() {
             <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XperienciasXtop
-                  onClose={() => {
-                    const prev = respuestasCorrectas;
-                    const nuevos = JSON.parse(
-                      localStorage.getItem("progresoXperiencias") || "{}"
-                    );
-                    const nueva = Object.keys(nuevos).find(
-                      (k) => nuevos[k] && !prev[k]
-                    );
-                    setRespuestasCorrectas(nuevos);
-                    setInsigniaReciente(nueva || null);
+                  onClose={(nuevaInsignia) => {
+                    // nuevaInsignia viene de XperienciasXtop al completar
+                    setInsigniaReciente(nuevaInsignia || null);
                     setShowXperienciasModal(false);
                   }}
                 />

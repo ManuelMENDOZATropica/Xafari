@@ -1,4 +1,4 @@
-const { User, FamilyTree, Activity, Achievement, Xelfie } = require("../models");
+const { User, FamilyTree, Activity, Achievement, Xelfie, UserPreference } = require("../models");
 const { ResourceNotFoundError } = require("../utils/errors");
 
 exports.createUser = async ({
@@ -40,6 +40,11 @@ exports.getUser = async (id, transaction) => {
         include: [Xelfie],
       },
       {
+        model: Activity,
+        as: "preferredActivities",
+        through: { model: UserPreference, as: "userPreference" },
+      },
+      {
         model: Achievement,
       },
     ],
@@ -48,6 +53,7 @@ exports.getUser = async (id, transaction) => {
 
   return user;
 };
+
 
 exports.deleteUser = async (id) => {
   const user = await exports.getUser(id);

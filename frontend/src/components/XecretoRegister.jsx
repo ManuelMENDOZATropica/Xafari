@@ -25,7 +25,7 @@ const GLYPH_TO_XECRETO = {
 export default function XecretoRegister({ onClose, previewOnly = false }) {
   const videoRef = useRef(null);
   const { t } = useTranslation();
-  const { playSuccessSound, registerActivityCompleted } = useContext(XafariContext);
+  const { playSuccessSound, registerActivityCompleted, xecretos } = useContext(XafariContext);
   const qrData = {
     xecreto1: { guardian: "Mono", maya: "/maya/GuardianMono.png", arbol: "/guardianes/Mono Casa Vida.png" },
     xecreto2: { guardian: "Rana", maya: "/maya/GuardianRana.png", arbol: "/guardianes/Rana Casa Agua.png" },
@@ -38,25 +38,15 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
     xecreto9: { guardian: "Flamenco", maya: "/maya/GuardianFlamenco.png", arbol: "/guardianes/Flamenco Casa Sol.png" },
     xecreto10: { guardian: "Coati", maya: "/maya/GuardianCoati.png", arbol: "/guardianes/Coati.png" },
   };
+  // Inicializar desde contexto (BD) — sync automático cuando xecretos cambia
   const [scannedCodes, setScannedCodes] = useState(() => {
-    const saved = localStorage.getItem("xecretos");
-    const defaultState = Object.keys(qrData).reduce((acc, key) => {
-      acc[key] = false;
-      return acc;
-    }, {});
-    return saved ? { ...defaultState, ...JSON.parse(saved) } : defaultState;
+    const defaultState = Object.keys(qrData).reduce((acc, key) => { acc[key] = false; return acc; }, {});
+    return { ...defaultState, ...xecretos };
   });
 
   useEffect(() => {
-    const reloadLocalState = () => {
-      const saved = localStorage.getItem("xecretos");
-      if (saved) {
-        setScannedCodes((prev) => ({ ...prev, ...JSON.parse(saved) }));
-      }
-    };
-    window.addEventListener("progression_synced", reloadLocalState);
-    return () => window.removeEventListener("progression_synced", reloadLocalState);
-  }, []);
+    setScannedCodes((prev) => ({ ...prev, ...xecretos }));
+  }, [xecretos]);
 
   const [lastScanned, setLastScanned] = useState(null);
   const [insigniaKey, setInsigniaKey] = useState(0);

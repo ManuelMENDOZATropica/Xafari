@@ -1,9 +1,11 @@
 exports.toUserPreferenceDTO = (pref) => {
   return {
     id: pref.id,
-    activityId: pref.activity.activityId,
+    userId: pref.userId,
+    activityId: pref.activityId,
     rating: pref.rating,
     comment: pref.comment,
     isFavorite: pref.isFavorite,
   };
 };
+
