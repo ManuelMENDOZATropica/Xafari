@@ -14,10 +14,10 @@ app.use(express.json({ limit: "1mb" }));
 // A-01: Restrict CORS to known origins only
 const ALLOWED_ORIGINS = [
   "https://xafari.onrender.com",
-  "https://xafari-frontend.vercel.app",
-  process.env.FRONTEND_URL,       // configurable via env var
-  "http://localhost:5173",         // dev
-  "http://localhost:4173",         // dev preview
+  "https://xafari-phi.vercel.app",   // frontend producción
+  process.env.FRONTEND_URL,           // configurable via env var
+  "http://localhost:5173",            // dev
+  "http://localhost:4173",            // dev preview
 ].filter(Boolean);
 
 app.use((req, res, next) => {
