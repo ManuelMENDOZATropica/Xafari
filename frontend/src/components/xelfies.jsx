@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import XafariContext from "./XafariContext";
+import QRScannerModal from "./QRScannerModal";
 
 const XELFIES = [
   {
@@ -68,8 +69,20 @@ export default function Xelfies({ onClose, onOpenMapa }) {
     registerActivityCompleted(xelfie.activityName);
   };
 
+  const [scannerXelfie, setScannerXelfie] = useState(null); // xelfie que se está escaneando
+
   const handleVerMapa = () => {
     if (onOpenMapa) onOpenMapa();
+  };
+
+  const handleEscanear = (xelfie) => {
+    if (completados[xelfie.activityName]) return;
+    setScannerXelfie(xelfie);
+  };
+
+  const handleScanConfirm = () => {
+    if (scannerXelfie) handleCompletar(scannerXelfie);
+    setScannerXelfie(null);
   };
 
   return (
@@ -152,7 +165,7 @@ export default function Xelfies({ onClose, onOpenMapa }) {
 
                         {/* Tomar Xelfie */}
                         <button
-                          onClick={() => handleCompletar(xelfie)}
+                          onClick={() => handleEscanear(xelfie)}
                           disabled={completado}
                           className="flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[11px] font-bold transition-all active:scale-95 disabled:opacity-70"
                           style={{
@@ -181,6 +194,17 @@ export default function Xelfies({ onClose, onOpenMapa }) {
 
         </div>
       </div>
+
+      {/* Modal escanear QR */}
+      <AnimatePresence>
+        {scannerXelfie && (
+          <QRScannerModal
+            key={scannerXelfie.activityName}
+            onClose={() => setScannerXelfie(null)}
+            onConfirm={handleScanConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
