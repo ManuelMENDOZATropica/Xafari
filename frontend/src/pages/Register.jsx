@@ -161,8 +161,18 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        setServerError(data?.error || "Ocurrió un error al registrarse.");
+        const errorMsg = data?.error || "Ocurrió un error al registrarse.";
+        setServerError(errorMsg);
         setLoading(false);
+
+        // Regresar al paso donde está el error
+        const errorLower = errorMsg.toLowerCase();
+        if (errorLower.includes("already exists") || errorLower.includes("ya existe") || errorLower.includes("email")) {
+          setStep(1); // paso del email
+        } else if (errorLower.includes("birthdate") || errorLower.includes("fecha") || errorLower.includes("date")) {
+          setStep(2); // paso de la fecha
+        }
+        // Para otros errores se queda en el paso actual (casa)
         return;
       }
 
@@ -577,15 +587,29 @@ export default function Register() {
             {loading ? "..." : t("next")}
           </button>
           {serverError && (
-            <p style={{
-              fontSize: "13px",
-              color: "#fca5a5",
-              fontFamily: "'Apercu Pro', sans-serif",
-              textAlign: "center",
+            <div style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "8px",
+              backgroundColor: "rgba(156, 62, 50, 0.85)",
+              borderRadius: "12px",
+              padding: "10px 14px",
               maxWidth: "280px",
+              backdropFilter: "blur(4px)",
             }}>
-              {serverError}
-            </p>
+              <span style={{ fontSize: "16px", flexShrink: 0, marginTop: "1px" }}>⚠️</span>
+              <p style={{
+                fontSize: "13px",
+                color: "#fff",
+                fontFamily: "'Apercu Pro', sans-serif",
+                fontWeight: 500,
+                margin: 0,
+                lineHeight: "1.4",
+                textAlign: "left",
+              }}>
+                {serverError}
+              </p>
+            </div>
           )}
         </div>
       </div>
