@@ -87,7 +87,7 @@ export default function XecretosCards({ onClose }) {
                         style={{ backgroundColor: "rgba(242, 232, 218, 1)" }}
                       >
                         {/* Card body: título/descripción a la izq, check+imagen a la der */}
-                        <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+                        <div className="flex items-start gap-3 px-4 pt-4 pb-0">
                           {/* Izquierda: título + descripción */}
                           <div className="flex-1">
                             <h2
