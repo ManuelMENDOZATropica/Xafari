@@ -86,62 +86,60 @@ export default function XecretosCards({ onClose }) {
                         className="relative rounded-2xl overflow-hidden shadow-md"
                         style={{ backgroundColor: "rgba(242, 232, 218, 1)" }}
                       >
-                        {/* Header: imagen + título + checkbox */}
-                        <div className="flex items-start justify-between px-4 pt-4 pb-1">
-                          {/* Imagen del guardián */}
-                          <div className="flex items-start gap-3 flex-1 pr-3">
-                            <img
-                              src={GUARDIAN_IMG[xecreto.key]}
-                              alt={xecreto.name}
-                              className="w-10 h-10 object-contain flex-shrink-0"
-                              style={{ opacity: completado ? 1 : 0.35 }}
-                            />
+                        {/* Card body: título/descripción a la izq, check+imagen a la der */}
+                        <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+                          {/* Izquierda: título + descripción */}
+                          <div className="flex-1">
                             <h2
-                              className="text-sm font-bold leading-tight pt-1"
+                              className="text-sm font-bold leading-tight mb-1"
                               style={{ color: "#3D1A00" }}
                             >
                               Guardián {xecreto.name}
                             </h2>
+                            {xecreto.description ? (
+                              <p className="text-xs leading-relaxed" style={{ color: "#3D1A00" }}>
+                                {xecreto.description}
+                              </p>
+                            ) : (
+                              <p className="text-xs leading-relaxed opacity-50 italic" style={{ color: "#3D1A00" }}>
+                                Encuéntralo escondido en el resort…
+                              </p>
+                            )}
                           </div>
 
-                          {/* Checkbox — mismo icono que Xperiencias */}
-                          <div className="relative flex-shrink-0 w-[34px] h-[34px]">
+                          {/* Derecha: check arriba + insignia abajo */}
+                          <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                            {/* Checkbox */}
+                            <div className="relative w-[34px] h-[34px]">
+                              <img
+                                src="/iconos/checkXperiencias.png"
+                                alt="Pendiente"
+                                className="w-full h-full object-contain"
+                              />
+                              {completado && (
+                                <div className="absolute" style={{ inset: "10%" }}>
+                                  <motion.img
+                                    src="/iconos/correctXperiencias.png"
+                                    alt="Completado"
+                                    className="w-full h-full object-contain"
+                                    initial={{ opacity: 0, scale: 0.4 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.4, ease: "backOut" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Insignia del guardián — doble tamaño */}
                             <img
-                              src="/iconos/checkXperiencias.png"
-                              alt="Pendiente"
-                              className="w-full h-full object-contain"
+                              src={GUARDIAN_IMG[xecreto.key]}
+                              alt={xecreto.name}
+                              className="w-20 h-20 object-contain"
+                              style={{ opacity: completado ? 1 : 0.35 }}
                             />
-                            {completado && (
-                              <div className="absolute" style={{ inset: "10%" }}>
-                                <motion.img
-                                  src="/iconos/correctXperiencias.png"
-                                  alt="Completado"
-                                  className="w-full h-full object-contain"
-                                  initial={{ opacity: 0, scale: 0.4 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  transition={{ duration: 0.4, ease: "backOut" }}
-                                />
-                              </div>
-                            )}
                           </div>
                         </div>
 
-                        {/* Descripción */}
-                        {xecreto.description ? (
-                          <p
-                            className="text-xs px-4 pb-3 leading-relaxed"
-                            style={{ color: "#3D1A00" }}
-                          >
-                            {xecreto.description}
-                          </p>
-                        ) : (
-                          <p
-                            className="text-xs px-4 pb-3 leading-relaxed opacity-50 italic"
-                            style={{ color: "#3D1A00" }}
-                          >
-                            Encuéntralo escondido en el resort…
-                          </p>
-                        )}
 
                         {/* Botón escanear */}
                         {!completado && (
