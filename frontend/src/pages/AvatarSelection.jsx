@@ -76,7 +76,7 @@ export default function AvatarSelection() {
 
         const data = await response.json().catch(() => ({}));
         if (data.user) {
-          setUser(JSON.stringify(data.user));
+          setUser((prev) => ({ ...prev, ...data.user }));
           console.log("✅ Avatar actualizado en backend:", data.user.avatar);
         }
 
