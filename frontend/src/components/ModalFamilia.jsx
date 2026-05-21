@@ -75,7 +75,7 @@ export default function ModalFamilia({ onClose }) {
       } catch (_) {}
     };
 
-    const interval = setInterval(poll, 8000);
+    const interval = setInterval(poll, 4000);
     return () => clearInterval(interval);
   }, [view, familyTree?.id, token, setFamilyTree]);
 
