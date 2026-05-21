@@ -29,30 +29,20 @@ const checklistItems = [
 
 export default function ChecklistGastro({ onClose }) {
   const { t } = useTranslation();
-  const { playSuccessSound, registerActivityCompleted, saveActivityRating } = useContext(XafariContext);
-  const getItemField = (itemKey, field) =>
-    t(`gastroChecklist.items.${itemKey}.${field}`);
+  const {
+    playSuccessSound, registerActivityCompleted, saveActivityRating,
+    progresoChecklist, calificacionesChecklist,
+  } = useContext(XafariContext);
 
-  const [estado, setEstado] = useState(() => {
-    const saved = localStorage.getItem("progresoChecklistGastro");
-    return saved ? JSON.parse(saved) : {};
-  });
+  const getItemField = (itemKey, field) => t(`gastroChecklist.items.${itemKey}.${field}`);
 
-  const [ratings, setRatings] = useState(() => {
-    const saved = localStorage.getItem("calificacionesChecklistGastro");
-    return saved ? JSON.parse(saved) : {};
-  });
+  const [estado, setEstado] = useState(() => ({ ...progresoChecklist }));
+  const [ratings, setRatings] = useState(() => ({ ...calificacionesChecklist }));
 
-  useEffect(() => {
-    const reloadLocalState = () => {
-      const savedEstado = localStorage.getItem("progresoChecklistGastro");
-      if (savedEstado) setEstado(JSON.parse(savedEstado));
-      const savedRatings = localStorage.getItem("calificacionesChecklistGastro");
-      if (savedRatings) setRatings(JSON.parse(savedRatings));
-    };
-    window.addEventListener("progression_synced", reloadLocalState);
-    return () => window.removeEventListener("progression_synced", reloadLocalState);
-  }, []);
+  // Sync when context updates (backend sync on login)
+  useEffect(() => { setEstado({ ...progresoChecklist }); }, [progresoChecklist]);
+  useEffect(() => { setRatings({ ...calificacionesChecklist }); }, [calificacionesChecklist]);
+
 
   const handleCheck = (clave) => {
     const actualizado = { ...estado, [clave]: true };

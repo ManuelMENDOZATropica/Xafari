@@ -119,7 +119,8 @@ const SOUND_ICONS = {
 
 export default function TreeOfLife() {
   const { t, i18n } = useTranslation();
-  const { soundSetting, setSoundSetting, triggerClickFeedback, token } =
+  const { soundSetting, setSoundSetting, triggerClickFeedback, token,
+          xecretos, progresoXperiencias: respuestasCorrectas, progresoChecklist: checklistProgreso } =
     useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
@@ -132,41 +133,12 @@ export default function TreeOfLife() {
   const [showArbolMenu, setShowArbolMenu] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  const [xecretos, setXecretos] = useState({});
-  const [respuestasCorrectas, setRespuestasCorrectas] = useState({});
-  const [checklistProgreso, setChecklistProgreso] = useState({});
   const [insigniaReciente, setInsigniaReciente] = useState(null);
   const [checklistReciente, setChecklistReciente] = useState(null);
   const [guardianReciente, setGuardianReciente] = useState(null);
 
   const currentLanguage = i18n.language?.split("-")[0] ?? "es";
 
-  useEffect(() => {
-    const loadProgression = () => {
-      // Solo cargar progreso si hay sesión activa
-      const hasSession = !!localStorage.getItem("token");
-      if (!hasSession) {
-        setXecretos({});
-        setRespuestasCorrectas({});
-        setChecklistProgreso({});
-        return;
-      }
-      setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
-      setRespuestasCorrectas(
-        JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
-      );
-      setChecklistProgreso(
-        JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}")
-      );
-    };
-
-    loadProgression();
-
-    window.addEventListener("progression_synced", loadProgression);
-    return () => {
-      window.removeEventListener("progression_synced", loadProgression);
-    };
-  }, [token]);
 
   useEffect(() => {
     if (insigniaReciente || checklistReciente || guardianReciente) {

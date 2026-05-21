@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import XafariContext from "./XafariContext";
 
 const NOMBRES = [
   "Rodrigo", "Rodrigo", "Rodrigo", "Rodrigo", "Rodrigo",
@@ -114,7 +115,7 @@ export default function PodiumModal() {
   const [jugadores, setJugadores] = useState([]);
   const [filtro, setFiltro] = useState("todos");
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { user, progresoXperiencias, xecretos } = useContext(XafariContext);
 
   useEffect(() => {
     const casasJugables = CASAS.filter((c) => c.key !== "todos");
@@ -129,11 +130,11 @@ export default function PodiumModal() {
       };
     });
 
-    // Incluir el progreso real del usuario si existe
+    // Progreso real del usuario desde context (BD)
     const real = {
-      xperiencias: contar(JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")),
-      xelfies: contar(JSON.parse(localStorage.getItem("progresoXelfies") || "{}")),
-      xecretos: contar(JSON.parse(localStorage.getItem("xecretos") || "{}")),
+      xperiencias: contar(progresoXperiencias),
+      xelfies: 0,
+      xecretos: contar(xecretos),
     };
     if (user?.name) {
       simulacion.push({
@@ -147,8 +148,8 @@ export default function PodiumModal() {
 
     simulacion.sort((a, b) => b.total - a.total);
     setJugadores(simulacion);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, progresoXperiencias, xecretos]);
+
 
   const listaFiltrada = useMemo(() => {
     const base = filtro === "todos" ? jugadores : jugadores.filter((j) => j.casa === filtro);

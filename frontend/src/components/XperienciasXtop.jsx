@@ -199,28 +199,24 @@ const xperiencias = [
 
 export default function XperienciasXtop({ onClose }) {
   const { t } = useTranslation();
-  const { playSuccessSound, playErrorSound, registerActivityCompleted, saveActivityRating } = useContext(XafariContext);
+  const {
+    playSuccessSound, playErrorSound,
+    registerActivityCompleted, saveActivityRating,
+    progresoXperiencias, calificacionesXperiencias,
+  } = useContext(XafariContext);
 
-  const [ratings, setRatings] = useState(() => {
-    const saved = localStorage.getItem("calificacionesXperiencias");
-    return saved ? JSON.parse(saved) : {};
-  });
+  // Ratings: copy from context into local state so user can update them optimistically
+  const [ratings, setRatings] = useState(() => ({ ...calificacionesXperiencias }));
+  const [respuestas, setRespuestas] = useState(() => ({ ...progresoXperiencias }));
 
-  const [respuestas, setRespuestas] = useState(() => {
-    const saved = localStorage.getItem("progresoXperiencias");
-    return saved ? JSON.parse(saved) : {};
-  });
+  // Sync when context updates (e.g. after backend sync on login)
+  useEffect(() => {
+    setRespuestas({ ...progresoXperiencias });
+  }, [progresoXperiencias]);
 
   useEffect(() => {
-    const reloadLocalState = () => {
-      const savedRespuestas = localStorage.getItem("progresoXperiencias");
-      if (savedRespuestas) setRespuestas(JSON.parse(savedRespuestas));
-      const savedRatings = localStorage.getItem("calificacionesXperiencias");
-      if (savedRatings) setRatings(JSON.parse(savedRatings));
-    };
-    window.addEventListener("progression_synced", reloadLocalState);
-    return () => window.removeEventListener("progression_synced", reloadLocalState);
-  }, []);
+    setRatings({ ...calificacionesXperiencias });
+  }, [calificacionesXperiencias]);
 
   const [bloqueados, setBloqueados] = useState(() => {
     const saved = localStorage.getItem("tiemposBloqueoXperiencias");

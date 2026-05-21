@@ -54,6 +54,13 @@ function App() {
     return null;
   });
   const [activitiesMap, setActivitiesMap] = useState({});
+
+  // ── Progreso en React state — fuente de verdad: BD ───────────────────────
+  const [progresoXperiencias, setProgresoXperiencias] = useState({});
+  const [xecretos, setXecretos] = useState({});
+  const [progresoChecklist, setProgresoChecklist] = useState({});
+  const [calificacionesXperiencias, setCalificacionesXperiencias] = useState({});
+  const [calificacionesChecklist, setCalificacionesChecklist] = useState({});
   const [soundSetting, setSoundSetting] = useState(() => {
     if (typeof window === "undefined") {
       return "full";
@@ -104,70 +111,65 @@ function App() {
     fetchActivities();
   }, []);
 
-  // Fetch user profile and progress if token exists
+  // ── Sync progreso desde BD cuando hay sesión ───────────────────────────
   useEffect(() => {
-    if (!token || !user?.id) return;
+    if (!token) {
+      // Sin sesión: limpiar todo el progreso
+      setProgresoXperiencias({});
+      setXecretos({});
+      setProgresoChecklist({});
+      setCalificacionesXperiencias({});
+      setCalificacionesChecklist({});
+      return;
+    }
+    if (!user?.id) return;
+
     const syncUserProgress = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || "/api";
         const res = await fetch(`${apiUrl}/users/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) {
-          const data = await res.json();
-          const dbUser = data.user || data;
+        if (!res.ok) return;
 
-          // Update user state without overwriting local changes completely
-          setUser((old) => ({ ...old, ...dbUser }));
+        const data = await res.json();
+        const dbUser = data.user || data;
+        setUser((old) => ({ ...old, ...dbUser }));
 
-          const dbActivities = dbUser.activities || [];
-          const dbPreferences = dbUser.preferredActivities || [];
+        const dbActivities = dbUser.activities || [];
+        const dbPreferences = dbUser.preferredActivities || [];
 
-          const progresoXperiencias = {};
-          const xecretos = {};
-          const progresoChecklistGastro = {};
+        const answersMap = {
+          kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+          conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+          patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
+        };
 
-          dbActivities.forEach((act) => {
-            const isCompleted = act.userActivity && act.userActivity.completedAt;
-            if (isCompleted) {
-              if (act.type === "Xperiencia") {
-                const answersMap = {
-                  kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
-                  conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
-                  patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a"
-                };
-                progresoXperiencias[act.name] = answersMap[act.name] || "a";
-              } else if (act.type === "Xecreto") {
-                xecretos[act.name] = true;
-              } else if (act.type === "Event") {
-                progresoChecklistGastro[act.name] = true;
-              }
-            }
-          });
+        const newXperiencias = {};
+        const newXecretos = {};
+        const newChecklist = {};
 
-          const calificacionesXperiencias = {};
-          const calificacionesChecklistGastro = {};
-          dbPreferences.forEach((pref) => {
-            const rating = pref.userPreference ? pref.userPreference.rating : null;
-            if (rating) {
-              if (pref.type === "Xperiencia") {
-                calificacionesXperiencias[pref.name] = rating;
-              } else if (pref.type === "Event") {
-                calificacionesChecklistGastro[pref.name] = rating;
-              }
-            }
-          });
+        dbActivities.forEach((act) => {
+          if (!(act.userActivity && act.userActivity.completedAt)) return;
+          if (act.type === "Xperiencia") newXperiencias[act.name] = answersMap[act.name] || "a";
+          else if (act.type === "Xecreto")  newXecretos[act.name] = true;
+          else if (act.type === "Event")    newChecklist[act.name] = true;
+        });
 
-          localStorage.setItem("progresoXperiencias", JSON.stringify(progresoXperiencias));
-          localStorage.setItem("xecretos", JSON.stringify(xecretos));
-          localStorage.setItem("progresoChecklistGastro", JSON.stringify(progresoChecklistGastro));
-          localStorage.setItem("calificacionesXperiencias", JSON.stringify(calificacionesXperiencias));
-          localStorage.setItem("calificacionesChecklistGastro", JSON.stringify(calificacionesChecklistGastro));
+        const newCalXperiencias = {};
+        const newCalChecklist = {};
+        dbPreferences.forEach((pref) => {
+          const rating = pref.userPreference?.rating;
+          if (!rating) return;
+          if (pref.type === "Xperiencia") newCalXperiencias[pref.name] = rating;
+          else if (pref.type === "Event") newCalChecklist[pref.name] = rating;
+        });
 
-          window.dispatchEvent(new Event("progression_synced"));
-        }
+        setProgresoXperiencias(newXperiencias);
+        setXecretos(newXecretos);
+        setProgresoChecklist(newChecklist);
+        setCalificacionesXperiencias(newCalXperiencias);
+        setCalificacionesChecklist(newCalChecklist);
       } catch (err) {
         console.error("Error syncing user progress:", err);
       }
@@ -175,91 +177,61 @@ function App() {
     syncUserProgress();
   }, [token, user?.id]);
 
+  const answersMap = {
+    kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+    conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+    patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
+  };
+
   const registerActivityCompleted = async (activityName) => {
-    // 1. Update local storage immediately for fast UI response
     const activity = activitiesMap[activityName];
+
+    // 1. Actualizar state inmediatamente (UI reactiva sin esperar backend)
     if (activity) {
       if (activity.type === "Xperiencia") {
-        const saved = JSON.parse(localStorage.getItem("progresoXperiencias") || "{}");
-        const answersMap = {
-          kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
-          conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
-          patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a"
-        };
-        saved[activityName] = answersMap[activityName] || "a";
-        localStorage.setItem("progresoXperiencias", JSON.stringify(saved));
+        setProgresoXperiencias((prev) => ({ ...prev, [activityName]: answersMap[activityName] || "a" }));
       } else if (activity.type === "Xecreto") {
-        const saved = JSON.parse(localStorage.getItem("xecretos") || "{}");
-        saved[activityName] = true;
-        localStorage.setItem("xecretos", JSON.stringify(saved));
+        setXecretos((prev) => ({ ...prev, [activityName]: true }));
       } else if (activity.type === "Event") {
-        const saved = JSON.parse(localStorage.getItem("progresoChecklistGastro") || "{}");
-        saved[activityName] = true;
-        localStorage.setItem("progresoChecklistGastro", JSON.stringify(saved));
+        setProgresoChecklist((prev) => ({ ...prev, [activityName]: true }));
       }
-      window.dispatchEvent(new Event("progression_synced"));
     }
 
-    // 2. Call backend if authenticated
-    if (!token || !user?.id) return;
-    if (!activity) return;
-
+    // 2. Persistir en BD
+    if (!token || !user?.id || !activity) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      const res = await fetch(`${apiUrl}/users/${user.id}/activity`, {
+      await fetch(`${apiUrl}/users/${user.id}/activity`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ activityId: activity.id }),
       });
-      if (res.ok) {
-        console.log(`Backend: Registered activity completion for ${activityName}`);
-      }
     } catch (err) {
-      console.error("Error registering activity completion on backend:", err);
+      console.error("Error registering activity on backend:", err);
     }
   };
 
   const saveActivityRating = async (activityName, rating) => {
-    // 1. Update local storage immediately
     const activity = activitiesMap[activityName];
+
+    // 1. Actualizar state inmediatamente
     if (activity) {
       if (activity.type === "Xperiencia") {
-        const saved = JSON.parse(localStorage.getItem("calificacionesXperiencias") || "{}");
-        saved[activityName] = rating;
-        localStorage.setItem("calificacionesXperiencias", JSON.stringify(saved));
+        setCalificacionesXperiencias((prev) => ({ ...prev, [activityName]: rating }));
       } else if (activity.type === "Event") {
-        const saved = JSON.parse(localStorage.getItem("calificacionesChecklistGastro") || "{}");
-        saved[activityName] = rating;
-        localStorage.setItem("calificacionesChecklistGastro", JSON.stringify(saved));
+        setCalificacionesChecklist((prev) => ({ ...prev, [activityName]: rating }));
       }
-      window.dispatchEvent(new Event("progression_synced"));
     }
 
-    // 2. Call backend if authenticated
-    if (!token || !user?.id) return;
-    if (!activity) return;
-
+    // 2. Persistir en BD
+    if (!token || !user?.id || !activity) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      const res = await fetch(`${apiUrl}/user-preferences`, {
+      await fetch(`${apiUrl}/user-preferences`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          activityId: activity.id,
-          rating,
-          comment: "Calificación desde la App",
-        }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ userId: user.id, activityId: activity.id, rating, comment: "Calificación desde la App" }),
       });
-      if (res.ok) {
-        console.log(`Backend: Saved rating for ${activityName}`);
-      }
     } catch (err) {
       console.error("Error saving rating on backend:", err);
     }
@@ -301,6 +273,12 @@ function App() {
       activitiesMap,
       registerActivityCompleted,
       saveActivityRating,
+      // Progreso — desde BD, sin localStorage
+      progresoXperiencias,
+      xecretos,
+      progresoChecklist,
+      calificacionesXperiencias,
+      calificacionesChecklist,
       soundSetting,
       setSoundSetting,
       musicEnabled,
@@ -314,6 +292,11 @@ function App() {
       user,
       token,
       activitiesMap,
+      progresoXperiencias,
+      xecretos,
+      progresoChecklist,
+      calificacionesXperiencias,
+      calificacionesChecklist,
       soundSetting,
       musicEnabled,
       triggerClickFeedback,
