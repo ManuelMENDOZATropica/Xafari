@@ -10,13 +10,15 @@ const NOMBRES = [
 // Casas del juego (coinciden con los guardianes del Árbol de la Vida)
 const CASAS = [
   { key: "todos", label: "Todos" },
-  { key: "tierra", label: "Casa Tierra" },
   { key: "viento", label: "Casa Viento" },
-  { key: "eclipse", label: "Casa Eclipse" },
+  { key: "tierra", label: "Casa Tierra" },
   { key: "espiral", label: "Casa Espiral" },
-  { key: "sol", label: "Casa Sol" },
-  { key: "fuego", label: "Casa Fuego" },
   { key: "agua", label: "Casa Agua" },
+  { key: "fuego", label: "Casa Fuego" },
+  { key: "cielo", label: "Casa Cielo" },
+  { key: "eclipse", label: "Casa Eclipse" },
+  { key: "luna", label: "Casa Luna" },
+  { key: "sol", label: "Casa Sol" },
   { key: "vida", label: "Casa Vida" },
 ];
 

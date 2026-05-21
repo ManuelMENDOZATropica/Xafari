@@ -12,11 +12,9 @@ exports.createUserValidation = [
     .isISO8601()
     .toDate()
     .withMessage("Birthdate must be a valid ISO 8601 date"),
-  body("reservationNumber")
-    .trim()
-    .notEmpty()
-    .withMessage("Reservation number cannot be empty"),
+  body("reservationNumber").optional().isString(),
   body("pronouns").optional().isString(),
+  body("casa").optional().isString(),
   body("avatar").optional().isObject(),
 ];
 
@@ -29,6 +27,7 @@ exports.updateUserValidation = [
   body("birthdate").optional().trim().isISO8601().toDate().withMessage("Birthdate must be a valid ISO 8601 date"),
   body("reservationNumber").optional().trim().notEmpty().withMessage("Reservation number cannot be empty"),
   body("pronouns").optional().isString(),
+  body("casa").optional().isString(),
   body("avatar").optional().isObject(),
 ];
 

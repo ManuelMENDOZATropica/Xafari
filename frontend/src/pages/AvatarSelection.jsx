@@ -4,8 +4,19 @@ import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 
 const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
-const bodyIconOptions = ["/avatares/cuerpoNiñoIcono.png", "/avatares/cuerpoAdultoIcono.png"];
 const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
+
+// ── Calcula edad completa ─────────────────────────────────────────────────────
+function calcularEdad(birthdateStr) {
+  if (!birthdateStr) return null;
+  const hoy = new Date();
+  const nac = new Date(birthdateStr);
+  if (isNaN(nac)) return null;
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
 
 function useSelection(options, isObject = false, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex || 0);
@@ -23,21 +34,24 @@ export default function AvatarSelection() {
   const navigate = useNavigate();
   const { user, setUser, token, playWardrobeSound } = useContext(XafariContext);
 
-  const [bodyIndex, bodyImg, setBody, bodyList] = useSelection(bodyOptions, false, user?.avatar?.bodyOptions);
-  const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, false, user?.avatar?.faceOptions);
+  // ── Body forzado por edad ─────────────────────────────────────────────────
+  const edad = calcularEdad(user?.birthdate);
+  const bodyForzado = (edad !== null && edad >= 16) ? 1 : 0;
+  const bodyImg = bodyOptions[bodyForzado];
 
-  const [activeTab, setActiveTab] = useState("body");
+  const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, false, user?.avatar?.faceOptions);
+  const [activeTab, setActiveTab] = useState("face");
 
   useEffect(() => {
     setUser((oldUser) => ({
       ...oldUser,
       avatar: {
         ...oldUser.avatar,
-        bodyOptions: bodyIndex,
+        bodyOptions: bodyForzado,
         faceOptions: faceIndex,
       },
     }));
-  }, [setUser, bodyIndex, faceIndex]);
+  }, [setUser, bodyForzado, faceIndex]);
 
   const handleSaveAvatar = useCallback(() => {
     if (!token) return navigate("/bienvenida");
@@ -75,7 +89,7 @@ export default function AvatarSelection() {
   }, [token, user, navigate, setUser]);
 
   const tabs = [
-    { key: "body", label: t("body"), set: setBody, list: bodyList, icons: bodyIconOptions, current: bodyIndex },
+    // Cuerpo quitado — bloqueado por edad
     { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
   ];
 
@@ -117,13 +131,13 @@ export default function AvatarSelection() {
           <img
             src={bodyImg}
             alt="body"
-            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyIndex === 0 ? "scale-[0.85] translate-y-[4%]" : "scale-100"
+            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyForzado === 0 ? "scale-[0.85] translate-y-[4%]" : "scale-100"
               }`}
           />
           <img
             src={faceImg}
             alt="face"
-            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyIndex === 0
+            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyForzado === 0
               ? "scale-[0.5] -translate-y-[5%]"
               : "scale-[0.7] -translate-y-[20%] -translate-x-[-5%]"
               }`}

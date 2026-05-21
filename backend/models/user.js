@@ -36,9 +36,15 @@ const user = database.define(
     },
     reservationNumber: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: "",
     },
     pronouns: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "",
+    },
+    casa: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: "",

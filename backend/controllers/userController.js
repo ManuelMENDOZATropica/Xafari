@@ -15,6 +15,7 @@ exports.createUser = async (req, res, next) => {
     birthdate,
     reservationNumber,
     pronouns,
+    casa,
     avatar,
   } = req.body;
 
@@ -27,6 +28,7 @@ exports.createUser = async (req, res, next) => {
       birthdate,
       reservationNumber,
       pronouns,
+      casa,
       avatar: avatar ? JSON.stringify(avatar) : null,
     });
 
@@ -86,6 +88,7 @@ exports.updateUser = async (req, res, next) => {
     if (req.body.birthdate !== undefined) newUserData.birthdate = req.body.birthdate;
     if (req.body.reservationNumber !== undefined) newUserData.reservationNumber = req.body.reservationNumber;
     if (req.body.pronouns !== undefined) newUserData.pronouns = req.body.pronouns;
+    if (req.body.casa !== undefined) newUserData.casa = req.body.casa;
     if (req.body.avatar !== undefined) {
       newUserData.avatar = typeof req.body.avatar === "object"
         ? JSON.stringify(req.body.avatar)
@@ -143,6 +146,7 @@ exports.updateCurrentUser = async (req, res, next) => {
     if (req.body.birthdate !== undefined) newUserData.birthdate = req.body.birthdate;
     if (req.body.reservationNumber !== undefined) newUserData.reservationNumber = req.body.reservationNumber;
     if (req.body.pronouns !== undefined) newUserData.pronouns = req.body.pronouns;
+    if (req.body.casa !== undefined) newUserData.casa = req.body.casa;
     if (req.body.avatar !== undefined) {
       newUserData.avatar = typeof req.body.avatar === "object"
         ? JSON.stringify(req.body.avatar)

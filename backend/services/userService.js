@@ -9,6 +9,7 @@ exports.createUser = async ({
   birthdate,
   reservationNumber,
   pronouns,
+  casa,
   avatar
 }) => {
   const user = await User.create({
@@ -19,6 +20,7 @@ exports.createUser = async ({
     birthdate,
     reservationNumber,
     pronouns,
+    casa,
     avatar,
   });
 

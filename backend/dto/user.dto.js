@@ -17,6 +17,7 @@ exports.toUserDTO = (user) => {
     birthdate: user.birthdate,
     reservationNumber: user.reservationNumber,
     pronouns: user.pronouns,
+    casa: user.casa,
     avatar: parsedAvatar,
     avatarUrl: user.avatarUrl,
     achievements: user.achievements ? user.achievements.map(a => {

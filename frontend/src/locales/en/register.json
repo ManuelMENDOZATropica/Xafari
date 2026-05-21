@@ -28,6 +28,8 @@
     "step2Title": "My email is…",
     "emailPlaceholder": "Email address",
     "step3Title": "My birthday is…",
+    "step4Title": "And I'm staying at…",
+    "casaPlaceholder": "Select your house",
     "dayPlaceholder": "Day",
     "monthPlaceholder": "Month",
     "yearPlaceholder": "Year",
