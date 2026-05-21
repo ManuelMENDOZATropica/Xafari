@@ -40,6 +40,45 @@ export default function ModalFamilia({ onClose }) {
   const [joinSuccess, setJoinSuccess] = useState(false);
   const [cameraErr, setCameraErr]   = useState(null);
 
+  // ── Polling real-time: refresca familia cada 8s mientras el modal está abierto ──
+  const [newMemberIds, setNewMemberIds] = useState(new Set());
+  const knownIdsRef = useRef(new Set((familyTree?.users || []).map((u) => u.id)));
+
+  useEffect(() => {
+    if (view !== "familia" || !familyTree?.id || !token) return;
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`${API}/family-trees/${familyTree.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const ft = data.familyTree || data;
+        const currentIds = new Set((ft.users || []).map((u) => u.id));
+
+        // Detectar miembros nuevos
+        const nuevos = [...currentIds].filter((id) => !knownIdsRef.current.has(id));
+        if (nuevos.length > 0) {
+          setNewMemberIds((prev) => new Set([...prev, ...nuevos]));
+          knownIdsRef.current = currentIds;
+          setFamilyTree(ft);
+          // Quitar badge de "nuevo" después de 4s
+          setTimeout(() => {
+            setNewMemberIds((prev) => {
+              const next = new Set(prev);
+              nuevos.forEach((id) => next.delete(id));
+              return next;
+            });
+          }, 4000);
+        }
+      } catch (_) {}
+    };
+
+    const interval = setInterval(poll, 8000);
+    return () => clearInterval(interval);
+  }, [view, familyTree?.id, token, setFamilyTree]);
+
   // ── Compartir QR (si ya tengo familia) ───────────────────────────────────
   const shareQrRef = useRef(null);
   useEffect(() => {
@@ -318,17 +357,33 @@ export default function ModalFamilia({ onClose }) {
             {/* Lista miembros */}
             <div className="flex flex-col gap-2">
               {(familyTree.users || []).map((m) => (
-                <div key={m.id} className="flex items-center gap-3 px-3 py-2 rounded-xl" style={{ backgroundColor: "rgba(61,26,0,0.06)" }}>
+                <motion.div
+                  key={m.id}
+                  initial={newMemberIds.has(m.id) ? { opacity: 0, x: -20 } : false}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl relative"
+                  style={{ backgroundColor: newMemberIds.has(m.id) ? "rgba(52,211,153,0.15)" : "rgba(61,26,0,0.06)" }}
+                >
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: "#3D1A00", color: "#F2E8DA" }}>
                     {(m.name || "?")[0].toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium" style={{ color: "#3D1A00" }}>
+                  <span className="text-sm font-medium flex-1" style={{ color: "#3D1A00" }}>
                     {m.name} {m.lastname || ""}
                     {m.id === familyTree.adminId && (
                       <span className="ml-1 text-[10px] opacity-50">(admin)</span>
                     )}
                   </span>
-                </div>
+                  {newMemberIds.has(m.id) && (
+                    <motion.span
+                      initial={{ scale: 0 }} animate={{ scale: 1 }}
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ backgroundColor: "#34d399", color: "#fff" }}
+                    >
+                      ¡Nuevo!
+                    </motion.span>
+                  )}
+                </motion.div>
               ))}
             </div>
 
