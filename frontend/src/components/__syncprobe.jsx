@@ -1,0 +1,1 @@
+const probe = 42; export default probe;

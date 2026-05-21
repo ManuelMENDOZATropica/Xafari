@@ -18,9 +18,9 @@ export default defineConfig({
     host: true,   // expose to LAN (equivalent to --host)
     proxy: {
       '/api': {
-        target: 'https://xafari.rexmalebka.com',
+        target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },

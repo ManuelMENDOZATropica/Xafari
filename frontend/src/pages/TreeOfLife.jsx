@@ -14,6 +14,7 @@ import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
 import ModalMapa from "@/components/ModalMapa";
 import Xelfies from "@/components/xelfies";
 import SoundMenu from "@/components/SoundMenu";
+import ModalAjustes from "@/components/ModalAjustes";
 
 const FamilyIcon = (props) => (
   <svg
@@ -463,121 +464,7 @@ export default function TreeOfLife() {
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
 
 
-                <div className="relative flex h-full flex-col overflow-hidden">
-                  <div className="flex items-center justify-between px-6 pt-5 pb-2">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                        {t("settingsMenuTitle")}
-                      </p>
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        {t("settingsMenuSubtitle")}
-                      </h2>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleCloseSettingsModal}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-300"
-                      aria-label={t("close")}
-                    >
-                      <svg
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="m6 6 12 12M18 6 6 18" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className="flex-1 space-y-6 overflow-y-auto px-6 pb-6">
-                    <section className="space-y-3">
-                      <h3 className="text-sm font-semibold text-gray-800">
-                        {t("settingsLanguageTitle")}
-                      </h3>
-                      <div className="grid grid-cols-3 gap-3">
-                        {SUPPORTED_LANGUAGES.map((lang) => {
-                          const isActive = currentLanguage === lang;
-                          return (
-                            <button
-                              key={lang}
-                              type="button"
-                              onClick={() => handleLanguageSelect(lang)}
-                              className={`flex flex-col items-center justify-center gap-1 rounded-2xl border px-3 py-2 text-xs font-semibold uppercase transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
-                                ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                                : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
-                                }`}
-                              aria-pressed={isActive}
-                            >
-                              <span className="text-2xl" aria-hidden="true">
-                                {LANGUAGE_FLAGS[lang]}
-                              </span>
-                              <span className="text-[0.65rem] leading-tight">
-                                {t(`languages.${lang}`)}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </section>
-
-                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
-                    <section className="space-y-3">
-                      <h3 className="text-sm font-semibold text-gray-800">
-                        {t("settingsSoundTitle")}
-                      </h3>
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                        {SOUND_OPTIONS.map((option) => {
-                          const isActive = soundSetting === option.value;
-                          return (
-                            <button
-                              key={option.value}
-                              type="button"
-                              onClick={() => handleSoundSelect(option.value)}
-                              className={`flex flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-2 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${isActive
-                                ? "border-sky-300 bg-sky-50 text-sky-700 shadow"
-                                : "border-gray-200 bg-white/80 text-gray-700 shadow-sm hover:bg-white"
-                                }`}
-                              aria-pressed={isActive}
-                            >
-                              <span aria-hidden="true">{SOUND_ICONS[option.value]}</span>
-                              <span className="text-xs font-semibold tracking-wide">
-                                {t(option.labelKey)}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </section>
-
-                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
-                    <section className="space-y-3">
-                      <h3 className="text-sm font-semibold text-gray-800">
-                        {t("settingsMenuLegalTitle") || "Privacidad"}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {t("settingsLegalDescription") ||
-                          "Consulta los avisos de privacidad y detalles legales del recorrido."}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Link
-                          to="/privacy"
-                          onClick={handleCloseSettingsModal}
-                          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#00b6e9] px-4 py-2 text-sm font-semibold text-white shadow hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-sky-300"
-                        >
-                          {t("settingsLegalButton") || "Aviso de Privacidad"}
-                        </Link>
-                        <LanguageToggle />
-                      </div>
-                    </section>
-                  </div>
-                </div>
+                <ModalAjustes onClose={handleCloseSettingsModal} />
               </div>
             </div>
           </motion.div>

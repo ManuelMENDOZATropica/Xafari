@@ -7,7 +7,6 @@ const NOMBRES = [
   "Rodrigo", "Rodrigo", "Rodrigo", "Rodrigo", "Rodrigo",
 ];
 
-// Casas del juego (coinciden con los guardianes del Árbol de la Vida)
 const CASAS = [
   { key: "todos", label: "Todos" },
   { key: "tierra", label: "Casa Tierra" },
@@ -24,7 +23,6 @@ const totalExperiencias = 12;
 const totalXelfies = 10;
 const totalXecretos = 10;
 
-// Genera un avance simulado (cantidades completadas)
 const generarAvance = () => ({
   xperiencias: Math.floor(Math.random() * (totalExperiencias + 1)),
   xelfies: Math.floor(Math.random() * (totalXelfies + 1)),
@@ -33,7 +31,6 @@ const generarAvance = () => ({
 
 const contar = (obj) => Object.values(obj || {}).filter(Boolean).length;
 
-// Pequeño glifo monocromo para cada Casa
 function CasaGlyph({ casaKey, className = "h-4 w-4", color = "#5b3a1a", bg = "#f4ead9" }) {
   const common = {
     className,
@@ -45,7 +42,7 @@ function CasaGlyph({ casaKey, className = "h-4 w-4", color = "#5b3a1a", bg = "#f
     strokeLinejoin: "round",
   };
   switch (casaKey) {
-    case "tierra": // barril / montaña
+    case "tierra":
       return (
         <svg {...common}>
           <ellipse cx="12" cy="5" rx="6" ry="2.2" fill={color} stroke="none" />
@@ -53,51 +50,51 @@ function CasaGlyph({ casaKey, className = "h-4 w-4", color = "#5b3a1a", bg = "#f
           <path d="M6 12c0 1.2 2.7 2 6 2s6-.8 6-2" stroke={bg} />
         </svg>
       );
-    case "viento": // remolino / abeja
+    case "viento":
       return (
         <svg {...common}>
           <path d="M4 8c4-3 9-3 12 0M4 14c5 3 11 3 16 0M7 19c3 2 7 2 10 0" />
         </svg>
       );
-    case "agua": // gota
+    case "agua":
       return (
         <svg {...common}>
           <path d="M12 3c4 5 6 8 6 11a6 6 0 1 1-12 0c0-3 2-6 6-11Z" fill={color} stroke="none" />
         </svg>
       );
-    case "fuego": // llama
+    case "fuego":
       return (
         <svg {...common}>
           <path d="M12 3c1 4 5 5 5 9a5 5 0 1 1-10 0c0-2 1-3 2-4 1 1 0 3 1 3 1-3 1-5 2-8Z" fill={color} stroke="none" />
         </svg>
       );
-    case "sol": // sol
+    case "sol":
       return (
         <svg {...common}>
           <circle cx="12" cy="12" r="4" fill={color} stroke="none" />
           <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
         </svg>
       );
-    case "eclipse": // luna / eclipse
+    case "eclipse":
       return (
         <svg {...common}>
           <circle cx="12" cy="12" r="8" fill={color} stroke="none" />
           <circle cx="15" cy="11" r="6" fill={bg} stroke="none" />
         </svg>
       );
-    case "espiral": // espiral
+    case "espiral":
       return (
         <svg {...common}>
           <path d="M12 12a3 3 0 1 1-1-2.2 5 5 0 1 1-3 4.2 7 7 0 1 1 7-7" />
         </svg>
       );
-    case "vida": // hoja / árbol
+    case "vida":
       return (
         <svg {...common}>
           <path d="M12 21V9M12 9C12 5 9 3 5 3c0 4 3 6 7 6ZM12 11c0-3 3-5 7-5 0 4-4 5-7 5Z" fill={color} stroke="none" />
         </svg>
       );
-    default: // todos / genérico
+    default:
       return (
         <svg {...common}>
           <rect x="4" y="4" width="16" height="16" rx="3" fill={color} stroke="none" />
@@ -127,7 +124,6 @@ export default function PodiumModal() {
       };
     });
 
-    // Incluir el progreso real del usuario si existe
     const real = {
       xperiencias: contar(JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")),
       xelfies: contar(JSON.parse(localStorage.getItem("progresoXelfies") || "{}")),
@@ -145,7 +141,6 @@ export default function PodiumModal() {
 
     simulacion.sort((a, b) => b.total - a.total);
     setJugadores(simulacion);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const listaFiltrada = useMemo(() => {
@@ -162,7 +157,6 @@ export default function PodiumModal() {
 
   return (
     <motion.div className="flex h-full w-full flex-col overflow-hidden bg-[#7b5226] font-apercu">
-      {/* Lista de ranking */}
       <div className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
         {listaFiltrada.map((j, idx) => (
           <div
@@ -172,12 +166,10 @@ export default function PodiumModal() {
             }`}
           >
             <div className="min-w-0 flex-1">
-              {/* Nombre + glifo de casa */}
               <div className="mb-2 flex items-center gap-2">
                 <span className="truncate text-base font-bold text-[#3d1a00]">{j.nombre}</span>
                 <CasaGlyph casaKey={j.casa} />
               </div>
-              {/* Cajas de stats */}
               <div className="flex items-stretch gap-2 pr-12">
                 <Stat valor={j.xperiencias} etiqueta={t("xperiencesLabel") || "Xperiencias"} />
                 <Stat valor={j.xelfies} etiqueta={t("xelfies") || "Xelfies"} />
@@ -185,7 +177,6 @@ export default function PodiumModal() {
               </div>
             </div>
 
-            {/* Círculo de rango */}
             <div className="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#c9982f] shadow">
               <span className="text-lg font-extrabold text-white">{j.rank}°</span>
             </div>
@@ -199,7 +190,6 @@ export default function PodiumModal() {
         )}
       </div>
 
-      {/* Barra inferior de filtros por Casa */}
       <div className="flex-shrink-0 overflow-x-auto bg-[#7b5226] px-3 py-2">
         <div className="flex w-max items-center gap-2">
           {CASAS.map((casa) => {
