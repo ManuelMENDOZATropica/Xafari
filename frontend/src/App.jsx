@@ -357,6 +357,7 @@ function App() {
 
           {/* ── Flujo de registro — sin token aún ── */}
           <Route path="/welcome" element={<Welcome />} />
+          <Route path="/intro" element={<Intro />} />
           <Route path="/intro-maya" element={<IntroMaya />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register-step1" element={<RegisterStep1 />} />
@@ -367,7 +368,6 @@ function App() {
           <Route path="/bienvenida" element={<PrivateRoute><BienvenidaGuacamaya /></PrivateRoute>} />
           <Route path="/tutorial" element={<PrivateRoute><TutorialArbol /></PrivateRoute>} />
           <Route path="/treeoflife" element={<PrivateRoute><TreeOfLife /></PrivateRoute>} />
-          <Route path="/intro" element={<PrivateRoute><Intro /></PrivateRoute>} />
           <Route path="/edit-avatar" element={<PrivateRoute><EditAvatar /></PrivateRoute>} />
           <Route path="/minimalqr" element={<PrivateRoute><MinimalQr /></PrivateRoute>} />
           <Route
