@@ -18,6 +18,7 @@ import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XecretoRegister from "./components/XecretoRegister";
 import XafariContext from "./components/XafariContext";
+import PrivateRoute from "./components/PrivateRoute";
 import { useEffect, useMemo, useState } from "react";
 import useSoundController from "./hooks/useSoundController";
 import PrivacyNotice from "./pages/PrivacyNotice";
@@ -348,34 +349,38 @@ function App() {
     <XafariContext.Provider value={contextValue}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          {/* ── Públicas — siempre accesibles ── */}
           <Route path="/" element={<SplashScreen />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route
-            path="/welcome-animation-login"
-            element={<WelcomeAnimationLogin />}
-          />
-          <Route path="/welcome-animation" element={<WelcomeAnimation />} />
-          <Route path="/intro-maya" element={<IntroMaya />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register-step1" element={<RegisterStep1 />} />
-          <Route path="/register-step2" element={<RegisterStep2 />} />
-          <Route path="/create-avatar" element={<AvatarSelection />} />
-          <Route path="/bienvenida" element={<BienvenidaGuacamaya />} />
-          <Route path="/tutorial" element={<TutorialArbol />} />
-          <Route path="/treeoflife" element={<TreeOfLife />} />
-          <Route path="/intro" element={<Intro />} />
           <Route path="/login" element={<LogIn />} />
-          <Route path="/edit-avatar" element={<EditAvatar />} />
-          <Route path="/minimalqr" element={<MinimalQr />} />
           <Route path="/privacy" element={<PrivacyNotice />} />
           <Route path="/terms" element={<TermsConditions />} />
-          {/* Debug route — direct access to glyph scanner */}
+
+          {/* ── Protegidas — requieren sesión iniciada ── */}
+          <Route path="/welcome" element={<PrivateRoute><Welcome /></PrivateRoute>} />
+          <Route
+            path="/welcome-animation-login"
+            element={<PrivateRoute><WelcomeAnimationLogin /></PrivateRoute>}
+          />
+          <Route path="/welcome-animation" element={<PrivateRoute><WelcomeAnimation /></PrivateRoute>} />
+          <Route path="/intro-maya" element={<PrivateRoute><IntroMaya /></PrivateRoute>} />
+          <Route path="/register" element={<PrivateRoute><Register /></PrivateRoute>} />
+          <Route path="/register-step1" element={<PrivateRoute><RegisterStep1 /></PrivateRoute>} />
+          <Route path="/register-step2" element={<PrivateRoute><RegisterStep2 /></PrivateRoute>} />
+          <Route path="/create-avatar" element={<PrivateRoute><AvatarSelection /></PrivateRoute>} />
+          <Route path="/bienvenida" element={<PrivateRoute><BienvenidaGuacamaya /></PrivateRoute>} />
+          <Route path="/tutorial" element={<PrivateRoute><TutorialArbol /></PrivateRoute>} />
+          <Route path="/treeoflife" element={<PrivateRoute><TreeOfLife /></PrivateRoute>} />
+          <Route path="/intro" element={<PrivateRoute><Intro /></PrivateRoute>} />
+          <Route path="/edit-avatar" element={<PrivateRoute><EditAvatar /></PrivateRoute>} />
+          <Route path="/minimalqr" element={<PrivateRoute><MinimalQr /></PrivateRoute>} />
           <Route
             path="/debug-scan"
             element={
-              <div className="fixed inset-0 z-50 bg-black">
-                <XecretoRegister onClose={() => window.history.back()} />
-              </div>
+              <PrivateRoute>
+                <div className="fixed inset-0 z-50 bg-black">
+                  <XecretoRegister onClose={() => window.history.back()} />
+                </div>
+              </PrivateRoute>
             }
           />
         </Routes>
