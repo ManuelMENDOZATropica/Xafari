@@ -171,34 +171,17 @@ export default function TreeOfLife() {
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
-  const progreso = JSON.parse(
-    localStorage.getItem("progresoXperiencias") || "{}"
-  );
-
-  const xtopProgreso = {};
-  const xperienciasProgreso = {};
 
   const xtopNombres = [
-    "camion",
-    "caracola",
-    "conejo",
-    "drink",
-    "estrella",
-    "kayak",
-    "mascarajaguar",
-    "patin",
-    "piscina",
-    "poolpo",
-    "salvavidas",
-    "teatro",
-    "tobogan",
-    "tv",
-    "vinil",
-    "xpiral",
-    "xorbeteria",
+    "camion", "caracola", "conejo", "drink", "estrella", "kayak",
+    "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
+    "teatro", "tobogan", "tv", "vinil", "xpiral", "xorbeteria",
   ];
 
-  Object.entries(progreso).forEach(([k]) => {
+  // Derived reactively from respuestasCorrectas state (updates when xperiencias complete)
+  const xtopProgreso = {};
+  const xperienciasProgreso = {};
+  Object.entries(respuestasCorrectas).forEach(([k]) => {
     if (xtopNombres.includes(k)) {
       xtopProgreso[k] = true;
     } else if (k.startsWith("x")) {

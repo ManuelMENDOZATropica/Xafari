@@ -83,8 +83,11 @@ function App() {
     }
   }, []);
 
-  // Fetch all activities on start
+  // Fetch all activities on start (with retry for slow backend startup)
   useEffect(() => {
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
+
     const fetchActivities = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || "/api";
@@ -96,9 +99,17 @@ function App() {
             map[act.name] = { id: act.id, type: act.type };
           });
           setActivitiesMap(map);
+        } else if (attempts < MAX_ATTEMPTS) {
+          attempts++;
+          setTimeout(fetchActivities, 2000 * attempts);
         }
       } catch (err) {
-        console.error("Error fetching activities:", err);
+        if (attempts < MAX_ATTEMPTS) {
+          attempts++;
+          setTimeout(fetchActivities, 2000 * attempts);
+        } else {
+          console.warn("Backend no disponible para cargar actividades.");
+        }
       }
     };
     fetchActivities();
