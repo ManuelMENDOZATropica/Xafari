@@ -447,8 +447,8 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
-              <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 221px)" }}>
+              <div className="relative h-full w-full overflow-hidden">
                 <XecretoRegister
                   onClose={() => {
                     const prev = xecretos;
