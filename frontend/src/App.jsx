@@ -17,6 +17,7 @@ import EditAvatar from "./pages/EditAvatar";
 import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
 import MinimalQr from "./components/minimalQr";
 import XecretoRegister from "./components/XecretoRegister";
+import XecretoDeepLink from "./pages/XecretoDeepLink";
 import XafariContext from "./components/XafariContext";
 import PrivateRoute from "./components/PrivateRoute";
 import { useEffect, useMemo, useState } from "react";
@@ -384,6 +385,11 @@ function App() {
                 </div>
               </PrivateRoute>
             }
+          />
+          {/* ── Deep link QR xecretos — ruta que abre el QR nativo del teléfono ── */}
+          <Route
+            path="/xecreto/:id"
+            element={<PrivateRoute><XecretoDeepLink /></PrivateRoute>}
           />
         </Routes>
       </AnimatePresence>
