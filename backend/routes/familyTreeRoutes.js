@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const familyTreeController = require("../controllers/familyTreeController");
-const { checkSchema, matchedData } = require("express-validator");
-const { ValidationError } = require("../utils/errors");
 const {
   familyTreeIdParam,
   createFamilyTreeValidation,
@@ -10,18 +8,31 @@ const {
 } = require("../validation/familyTree.validation");
 const { validateRequest } = require("../middleware/validateRequest");
 
-router.get(
-  "/:familyId",
-  familyTreeIdParam,
-  validateRequest,
-  familyTreeController.getFamilyTree
-);
+// ── Rutas fijas primero (antes de /:familyId) ─────────────────────────────
+router.post("/leave", familyTreeController.leaveFamilyTree);
+
 router.post(
   "/",
   createFamilyTreeValidation,
   validateRequest,
   familyTreeController.createFamilyTree
 );
+
+// ── Rutas con parámetro ───────────────────────────────────────────────────
+router.get(
+  "/:familyId",
+  familyTreeIdParam,
+  validateRequest,
+  familyTreeController.getFamilyTree
+);
+
+router.post(
+  "/:familyId/join",
+  familyTreeIdParam,
+  validateRequest,
+  familyTreeController.joinFamilyTree
+);
+
 router.post(
   "/:familyId",
   familyTreeIdParam,

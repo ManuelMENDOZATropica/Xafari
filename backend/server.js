@@ -10,24 +10,17 @@ const startServer = () => {
   });
 };
 
-if (process.env.NODE_ENV === "production") {
-  database.authenticate()
-    .then(() => {
-      logger.info("Database connection has been established successfully in production.");
-      startServer();
-    })
-    .catch((err) => {
-      logger.error("Unable to connect to the database in production:", err);
-      process.exit(1);
-    });
-} else {
-  database.sync()
-    .then(() => {
-      logger.info("Database connected & synced...");
-      startServer();
-    })
-    .catch((err) => {
-      logger.error("Unable to sync database:", err);
-      process.exit(1);
-    });
-}
+database
+  .authenticate()
+  .then(() => {
+    logger.info("Database connection established successfully.");
+    return database.sync({ alter: true });
+  })
+  .then(() => {
+    logger.info("Database synced.");
+    startServer();
+  })
+  .catch((err) => {
+    logger.error("Unable to connect/sync the database:", err);
+    process.exit(1);
+  });

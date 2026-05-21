@@ -62,6 +62,7 @@ function App() {
   const [progresoXelfies, setProgresoXelfies] = useState({});
   const [calificacionesXperiencias, setCalificacionesXperiencias] = useState({});
   const [calificacionesChecklist, setCalificacionesChecklist] = useState({});
+  const [familyTree, setFamilyTree] = useState(null);
   const [soundSetting, setSoundSetting] = useState(() => {
     if (typeof window === "undefined") {
       return "full";
@@ -185,6 +186,21 @@ function App() {
         setProgresoXelfies(newXelfies);
         setCalificacionesXperiencias(newCalXperiencias);
         setCalificacionesChecklist(newCalChecklist);
+
+        // Fetch family tree if user belongs to one
+        if (dbUser.familyTreeId) {
+          try {
+            const fRes = await fetch(`${apiUrl}/family-trees/${dbUser.familyTreeId}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (fRes.ok) {
+              const fData = await fRes.json();
+              setFamilyTree(fData.familyTree || fData);
+            }
+          } catch (_) {}
+        } else {
+          setFamilyTree(null);
+        }
       } catch (err) {
         console.error("Error syncing user progress:", err);
       }
@@ -297,6 +313,8 @@ function App() {
       progresoXelfies,
       calificacionesXperiencias,
       calificacionesChecklist,
+      familyTree,
+      setFamilyTree,
       soundSetting,
       setSoundSetting,
       musicEnabled,
@@ -316,6 +334,7 @@ function App() {
       progresoXelfies,
       calificacionesXperiencias,
       calificacionesChecklist,
+      familyTree,
       soundSetting,
       musicEnabled,
       triggerClickFeedback,
