@@ -36,5 +36,12 @@ exports.toUserDTO = (user) => {
     }) : undefined,
     familyTreeId: user.familyTreeId || null,
     familyTree: (user.familyTree && user.familyTreeId) ? toFamilyTreeDTO(user.familyTree) : null,
+    preferredActivities: user.preferredActivities ? user.preferredActivities.map(act => {
+      const plain = act.get ? act.get({ plain: true }) : act;
+      return {
+        ...plain,
+        userPreference: plain.userPreference || plain.UserPreference,
+      };
+    }) : [],
   };
 };
