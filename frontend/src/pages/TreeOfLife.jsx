@@ -492,16 +492,9 @@ export default function TreeOfLife() {
             <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XperienciasXtop
-                  onClose={() => {
-                    const prev = respuestasCorrectas;
-                    const nuevos = JSON.parse(
-                      localStorage.getItem("progresoXperiencias") || "{}"
-                    );
-                    const nueva = Object.keys(nuevos).find(
-                      (k) => nuevos[k] && !prev[k]
-                    );
-                    setRespuestasCorrectas(nuevos);
-                    setInsigniaReciente(nueva || null);
+                  onClose={(nuevaInsignia) => {
+                    // nuevaInsignia viene de XperienciasXtop al completar
+                    setInsigniaReciente(nuevaInsignia || null);
                     setShowXperienciasModal(false);
                   }}
                 />

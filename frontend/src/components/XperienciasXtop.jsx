@@ -275,7 +275,7 @@ export default function XperienciasXtop({ onClose }) {
       setTimeout(() => {
         setShowCopy(null);
         setRespuestaReciente(null);
-        onClose();
+        onClose(clave);   // ← pasa la clave para animar la insignia en el árbol
       }, 2000);
     } else {
       if (typeof playErrorSound === "function") {
