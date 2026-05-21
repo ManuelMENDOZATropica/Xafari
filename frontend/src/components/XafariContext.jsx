@@ -19,6 +19,8 @@ const XafariContext = createContext({
   xecretos: {},
   soundSetting: "full",
   setSoundSetting: () => { },
+  musicEnabled: true,
+  setMusicEnabled: () => { },
   triggerClickFeedback: () => { },
   playWardrobeSound: () => { },
   playSuccessSound: () => { },

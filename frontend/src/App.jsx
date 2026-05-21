@@ -62,8 +62,14 @@ function App() {
     return localStorage.getItem("soundSetting") || "full";
   });
 
+  const [musicEnabled, setMusicEnabled] = useState(() => {
+    const v = localStorage.getItem("ajuste_musica");
+    // default true: music ON unless the user has explicitly turned it off
+    return v === null ? true : v === "true";
+  });
+
   const { triggerClickFeedback, playWardrobeSound, playSuccessSound, playErrorSound } =
-    useSoundController(soundSetting);
+    useSoundController(soundSetting, musicEnabled);
 
   useEffect(() => {
     try {
@@ -279,6 +285,13 @@ function App() {
     localStorage.setItem("soundSetting", soundSetting);
   }, [soundSetting]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    localStorage.setItem("ajuste_musica", String(musicEnabled));
+  }, [musicEnabled]);
+
   const contextValue = useMemo(
     () => ({
       user,
@@ -290,6 +303,8 @@ function App() {
       saveActivityRating,
       soundSetting,
       setSoundSetting,
+      musicEnabled,
+      setMusicEnabled,
       triggerClickFeedback,
       playWardrobeSound,
       playSuccessSound,
@@ -300,6 +315,7 @@ function App() {
       token,
       activitiesMap,
       soundSetting,
+      musicEnabled,
       triggerClickFeedback,
       playWardrobeSound,
       playSuccessSound,

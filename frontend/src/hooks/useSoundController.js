@@ -12,7 +12,7 @@ const SOUND_EFFECTS = {
 const AUDIBLE_MODES = new Set(["full", "medium"]);
 const VIBRATION_DURATION = 30;
 
-export default function useSoundController(soundSetting) {
+export default function useSoundController(soundSetting, musicEnabled = true) {
   const backgroundAudioRef = useRef(null);
   const audioContextRef = useRef(null);
   const effectBuffersRef = useRef({});
@@ -20,24 +20,28 @@ export default function useSoundController(soundSetting) {
   const fallbackEffectsRef = useRef({});
   const attemptBackgroundPlaybackRef = useRef(null);
   const soundSettingRef = useRef(soundSetting);
+  const musicEnabledRef = useRef(musicEnabled);
   const hasWarnedVibrationRef = useRef(false);
   const gestureListenersActiveRef = useRef(false);
 
-  const applyModeToAudio = useCallback((mode) => {
+  const applyModeToAudio = useCallback((mode, music) => {
+    const musicOn = music !== undefined ? music : musicEnabledRef.current;
     const background = backgroundAudioRef.current;
     if (background) {
-      if (mode === "full") {
+      // Background (music) respects both the volume mode AND the music toggle
+      if (!musicOn || mode === "off" || mode === "vibrate") {
+        background.muted = true;
+        background.volume = 0;
+      } else if (mode === "full") {
         background.muted = false;
         background.volume = 1;
       } else if (mode === "medium") {
         background.muted = false;
         background.volume = 0.3;
-      } else {
-        background.muted = true;
-        background.volume = 0;
       }
     }
 
+    // Sound effects always follow the volume mode (music toggle doesn't affect them)
     if (effectGainRef.current) {
       if (mode === "full") {
         effectGainRef.current.gain.value = 1;
@@ -189,12 +193,13 @@ export default function useSoundController(soundSetting) {
 
   useEffect(() => {
     soundSettingRef.current = soundSetting;
-    applyModeToAudio(soundSetting);
+    musicEnabledRef.current = musicEnabled;
+    applyModeToAudio(soundSetting, musicEnabled);
 
-    if (soundSetting === "full" || soundSetting === "medium") {
+    if (musicEnabled && (soundSetting === "full" || soundSetting === "medium")) {
       ensureBackgroundPlaying();
     }
-  }, [soundSetting, applyModeToAudio, ensureBackgroundPlaying]);
+  }, [soundSetting, musicEnabled, applyModeToAudio, ensureBackgroundPlaying]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -249,7 +254,7 @@ export default function useSoundController(soundSetting) {
       fallbackEffectsRef.current[key] = audio;
     });
 
-    applyModeToAudio(soundSettingRef.current);
+    applyModeToAudio(soundSettingRef.current, musicEnabledRef.current);
 
     function removeGestureListeners() {
       if (!gestureListenersActiveRef.current) {
@@ -286,7 +291,7 @@ export default function useSoundController(soundSetting) {
 
       try {
         await background.play();
-        applyModeToAudio(soundSettingRef.current);
+        applyModeToAudio(soundSettingRef.current, musicEnabledRef.current);
         removeGestureListeners();
       } catch (error) {
         if (error?.name !== "AbortError") {
