@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useContext, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import ModalInstruccionesXecretos from "@/components/ModalInstruccionesXecretos";
-import ModalPistaXecreto from "@/components/ModalPistaXecreto";
 import XafariContext from "./XafariContext";
 import useGlyphRecognizer from "@/hooks/useGlyphRecognizer";
 
@@ -49,9 +48,8 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
   const [insigniaKey, setInsigniaKey]   = useState(0);
   const [showInsignia, setShowInsignia] = useState(false);
   const [cameraError, setCameraError]   = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing, setIsProcessing]     = useState(false);
   const [showInstrucciones, setShowInstrucciones] = useState(false);
-  const [showPista, setShowPista]       = useState(false);
 
   // ─── Glyph detection ────────────────────────────────────────────────────
   const handleGlyphDetection = useCallback((glyphLabel) => {
@@ -239,18 +237,6 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
           </svg>
         </button>
 
-        {/* Pista */}
-        <button
-          onClick={() => setShowPista(true)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-full active:scale-95 transition-all text-[11px] font-bold"
-          style={{ backgroundColor: "rgba(61,26,0,0.85)", color: "#f5ddb0" }}
-        >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-          Pista
-        </button>
-
         {/* Info */}
         <button
           onClick={() => setShowInstrucciones(true)}
@@ -266,7 +252,6 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
 
       {/* Modales auxiliares */}
       <ModalInstruccionesXecretos show={showInstrucciones} onClose={() => setShowInstrucciones(false)} />
-      <ModalPistaXecreto show={showPista} onClose={() => setShowPista(false)} scannedCodes={scannedCodes} />
 
       <style>{`
         @keyframes pulse-ring {
