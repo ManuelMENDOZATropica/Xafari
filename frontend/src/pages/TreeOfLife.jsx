@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import LanguageToggle from "@/components/LanguageToggle";
 import XafariContext from "@/components/XafariContext";
 
-import XecretoRegister from "@/components/XecretoRegister";
+import XecretosCards from "@/components/XecretosCards";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import ChecklistGastro from "@/components/ChecklistGastro";
 import PodiumModal from "@/components/PodiumModal";
@@ -449,20 +449,7 @@ export default function TreeOfLife() {
           >
             <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 221px)" }}>
               <div className="relative h-full w-full overflow-hidden">
-                <XecretoRegister
-                  onClose={() => {
-                    const prev = xecretos;
-                    const nuevos = JSON.parse(
-                      localStorage.getItem("xecretos") || "{}"
-                    );
-                    const nueva = Object.keys(nuevos).find(
-                      (k) => nuevos[k] && !prev[k]
-                    );
-                    setXecretos(nuevos);
-                    setGuardianReciente(nueva || null);
-                    setShowXecretoModal(false);
-                  }}
-                />
+                <XecretosCards onClose={() => setShowXecretoModal(false)} />
               </div>
             </div>
           </motion.div>
