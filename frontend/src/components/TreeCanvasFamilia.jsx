@@ -11,10 +11,11 @@ const MIN_SCALE     = 0.15;
 const MAX_SCALE     = 0.40;
 
 function calcInitialPos() {
-  const vw           = window.innerWidth;
-  const vh           = window.innerHeight;
+  // iOS Safari puede devolver 0 o valores raros antes del layout — usamos fallbacks seguros
+  const vw = (typeof window !== "undefined" && window.innerWidth)  || 390;
+  const vh = (typeof window !== "undefined" && window.innerHeight) || 844;
   const topOffset    = 56;
-  const bottomOffset = vh * 0.02 + 210;   // 2vh margen + botones(~118px) + gap(12px) + submenu(~68px) + pt-3(12px)
+  const bottomOffset = vh * 0.02 + 210;
   const availableH   = vh - topOffset - bottomOffset;
   return {
     x: (vw - CANVAS_WIDTH  * INITIAL_SCALE) / 2,
@@ -415,14 +416,20 @@ const mapaXtop = {
 export default function TreeCanvasFamilia({ insigniaReciente }) {
   const initialPos = useRef(calcInitialPos());
 
-  const [jugador, setJugador] = useState(() =>
-    JSON.parse(localStorage.getItem("user") || "{}")
-  );
+  const [jugador, setJugador] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch (_) {
+      return {};
+    }
+  });
 
   useEffect(() => {
     const handleStorage = () => {
-      const updated = JSON.parse(localStorage.getItem("user") || "{}");
-      setJugador(updated);
+      try {
+        const updated = JSON.parse(localStorage.getItem("user") || "{}");
+        setJugador(updated);
+      } catch (_) {}
     };
 
     window.addEventListener("storage", handleStorage);
@@ -445,18 +452,25 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
   };
 
   const checkAndReset = useCallback((ref) => {
-    const { scale, positionX: posX, positionY: posY } = ref.state;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const scaledW = CANVAS_WIDTH  * scale;
-    const scaledH = CANVAS_HEIGHT * scale;
-    const visibleX =
-      Math.max(0, Math.min(vw, scaledW + posX)) - Math.max(0, Math.min(vw, posX));
-    const visibleY =
-      Math.max(0, Math.min(vh, scaledH + posY)) - Math.max(0, Math.min(vh, posY));
-    if (visibleX / vw < 0.4 || visibleY / vh < 0.4) {
-      const { x, y } = initialPos.current;
-      ref.setTransform(x, y, INITIAL_SCALE, 380, "easeOut");
+    try {
+      // En iOS Safari, ref.state puede llegar undefined — guardamos con optional chaining
+      const scale = ref?.state?.scale ?? INITIAL_SCALE;
+      const posX  = ref?.state?.positionX ?? 0;
+      const posY  = ref?.state?.positionY ?? 0;
+      const vw = window.innerWidth  || 390;
+      const vh = window.innerHeight || 844;
+      const scaledW = CANVAS_WIDTH  * scale;
+      const scaledH = CANVAS_HEIGHT * scale;
+      const visibleX =
+        Math.max(0, Math.min(vw, scaledW + posX)) - Math.max(0, Math.min(vw, posX));
+      const visibleY =
+        Math.max(0, Math.min(vh, scaledH + posY)) - Math.max(0, Math.min(vh, posY));
+      if (visibleX / vw < 0.4 || visibleY / vh < 0.4) {
+        const { x, y } = initialPos.current;
+        ref?.setTransform?.(x, y, INITIAL_SCALE, 380, "easeOut");
+      }
+    } catch (_) {
+      // silenciar errores de iOS Safari en callbacks de touch
     }
   }, []);
 

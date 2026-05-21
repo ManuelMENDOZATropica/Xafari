@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { Component, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,6 +16,42 @@ import Xelfies from "@/components/xelfies";
 import SoundMenu from "@/components/SoundMenu";
 import ModalFamilia from "@/components/ModalFamilia";
 import ModalAjustes from "@/components/ModalAjustes";
+
+// Error Boundary — captura crashes de iOS Safari en TreeCanvasFamilia
+class FamiliaErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error) {
+    console.error("[FamiliaErrorBoundary] crash capturado:", error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          justifyContent: "center", height: "100%", gap: 12, opacity: 0.6,
+        }}>
+          <span style={{ fontSize: 32 }}>🌳</span>
+          <p style={{ fontSize: 13, color: "#3D1A00", fontFamily: "sans-serif" }}>
+            Error al cargar el árbol familiar
+          </p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            style={{ fontSize: 12, color: "#3D1A00", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
+          >
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const FamilyIcon = (props) => (
   <svg
@@ -256,10 +292,12 @@ export default function TreeOfLife() {
       <div className="absolute inset-0 pb-[calc(2vh+210px)] pt-14 w-full flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
           {modoFamilia ? (
-            <TreeCanvasFamilia
-              key="canvas-familia"
-              insigniaReciente={insigniaReciente}
-            />
+            <FamiliaErrorBoundary key={`familia-${modoFamilia}`}>
+              <TreeCanvasFamilia
+                key="canvas-familia"
+                insigniaReciente={insigniaReciente}
+              />
+            </FamiliaErrorBoundary>
           ) : (
             <TreeCanvasIndividual
               key="canvas-individual"
