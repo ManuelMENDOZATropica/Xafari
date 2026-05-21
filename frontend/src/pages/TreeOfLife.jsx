@@ -130,6 +130,8 @@ export default function TreeOfLife() {
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
   const [showXelfiesModal, setShowXelfiesModal] = useState(false);
   const [showMapaModal, setShowMapaModal] = useState(false);
+  const [mapaFilter, setMapaFilter] = useState("xperiencias");
+  const [mapaFromXelfies, setMapaFromXelfies] = useState(false);
   const [showArbolMenu, setShowArbolMenu] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
@@ -206,10 +208,15 @@ export default function TreeOfLife() {
     setShowXelfiesModal(true);
   };
 
-  const handleOpenMapa = () => {
-    closePrimaryModals();
+  const handleOpenMapa = (filter = "xperiencias") => {
+    const fromXelfies = filter === "xelfies";
+    if (!fromXelfies) {
+      closePrimaryModals();
+      setShowArbolMenu(false);
+    }
+    setMapaFilter(filter);
+    setMapaFromXelfies(fromXelfies);
     setShowMapaModal(true);
-    setShowArbolMenu(false);
   };
 
   const handleOpenPodio = () => {
@@ -416,12 +423,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showSettingsModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className="fixed inset-0 z-20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
 
 
@@ -435,12 +442,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXecretoModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className="fixed inset-0 z-20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XecretoRegister
                   onClose={() => {
@@ -465,12 +472,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXperienciasModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className="fixed inset-0 z-20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
                 <XperienciasXtop
                   onClose={(nuevaInsignia) => {
@@ -514,12 +521,12 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showPodiumModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className="fixed inset-0 z-20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
                 <PodiumModal onClose={() => setShowPodiumModal(false)} />
               </div>
@@ -531,14 +538,20 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showMapaModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className={`fixed inset-0 pointer-events-none ${mapaFromXelfies ? "z-30" : "z-20"}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: mapaFromXelfies ? "calc(2vh + 155px)" : "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
-                <ModalMapa onClose={() => setShowMapaModal(false)} />
+                <ModalMapa
+                  initialFilter={mapaFilter}
+                  fromXelfies={mapaFromXelfies}
+                  onClose={() => {
+                    setShowMapaModal(false);
+                  }}
+                />
               </div>
             </div>
           </motion.div>
@@ -548,14 +561,14 @@ export default function TreeOfLife() {
       <AnimatePresence>
         {showXelfiesModal && (
           <motion.div
-            className="fixed inset-0 z-20"
+            className="fixed inset-0 z-20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
-                <Xelfies onClose={() => setShowXelfiesModal(false)} />
+                <Xelfies onClose={() => setShowXelfiesModal(false)} onOpenMapa={() => handleOpenMapa("xelfies")} />
               </div>
             </div>
           </motion.div>

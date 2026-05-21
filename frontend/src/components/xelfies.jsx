@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import XafariContext from "./XafariContext";
+import QRScannerModal from "./QRScannerModal";
 
 const XELFIES = [
   {
@@ -53,7 +54,7 @@ const XELFIES = [
   },
 ];
 
-export default function Xelfies({ onClose }) {
+export default function Xelfies({ onClose, onOpenMapa }) {
   const { registerActivityCompleted, progresoXelfies } = useContext(XafariContext);
 
   const [completados, setCompletados] = useState(() => ({ ...progresoXelfies }));
@@ -68,11 +69,20 @@ export default function Xelfies({ onClose }) {
     registerActivityCompleted(xelfie.activityName);
   };
 
-  const handleVerMapa = (xelfie) => {
-    window.open(
-      `https://maps.google.com/?q=${encodeURIComponent(xelfie.location)}`,
-      "_blank"
-    );
+  const [scannerXelfie, setScannerXelfie] = useState(null); // xelfie que se está escaneando
+
+  const handleVerMapa = () => {
+    if (onOpenMapa) onOpenMapa();
+  };
+
+  const handleEscanear = (xelfie) => {
+    if (completados[xelfie.activityName]) return;
+    setScannerXelfie(xelfie);
+  };
+
+  const handleScanConfirm = () => {
+    if (scannerXelfie) handleCompletar(scannerXelfie);
+    setScannerXelfie(null);
   };
 
   return (
@@ -138,7 +148,7 @@ export default function Xelfies({ onClose }) {
 
                         {/* Ver en mapa */}
                         <button
-                          onClick={() => handleVerMapa(xelfie)}
+                          onClick={() => handleVerMapa()}
                           className="flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[11px] font-medium transition-all active:scale-95"
                           style={{
                             backgroundColor: "rgba(255,255,255,0.85)",
@@ -155,7 +165,7 @@ export default function Xelfies({ onClose }) {
 
                         {/* Tomar Xelfie */}
                         <button
-                          onClick={() => handleCompletar(xelfie)}
+                          onClick={() => handleEscanear(xelfie)}
                           disabled={completado}
                           className="flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[11px] font-bold transition-all active:scale-95 disabled:opacity-70"
                           style={{
@@ -167,10 +177,12 @@ export default function Xelfies({ onClose }) {
                           }}
                         >
                           <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
                           </svg>
-                          {completado ? "¡Xelfie tomada!" : "Xelfie aquí"}
+                          {completado ? "¡Escaneado!" : "Escanear QR"}
                         </button>
                       </div>
                     </div>
@@ -182,6 +194,17 @@ export default function Xelfies({ onClose }) {
 
         </div>
       </div>
+
+      {/* Modal escanear QR */}
+      <AnimatePresence>
+        {scannerXelfie && (
+          <QRScannerModal
+            key={scannerXelfie.activityName}
+            onClose={() => setScannerXelfie(null)}
+            onConfirm={handleScanConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
