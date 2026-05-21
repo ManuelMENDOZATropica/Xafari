@@ -134,7 +134,7 @@ export default function XecretosCards({ onClose }) {
                             <img
                               src={GUARDIAN_IMG[xecreto.key]}
                               alt={xecreto.name}
-                              className="w-40 h-40 object-contain"
+                              className="w-40 h-40 object-contain -mb-6"
                               style={{ opacity: completado ? 1 : 0.35 }}
                             />
                           </div>
