@@ -355,17 +355,14 @@ function App() {
           <Route path="/privacy" element={<PrivacyNotice />} />
           <Route path="/terms" element={<TermsConditions />} />
 
+          {/* ── Flujo de registro — sin token aún ── */}
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/intro-maya" element={<IntroMaya />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/register-step1" element={<RegisterStep1 />} />
+          <Route path="/register-step2" element={<RegisterStep2 />} />
+
           {/* ── Protegidas — requieren sesión iniciada ── */}
-          <Route path="/welcome" element={<PrivateRoute><Welcome /></PrivateRoute>} />
-          <Route
-            path="/welcome-animation-login"
-            element={<PrivateRoute><WelcomeAnimationLogin /></PrivateRoute>}
-          />
-          <Route path="/welcome-animation" element={<PrivateRoute><WelcomeAnimation /></PrivateRoute>} />
-          <Route path="/intro-maya" element={<PrivateRoute><IntroMaya /></PrivateRoute>} />
-          <Route path="/register" element={<PrivateRoute><Register /></PrivateRoute>} />
-          <Route path="/register-step1" element={<PrivateRoute><RegisterStep1 /></PrivateRoute>} />
-          <Route path="/register-step2" element={<PrivateRoute><RegisterStep2 /></PrivateRoute>} />
           <Route path="/create-avatar" element={<PrivateRoute><AvatarSelection /></PrivateRoute>} />
           <Route path="/bienvenida" element={<PrivateRoute><BienvenidaGuacamaya /></PrivateRoute>} />
           <Route path="/tutorial" element={<PrivateRoute><TutorialArbol /></PrivateRoute>} />
@@ -373,6 +370,11 @@ function App() {
           <Route path="/intro" element={<PrivateRoute><Intro /></PrivateRoute>} />
           <Route path="/edit-avatar" element={<PrivateRoute><EditAvatar /></PrivateRoute>} />
           <Route path="/minimalqr" element={<PrivateRoute><MinimalQr /></PrivateRoute>} />
+          <Route
+            path="/welcome-animation-login"
+            element={<PrivateRoute><WelcomeAnimationLogin /></PrivateRoute>}
+          />
+          <Route path="/welcome-animation" element={<PrivateRoute><WelcomeAnimation /></PrivateRoute>} />
           <Route
             path="/debug-scan"
             element={
