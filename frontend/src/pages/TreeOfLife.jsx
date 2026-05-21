@@ -210,11 +210,13 @@ export default function TreeOfLife() {
 
   const handleOpenMapa = (filter = "xperiencias") => {
     const fromXelfies = filter === "xelfies";
-    if (!fromXelfies) closePrimaryModals(); // No cerrar Xelfies si venimos de ahí
+    if (!fromXelfies) {
+      closePrimaryModals();
+      setShowArbolMenu(false);
+    }
     setMapaFilter(filter);
     setMapaFromXelfies(fromXelfies);
     setShowMapaModal(true);
-    setShowArbolMenu(false);
   };
 
   const handleOpenPodio = () => {
