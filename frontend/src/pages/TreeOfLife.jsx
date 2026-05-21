@@ -146,45 +146,26 @@ export default function TreeOfLife() {
         setInsigniaReciente(null);
         setChecklistReciente(null);
         setGuardianReciente(null);
-      }, 1000);
+      }, 4000);   // 4s para que la animación sea visible
       return () => clearTimeout(timeout);
     }
   }, [insigniaReciente, checklistReciente, guardianReciente]);
 
-  const progreso = JSON.parse(
-    localStorage.getItem("progresoXperiencias") || "{}"
-  );
-
-  const xtopProgreso = {};
-  const xperienciasProgreso = {};
 
   const xtopNombres = [
-    "camion",
-    "caracola",
-    "conejo",
-    "drink",
-    "estrella",
-    "kayak",
-    "mascarajaguar",
-    "patin",
-    "piscina",
-    "poolpo",
-    "salvavidas",
-    "teatro",
-    "tobogan",
-    "tv",
-    "vinil",
-    "xpiral",
-    "xorbeteria",
+    "camion", "caracola", "conejo", "drink", "estrella", "kayak",
+    "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
+    "teatro", "tobogan", "tv", "vinil", "xpiral", "xorbeteria",
   ];
 
-  Object.entries(progreso).forEach(([k]) => {
-    if (xtopNombres.includes(k)) {
-      xtopProgreso[k] = true;
-    } else if (k.startsWith("x")) {
-      xperienciasProgreso[k] = true;
-    }
+  // Derived from context (BD) — reactive
+  const xtopProgreso = {};
+  const xperienciasProgreso = {};
+  Object.entries(respuestasCorrectas).forEach(([k]) => {
+    if (xtopNombres.includes(k)) xtopProgreso[k] = true;
+    else if (k.startsWith("x")) xperienciasProgreso[k] = true;
   });
+
 
   const closePrimaryModals = () => {
     setShowXecretoModal(false);
