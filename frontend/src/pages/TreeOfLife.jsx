@@ -119,7 +119,7 @@ const SOUND_ICONS = {
 
 export default function TreeOfLife() {
   const { t, i18n } = useTranslation();
-  const { soundSetting, setSoundSetting, triggerClickFeedback } =
+  const { soundSetting, setSoundSetting, triggerClickFeedback, token } =
     useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
@@ -143,6 +143,14 @@ export default function TreeOfLife() {
 
   useEffect(() => {
     const loadProgression = () => {
+      // Solo cargar progreso si hay sesión activa
+      const hasSession = !!localStorage.getItem("token");
+      if (!hasSession) {
+        setXecretos({});
+        setRespuestasCorrectas({});
+        setChecklistProgreso({});
+        return;
+      }
       setXecretos(JSON.parse(localStorage.getItem("xecretos") || "{}"));
       setRespuestasCorrectas(
         JSON.parse(localStorage.getItem("progresoXperiencias") || "{}")
@@ -158,7 +166,7 @@ export default function TreeOfLife() {
     return () => {
       window.removeEventListener("progression_synced", loadProgression);
     };
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (insigniaReciente || checklistReciente || guardianReciente) {
