@@ -59,6 +59,7 @@ function App() {
   const [progresoXperiencias, setProgresoXperiencias] = useState({});
   const [xecretos, setXecretos] = useState({});
   const [progresoChecklist, setProgresoChecklist] = useState({});
+  const [progresoXelfies, setProgresoXelfies] = useState({});
   const [calificacionesXperiencias, setCalificacionesXperiencias] = useState({});
   const [calificacionesChecklist, setCalificacionesChecklist] = useState({});
   const [soundSetting, setSoundSetting] = useState(() => {
@@ -114,10 +115,10 @@ function App() {
   // ── Sync progreso desde BD cuando hay sesión ───────────────────────────
   useEffect(() => {
     if (!token) {
-      // Sin sesión: limpiar todo el progreso
       setProgresoXperiencias({});
       setXecretos({});
       setProgresoChecklist({});
+      setProgresoXelfies({});
       setCalificacionesXperiencias({});
       setCalificacionesChecklist({});
       return;
@@ -148,12 +149,14 @@ function App() {
         const newXperiencias = {};
         const newXecretos = {};
         const newChecklist = {};
+        const newXelfies = {};
 
         dbActivities.forEach((act) => {
           if (!(act.userActivity && act.userActivity.completedAt)) return;
           if (act.type === "Xperiencia") newXperiencias[act.name] = answersMap[act.name] || "a";
           else if (act.type === "Xecreto")  newXecretos[act.name] = true;
           else if (act.type === "Event")    newChecklist[act.name] = true;
+          else if (act.type === "Xelfie")   newXelfies[act.name] = true;
         });
 
         const newCalXperiencias = {};
@@ -168,6 +171,7 @@ function App() {
         setProgresoXperiencias(newXperiencias);
         setXecretos(newXecretos);
         setProgresoChecklist(newChecklist);
+        setProgresoXelfies(newXelfies);
         setCalificacionesXperiencias(newCalXperiencias);
         setCalificacionesChecklist(newCalChecklist);
       } catch (err) {
@@ -194,6 +198,8 @@ function App() {
         setXecretos((prev) => ({ ...prev, [activityName]: true }));
       } else if (activity.type === "Event") {
         setProgresoChecklist((prev) => ({ ...prev, [activityName]: true }));
+      } else if (activity.type === "Xelfie") {
+        setProgresoXelfies((prev) => ({ ...prev, [activityName]: true }));
       }
     }
 
@@ -277,6 +283,7 @@ function App() {
       progresoXperiencias,
       xecretos,
       progresoChecklist,
+      progresoXelfies,
       calificacionesXperiencias,
       calificacionesChecklist,
       soundSetting,
@@ -295,6 +302,7 @@ function App() {
       progresoXperiencias,
       xecretos,
       progresoChecklist,
+      progresoXelfies,
       calificacionesXperiencias,
       calificacionesChecklist,
       soundSetting,

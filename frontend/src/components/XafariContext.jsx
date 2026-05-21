@@ -9,11 +9,12 @@ const XafariContext = createContext({
   registerActivityCompleted: async () => { },
   saveActivityRating: async () => { },
   // ── Progreso (fuente de verdad: BD, no localStorage) ──────────────────
-  progresoXperiencias: {},      // { kayak: "a", vinil: "b", ... }
-  xecretos: {},                  // { xecreto1: true, ... }
-  progresoChecklist: {},         // { quesadillas: true, ... }
-  calificacionesXperiencias: {}, // { kayak: 4, ... }
-  calificacionesChecklist: {},   // { quesadillas: 3, ... }
+  progresoXperiencias: {},
+  xecretos: {},
+  progresoChecklist: {},
+  progresoXelfies: {},
+  calificacionesXperiencias: {},
+  calificacionesChecklist: {},
   // ─────────────────────────────────────────────────────────────────────
   soundSetting: "full",
   setSoundSetting: () => { },
