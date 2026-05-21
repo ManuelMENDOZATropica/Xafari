@@ -18,15 +18,19 @@ exports.addUserActivity = async (userId, activityId, trans) => {
       throw new ResourceNotFoundError("Activity not found");
     }
 
-    const userActivity = await UserActivity.create(
-      {
+    const [userActivity, created] = await UserActivity.findOrCreate({
+      where: { userId: user.id, activityId: activity.id },
+      defaults: {
         userId: user.id,
         activityId: activity.id,
+        completedAt: new Date(),
       },
-      {
-        transaction,
-      }
-    );
+      transaction,
+    });
+
+    if (!created && !userActivity.completedAt) {
+      await userActivity.update({ completedAt: new Date() }, { transaction });
+    }
 
     if (!trans) await transaction.commit();
 
