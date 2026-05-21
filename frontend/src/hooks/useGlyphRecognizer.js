@@ -102,7 +102,7 @@ function cosineSim(a, b) {
 // ─── Primary loader: custom CNN ──────────────────────────────────────────────
 async function loadCNN() {
   try {
-    console.log("🧠 [GlyphRecognizer] Trying custom CNN model...");
+    if (import.meta.env.DEV) console.log("🧠 [GlyphRecognizer] Trying custom CNN model...");
     const [model, labelsRes] = await Promise.all([
       _tf.loadLayersModel(CUSTOM_MODEL_URL),
       fetch(LABELS_URL),
@@ -117,17 +117,17 @@ async function loadCNN() {
     _cnnModel  = model;
     _cnnLabels = labels;
     _mode      = "cnn";
-    console.log(`✅ [GlyphRecognizer] Custom CNN loaded. Classes: ${labels.join(", ")}`);
+    if (import.meta.env.DEV) console.log(`✅ [GlyphRecognizer] Custom CNN loaded. Classes: ${labels.join(", ")}`);
     return true;
   } catch (err) {
-    console.warn("⚠️ [GlyphRecognizer] Custom CNN not found:", err.message);
+    if (import.meta.env.DEV) console.warn("⚠️ [GlyphRecognizer] Custom CNN not found:", err.message);
     return false;
   }
 }
 
 // ─── Fallback loader: MobileNet cosine similarity ────────────────────────────
 async function loadMobileNet() {
-  console.log("🔄 [GlyphRecognizer] Falling back to MobileNet embeddings...");
+  if (import.meta.env.DEV) console.log("🔄 [GlyphRecognizer] Falling back to MobileNet embeddings...");
   const fullModel = await _tf.loadLayersModel(MOBILENET_URL);
 
   let featureLayer;
@@ -144,7 +144,7 @@ async function loadMobileNet() {
 
   _mnModel = featureModel;
 
-  console.log("📐 [GlyphRecognizer] Computing reference embeddings...");
+  if (import.meta.env.DEV) console.log("📐 [GlyphRecognizer] Computing reference embeddings...");
   _mnEmbeddings = [];
 
   for (const ref of GLYPH_REFS) {
@@ -165,7 +165,7 @@ async function loadMobileNet() {
       features.dispose();
       pooled.dispose();
     } catch (err) {
-      console.warn(`⚠️ Embedding failed for ${ref.label}:`, err);
+      if (import.meta.env.DEV) console.warn(`⚠️ Embedding failed for ${ref.label}:`, err);
     }
   }
 
@@ -175,7 +175,7 @@ async function loadMobileNet() {
   dummy.dispose();
 
   _mode = "mobilenet";
-  console.log(`✅ [GlyphRecognizer] MobileNet ready. ${_mnEmbeddings.length} embeddings.`);
+  if (import.meta.env.DEV) console.log(`✅ [GlyphRecognizer] MobileNet ready. ${_mnEmbeddings.length} embeddings.`);
 }
 
 // ─── Unified preload entry point ──────────────────────────────────────────────
@@ -370,7 +370,7 @@ export default function useGlyphRecognizer(videoRef, { active = true, onDetectio
         consecutiveRef.current = { label: null, count: 0 };
       }
     } catch (err) {
-      console.warn("[GlyphRecognizer] Classification error:", err);
+      if (import.meta.env.DEV) console.warn("[GlyphRecognizer] Classification error:", err);
     }
   }, [videoRef, onDetection]);
 

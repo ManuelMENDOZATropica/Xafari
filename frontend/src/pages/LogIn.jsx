@@ -12,6 +12,7 @@ export default function Login() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +22,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     setLoading(true);
+    setLoginError("");
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || "/api"}/login`, {
         method: "POST",
@@ -33,21 +35,17 @@ export default function Login() {
 
       const data = await response.json();
 
-      console.log("Respuesta del servidor:", data);
-
       if (!response.ok) {
-        throw new Error(data || "Login failed");
+        throw new Error(data?.error || "Login fallido");
       }
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-
       navigate("/welcome-animation-login", { state: data.user });
 
     } catch (error) {
-      console.error("Error en login:", error.message);
-      alert("Error al iniciar sesión: " + error.message);
+      setLoginError(error.message || "Error al iniciar sesión");
     } finally {
       setLoading(false);
     }
@@ -112,13 +110,27 @@ export default function Login() {
             <button
               disabled={!isFormValid || loading}
               onClick={handleLogin}
-              className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${isFormValid && !loading
-                ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
+                isFormValid && !loading
+                  ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
             >
               {loading ? t("loading") : t("login")}
             </button>
+
+            {loginError && (
+              <div style={{
+                display: "flex", alignItems: "flex-start", gap: "8px",
+                backgroundColor: "rgba(156,62,50,0.85)", borderRadius: "12px",
+                padding: "10px 14px",
+              }}>
+                <span style={{ fontSize: "16px", flexShrink: 0 }}>⚠️</span>
+                <p style={{ fontSize: "13px", color: "#fff", margin: 0, lineHeight: "1.4" }}>
+                  {loginError}
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col items-center gap-2 mt-3">
               <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">

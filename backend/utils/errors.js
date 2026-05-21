@@ -76,7 +76,6 @@ function handleSequelizeError(error, resource) {
     return error;
   }
 
-  console.log("AAAA", error)
   logger.error(error);
   if (error instanceof UniqueConstraintError) {
     // Violación de restricción única
@@ -91,7 +90,7 @@ function handleSequelizeError(error, resource) {
     // Errores de conexión
     return new DatabaseError("Database Connection error");
   } else {
-    return new DatabaseError(`Internal server error: "${error.message}". `);
+    return new DatabaseError("Internal server error");
   }
 }
 

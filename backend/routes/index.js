@@ -2,6 +2,16 @@ const { handleSequelizeError } = require("../utils/errors");
 
 const express = require("express");
 const router = express.Router();
+const rateLimit = require("express-rate-limit");
+
+// A-02: Rate limiting — max 10 intentos por IP cada 15 minutos en endpoints de auth
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos. Por favor espera 15 minutos e intenta de nuevo." },
+});
 
 router.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
@@ -29,7 +39,7 @@ const authMiddleware = require("../middleware/authHandler");
 
 // router.use(authMiddleware)
 
-router.post("/login", userController.login);
+router.post("/login", authLimiter, userController.login);
 router.put("/user", authMiddleware, userController.updateCurrentUser);
 
 router.use("/users", usersRoutes);
