@@ -35,20 +35,21 @@ export default function QRScannerModal({ onClose, onConfirm }) {
   };
 
   return (
-    /* Cubre exactamente el área del modal de Xelfies */
+    /* fixed con z-40 — por encima del nav (z-30) y en la misma área del modal de Xelfies */
     <motion.div
-      className="absolute inset-0 z-20 flex flex-col"
-      style={{ backgroundColor: "rgba(242, 232, 218, 1)", borderRadius: "inherit" }}
+      className="fixed left-[12px] right-[12px] z-40 flex flex-col overflow-hidden"
+      style={{
+        top: "8%",
+        bottom: "calc(2vh + 160px)",
+        backgroundColor: "rgba(242, 232, 218, 1)",
+        borderRadius: "16px",
+        border: "6px solid #7b4a1a",
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Borde café — mismo estilo visual que el mockup */}
-      <div
-        className="absolute inset-0 rounded-[inherit] pointer-events-none"
-        style={{ border: "6px solid #7b4a1a", borderRadius: "inherit", zIndex: 1 }}
-      />
 
       {/* Área de cámara — ocupa todo el espacio disponible menos los botones */}
       <div className="flex-1 relative overflow-hidden">
