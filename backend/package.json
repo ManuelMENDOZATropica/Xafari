@@ -18,9 +18,11 @@
 		"supertest": "^7.0.0"
 	},
 	"dependencies": {
+		"bcrypt": "^6.0.0",
 		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
 		"express-validator": "^7.2.1",
+		"jsonwebtoken": "^9.0.3",
 		"openapi-to-md": "^1.0.25",
 		"pg": "^8.21.0",
 		"pg-hstore": "^2.3.4",

@@ -5,6 +5,15 @@ const {
   ResourceNotFoundError,
 } = require("../utils/errors");
 const { toUserDTO } = require("../dto/user.dto");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET || "xafari-dev-secret-change-in-prod";
+const BCRYPT_ROUNDS = 10;
+
+function signToken(userId) {
+  return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "7d" });
+}
 
 exports.createUser = async (req, res, next) => {
   const {
@@ -20,11 +29,12 @@ exports.createUser = async (req, res, next) => {
   } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
     const user = await userService.createUser({
       name,
       lastname,
       email,
-      password,
+      password: hashedPassword,
       birthdate,
       reservationNumber,
       pronouns,
@@ -34,7 +44,7 @@ exports.createUser = async (req, res, next) => {
 
     const userDTO = toUserDTO(user);
     res.status(200).json({
-      token: `mock-token-${user.id}`,
+      token: signToken(user.id),
       user: userDTO,
       ...userDTO
     });
@@ -117,13 +127,14 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ error: "Credenciales inválidas" });
     }
 
-    if (user.password !== password) {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return res.status(401).json({ error: "Credenciales inválidas" });
     }
 
     const userDTO = toUserDTO(user);
     res.status(200).json({
-      token: `mock-token-${user.id}`,
+      token: signToken(user.id),
       user: userDTO,
       ...userDTO
     });

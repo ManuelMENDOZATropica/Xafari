@@ -1,4 +1,7 @@
+const jwt = require("jsonwebtoken");
 const userService = require("../services/userService");
+
+const JWT_SECRET = process.env.JWT_SECRET || "xafari-dev-secret-change-in-prod";
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers["authorization"] ?? "";
@@ -9,28 +12,22 @@ const authMiddleware = async (req, res, next) => {
 
   const token = authHeader.replace("Bearer ", "").trim();
 
-  // Compatibility with the static mock token
-  if (token === "miaumiau") {
-    const User = require("../models/user");
-    const firstUser = await User.findOne();
-    if (firstUser) {
-      req.user = firstUser;
-      return next();
-    }
-  }
-
-  // Extract userId from mock-token-{userId} or use the token directly if it's the raw UUID
-  let userId = token.startsWith("mock-token-") ? token.replace("mock-token-", "") : token;
-
   try {
-    const user = await userService.getUser(userId);
+    // Verificar y decodificar el JWT
+    const payload = jwt.verify(token, JWT_SECRET);
+    const user = await userService.getUser(payload.id);
+
     if (!user) {
       return res.status(401).json({ error: "User not found or invalid token" });
     }
+
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid session" });
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Sesión expirada. Inicia sesión de nuevo." });
+    }
+    return res.status(401).json({ error: "Token inválido" });
   }
 };
 
