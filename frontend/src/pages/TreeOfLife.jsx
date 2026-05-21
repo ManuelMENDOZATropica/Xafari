@@ -543,7 +543,7 @@ export default function TreeOfLife() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: mapaFromXelfies ? "calc(2vh + 155px)" : "calc(2vh + 160px)" }}>
+            <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: mapaFromXelfies ? "calc(2vh + 221px)" : "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
                 <ModalMapa
                   initialFilter={mapaFilter}
