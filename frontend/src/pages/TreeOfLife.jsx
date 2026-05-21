@@ -130,6 +130,7 @@ export default function TreeOfLife() {
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
   const [showXelfiesModal, setShowXelfiesModal] = useState(false);
   const [showMapaModal, setShowMapaModal] = useState(false);
+  const [mapaFilter, setMapaFilter] = useState("xperiencias");
   const [showArbolMenu, setShowArbolMenu] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
@@ -206,8 +207,9 @@ export default function TreeOfLife() {
     setShowXelfiesModal(true);
   };
 
-  const handleOpenMapa = () => {
+  const handleOpenMapa = (filter = "xperiencias") => {
     closePrimaryModals();
+    setMapaFilter(filter);
     setShowMapaModal(true);
     setShowArbolMenu(false);
   };
@@ -538,7 +540,7 @@ export default function TreeOfLife() {
           >
             <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
-                <ModalMapa onClose={() => setShowMapaModal(false)} />
+                <ModalMapa onClose={() => setShowMapaModal(false)} initialFilter={mapaFilter} />
               </div>
             </div>
           </motion.div>
@@ -555,7 +557,7 @@ export default function TreeOfLife() {
           >
             <div className="absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
-                <Xelfies onClose={() => setShowXelfiesModal(false)} />
+                <Xelfies onClose={() => setShowXelfiesModal(false)} onOpenMapa={() => handleOpenMapa("xelfies")} />
               </div>
             </div>
           </motion.div>

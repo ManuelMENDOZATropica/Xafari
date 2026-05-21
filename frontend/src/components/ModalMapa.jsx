@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function ModalMapa({ onClose }) {
+export default function ModalMapa({ onClose, initialFilter = "xperiencias" }) {
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState("xperiencias");
+  const [activeFilter, setActiveFilter] = useState(initialFilter);
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-3xl">

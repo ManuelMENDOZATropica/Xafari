@@ -53,7 +53,7 @@ const XELFIES = [
   },
 ];
 
-export default function Xelfies({ onClose }) {
+export default function Xelfies({ onClose, onOpenMapa }) {
   const { registerActivityCompleted, progresoXelfies } = useContext(XafariContext);
 
   const [completados, setCompletados] = useState(() => ({ ...progresoXelfies }));
@@ -68,11 +68,8 @@ export default function Xelfies({ onClose }) {
     registerActivityCompleted(xelfie.activityName);
   };
 
-  const handleVerMapa = (xelfie) => {
-    window.open(
-      `https://maps.google.com/?q=${encodeURIComponent(xelfie.location)}`,
-      "_blank"
-    );
+  const handleVerMapa = () => {
+    if (onOpenMapa) onOpenMapa();
   };
 
   return (
@@ -138,7 +135,7 @@ export default function Xelfies({ onClose }) {
 
                         {/* Ver en mapa */}
                         <button
-                          onClick={() => handleVerMapa(xelfie)}
+                          onClick={() => handleVerMapa()}
                           className="flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[11px] font-medium transition-all active:scale-95"
                           style={{
                             backgroundColor: "rgba(255,255,255,0.85)",
