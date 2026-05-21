@@ -40,7 +40,7 @@ export default function QRScannerModal({ onClose, onConfirm }) {
       className="fixed left-[12px] right-[12px] z-40 flex flex-col overflow-hidden"
       style={{
         top: "8%",
-        bottom: "calc(2vh + 160px)",
+        bottom: "calc(2vh + 221px)",
         backgroundColor: "rgba(242, 232, 218, 1)",
         borderRadius: "16px",
         border: "6px solid #7b4a1a",
