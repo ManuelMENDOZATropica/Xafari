@@ -1,6 +1,7 @@
 const app = require("./app");
 const logger = require("./utils/logger");
 const database = require("./config/database");
+const { seed } = require("./scripts/seed");
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,9 +19,13 @@ database
   })
   .then(() => {
     logger.info("Database synced.");
+    return seed(); // idempotente — solo inserta si las tablas están vacías
+  })
+  .then(() => {
+    logger.info("Seed completed.");
     startServer();
   })
   .catch((err) => {
-    logger.error("Unable to connect/sync the database:", err);
+    logger.error("Unable to connect/sync/seed the database:", err);
     process.exit(1);
   });
