@@ -160,9 +160,9 @@ export default function Welcome() {
         <button
           type="button"
           onClick={() => setPrivacyOpen(true)}
-          className="flex items-center justify-center font-bold text-[12px] uppercase tracking-wide cursor-pointer transition-opacity hover:opacity-90 active:scale-95"
+          className="flex items-center justify-center font-bold text-[12px] tracking-wide whitespace-nowrap cursor-pointer transition-opacity hover:opacity-90 active:scale-95"
           style={{
-            width: "142px",
+            width: "172px",
             height: "35px",
             borderRadius: "20px",
             backgroundColor: "#4B3621",
@@ -171,14 +171,14 @@ export default function Welcome() {
             border: "none",
           }}
         >
-          {t("settingsLegalButton")}
+          Aviso de privacidad
         </button>
         <button
           type="button"
           onClick={() => setInfoOpen(true)}
-          className="flex items-center justify-center font-bold text-[12px] uppercase tracking-wide cursor-pointer transition-opacity hover:opacity-90 active:scale-95"
+          className="flex items-center justify-center font-bold text-[12px] tracking-wide whitespace-nowrap cursor-pointer transition-opacity hover:opacity-90 active:scale-95"
           style={{
-            width: "124px",
+            width: "155px",
             height: "36px",
             borderRadius: "20px",
             backgroundColor: "#4B3621",
@@ -187,7 +187,7 @@ export default function Welcome() {
             border: "none",
           }}
         >
-          {t("whatIsXafari")}
+          ¿Qué es Xafari?
         </button>
       </div>
 
