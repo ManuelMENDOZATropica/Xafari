@@ -10,7 +10,7 @@ export default function BienvenidaGuacamaya() {
   return (
     <div
       className="relative flex flex-col items-center justify-center min-h-screen w-screen overflow-hidden font-apercu"
-      style={{ backgroundColor: "#1A3C15" }}
+      style={{ backgroundColor: "rgba(53, 36, 22, 1)" }}
     >
       {/* Sonido — esquina superior derecha */}
       <div style={{ position: "absolute", top: "27px", right: "27px", zIndex: 30 }}>
@@ -29,7 +29,7 @@ export default function BienvenidaGuacamaya() {
           justifyContent: "center",
         }}>
           <motion.img
-            src="/img/guacamaya.png"
+            src="/maya/5.png"
             alt="Guacamaya"
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}

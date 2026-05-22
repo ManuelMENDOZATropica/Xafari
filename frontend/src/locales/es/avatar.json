@@ -1,6 +1,6 @@
 {
   "editAvatar": "Editar avatar",
-  "chooseYourStyle": "Elige tu estilo",
+  "chooseYourStyle": "Personaliza tu avatar",
   "skinTone": "Tono de piel",
   "hair": "Cabello",
   "clothing": "Ropa",
@@ -11,7 +11,7 @@
   "bodyAccessory": "Accesorios cuerpo",
   "glasses": "Lentes",
   "headAccessory": "Accesorios cabeza",
-  "saveAvatarAndContinue": "Guardar y continuar",
+  "saveAvatarAndContinue": "Guardar",
   "face": "Cara",
   "randomize": "Aleatorio",
   "reset": "Reiniciar"

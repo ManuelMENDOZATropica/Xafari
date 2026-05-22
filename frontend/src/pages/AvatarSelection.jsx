@@ -18,14 +18,10 @@ function calcularEdad(birthdateStr) {
   return edad;
 }
 
-function useSelection(options, isObject = false, initialIndex = 0) {
+function useSelection(options, _isObject = false, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex || 0);
   const set = (i) => setIndex(i);
   const value = options[index];
-
-  useEffect(() => {
-    setIndex(initialIndex);
-  }, [initialIndex]);
   return [index, value, set, options];
 }
 
@@ -51,7 +47,8 @@ export default function AvatarSelection() {
         faceOptions: faceIndex,
       },
     }));
-  }, [setUser, bodyForzado, faceIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bodyForzado, faceIndex]);
 
   const handleSaveAvatar = useCallback(() => {
     if (!token) return navigate("/bienvenida");
@@ -121,13 +118,21 @@ export default function AvatarSelection() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full px-4 pt-24 pb-[env(safe-area-inset-bottom)] overflow-y-auto">
-        <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-xl shadow-md mb-2 w-full max-w-sm">
-          <h1 className="text-xl md:text-2xl font-bold text-center text-gray-800">
+        <div style={{ width: "237px", height: "32px", display: "flex", alignItems: "center", margin: "0 auto" }}>
+          <h1 style={{
+            fontFamily: "'Volume TC', sans-serif",
+            fontSize: "25px",
+            fontWeight: 400,
+            color: "rgba(72, 39, 34, 1)",
+            margin: 0,
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+          }}>
             {t("chooseYourStyle")}
           </h1>
         </div>
 
-        <div className="relative w-[60vw] max-w-[200px] h-[80vw] max-h-[320px] flex items-center justify-center mb-6">
+        <div className="relative w-[90vw] max-w-[300px] h-[120vw] max-h-[480px] flex items-center justify-center mb-6 mx-auto">
           <img
             src={bodyImg}
             alt="body"
@@ -149,23 +154,24 @@ export default function AvatarSelection() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.key
-                ? "bg-emerald-600/90 text-white shadow-lg scale-105 border border-emerald-500/50"
+              className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.key
+                ? "text-white shadow-lg scale-105"
                 : "bg-white/50 text-black border border-white/40 backdrop-blur-md hover:bg-white/60"
                 }`}
+              style={activeTab === tab.key ? { backgroundColor: "rgba(72, 39, 34, 1)" } : {}}
             >
               {tab.label}
             </button>
           ))}
         </div>
 
-        <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-2 max-h-[40vh] overflow-y-auto">
+        <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-1 shadow-md mb-2 max-h-[40vh] overflow-y-auto">
           {tabs
             .filter((tab) => tab.key === activeTab)
             .map((tab) => {
               const scrollRef = useRef();
               const [showArrow, setShowArrow] = useState(false);
-              const zoom = tab.key === "face" ? { scale: "scale-[2.5]", translateY: "-translate-y-[0%]" } : { scale: "scale-[1.2]" };
+              const zoom = tab.key === "face" ? { scale: "", translateY: "" } : { scale: "scale-[1.2]" };
 
               useEffect(() => {
                 const el = scrollRef.current;
@@ -211,16 +217,18 @@ export default function AvatarSelection() {
                             }}
                             data-skip-sound-click="true"
                             aria-pressed={isCurrent}
-                            className={`w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer ${isCurrent
+                            className={`flex items-center justify-center border-2 cursor-pointer overflow-hidden ${isCurrent
                               ? "border-green-600"
                               : "border-transparent"
-                              } bg-white overflow-hidden`}
+                              }`}
+                            style={{ width: "130px", height: "100px" }}
                           >
                             {opt ? (
                               <img
                                 src={tab.icons ? tab.icons[i] : opt}
                                 alt={`${tab.key}_${i}`}
-                                className={`w-full h-full object-contain transform ${tab.icons ? "" : (zoom.scale || "")} ${tab.icons ? "" : (zoom.translateY || "")}`}
+                                style={{ width: "130px", height: "130px", objectFit: "contain", flexShrink: 0 }}
+                                className={`transform ${tab.icons ? "" : (zoom.scale || "")} ${tab.icons ? "" : (zoom.translateY || "")}`}
                               />
                             ) : (
                               <span className="text-xl font-bold text-gray-400">
@@ -242,13 +250,39 @@ export default function AvatarSelection() {
             })}
         </div>
 
-
-        <button
-          onClick={handleSaveAvatar}
-          className="bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-[0.2em] py-3.5 px-8 rounded-full shadow-lg hover:bg-emerald-700 transition-all active:scale-95 w-full max-w-sm border border-emerald-500/30"
-        >
-          {t("saveAvatarAndContinue")}
-        </button>
+        <div style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: "flex",
+          justifyContent: "center",
+          paddingBottom: "calc(env(safe-area-inset-bottom) + 40px)",
+          paddingTop: "16px",
+          zIndex: 50,
+        }}>
+          <button
+            onClick={handleSaveAvatar}
+            style={{
+              width: "200px",
+              height: "60px",
+              borderRadius: "30px",
+              backgroundColor: "#80A850",
+              color: "#F7F3EA",
+              fontSize: "24px",
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "3.2px 3.2px 3.2px 0px rgba(0,0,0,0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "'Apercu Pro', sans-serif",
+            }}
+          >
+            {t("saveAvatarAndContinue")}
+          </button>
+        </div>
       </div>
     </div>
   );

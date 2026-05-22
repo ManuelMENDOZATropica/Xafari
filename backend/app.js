@@ -17,7 +17,11 @@ const ALLOWED_ORIGINS = [
   "https://xafari-phi.vercel.app",   // frontend producción
   process.env.FRONTEND_URL,           // configurable via env var
   "http://localhost:5173",            // dev
+  "https://localhost:5173",           // dev (SSL)
+  "http://localhost:5174",            // dev (puerto alternativo)
+  "https://localhost:5174",           // dev (SSL, puerto alternativo)
   "http://localhost:4173",            // dev preview
+  "https://localhost:4173",           // dev preview (SSL)
 ].filter(Boolean);
 
 app.use((req, res, next) => {
