@@ -172,6 +172,11 @@ export default function TreeOfLife() {
   const [mapaFromXelfies, setMapaFromXelfies] = useState(false);
   const [showArbolMenu, setShowArbolMenu] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [podioPerido, setPodioPerido] = useState("siempre");
+
+  // Ocultar botón Solo/Familia cuando cualquier modal está abierto
+  const anyModalOpen = showPodiumModal || showXecretoModal || showXperienciasModal ||
+    showXelfiesModal || showMapaModal || showSettingsModal || showChecklistModal;
 
   const [insigniaReciente, setInsigniaReciente] = useState(null);
   const [checklistReciente, setChecklistReciente] = useState(null);
@@ -343,33 +348,40 @@ export default function TreeOfLife() {
         </AnimatePresence>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setModoFamilia((prev) => !prev)}
-        aria-pressed={modoFamilia}
-        className="absolute top-4 left-4 z-40 flex items-center bg-[#80A850] rounded-full px-1.5 py-1.5 shadow-md gap-0 font-volume"
-      >
-        {/* Solo tab */}
-        <span
-          className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200
-            ${!modoFamilia
-              ? "bg-[#C9DCB5] text-[#233C15] shadow-sm"
-              : "bg-transparent text-white"
-            }`}
+      {/* Botón Solo/Familia — se oculta cuando hay un modal abierto */}
+      {!anyModalOpen && (
+        <button
+          type="button"
+          onClick={() => setModoFamilia((prev) => !prev)}
+          aria-pressed={modoFamilia}
+          className="absolute top-4 left-4 z-40 flex items-center bg-[#80A850] rounded-full px-1.5 py-1.5 shadow-md gap-0 font-volume"
         >
-          Solo
-        </span>
-        {/* Familia tab */}
-        <span
-          className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200
-            ${modoFamilia
-              ? "bg-[#C9DCB5] text-[#233C15] shadow-sm"
-              : "bg-transparent text-white"
-            }`}
-        >
-          Familia
-        </span>
-      </button>
+          <span className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200 ${!modoFamilia ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"}`}>
+            Solo
+          </span>
+          <span className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200 ${modoFamilia ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"}`}>
+            Familia
+          </span>
+        </button>
+      )}
+
+      {/* Pill Hoy/Mes/Siempre — aparece cuando el podio está abierto */}
+      {showPodiumModal && (
+        <div className="absolute top-4 left-4 z-40 flex items-center bg-[#80A850] rounded-full px-1.5 py-1.5 shadow-md gap-0 font-volume">
+          {["hoy", "mes", "siempre"].map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setPodioPerido(p)}
+              className={`flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-volume transition-all duration-200 ${
+                podioPerido === p ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"
+              }`}
+            >
+              {p.charAt(0).toUpperCase() + p.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="fixed bottom-0 left-0 right-0 z-30 pb-[2vh] pt-3 bg-transparent pointer-events-none">
         <div className="flex flex-col items-center gap-3 px-3 pointer-events-auto w-full">
@@ -598,7 +610,7 @@ export default function TreeOfLife() {
           >
             <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 160px)" }}>
               <div className="relative h-full w-full rounded-3xl overflow-hidden bg-[#7b5226]">
-                <PodiumModal onClose={() => setShowPodiumModal(false)} />
+                <PodiumModal onClose={() => setShowPodiumModal(false)} periodo={podioPerido} />
               </div>
             </div>
           </motion.div>

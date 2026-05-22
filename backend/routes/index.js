@@ -33,6 +33,7 @@ const userPreferenceRoutes = require("./userPreferenceRoutes");
 const userAchievementRoutes = require("./userAchievementRoutes");
 const activityRoutes = require("./activityRoutes");
 const docsRoutes = require("./docsRoutes")
+const leaderboardRoutes = require("./leaderboardRoutes");
 const userController = require("../controllers/userController");
 const errorMiddleware = require("../middleware/errorHandler");
 const authMiddleware = require("../middleware/authHandler");
@@ -79,6 +80,8 @@ router.use("/user-preference", userPreferenceRoutes);
 
 router.use("/activities", activityRoutes);
 router.use("/activity", activityRoutes);
+
+router.use("/leaderboard", leaderboardRoutes);
 
 router.use("/", userAchievementRoutes);
 
