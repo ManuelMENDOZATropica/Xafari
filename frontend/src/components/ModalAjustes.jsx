@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import XafariContext from "./XafariContext";
@@ -66,6 +66,12 @@ export default function ModalAjustes({ onClose }) {
     setMusicEnabled,
   } = useContext(XafariContext);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+
+  const irAPerfil = () => {
+    if (typeof onClose === "function") onClose();
+    navigate("/perfil");
+  };
 
   const user = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
 
@@ -101,18 +107,18 @@ export default function ModalAjustes({ onClose }) {
   // ─── Toggle genérico ────────────────────────────────────────────────────────
   const Toggle = ({ on, onClick, label }) => (
     <div className="flex flex-col items-center gap-2">
-      <span className="text-sm font-semibold text-[#3d2a14]">{label}</span>
+      <span className="text-sm font-bold text-[#345230]">{label}</span>
       <button
         type="button"
         onClick={onClick}
         role="switch"
         aria-checked={on}
         aria-label={label}
-        className="relative inline-flex h-8 w-16 items-center rounded-full px-1 transition-colors"
-        style={{ backgroundColor: on ? "#5f7d3a" : "#4a2e0e" }}
+        className="relative inline-flex h-8 w-16 items-center rounded-full px-1 shadow-md transition-colors"
+        style={{ backgroundColor: on ? "#7faa55" : "#9e3b32" }}
       >
         <span
-          className="inline-block h-6 w-6 transform rounded-full bg-[#efe7d6] shadow transition-transform"
+          className="inline-block h-6 w-6 transform rounded-full bg-[#f4ead9] shadow transition-transform"
           style={{ transform: on ? "translateX(32px)" : "translateX(0px)" }}
         />
       </button>
@@ -125,59 +131,84 @@ export default function ModalAjustes({ onClose }) {
 
       {/* ── Panel crema: anclado 12px adentro, sin scroll en ningún eje ─── */}
       <div className="absolute inset-3 rounded-2xl bg-[#f4ead9] overflow-hidden">
-        <div className="flex flex-col px-5 pb-4 pt-4">
+        <div className="flex h-full flex-col justify-between px-5 pb-5 pt-5">
 
+          {/* ── Grupo superior: título + idioma ──────────────────────────── */}
+          <div>
           {/* Título centrado */}
-          <h1 className="mb-3 text-center text-lg font-extrabold text-[#3d3d33]">
+          <h1 className="mb-3 text-center text-xl font-extrabold text-[#345230]">
             {t("settingsTitle") || "Ajustes"}
           </h1>
 
-          {/* ── Fila: toggle de idioma + avatar ──────────────────────────── */}
-          <div className="mb-4 flex items-center gap-3">
-            {/* Toggle idioma (izquierda) */}
-            <div className="inline-flex items-center rounded-full border-2 border-[#586b39] p-1">
-              {LANGS.map((l) => {
-                const activo = currentLanguage === l.code;
-                return (
-                  <button
-                    key={l.code}
-                    type="button"
-                    onClick={() => i18n.changeLanguage(l.code)}
-                    className="rounded-full px-4 py-1 text-sm font-semibold transition-colors"
-                    style={{
-                      backgroundColor: activo ? "#6f8f43" : "transparent",
-                      color: activo ? "#ffffff" : "#3d2a14",
-                    }}
-                  >
-                    {l.label}
-                  </button>
-                );
-              })}
+          {/* ── Idioma (con rótulo) + avatar ─────────────────────────────── */}
+          <div className="mb-5 flex items-start justify-between">
+            <div>
+              <h2 className="mb-2 text-lg font-bold text-[#345230]">
+                {t("settingsLanguageTitle") || "Idioma"}
+              </h2>
+              {/* Píldora verde sólida con botón activo elevado */}
+              <div className="inline-flex items-center rounded-full bg-[#7faa55] p-1 shadow-md">
+                {LANGS.map((l) => {
+                  const activo = currentLanguage === l.code;
+                  return (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => i18n.changeLanguage(l.code)}
+                      className="rounded-full px-4 py-1.5 text-sm font-semibold transition-all"
+                      style={{
+                        backgroundColor: activo ? "#a7cd80" : "transparent",
+                        color: "#2f4a2c",
+                        boxShadow: activo ? "0 1px 3px rgba(0,0,0,0.25)" : "none",
+                      }}
+                    >
+                      {l.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Avatar — h-24 (96px), alineado con el toggle */}
-            <div className="ml-auto flex-shrink-0 h-24 w-24 overflow-hidden rounded-full border-[3px] border-[#586b39] bg-[#efe7d6]">
-              <AvatarFaceOnly avatarData={user?.avatar} />
-            </div>
+            {/* Avatar — elipse + cara superpuesta */}
+            <button
+              type="button"
+              onClick={irAPerfil}
+              aria-label={t("editProfile") || "Editar perfil"}
+              className="relative flex-shrink-0 bg-transparent transition-transform active:scale-95"
+              style={{ width: "163px", height: "163px" }}
+            >
+              {/* Marco elipse debajo */}
+              <img
+                src="/iconos/elipseAvatar.png"
+                alt=""
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+              {/* Cara del avatar encima */}
+              {user?.avatar && (
+                <img
+                  src={`/avatares/cara (${(user.avatar.faceOptions ?? 0) + 1}).png`}
+                  alt="Avatar"
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ zIndex: 10 }}
+                />
+              )}
+            </button>
+          </div>
           </div>
 
+          {/* ── Grupo medio: personaliza tu experiencia ──────────────────── */}
+          <div>
           {/* ── Personaliza tu experiencia ────────────────────────────────── */}
-          <h2 className="mb-2 text-base font-bold text-[#3d2a14]">
+          <h2 className="mb-3 text-lg font-bold text-[#345230]">
             {t("settingsPersonalizeTitle") || "Personaliza tu experiencia"}
           </h2>
 
           {/* Volumen general */}
-          <p className="mb-1 text-sm font-semibold text-[#3d2a14]">
+          <p className="mb-1 text-sm font-semibold text-[#345230]">
             {t("settingsVolumeLabel") || "Volumen"}
           </p>
           <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#6f8f43]">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="#f4ead9" aria-hidden="true">
-                <path d="M4 9v6h4l5 5V4L8 9H4z" />
-                <path d="M16 8.5a4 4 0 0 1 0 7" fill="none" stroke="#f4ead9" strokeWidth="1.8" strokeLinecap="round" />
-                <path d="M18.5 6a7 7 0 0 1 0 12" fill="none" stroke="#f4ead9" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </span>
+            <img src="/iconos/iconoSonidoSettings.png" alt="Volumen" className="h-11 w-11 shrink-0 object-contain" />
             <input
               type="range"
               min="0"
@@ -214,9 +245,10 @@ export default function ModalAjustes({ onClose }) {
               label={t("settingsDarkModeLabel") || "Modo Obscuro"}
             />
           </div>
+          </div>
 
-          {/* Aviso de privacidad */}
-          <div className="flex justify-center pt-1">
+          {/* ── Grupo inferior: aviso de privacidad ──────────────────────── */}
+          <div className="flex justify-center">
             <Link
               to="/privacy"
               onClick={onClose}
@@ -233,20 +265,20 @@ export default function ModalAjustes({ onClose }) {
         .ajustes-slider::-webkit-slider-thumb {
           -webkit-appearance: none;
           appearance: none;
-          height: 32px;
-          width: 32px;
-          border-radius: 9999px;
-          background: #6b4423 radial-gradient(circle at 50% 50%, #8a5a2c 22%, transparent 23%);
-          box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+          height: 36px;
+          width: 36px;
+          border-radius: 0;
+          background: url('/iconos/iconoSlider.png') center / contain no-repeat;
+          box-shadow: none;
           cursor: pointer;
         }
         .ajustes-slider::-moz-range-thumb {
-          height: 32px;
-          width: 32px;
+          height: 36px;
+          width: 36px;
           border: none;
-          border-radius: 9999px;
-          background: #6b4423;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+          border-radius: 0;
+          background: url('/iconos/iconoSlider.png') center / contain no-repeat;
+          box-shadow: none;
           cursor: pointer;
         }
       `}</style>
