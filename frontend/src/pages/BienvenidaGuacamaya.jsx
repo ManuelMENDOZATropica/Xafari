@@ -31,8 +31,8 @@ export default function BienvenidaGuacamaya() {
           <motion.img
             src="/maya/5.png"
             alt="Guacamaya"
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.92, scaleX: -1 }}
+            animate={{ opacity: 1, scale: 1, scaleX: -1 }}
             transition={{ duration: 0.45 }}
             style={{
               position: "absolute",

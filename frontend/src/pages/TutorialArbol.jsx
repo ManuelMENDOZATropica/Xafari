@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import TreeOfLife from "./TreeOfLife";
 import XperienciasXtop from "@/components/XperienciasXtop";
 import Xelfies from "@/components/xelfies";
-import XecretoRegister from "@/components/XecretoRegister";
+import XecretosCards from "@/components/XecretosCards";
 import SoundMenu from "@/components/SoundMenu";
 
 export default function TutorialArbol() {
@@ -414,7 +414,7 @@ export default function TutorialArbol() {
               style={{ bottom: "calc(2vh + 160px)" }}
             >
               <div className="relative h-full w-full rounded-t-3xl overflow-hidden bg-[#7b5226]">
-                <XecretoRegister onClose={() => {}} previewOnly />
+                <XecretosCards onClose={() => {}} />
               </div>
             </div>
 
@@ -548,23 +548,25 @@ export default function TutorialArbol() {
               transition={{ duration: 0.5, delay: 0.15 }}
               style={{
                 position: "absolute",
-                bottom: step === 1 ? "-18%" : "-2%",
+                bottom: "-2%",
                 left: 0, right: 0,
                 display: "flex",
                 justifyContent: step === 2 ? "flex-end" : step === 3 ? "flex-start" : "center",
               }}
             >
               <div style={{
-                width: step >= 2 ? "59%" : "80%",
-                maxWidth: step >= 2 ? "252px" : "340px",
+                width: step >= 1 ? "59%" : "80%",
+                maxWidth: step >= 1 ? "252px" : "340px",
                 marginRight: step === 2 ? "-15%" : undefined,
-                marginLeft: step === 3 ? "-15%" : undefined,
-                transform: step === 3 ? "scaleX(-1)" : undefined,
+                marginLeft: step === 3 ? "10%" : undefined,
               }}>
                 <img
                   src={`/img/tuto${step + 1}.png`}
                   alt="Guacamaya"
-                  style={{ width: "100%", objectFit: "contain" }}
+                  style={{
+                    width: "100%",
+                    objectFit: "contain",
+                  }}
                 />
               </div>
             </motion.div>
