@@ -24,6 +24,7 @@ import { useEffect, useMemo, useState } from "react";
 import useSoundController from "./hooks/useSoundController";
 import PrivacyNotice from "./pages/PrivacyNotice";
 import TermsConditions from "./pages/TermsConditions";
+import Perfil from "./pages/Perfil";
 
 function App() {
   const location = useLocation();
@@ -370,6 +371,7 @@ function App() {
           <Route path="/tutorial" element={<PrivateRoute><TutorialArbol /></PrivateRoute>} />
           <Route path="/treeoflife" element={<PrivateRoute><TreeOfLife /></PrivateRoute>} />
           <Route path="/edit-avatar" element={<PrivateRoute><EditAvatar /></PrivateRoute>} />
+          <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
           <Route path="/minimalqr" element={<PrivateRoute><MinimalQr /></PrivateRoute>} />
           <Route
             path="/welcome-animation-login"
