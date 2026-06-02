@@ -657,6 +657,11 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
       const posX = vw / 2 - targetX * zoomScale;
       const posY = vh / 2 - targetY * zoomScale;
 
+      // Vibrar el teléfono física si la API está disponible (patrón doble premium)
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate([150, 100, 150]);
+      }
+
       transformRef.current.setTransform(posX, posY, zoomScale, 1200, "easeOut");
 
       const timer = setTimeout(() => {
@@ -733,7 +738,9 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
       const nivel = calcularNivelDesbloqueo(clave, tipo);
       const jugadorLaTiene = jugador?.progreso?.[tipo]?.[clave] === true;
       const esReciente =
-        insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave;
+        typeof insigniaReciente === "string"
+          ? (tipo === "xecretos" ? insigniaReciente === clave : insigniaReciente === asset)
+          : (insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave);
       const debeAnimar = jugadorLaTiene && esReciente;
       const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
 
@@ -751,9 +758,13 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
               width: pos.width,
               height: pos.height,
             }}
-            initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
-            animate={{ opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel], scale: 1 }}
-            transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
+            animate={{
+              opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel],
+              scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
+              rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
+            }}
+            transition={{ duration: debeAnimar ? 1.2 : 0.6, ease: "easeInOut", delay: debeAnimar ? 1.0 : 0 }}
           />
         );
       }
@@ -772,9 +783,13 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
               width: pos.width,
               height: pos.height,
             }}
-            initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
-            animate={{ opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel], scale: 1 }}
-            transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
+            animate={{
+              opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel],
+              scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
+              rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
+            }}
+            transition={{ duration: debeAnimar ? 1.2 : 0.6, ease: "easeInOut", delay: debeAnimar ? 1.0 : 0 }}
           />
         );
       }

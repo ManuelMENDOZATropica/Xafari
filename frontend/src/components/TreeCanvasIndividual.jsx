@@ -294,6 +294,11 @@ export default function TreeCanvasIndividual({
       const posX = vw / 2 - targetX * zoomScale;
       const posY = vh / 2 - targetY * zoomScale;
 
+      // Vibrar el teléfono física si la API está disponible (patrón doble premium)
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate([150, 100, 150]);
+      }
+
       // Hacer zoom centrado en la insignia (duración 1.2s)
       transformRef.current.setTransform(posX, posY, zoomScale, 1200, "easeOut");
 
@@ -381,13 +386,17 @@ export default function TreeCanvasIndividual({
                   width: pos.width,
                   height: pos.height,
                 }}
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
                 animate={
                   insigniaReciente === k
-                    ? { opacity: 1, scale: [1.5, 0.95, 1] }
-                    : { opacity: 1, scale: 1 }
+                    ? {
+                        opacity: [0, 1, 1, 1, 1],
+                        scale: [0.8, 1.3, 0.95, 1.05, 1],
+                        rotate: [0, -8, 8, -6, 6, -3, 3, 0],
+                      }
+                    : { opacity: 1, scale: 1, rotate: 0 }
                 }
-                transition={{ duration: 0.8, delay: insigniaReciente === k ? 1.0 : 0 }}
+                transition={{ duration: 1.2, ease: "easeInOut", delay: insigniaReciente === k ? 1.0 : 0 }}
               />
             );
           })}
@@ -407,13 +416,17 @@ export default function TreeCanvasIndividual({
                   width: pos.width,
                   height: pos.height,
                 }}
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
                 animate={
                   insigniaReciente === k
-                    ? { opacity: 1, scale: [1.5, 0.95, 1] }
-                    : { opacity: 1, scale: 1 }
+                    ? {
+                        opacity: [0, 1, 1, 1, 1],
+                        scale: [0.8, 1.3, 0.95, 1.05, 1],
+                        rotate: [0, -8, 8, -6, 6, -3, 3, 0],
+                      }
+                    : { opacity: 1, scale: 1, rotate: 0 }
                 }
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 1.2, ease: "easeInOut", delay: insigniaReciente === k ? 1.0 : 0 }}
               />
             );
           })}
