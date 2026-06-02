@@ -146,7 +146,30 @@ function App() {
         const res = await fetch(`${apiUrl}/users/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 404) {
+            console.warn("Sesión inválida o usuario no encontrado. Limpiando sesión local.");
+            setUser({
+              name: null,
+              lastname: null,
+              email: null,
+              avatar: {
+                bodyOptions: 0,
+                hairOptions: 0,
+                clothingOptions: 0,
+                shoeOptions: 0,
+                eyesOptions: 0,
+                glassesAccessoryOptions: 0,
+                headAccessoryOptions: 0,
+                bodyAccessoryOptions: 0,
+              },
+            });
+            setToken(null);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+          return;
+        }
 
         const data = await res.json();
         const dbUser = data.user || data;
@@ -237,10 +260,10 @@ function App() {
     if (!token || !user?.id || !activity) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      await fetch(`${apiUrl}/users/${user.id}/activity`, {
+      await fetch(`${apiUrl}/user-activities`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ activityId: activity.id }),
+        body: JSON.stringify({ userId: user.id, activityId: activity.id }),
       });
     } catch (err) {
       console.error("Error registering activity on backend:", err);

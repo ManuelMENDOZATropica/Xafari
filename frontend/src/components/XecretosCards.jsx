@@ -33,8 +33,15 @@ const GUARDIAN_IMG = {
 
 export default function XecretosCards({ onClose }) {
   const { xecretos, registerActivityCompleted } = useContext(XafariContext);
-  const [xecretosList, setXecretosList] = useState([]);
-  const [loadingList, setLoadingList]   = useState(true);
+  const [xecretosList, setXecretosList] = useState(() =>
+    Object.entries(GUARDIAN_NAMES).map(([key, name]) => ({
+      key,
+      name,
+      description: "",
+      location: "",
+    }))
+  );
+  const [loadingList, setLoadingList]   = useState(false);
   const [showScanner, setShowScanner]   = useState(false);
 
   // Fetch xecretos desde la BD
@@ -182,7 +189,12 @@ export default function XecretosCards({ onClose }) {
               exit={{ opacity: 0 }}
             >
               <XecretoRegister
-                onClose={() => setShowScanner(false)}
+                onClose={(scannedKey) => {
+                  setShowScanner(false);
+                  if (scannedKey) {
+                    onClose(scannedKey);
+                  }
+                }}
               />
             </motion.div>
           )}

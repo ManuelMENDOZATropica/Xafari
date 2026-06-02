@@ -72,7 +72,7 @@ export default function PodiumModal({ periodo = "siempre" }) {
     };
     fetchData();
     return () => { cancelled = true; };
-  }, [periodo, token, user?.id]);
+  }, [periodo, token, user?.id, user?.name, xecretos]);
 
   // ── Filtro por casa ──────────────────────────────────────────────────────────
   const listaFiltrada = useMemo(() => {

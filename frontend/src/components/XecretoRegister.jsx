@@ -75,7 +75,6 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
     const isNew = !scannedCodes[xecretoKey];
     if (isNew) {
       setScannedCodes((p) => ({ ...p, [xecretoKey]: true }));
-      registerActivityCompleted(xecretoKey);
       if (typeof playSuccessSound === "function") playSuccessSound();
     }
 
@@ -88,8 +87,11 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
       setShowInsignia(false);
       setScanFeedback(null);
       setIsProcessing(false);
-      onClose();
-    }, 5000);
+      if (isNew) {
+        registerActivityCompleted(xecretoKey);
+      }
+      onClose(xecretoKey);
+    }, 3000);
   }, [isProcessing, scannedCodes, playSuccessSound, registerActivityCompleted, onClose]);
 
   useEffect(() => {
@@ -182,34 +184,58 @@ export default function XecretoRegister({ onClose, previewOnly = false }) {
           <span className="text-white text-xs font-semibold">{scannedCount} / {Object.keys(GUARDIAN_DATA).length}</span>
         </div>
 
-        {/* Animación guardián detectado */}
-        {lastScanned && GUARDIAN_DATA[lastScanned] && (
-          <AnimatePresence>
-            {showInsignia && (
-              <motion.img
-                key={insigniaKey}
-                src={GUARDIAN_DATA[lastScanned].arbol}
-                alt={GUARDIAN_DATA[lastScanned].guardian}
-                initial={{ scale: 0, opacity: 0, x: "-50%", y: "-50%", rotate: -10 }}
-                animate={{ scale: [0, 1.2, 1, 1.1, 1], y: ["-50%","-52%","-48%","-50%","-50%"], rotate: [0,5,-5,3,0], opacity: [0,1,1,1,0], x: ["-50%","-50%","-50%","-70%","-200%"] }}
-                transition={{ duration: 5, times: [0,0.2,0.4,0.7,1] }}
-                exit={{ opacity: 0 }}
-                className="absolute z-50 top-[35%] left-1/2 w-48 aspect-square pointer-events-none"
-              />
-            )}
-          </AnimatePresence>
-        )}
+        {/* Pantalla intermedia de éxito (cubre todo con animación) */}
+        <AnimatePresence>
+          {showInsignia && lastScanned && GUARDIAN_DATA[lastScanned] && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#4a2e0e]/95 backdrop-blur-md p-6 text-center select-none"
+            >
+              {/* Glow effect behind the badge */}
+              <div className="absolute w-72 h-72 rounded-full bg-[#80A850]/20 blur-3xl" />
 
-        {lastScanned && GUARDIAN_DATA[lastScanned] && showInsignia && (
-          <motion.div
-            className="absolute top-[62%] left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow text-center z-50"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-          >
-            <p className="text-sm font-bold" style={{ color: "#3D1A00" }}>
-              ¡Guardián {GUARDIAN_DATA[lastScanned].guardian} descubierto!
-            </p>
-          </motion.div>
-        )}
+              <motion.div
+                initial={{ scale: 0.3, rotate: -20, opacity: 0 }}
+                animate={{ scale: [0.3, 1.1, 1], rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="relative z-10 flex flex-col items-center gap-6"
+              >
+                {/* Badge Frame */}
+                <div className="relative w-48 h-48 flex items-center justify-center">
+                  <motion.img
+                    src="/iconos/elipseAvatar.png"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-contain opacity-80"
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
+                  />
+                  <motion.img
+                    src={GUARDIAN_DATA[lastScanned].arbol}
+                    alt={GUARDIAN_DATA[lastScanned].guardian}
+                    className="relative z-10 w-[75%] h-[75%] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]"
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                  />
+                </div>
+
+                {/* Title & Description */}
+                <div className="space-y-2 max-w-xs">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#a7cd80]">
+                    ¡Xecreto Revelado!
+                  </span>
+                  <h2 className="text-2xl font-black text-[#f4ead9] leading-tight">
+                    Guardián {GUARDIAN_DATA[lastScanned].guardian}
+                  </h2>
+                  <p className="text-sm text-[#f4ead9]/75 font-medium px-4">
+                    Has descubierto un nuevo guardián en tu Árbol de la Vida.
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Botones ─────────────────────────────────────────────────────── */}

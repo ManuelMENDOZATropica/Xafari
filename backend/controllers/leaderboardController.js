@@ -50,9 +50,9 @@ exports.getLeaderboard = async (req, res) => {
     const leaderboard = users
       .map((u) => {
         const acts       = u.activities || [];
-        const xperiencias = acts.filter((a) => a.Xperiencia).length;
-        const xecretos    = acts.filter((a) => a.Xecreto).length;
-        const xelfies     = acts.filter((a) => a.Xelfie).length;
+        const xperiencias = acts.filter((a) => a.xperiencium || a.xperiencia).length;
+        const xecretos    = acts.filter((a) => a.xecreto).length;
+        const xelfies     = acts.filter((a) => a.xelfie).length;
         return {
           id: u.id,
           nombre: u.name,

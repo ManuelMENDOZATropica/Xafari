@@ -544,7 +544,14 @@ export default function TreeOfLife() {
           >
             <div className="pointer-events-auto absolute top-[8%] left-[12px] right-[12px]" style={{ bottom: "calc(2vh + 221px)" }}>
               <div className="relative h-full w-full overflow-hidden">
-                <XecretosCards onClose={() => setShowXecretoModal(false)} />
+                <XecretosCards
+                  onClose={(nuevaInsignia) => {
+                    if (nuevaInsignia && typeof nuevaInsignia === "string") {
+                      setInsigniaReciente(nuevaInsignia);
+                    }
+                    setShowXecretoModal(false);
+                  }}
+                />
               </div>
             </div>
           </motion.div>

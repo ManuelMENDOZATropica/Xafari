@@ -64,6 +64,8 @@ export default function ModalAjustes({ onClose }) {
     triggerClickFeedback,
     musicEnabled,
     setMusicEnabled,
+    setUser,
+    setToken,
   } = useContext(XafariContext);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -102,6 +104,29 @@ export default function ModalAjustes({ onClose }) {
     setMusicEnabled(next);
     // también persiste en localStorage para que App.jsx lo recupere al recargar
     localStorage.setItem("ajuste_musica", String(next));
+  };
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser({
+      name: null,
+      lastname: null,
+      email: null,
+      avatar: {
+        bodyOptions: 0,
+        hairOptions: 0,
+        clothingOptions: 0,
+        shoeOptions: 0,
+        eyesOptions: 0,
+        glassesAccessoryOptions: 0,
+        headAccessoryOptions: 0,
+        bodyAccessoryOptions: 0,
+      },
+    });
+    setToken(null);
+    if (typeof onClose === "function") onClose();
+    navigate("/");
   };
 
   // ─── Toggle genérico ────────────────────────────────────────────────────────
@@ -247,15 +272,22 @@ export default function ModalAjustes({ onClose }) {
           </div>
           </div>
 
-          {/* ── Grupo inferior: aviso de privacidad ──────────────────────── */}
-          <div className="flex justify-center">
+          {/* ── Grupo inferior: aviso de privacidad y cerrar sesión ──────────────────────── */}
+          <div className="flex items-center justify-center gap-3">
             <Link
               to="/privacy"
               onClick={onClose}
-              className="inline-flex items-center justify-center rounded-full bg-[#4a2e0e] px-8 py-2.5 text-sm font-semibold text-[#f4ead9] shadow-md transition-transform active:scale-95"
+              className="inline-flex items-center justify-center rounded-full bg-[#4a2e0e] px-6 py-2.5 text-sm font-semibold text-[#f4ead9] shadow-md transition-transform active:scale-95"
             >
               {t("settingsLegalButton") || "Aviso de privacidad"}
             </Link>
+            <button
+              type="button"
+              onClick={cerrarSesion}
+              className="inline-flex items-center justify-center rounded-full bg-[#9e3b32] px-6 py-2.5 text-sm font-semibold text-[#f4ead9] shadow-md transition-transform active:scale-95"
+            >
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </div>

@@ -137,7 +137,7 @@ export default function TreeCanvasIndividual({
                     ? { opacity: 1, scale: [1.5, 0.95, 1] }
                     : { opacity: 1, scale: 1 }
                 }
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.8, delay: insigniaReciente === k ? 1.0 : 0 }}
               />
             ) : null
           )}
