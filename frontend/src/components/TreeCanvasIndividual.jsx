@@ -1,6 +1,6 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import AvatarRender from "@/components/AvatarRender";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 
 // ─── constantes del canvas ───────────────────────────────────────────────────
@@ -133,122 +133,122 @@ const guardianPositions = {
 const xtopPositions = {
   camion: {
     src: "/arbol/xtop/Insignia Xiquit inn.png",
-    left: "48.177%",
-    top: "19.298%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "48.768%",
+    top: "19.333%",
+    width: "7.798%",
+    height: "5.167%",
   },
   caracola: {
     src: "/arbol/xtop/Insignia Muluk spa.png",
-    left: "33.591%",
-    top: "38.000%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "35.152%",
+    top: "39.167%",
+    width: "5.859%",
+    height: "2.905%",
   },
   conejo: {
     src: "/arbol/xtop/Insignia Lunateca.png",
-    left: "47.793%",
-    top: "46.143%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "48.444%",
+    top: "46.476%",
+    width: "7.677%",
+    height: "4.571%",
   },
   drink: {
     src: "/arbol/xtop/Insignia Pava Jarla.png",
-    left: "55.530%",
-    top: "57.357%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "57.293%",
+    top: "57.762%",
+    width: "5.455%",
+    height: "4.429%",
   },
   estrella: {
     src: "/arbol/xtop/Insignias Dixtrito 1317.png",
-    left: "71.450%",
-    top: "70.167%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "73.293%",
+    top: "71.238%",
+    width: "5.293%",
+    height: "3.095%",
   },
   kayak: {
     src: "/arbol/xtop/Insignia Kayak.png",
-    left: "71.207%",
-    top: "59.060%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "72.485%",
+    top: "58.881%",
+    width: "6.424%",
+    height: "5.595%",
   },
   mascarajaguar: {
     src: "/arbol/xtop/Insignia Paxanguería.png",
-    left: "47.591%",
-    top: "59.393%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "47.677%",
+    top: "59.524%",
+    width: "8.808%",
+    height: "4.976%",
   },
   patin: {
     src: "/arbol/xtop/Insignia Patín.png",
-    left: "39.894%",
-    top: "30.214%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "41.616%",
+    top: "30.429%",
+    width: "5.535%",
+    height: "4.810%",
   },
   piscina: {
     src: "/arbol/xtop/Insignia Rooftop Fuego.png",
-    left: "28.783%",
-    top: "50.536%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "29.737%",
+    top: "51.190%",
+    width: "7.071%",
+    height: "3.929%",
   },
   poolpo: {
     src: "/arbol/xtop/Insignia pool poh.png",
-    left: "57.248%",
-    top: "32.976%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "57.737%",
+    top: "33.762%",
+    width: "8.000%",
+    height: "3.667%",
   },
   salvavidas: {
     src: "/arbol/xtop/Insignia infinity pool.png",
-    left: "72.985%",
-    top: "66.000%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "74.303%",
+    top: "66.738%",
+    width: "6.343%",
+    height: "3.762%",
   },
   teatro: {
     src: "/arbol/xtop/Insignia Teatro del Río.png",
-    left: "23.268%",
-    top: "57.964%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "24.848%",
+    top: "59.071%",
+    width: "5.818%",
+    height: "3.024%",
   },
   tobogan: {
     src: "/arbol/xtop/Insignia Tobogan Arboloco.png",
-    left: "47.692%",
-    top: "51.881%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "45.778%",
+    top: "51.833%",
+    width: "12.808%",
+    height: "5.333%",
   },
   tv: {
     src: "/arbol/xtop/Insignia Bar las maquinitas.png",
-    left: "20.480%",
-    top: "65.131%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "21.616%",
+    top: "65.714%",
+    width: "6.707%",
+    height: "4.071%",
   },
   vinil: {
     src: "/arbol/xtop/Insignia Vinil.png",
-    left: "16.298%",
-    top: "61.417%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "17.737%",
+    top: "62.238%",
+    width: "6.101%",
+    height: "3.595%",
   },
   xorbeteria: {
     src: "/arbol/xtop/Insignias Xoberte.png",
-    left: "37.692%",
-    top: "62.524%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "40.162%",
+    top: "63.262%",
+    width: "4.040%",
+    height: "3.762%",
   },
   xpiral: {
     src: "/arbol/xtop/Insignia Xpiral.png",
-    left: "81.631%",
-    top: "52.655%",
-    width: "8.980%",
-    height: "5.238%",
+    left: "79.838%",
+    top: "53.143%",
+    width: "12.566%",
+    height: "4.262%",
   },
 };
 
@@ -262,6 +262,52 @@ export default function TreeCanvasIndividual({
 }) {
   // Posición inicial calculada UNA vez (síncrono → sin flicker)
   const initialPos = useRef(calcInitialPos());
+  const transformRef = useRef(null);
+
+  // Programmatic Zoom on new insignia
+  useEffect(() => {
+    if (!insigniaReciente) return;
+
+    let pos = null;
+    if (guardianPositions[insigniaReciente]) {
+      pos = guardianPositions[insigniaReciente];
+    } else if (xtopPositions[insigniaReciente]) {
+      pos = xtopPositions[insigniaReciente];
+    }
+
+    if (pos && transformRef.current) {
+      const leftVal = parseFloat(pos.left);
+      const topVal = parseFloat(pos.top);
+      const wVal = parseFloat(pos.width);
+      const hVal = parseFloat(pos.height);
+
+      const cx_pct = leftVal + wVal / 2;
+      const cy_pct = topVal + hVal / 2;
+
+      const targetX = (cx_pct / 100) * CANVAS_WIDTH;
+      const targetY = (cy_pct / 100) * CANVAS_HEIGHT;
+
+      const zoomScale = 0.38; // Nivel de zoom destacado
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const posX = vw / 2 - targetX * zoomScale;
+      const posY = vh / 2 - targetY * zoomScale;
+
+      // Hacer zoom centrado en la insignia (duración 1.2s)
+      transformRef.current.setTransform(posX, posY, zoomScale, 1200, "easeOut");
+
+      // Regresar al home (posición y escala iniciales) tras 2.8 segundos
+      const timer = setTimeout(() => {
+        if (transformRef.current) {
+          const initial = calcInitialPos();
+          transformRef.current.setTransform(initial.x, initial.y, INITIAL_SCALE, 1000, "easeOut");
+        }
+      }, 2800);
+
+      return () => clearTimeout(timer);
+    }
+  }, [insigniaReciente]);
 
   // ── helper: comprueba si el árbol salió demasiado de pantalla y lo devuelve ──
   const checkAndReset = useCallback((ref) => {
@@ -287,6 +333,7 @@ export default function TreeCanvasIndividual({
 
   return (
     <TransformWrapper
+      ref={transformRef}
       initialScale={INITIAL_SCALE}
       initialPositionX={initialPos.current.x}
       initialPositionY={initialPos.current.y}
