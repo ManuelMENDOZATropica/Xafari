@@ -4,16 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import XafariContext from "@/components/XafariContext";
 
 const GUARDIAN_DATA = {
-  xecreto1:  { guardian: "Mono",      arbol: "/guardianes/Mono Casa Vida.png" },
-  xecreto2:  { guardian: "Rana",      arbol: "/guardianes/Rana Casa Agua.png" },
-  xecreto3:  { guardian: "Jaguar",    arbol: "/guardianes/Jaguar Casa Sol.png" },
-  xecreto4:  { guardian: "Guacamaya", arbol: "/guardianes/Guacamaya Casa Fuego.png" },
-  xecreto5:  { guardian: "Serpiente", arbol: "/guardianes/Serpiente Casa Espiral.png" },
-  xecreto6:  { guardian: "Venado",    arbol: "/guardianes/Venado Casa Tierra.png" },
-  xecreto7:  { guardian: "Búho",      arbol: "/guardianes/Búho Casa Eclipse.png" },
-  xecreto8:  { guardian: "Mariposa",  arbol: "/guardianes/Mariposa Casa Viento.png" },
-  xecreto9:  { guardian: "Flamenco",  arbol: "/guardianes/Flamenco Casa Sol.png" },
-  xecreto10: { guardian: "Coatí",     arbol: "/guardianes/Coati.png" },
+  xecreto1:  { guardian: "Mono",      arbol: "/arbol/guardianes/Mono Casa Vida.png" },
+  xecreto2:  { guardian: "Rana",      arbol: "/arbol/guardianes/Rana Casa Agua.png" },
+  xecreto3:  { guardian: "Jaguar",    arbol: "/arbol/guardianes/Jaguar Casa Sol.png" },
+  xecreto4:  { guardian: "Guacamaya", arbol: "/arbol/guardianes/Guacamaya Casa Fuego.png" },
+  xecreto5:  { guardian: "Serpiente", arbol: "/arbol/guardianes/Serpiente Casa Espiral.png" },
+  xecreto6:  { guardian: "Venado",    arbol: "/arbol/guardianes/Venado Casa Tierra.png" },
+  xecreto7:  { guardian: "Búho",      arbol: "/arbol/guardianes/Búho Casa Eclipse.png" },
+  xecreto8:  { guardian: "Mariposa",  arbol: "/arbol/guardianes/Mariposa Casa Viento.png" },
+  xecreto9:  { guardian: "Flamenco",  arbol: "/arbol/guardianes/Flamenco Casa Sol.png" },
+  xecreto10: { guardian: "Coatí",     arbol: "/arbol/guardianes/Coatí Casa Luna.png.png" },
 };
 
 export default function XecretoDeepLink() {

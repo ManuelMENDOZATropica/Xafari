@@ -8,16 +8,16 @@ import XafariContext from "./XafariContext";
 const QR_BASE = "https://www.xafari.xcaret.com/xecreto/";
 
 const GUARDIAN_DATA = {
-  xecreto1:  { guardian: "Mono",      arbol: "/guardianes/Mono Casa Vida.png",         maya: "/maya/GuardianMono.png" },
-  xecreto2:  { guardian: "Rana",      arbol: "/guardianes/Rana Casa Agua.png",         maya: "/maya/GuardianRana.png" },
-  xecreto3:  { guardian: "Jaguar",    arbol: "/guardianes/Jaguar Casa Sol.png",         maya: "/maya/GuardianJaguar.png" },
-  xecreto4:  { guardian: "Guacamaya", arbol: "/guardianes/Guacamaya Casa Fuego.png",   maya: "/maya/GuardianGuacamaya.png" },
-  xecreto5:  { guardian: "Serpiente", arbol: "/guardianes/Serpiente Casa Espiral.png", maya: "/maya/GuardianSerpiente.png" },
-  xecreto6:  { guardian: "Venado",    arbol: "/guardianes/Venado Casa Tierra.png",     maya: "/maya/GuardianVenado.png" },
-  xecreto7:  { guardian: "Búho",      arbol: "/guardianes/Búho Casa Eclipse.png",      maya: "/maya/GuardianBuho.png" },
-  xecreto8:  { guardian: "Mariposa",  arbol: "/guardianes/Mariposa Casa Viento.png",   maya: "/maya/GuardianMariposa.png" },
-  xecreto9:  { guardian: "Flamenco",  arbol: "/guardianes/Flamenco Casa Sol.png",      maya: "/maya/GuardianFlamenco.png" },
-  xecreto10: { guardian: "Coatí",     arbol: "/guardianes/Coati.png",                  maya: "/maya/GuardianCoati.png" },
+  xecreto1:  { guardian: "Mono",      arbol: "/arbol/guardianes/Mono Casa Vida.png",         maya: "/maya/GuardianMono.png" },
+  xecreto2:  { guardian: "Rana",      arbol: "/arbol/guardianes/Rana Casa Agua.png",         maya: "/maya/GuardianRana.png" },
+  xecreto3:  { guardian: "Jaguar",    arbol: "/arbol/guardianes/Jaguar Casa Sol.png",         maya: "/maya/GuardianJaguar.png" },
+  xecreto4:  { guardian: "Guacamaya", arbol: "/arbol/guardianes/Guacamaya Casa Fuego.png",   maya: "/maya/GuardianGuacamaya.png" },
+  xecreto5:  { guardian: "Serpiente", arbol: "/arbol/guardianes/Serpiente Casa Espiral.png", maya: "/maya/GuardianSerpiente.png" },
+  xecreto6:  { guardian: "Venado",    arbol: "/arbol/guardianes/Venado Casa Tierra.png",     maya: "/maya/GuardianVenado.png" },
+  xecreto7:  { guardian: "Búho",      arbol: "/arbol/guardianes/Búho Casa Eclipse.png",      maya: "/maya/GuardianBuho.png" },
+  xecreto8:  { guardian: "Mariposa",  arbol: "/arbol/guardianes/Mariposa Casa Viento.png",   maya: "/maya/GuardianMariposa.png" },
+  xecreto9:  { guardian: "Flamenco",  arbol: "/arbol/guardianes/Flamenco Casa Sol.png",      maya: "/maya/GuardianFlamenco.png" },
+  xecreto10: { guardian: "Coatí",     arbol: "/arbol/guardianes/Coatí Casa Luna.png.png",    maya: "/maya/GuardianCoati.png" },
 };
 
 export default function XecretoRegister({ onClose, previewOnly = false }) {

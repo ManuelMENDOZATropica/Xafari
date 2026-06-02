@@ -19,16 +19,16 @@ const GUARDIAN_NAMES = {
 
 // Imagen del árbol por guardián
 const GUARDIAN_IMG = {
-  xecreto1:  "/guardianes/Mono Casa Vida.png",
-  xecreto2:  "/guardianes/Rana Casa Agua.png",
-  xecreto3:  "/guardianes/Jaguar Casa Sol.png",
-  xecreto4:  "/guardianes/Guacamaya Casa Fuego.png",
-  xecreto5:  "/guardianes/Serpiente Casa Espiral.png",
-  xecreto6:  "/guardianes/Venado Casa Tierra.png",
-  xecreto7:  "/guardianes/Búho Casa Eclipse.png",
-  xecreto8:  "/guardianes/Mariposa Casa Viento.png",
-  xecreto9:  "/guardianes/Flamenco Casa Sol.png",
-  xecreto10: "/guardianes/Coati.png",
+  xecreto1:  "/arbol/guardianes/Mono Casa Vida.png",
+  xecreto2:  "/arbol/guardianes/Rana Casa Agua.png",
+  xecreto3:  "/arbol/guardianes/Jaguar Casa Sol.png",
+  xecreto4:  "/arbol/guardianes/Guacamaya Casa Fuego.png",
+  xecreto5:  "/arbol/guardianes/Serpiente Casa Espiral.png",
+  xecreto6:  "/arbol/guardianes/Venado Casa Tierra.png",
+  xecreto7:  "/arbol/guardianes/Búho Casa Eclipse.png",
+  xecreto8:  "/arbol/guardianes/Mariposa Casa Viento.png",
+  xecreto9:  "/arbol/guardianes/Flamenco Casa Sol.png",
+  xecreto10: "/arbol/guardianes/Coatí Casa Luna.png.png",
 };
 
 export default function XecretosCards({ onClose }) {
@@ -141,7 +141,7 @@ export default function XecretosCards({ onClose }) {
                             <img
                               src={GUARDIAN_IMG[xecreto.key]}
                               alt={xecreto.name}
-                              className="w-40 h-40 object-contain -mb-6"
+                              className="w-24 h-24 object-contain"
                               style={{ opacity: completado ? 1 : 0.35 }}
                             />
                           </div>
