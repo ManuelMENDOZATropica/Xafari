@@ -197,6 +197,26 @@ const xperiencias = [
   },
 ];
 
+const xtopInsigniaPaths = {
+  camion: "/arbol/xtop/Insignia Xiquit inn.png",
+  caracola: "/arbol/xtop/Insignia Muluk spa.png",
+  conejo: "/arbol/xtop/Insignia Lunateca.png",
+  drink: "/arbol/xtop/Insignia Pava Jarla.png",
+  estrella: "/arbol/xtop/Insignias Dixtrito 1317.png",
+  kayak: "/arbol/xtop/Insignia Kayak.png",
+  mascarajaguar: "/arbol/xtop/Insignia Paxanguería.png",
+  patin: "/arbol/xtop/Insignia Patín.png",
+  piscina: "/arbol/xtop/Insignia Rooftop Fuego.png",
+  poolpo: "/arbol/xtop/Insignia pool poh.png",
+  salvavidas: "/arbol/xtop/Insignia infinity pool.png",
+  teatro: "/arbol/xtop/Insignia Teatro del Río.png",
+  tobogan: "/arbol/xtop/Insignia Tobogan Arboloco.png",
+  tv: "/arbol/xtop/Insignia Bar las maquinitas.png",
+  vinil: "/arbol/xtop/Insignia Vinil.png",
+  xorbeteria: "/arbol/xtop/Insignias Xoberte.png",
+  xpiral: "/arbol/xtop/Insignia Xpiral.png",
+};
+
 export default function XperienciasXtop({ onClose }) {
   const { t } = useTranslation();
   const {
@@ -429,7 +449,7 @@ export default function XperienciasXtop({ onClose }) {
 
                         {/* Insignia — inline, siempre a la misma altura que los botones, subida 5% */}
                         <motion.img
-                          src={`/insigniasXtop/${xp.insignia}.png`}
+                          src={xtopInsigniaPaths[xp.insignia]}
                           alt="insignia"
                           className="flex-shrink-0 w-14 h-14 object-contain pointer-events-none"
                           style={{ marginTop: "-5%" }}
