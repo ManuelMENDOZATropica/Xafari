@@ -130,6 +130,128 @@ const guardianPositions = {
   },
 };
 
+const xtopPositions = {
+  camion: {
+    src: "/arbol/xtop/Insignia Xiquit inn.png",
+    left: "48.177%",
+    top: "19.298%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  caracola: {
+    src: "/arbol/xtop/Insignia Muluk spa.png",
+    left: "33.591%",
+    top: "38.000%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  conejo: {
+    src: "/arbol/xtop/Insignia Lunateca.png",
+    left: "47.793%",
+    top: "46.143%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  drink: {
+    src: "/arbol/xtop/Insignia Pava Jarla.png",
+    left: "55.530%",
+    top: "57.357%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  estrella: {
+    src: "/arbol/xtop/Insignias Dixtrito 1317.png",
+    left: "71.450%",
+    top: "70.167%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  kayak: {
+    src: "/arbol/xtop/Insignia Kayak.png",
+    left: "71.207%",
+    top: "59.060%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  mascarajaguar: {
+    src: "/arbol/xtop/Insignia Paxanguería.png",
+    left: "47.591%",
+    top: "59.393%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  patin: {
+    src: "/arbol/xtop/Insignia Patín.png",
+    left: "39.894%",
+    top: "30.214%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  piscina: {
+    src: "/arbol/xtop/Insignia Rooftop Fuego.png",
+    left: "28.783%",
+    top: "50.536%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  poolpo: {
+    src: "/arbol/xtop/Insignia pool poh.png",
+    left: "57.248%",
+    top: "32.976%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  salvavidas: {
+    src: "/arbol/xtop/Insignia infinity pool.png",
+    left: "72.985%",
+    top: "66.000%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  teatro: {
+    src: "/arbol/xtop/Insignia Teatro del Río.png",
+    left: "23.268%",
+    top: "57.964%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  tobogan: {
+    src: "/arbol/xtop/Insignia Tobogan Arboloco.png",
+    left: "47.692%",
+    top: "51.881%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  tv: {
+    src: "/arbol/xtop/Insignia Bar las maquinitas.png",
+    left: "20.480%",
+    top: "65.131%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  vinil: {
+    src: "/arbol/xtop/Insignia Vinil.png",
+    left: "16.298%",
+    top: "61.417%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  xorbeteria: {
+    src: "/arbol/xtop/Insignias Xoberte.png",
+    left: "37.692%",
+    top: "62.524%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+  xpiral: {
+    src: "/arbol/xtop/Insignia Xpiral.png",
+    left: "81.631%",
+    top: "52.655%",
+    width: "8.980%",
+    height: "5.238%",
+  },
+};
+
 export default function TreeCanvasIndividual({
   xecretos,
   respuestasCorrectas,
@@ -224,12 +346,20 @@ export default function TreeCanvasIndividual({
           })}
 
           {/* Xtop */}
-          {Object.entries(xtopProgreso || {}).map(([k, v]) =>
-            v && Object.values(mapaXtop).includes(k) ? (
+          {Object.entries(xtopProgreso || {}).map(([k, v]) => {
+            if (!v || !xtopPositions[k]) return null;
+            const pos = xtopPositions[k];
+            return (
               <motion.img
                 key={`xtop-${k}`}
-                src={`/arbol/xtopÁrbol/${k}.png`}
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                src={pos.src}
+                className="absolute object-contain pointer-events-none"
+                style={{
+                  left: pos.left,
+                  top: pos.top,
+                  width: pos.width,
+                  height: pos.height,
+                }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={
                   insigniaReciente === k
@@ -238,8 +368,8 @@ export default function TreeCanvasIndividual({
                 }
                 transition={{ duration: 0.8 }}
               />
-            ) : null
-          )}
+            );
+          })}
 
           {/* Checklist gastro */}
           {Object.entries(checklistProgreso || {}).map(([k, v]) =>
