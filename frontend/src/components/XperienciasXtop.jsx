@@ -205,6 +205,18 @@ export default function XperienciasXtop({ onClose }) {
     progresoXperiencias, calificacionesXperiencias,
   } = useContext(XafariContext);
 
+  // Shuffled options for each question, generated once on mount
+  const [shuffledOptions, setShuffledOptions] = useState(() => {
+    return xperiencias.map((xp) => {
+      const optionsCopy = [...xp.opciones];
+      for (let i = optionsCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
+      }
+      return optionsCopy;
+    });
+  });
+
   // Ratings: copy from context into local state so user can update them optimistically
   const [ratings, setRatings] = useState(() => ({ ...calificacionesXperiencias }));
   const [respuestas, setRespuestas] = useState(() => ({ ...progresoXperiencias }));
@@ -380,7 +392,7 @@ export default function XperienciasXtop({ onClose }) {
                       <div className="flex items-start gap-2">
                         {/* Botones de opciones (-10%) */}
                         <div className="flex flex-row gap-1 flex-1">
-                          {xp.opciones.map((op, i) => {
+                          {(shuffledOptions[idx] || xp.opciones).map((op, i) => {
                             const esCorrecta = op === xp.respuestaCorrecta;
                             return (
                               <motion.button
@@ -407,7 +419,9 @@ export default function XperienciasXtop({ onClose }) {
                                   border: "1.5px solid rgba(61,26,0,0.15)",
                                 }}
                               >
-                                {t(`options.${xp.pregunta}.${op.toUpperCase()}`)}
+                                <span style={{ filter: yaRespondida ? "blur(4px)" : "none", transition: "filter 0.3s ease" }}>
+                                  {t(`options.${xp.pregunta}.${op.toUpperCase()}`)}
+                                </span>
                               </motion.button>
                             );
                           })}
