@@ -61,16 +61,17 @@ const ALL_ASSETS = [
   "/arbol/floresÁrbol/FLORES_10.png",
 
   // Árbol — guardianes
-  "/arbol/guardianesÁrbol/buho.png",
-  "/arbol/guardianesÁrbol/coati.png",
-  "/arbol/guardianesÁrbol/flamenco.png",
-  "/arbol/guardianesÁrbol/guacamaya.png",
-  "/arbol/guardianesÁrbol/jaguar.png",
-  "/arbol/guardianesÁrbol/mariposa.png",
-  "/arbol/guardianesÁrbol/mono.png",
-  "/arbol/guardianesÁrbol/rana.png",
-  "/arbol/guardianesÁrbol/serpiente.png",
-  "/arbol/guardianesÁrbol/venado.png",
+  "/arbol/guardianes/Mono Casa Vida.png",
+  "/arbol/guardianes/Rana Casa Agua.png",
+  "/arbol/guardianes/Jaguar Casa Sol.png",
+  "/arbol/guardianes/Guacamaya Casa Fuego.png",
+  "/arbol/guardianes/Serpiente Casa Espiral.png",
+  "/arbol/guardianes/Venado Casa Tierra.png",
+  "/arbol/guardianes/Búho Casa Eclipse.png",
+  "/arbol/guardianes/Mariposa Casa Viento.png",
+  "/arbol/guardianes/Flamenco Casa Sol.png",
+  "/arbol/guardianes/Coatí Casa Luna.png.png",
+
 
   // Árbol — insignias Xtop
   "/arbol/xtopÁrbol/camion.png",

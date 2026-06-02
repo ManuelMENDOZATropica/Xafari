@@ -413,6 +413,79 @@ const mapaXtop = {
   xtop16: "xpiral",
 };
 
+const guardianPositions = {
+  xecreto1: {
+    src: "/arbol/guardianes/Mono Casa Vida.png",
+    left: "30.667%",
+    top: "34.357%",
+    width: "8.444%",
+    height: "3.381%",
+  },
+  xecreto10: {
+    src: "/arbol/guardianes/Coatí Casa Luna.png.png",
+    left: "49.616%",
+    top: "40.857%",
+    width: "7.556%",
+    height: "4.500%",
+  },
+  xecreto2: {
+    src: "/arbol/guardianes/Rana Casa Agua.png",
+    left: "35.475%",
+    top: "68.000%",
+    width: "6.303%",
+    height: "3.167%",
+  },
+  xecreto3: {
+    src: "/arbol/guardianes/Jaguar Casa Sol.png",
+    left: "65.818%",
+    top: "46.214%",
+    width: "11.434%",
+    height: "3.190%",
+  },
+  xecreto4: {
+    src: "/arbol/guardianes/Guacamaya Casa Fuego.png",
+    left: "47.798%",
+    top: "29.167%",
+    width: "10.061%",
+    height: "3.952%",
+  },
+  xecreto5: {
+    src: "/arbol/guardianes/Serpiente Casa Espiral.png",
+    left: "31.273%",
+    top: "55.619%",
+    width: "7.879%",
+    height: "4.000%",
+  },
+  xecreto6: {
+    src: "/arbol/guardianes/Venado Casa Tierra.png",
+    left: "65.131%",
+    top: "53.190%",
+    width: "7.677%",
+    height: "6.405%",
+  },
+  xecreto7: {
+    src: "/arbol/guardianes/Búho Casa Eclipse.png",
+    left: "62.465%",
+    top: "67.905%",
+    width: "7.394%",
+    height: "3.357%",
+  },
+  xecreto8: {
+    src: "/arbol/guardianes/Mariposa Casa Viento.png",
+    left: "67.192%",
+    top: "33.714%",
+    width: "8.485%",
+    height: "3.881%",
+  },
+  xecreto9: {
+    src: "/arbol/guardianes/Flamenco Casa Sol.png",
+    left: "30.343%",
+    top: "43.667%",
+    width: "6.545%",
+    height: "5.667%",
+  },
+};
+
 export default function TreeCanvasFamilia({ insigniaReciente }) {
   const initialPos = useRef(calcInitialPos());
 
@@ -481,15 +554,33 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
       const esReciente =
         insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave;
       const debeAnimar = jugadorLaTiene && esReciente;
+      const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
+
+      if (tipo === "xecretos") {
+        const pos = guardianPositions[clave];
+        if (!pos) return null;
+        return (
+          <motion.img
+            key={key}
+            src={pos.src}
+            className="absolute object-contain pointer-events-none"
+            style={{
+              left: pos.left,
+              top: pos.top,
+              width: pos.width,
+              height: pos.height,
+            }}
+            initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
+            animate={{ opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel], scale: 1 }}
+            transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
+          />
+        );
+      }
 
       const basePath =
-        tipo === "xecretos"
-          ? "/arbol/guardianesÁrbol/"
-          : tipo === "checklist"
-            ? "/arbol/checklist/"
-            : "/arbol/xtopÁrbol/";
-
-      const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
+        tipo === "checklist"
+          ? "/arbol/checklist/"
+          : "/arbol/xtopÁrbol/";
 
       return (
         <motion.img
