@@ -8,6 +8,7 @@ const XafariContext = createContext({
   activitiesMap: {},
   registerActivityCompleted: async () => { },
   saveActivityRating: async () => { },
+  syncUserProgress: async () => { },
   // ── Progreso (fuente de verdad: BD, no localStorage) ──────────────────
   progresoXperiencias: {},
   xecretos: {},

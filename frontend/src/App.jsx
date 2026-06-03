@@ -20,7 +20,7 @@ import XecretoRegister from "./components/XecretoRegister";
 import XecretoDeepLink from "./pages/XecretoDeepLink";
 import XafariContext from "./components/XafariContext";
 import PrivateRoute from "./components/PrivateRoute";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import useSoundController from "./hooks/useSoundController";
 import PrivacyNotice from "./pages/PrivacyNotice";
 import TermsConditions from "./pages/TermsConditions";
@@ -128,7 +128,104 @@ function App() {
   }, []);
 
   // ── Sync progreso desde BD cuando hay sesión ───────────────────────────
+  const syncUserProgress = useCallback(async (userId = user?.id, userToken = token) => {
+    console.log("App.jsx: syncUserProgress started. userId:", userId, "userToken:", userToken ? "exists" : "null");
+    if (!userToken || !userId) return;
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "/api";
+      const res = await fetch(`${apiUrl}/users/${userId}?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      console.log("App.jsx: syncUserProgress fetch response status:", res.status);
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 404) {
+          console.warn("Sesión inválida o usuario no encontrado. Limpiando sesión local.");
+          setUser({
+            name: null,
+            lastname: null,
+            email: null,
+            avatar: {
+              bodyOptions: 0,
+              hairOptions: 0,
+              clothingOptions: 0,
+              shoeOptions: 0,
+              eyesOptions: 0,
+              glassesAccessoryOptions: 0,
+              headAccessoryOptions: 0,
+              bodyAccessoryOptions: 0,
+            },
+          });
+          setToken(null);
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+        }
+        return;
+      }
+
+      const data = await res.json();
+      const dbUser = data.user || data;
+      setUser((old) => ({ ...old, ...dbUser }));
+
+      const dbActivities = dbUser.activities || [];
+      const dbPreferences = dbUser.preferredActivities || [];
+
+      const answersMap = {
+        kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+        conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+        patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
+      };
+
+      const newXperiencias = {};
+      const newXecretos = {};
+      const newChecklist = {};
+      const newXelfies = {};
+
+      dbActivities.forEach((act) => {
+        if (!(act.userActivity && act.userActivity.completedAt)) return;
+        if (act.type === "Xperiencia") newXperiencias[act.name] = answersMap[act.name] || "a";
+        else if (act.type === "Xecreto")  newXecretos[act.name] = true;
+        else if (act.type === "Event")    newChecklist[act.name] = true;
+        else if (act.type === "Xelfie")   newXelfies[act.name] = true;
+      });
+
+      const newCalXperiencias = {};
+      const newCalChecklist = {};
+      dbPreferences.forEach((pref) => {
+        const rating = pref.userPreference?.rating;
+        if (!rating) return;
+        if (pref.type === "Xperiencia") newCalXperiencias[pref.name] = rating;
+        else if (pref.type === "Event") newCalChecklist[pref.name] = rating;
+      });
+
+      setProgresoXperiencias(newXperiencias);
+      setXecretos(newXecretos);
+      setProgresoChecklist(newChecklist);
+      setProgresoXelfies(newXelfies);
+      setCalificacionesXperiencias(newCalXperiencias);
+      setCalificacionesChecklist(newCalChecklist);
+
+      // Fetch family tree if user belongs to one
+      if (dbUser.familyTreeId) {
+        try {
+          const fRes = await fetch(`${apiUrl}/family-trees/${dbUser.familyTreeId}?t=${Date.now()}`, {
+            headers: { Authorization: `Bearer ${userToken}` },
+          });
+          if (fRes.ok) {
+            const fData = await fRes.json();
+            setFamilyTree(fData.familyTree || fData);
+          }
+        } catch (_) {}
+      } else {
+        setFamilyTree(null);
+      }
+    } catch (err) {
+      console.error("Error syncing user progress:", err);
+    }
+  }, [token, user?.id]);
+
   useEffect(() => {
+    console.log("App.jsx: syncUserProgress useEffect triggered. token:", token ? "exists" : "null", "user?.id:", user?.id);
     if (!token) {
       setProgresoXperiencias({});
       setXecretos({});
@@ -138,101 +235,10 @@ function App() {
       setCalificacionesChecklist({});
       return;
     }
-    if (!user?.id) return;
-
-    const syncUserProgress = async () => {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || "/api";
-        const res = await fetch(`${apiUrl}/users/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          if (res.status === 401 || res.status === 404) {
-            console.warn("Sesión inválida o usuario no encontrado. Limpiando sesión local.");
-            setUser({
-              name: null,
-              lastname: null,
-              email: null,
-              avatar: {
-                bodyOptions: 0,
-                hairOptions: 0,
-                clothingOptions: 0,
-                shoeOptions: 0,
-                eyesOptions: 0,
-                glassesAccessoryOptions: 0,
-                headAccessoryOptions: 0,
-                bodyAccessoryOptions: 0,
-              },
-            });
-            setToken(null);
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-          }
-          return;
-        }
-
-        const data = await res.json();
-        const dbUser = data.user || data;
-        setUser((old) => ({ ...old, ...dbUser }));
-
-        const dbActivities = dbUser.activities || [];
-        const dbPreferences = dbUser.preferredActivities || [];
-
-        const answersMap = {
-          kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
-          conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
-          patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
-        };
-
-        const newXperiencias = {};
-        const newXecretos = {};
-        const newChecklist = {};
-        const newXelfies = {};
-
-        dbActivities.forEach((act) => {
-          if (!(act.userActivity && act.userActivity.completedAt)) return;
-          if (act.type === "Xperiencia") newXperiencias[act.name] = answersMap[act.name] || "a";
-          else if (act.type === "Xecreto")  newXecretos[act.name] = true;
-          else if (act.type === "Event")    newChecklist[act.name] = true;
-          else if (act.type === "Xelfie")   newXelfies[act.name] = true;
-        });
-
-        const newCalXperiencias = {};
-        const newCalChecklist = {};
-        dbPreferences.forEach((pref) => {
-          const rating = pref.userPreference?.rating;
-          if (!rating) return;
-          if (pref.type === "Xperiencia") newCalXperiencias[pref.name] = rating;
-          else if (pref.type === "Event") newCalChecklist[pref.name] = rating;
-        });
-
-        setProgresoXperiencias(newXperiencias);
-        setXecretos(newXecretos);
-        setProgresoChecklist(newChecklist);
-        setProgresoXelfies(newXelfies);
-        setCalificacionesXperiencias(newCalXperiencias);
-        setCalificacionesChecklist(newCalChecklist);
-
-        // Fetch family tree if user belongs to one
-        if (dbUser.familyTreeId) {
-          try {
-            const fRes = await fetch(`${apiUrl}/family-trees/${dbUser.familyTreeId}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (fRes.ok) {
-              const fData = await fRes.json();
-              setFamilyTree(fData.familyTree || fData);
-            }
-          } catch (_) {}
-        } else {
-          setFamilyTree(null);
-        }
-      } catch (err) {
-        console.error("Error syncing user progress:", err);
-      }
-    };
-    syncUserProgress();
-  }, [token, user?.id]);
+    if (user?.id) {
+      syncUserProgress();
+    }
+  }, [token, user?.id, syncUserProgress]);
 
   const answersMap = {
     kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
@@ -332,6 +338,7 @@ function App() {
       activitiesMap,
       registerActivityCompleted,
       saveActivityRating,
+      syncUserProgress,
       // Progreso — desde BD, sin localStorage
       progresoXperiencias,
       xecretos,
@@ -354,6 +361,7 @@ function App() {
       user,
       token,
       activitiesMap,
+      syncUserProgress,
       progresoXperiencias,
       xecretos,
       progresoChecklist,

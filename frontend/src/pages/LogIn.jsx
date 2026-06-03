@@ -6,7 +6,7 @@ import XafariContext from "../components/XafariContext";
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser, setToken } = useContext(XafariContext);
+  const { setUser, setToken, syncUserProgress } = useContext(XafariContext);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -46,6 +46,9 @@ export default function Login() {
 
       setToken(data.token);
       setUser(data.user);
+
+      // Sincronizar progreso del usuario antes de navegar para que esté disponible en TreeOfLife
+      await syncUserProgress(data.user.id, data.token);
 
       navigate("/welcome-animation-login", { state: data.user });
 
