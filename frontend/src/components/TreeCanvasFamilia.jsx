@@ -33,332 +33,27 @@ const positionsById = {
   6: { x: 1200, y: 3100 },
 };
 
-const familia = [
-  {
-    id: "1",
-    nombre: "Ana",
-    avatarData: {
-      bodyOptions: 1,
-      eyesOptions: 2,
-      hairOptions: 3,
-      clothingOptions: 4,
-      glassesAccessoryOptions: 2,
-      headAccessoryOptions: 1,
-      bodyAccessoryOptions: 1,
-      shoeOptions: 3,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: true,
-        xecreto2: true,
-        xecreto3: true,
-        xecreto4: true,
-        xecreto5: true,
-        xecreto6: true,
-        xecreto7: true,
-        xecreto8: true,
-        xecreto9: false,
-        xecreto10: true,
-      },
-      checklist: {
-        checklist1: true,
-        checklist2: false,
-        checklist3: true,
-        checklist4: true,
-        checklist5: false,
-        checklist6: true,
-        checklist7: true,
-        checklist8: false,
-        checklist9: true,
-        checklist10: true,
-      },
-      xperiencias: {
-        x1: true,
-        x2: true,
-        x3: false,
-        x4: false,
-        x5: true,
-        x6: true,
-        x7: false,
-        x8: true,
-        x9: false,
-        x10: false,
-        x11: true,
-        x12: false,
-      },
-    },
-  },
-  {
-    id: "2",
-    nombre: "Luis",
-    avatarData: {
-      bodyOptions: 2,
-      eyesOptions: 0,
-      hairOptions: 5,
-      clothingOptions: 2,
-      glassesAccessoryOptions: 1,
-      headAccessoryOptions: 0,
-      bodyAccessoryOptions: 0,
-      shoeOptions: 4,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: true,
-        xecreto2: false,
-        xecreto3: true,
-        xecreto4: true,
-        xecreto5: false,
-        xecreto6: false,
-        xecreto7: false,
-        xecreto8: false,
-        xecreto9: false,
-        xecreto10: true,
-      },
-      checklist: {
-        checklist1: true,
-        checklist2: true,
-        checklist3: false,
-        checklist4: false,
-        checklist5: true,
-        checklist6: false,
-        checklist7: false,
-        checklist8: false,
-        checklist9: false,
-        checklist10: true,
-      },
-      xperiencias: {
-        x1: false,
-        x2: true,
-        x3: true,
-        x4: true,
-        x5: false,
-        x6: false,
-        x7: false,
-        x8: true,
-        x9: false,
-        x10: true,
-        x11: false,
-        x12: false,
-      },
-    },
-  },
-  {
-    id: "3",
-    nombre: "Carlos",
-    avatarData: {
-      bodyOptions: 3,
-      eyesOptions: 3,
-      hairOptions: 10,
-      clothingOptions: 7,
-      glassesAccessoryOptions: 0,
-      headAccessoryOptions: 3,
-      bodyAccessoryOptions: 1,
-      shoeOptions: 6,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: false,
-        xecreto2: true,
-        xecreto3: false,
-        xecreto4: false,
-        xecreto5: false,
-        xecreto6: false,
-        xecreto7: true,
-        xecreto8: true,
-        xecreto9: false,
-        xecreto10: false,
-      },
-      checklist: {
-        checklist1: true,
-        checklist2: false,
-        checklist3: false,
-        checklist4: true,
-        checklist5: false,
-        checklist6: true,
-        checklist7: false,
-        checklist8: false,
-        checklist9: true,
-        checklist10: false,
-      },
-      xperiencias: {
-        x1: false,
-        x2: false,
-        x3: true,
-        x4: true,
-        x5: true,
-        x6: false,
-        x7: true,
-        x8: false,
-        x9: true,
-        x10: true,
-        x11: false,
-        x12: false,
-      },
-    },
-  },
-  {
-    id: "4",
-    nombre: "María",
-    avatarData: {
-      bodyOptions: 4,
-      eyesOptions: 1,
-      hairOptions: 14,
-      clothingOptions: 10,
-      glassesAccessoryOptions: 3,
-      headAccessoryOptions: 2,
-      bodyAccessoryOptions: 1,
-      shoeOptions: 8,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: false,
-        xecreto2: false,
-        xecreto3: false,
-        xecreto4: false,
-        xecreto5: false,
-        xecreto6: false,
-        xecreto7: false,
-        xecreto8: false,
-        xecreto9: false,
-        xecreto10: false,
-      },
-      checklist: {
-        checklist1: false,
-        checklist2: false,
-        checklist3: false,
-        checklist4: false,
-        checklist5: false,
-        checklist6: false,
-        checklist7: false,
-        checklist8: false,
-        checklist9: false,
-        checklist10: false,
-      },
-      xperiencias: {
-        x1: false,
-        x2: false,
-        x3: false,
-        x4: false,
-        x5: false,
-        x6: false,
-        x7: false,
-        x8: false,
-        x9: false,
-        x10: false,
-        x11: false,
-        x12: false,
-      },
-    },
-  },
-  {
-    id: "5",
-    nombre: "Valeria",
-    avatarData: {
-      bodyOptions: 5,
-      eyesOptions: 4,
-      hairOptions: 17,
-      clothingOptions: 12,
-      glassesAccessoryOptions: 0,
-      headAccessoryOptions: 6,
-      bodyAccessoryOptions: 0,
-      shoeOptions: 5,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: true,
-        xecreto2: false,
-        xecreto3: true,
-        xecreto4: false,
-        xecreto5: false,
-        xecreto6: false,
-        xecreto7: true,
-        xecreto8: false,
-        xecreto9: true,
-        xecreto10: false,
-      },
-      checklist: {
-        checklist1: true,
-        checklist2: true,
-        checklist3: true,
-        checklist4: true,
-        checklist5: false,
-        checklist6: false,
-        checklist7: true,
-        checklist8: false,
-        checklist9: false,
-        checklist10: false,
-      },
-      xperiencias: {
-        x1: true,
-        x2: true,
-        x3: true,
-        x4: true,
-        x5: true,
-        x6: false,
-        x7: false,
-        x8: false,
-        x9: true,
-        x10: false,
-        x11: false,
-        x12: false,
-      },
-    },
-  },
-  {
-    id: "6",
-    nombre: "Tomás",
-    avatarData: {
-      bodyOptions: 0,
-      eyesOptions: 0,
-      hairOptions: 1,
-      clothingOptions: 0,
-      glassesAccessoryOptions: 0,
-      headAccessoryOptions: 0,
-      bodyAccessoryOptions: 0,
-      shoeOptions: 0,
-    },
-    progreso: {
-      xecretos: {
-        xecreto1: false,
-        xecreto2: true,
-        xecreto3: false,
-        xecreto4: false,
-        xecreto5: false,
-        xecreto6: false,
-        xecreto7: false,
-        xecreto8: true,
-        xecreto9: false,
-        xecreto10: true,
-      },
-      checklist: {
-        checklist1: false,
-        checklist2: false,
-        checklist3: false,
-        checklist4: false,
-        checklist5: true,
-        checklist6: true,
-        checklist7: false,
-        checklist8: false,
-        checklist9: false,
-        checklist10: false,
-      },
-      xperiencias: {
-        x1: false,
-        x2: false,
-        x3: false,
-        x4: true,
-        x5: false,
-        x6: false,
-        x7: false,
-        x8: true,
-        x9: false,
-        x10: true,
-        x11: true,
-        x12: false,
-      },
-    },
-  },
-];
+function parseUserProgress(userObj) {
+  const dbActivities = userObj?.activities || [];
+  const xecretos = {};
+  const checklist = {};
+  const xperiencias = {};
+
+  dbActivities.forEach((act) => {
+    const completed = act.userActivity?.completedAt || act.UserActivity?.completedAt;
+    if (!completed) return;
+
+    if (act.type === "Xecreto") {
+      xecretos[act.name] = true;
+    } else if (act.type === "Event") {
+      checklist[act.name] = true;
+    } else if (act.type === "Xperiencia") {
+      xperiencias[act.name] = true;
+    }
+  });
+
+  return { xecretos, checklist, xperiencias };
+}
 const mapa = {
   xecreto1: "mono",
   xecreto2: "rana",
@@ -700,6 +395,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
 
 
   const {
+    familyTree,
     xecretos: jugadorXecretos,
     progresoXperiencias: jugadorRespuestasCorrectas,
     progresoChecklist: jugadorChecklist,
@@ -719,11 +415,28 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
     return map;
   }, [jugadorRespuestasCorrectas]);
 
+  const familyMembers = useMemo(() => {
+    if (!familyTree || !familyTree.users) return [];
+    
+    // Filtrar al jugador actual para no duplicarlo
+    const otherUsers = familyTree.users.filter((u) => u.id !== jugador?.id);
+    
+    return otherUsers.map((u, index) => {
+      return {
+        id: String(u.id),
+        nombre: u.name,
+        avatarData: u.avatar || {},
+        progreso: parseUserProgress(u),
+        posId: index + 1 // Asigna posición (1 a 6) en positionsById
+      };
+    });
+  }, [familyTree, jugador?.id]);
+
   const calcularNivelDesbloqueo = (clave, tipo, asset) => {
-    const total = familia.length + 1;
+    const total = familyMembers.length + 1;
     let desbloqueosFamilia = 0;
 
-    familia.forEach((m) => {
+    familyMembers.forEach((m) => {
       if (tipo === "xecretos" && m.progreso?.xecretos?.[clave]) {
         desbloqueosFamilia++;
       } else if (tipo === "xperiencias" && m.progreso?.xperiencias?.[clave]) {
@@ -900,8 +613,8 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
             className="w-full h-full object-contain"
           />
 
-          {familia.map((m) => {
-            const pos = positionsById[m.id];
+          {familyMembers.map((m) => {
+            const pos = positionsById[m.posId];
             if (!pos) return null;
             return (
               <div
