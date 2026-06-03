@@ -56,19 +56,6 @@ function AvatarFaceOnly({ avatarData }) {
           transform: `translateX(-50%) translate(${offset.x}%, ${offset.y}%)`,
         }}
       />
-      {avatarData.expressionOptions !== undefined && avatarData.expressionOptions !== null && avatarData.expressionOptions > 0 && (
-        <img
-          src={`/avatares/expresiones/expresion (${avatarData.expressionOptions}).png`}
-          alt="expression"
-          className="absolute left-1/2 object-contain"
-          style={{
-            width: isChild ? "90%" : "80%",
-            top: isChild ? "-22%" : "-18%",
-            transform: `translateX(-50%) translate(${offset.x}%, ${offset.y}%) scale(0.5) translateY(14%)`,
-            zIndex: 11,
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -236,17 +223,6 @@ export default function ModalAjustes({ onClose }) {
                       transform: `translate(${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.y || 0}%)`
                     }}
                   />
-                  {user.avatar.expressionOptions !== undefined && user.avatar.expressionOptions !== null && user.avatar.expressionOptions > 0 && (
-                    <img
-                      src={`/avatares/expresiones/expresion (${user.avatar.expressionOptions}).png`}
-                      alt="Expression"
-                      className="absolute inset-0 w-full h-full object-contain"
-                      style={{
-                        zIndex: 11,
-                        transform: `translate(${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.y || 0}%) scale(0.5) translateY(14%)`
-                      }}
-                    />
-                  )}
                 </>
               )}
             </button>

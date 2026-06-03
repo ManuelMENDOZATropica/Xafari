@@ -187,22 +187,6 @@ const ALL_ASSETS = [
   "/avatares/cara (22).png",
   "/avatares/cara (23).png",
 
-  // Avatares — expresiones
-  "/avatares/expresiones/expresion (1).png",
-  "/avatares/expresiones/expresion (2).png",
-  "/avatares/expresiones/expresion (3).png",
-  "/avatares/expresiones/expresion (4).png",
-  "/avatares/expresiones/expresion (5).png",
-  "/avatares/expresiones/expresion (6).png",
-  "/avatares/expresiones/expresion (7).png",
-  "/avatares/expresiones/expresion (8).png",
-  "/avatares/expresiones/expresion (9).png",
-  "/avatares/expresiones/expresion (10).png",
-  "/avatares/expresiones/expresion (11).png",
-  "/avatares/expresiones/expresion (12).png",
-  "/avatares/expresiones/expresion (13).png",
-  "/avatares/expresiones/expresion (14).png",
-
   // Avatares — cuerpos
   "/avatares/cuerpoAdulto.png",
   "/avatares/cuerpoAdultoIcono.png",

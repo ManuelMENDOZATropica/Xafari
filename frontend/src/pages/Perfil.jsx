@@ -30,18 +30,6 @@ function AvatarFaceOnly({ avatarData }) {
           transform: `translate(-50%, -50%) translate(${offset.x}%, ${offset.y}%)`
         }}
       />
-      {avatarData?.expressionOptions !== undefined && avatarData?.expressionOptions !== null && avatarData?.expressionOptions > 0 && (
-        <img
-          src={`/avatares/expresiones/expresion (${avatarData.expressionOptions}).png`}
-          alt="expression"
-          draggable={false}
-          className="absolute left-1/2 top-1/2 w-[78%] object-contain"
-          style={{
-            zIndex: 1,
-            transform: `translate(-50%, -50%) translate(${offset.x}%, ${offset.y}%) scale(0.5) translateY(14%)`,
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -205,18 +193,6 @@ export default function Perfil() {
                   transform: `translate(${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.y || 0}%)`
                 }}
               />
-              {baseUser.avatar.expressionOptions !== undefined && baseUser.avatar.expressionOptions !== null && baseUser.avatar.expressionOptions > 0 && (
-                <img
-                  src={`/avatares/expresiones/expresion (${baseUser.avatar.expressionOptions}).png`}
-                  alt="expression"
-                  draggable={false}
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{
-                    zIndex: 11,
-                    transform: `translate(${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.y || 0}%) scale(0.5) translateY(14%)`
-                  }}
-                />
-              )}
             </>
           )}
         </button>
