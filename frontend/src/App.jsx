@@ -1,7 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Welcome from "./pages/Welcome";
-import SplashScreen from "./pages/SplashScreen";
 import RegisterStep1 from "./pages/RegisterStep1";
 import RegisterStep2 from "./pages/RegisterStep2";
 import Register from "./pages/Register";
@@ -375,13 +374,13 @@ function App() {
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* ── Públicas — siempre accesibles ── */}
-          <Route path="/" element={<SplashScreen />} />
+          <Route path="/" element={<Welcome showSplashInitial={true} />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/privacy" element={<PrivacyNotice />} />
           <Route path="/terms" element={<TermsConditions />} />
 
           {/* ── Flujo de registro — sin token aún ── */}
-          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/welcome" element={<Welcome showSplashInitial={false} />} />
           <Route path="/intro" element={<Intro />} />
           <Route path="/intro-maya" element={<IntroMaya />} />
           <Route path="/register" element={<Register />} />
