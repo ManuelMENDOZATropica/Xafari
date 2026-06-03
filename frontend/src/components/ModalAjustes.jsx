@@ -25,7 +25,8 @@ function AvatarFaceOnly({ avatarData }) {
 
   const bodyOptions = ["/avatares/cuerpoNiñoIcono.png", "/avatares/cuerpoAdultoIcono.png"];
   const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
-  const isChild = avatarData.bodyOptions === 0;
+  const bodyIdx = avatarData.bodyOptions === 0 ? 0 : 1;
+  const isChild = bodyIdx === 0;
   const offset = FACE_OFFSETS[(avatarData.faceOptions || 0) + 1] || { x: 0, y: 0 };
 
   return (
@@ -34,7 +35,7 @@ function AvatarFaceOnly({ avatarData }) {
     <div className="relative w-full h-full overflow-hidden">
       {/* Cuerpo posicionado para que la cara quede centrada en el círculo */}
       <img
-        src={bodyOptions[avatarData.bodyOptions || 0]}
+        src={bodyOptions[bodyIdx]}
         alt="body"
         className="absolute left-1/2 object-contain"
         style={{

@@ -1,7 +1,8 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import AvatarRender from "@/components/AvatarRender";
 import { motion } from "framer-motion";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo, useContext } from "react";
+import XafariContext from "@/components/XafariContext";
 
 // ─── constantes del canvas ────────────────────────────────────────────────────
 const CANVAS_WIDTH  = 2450;
@@ -698,13 +699,53 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
   }, []);
 
 
-  const calcularNivelDesbloqueo = (clave, tipo) => {
+  const {
+    xecretos: jugadorXecretos,
+    progresoXperiencias: jugadorRespuestasCorrectas,
+    progresoChecklist: jugadorChecklist,
+  } = useContext(XafariContext);
+
+  const xtopNombres = [
+    "camion", "caracola", "conejo", "drink", "estrella", "kayak",
+    "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
+    "teatro", "tobogan", "tv", "vinil", "xpiral", "xorbeteria",
+  ];
+
+  const xtopProgreso = useMemo(() => {
+    const map = {};
+    Object.entries(jugadorRespuestasCorrectas || {}).forEach(([k]) => {
+      if (xtopNombres.includes(k)) map[k] = true;
+    });
+    return map;
+  }, [jugadorRespuestasCorrectas]);
+
+  const calcularNivelDesbloqueo = (clave, tipo, asset) => {
     const total = familia.length + 1;
-    const desbloqueosFamilia = familia.filter(
-      (m) => m.progreso?.[tipo]?.[clave]
-    ).length;
-    const desbloqueoJugador = jugador?.progreso?.[tipo]?.[clave] ? 1 : 0;
+    let desbloqueosFamilia = 0;
+
+    familia.forEach((m) => {
+      if (tipo === "xecretos" && m.progreso?.xecretos?.[clave]) {
+        desbloqueosFamilia++;
+      } else if (tipo === "xperiencias" && m.progreso?.xperiencias?.[clave]) {
+        desbloqueosFamilia++;
+      } else if (tipo === "checklist" && m.progreso?.checklist?.[clave]) {
+        desbloqueosFamilia++;
+      }
+    });
+
+    let jugadorTiene = false;
+    if (tipo === "xecretos") {
+      jugadorTiene = !!jugadorXecretos?.[clave];
+    } else if (tipo === "xperiencias") {
+      jugadorTiene = !!xtopProgreso?.[asset];
+    } else if (tipo === "checklist") {
+      jugadorTiene = !!jugadorChecklist?.[asset];
+    }
+
+    const desbloqueoJugador = jugadorTiene ? 1 : 0;
     const porcentaje = (desbloqueosFamilia + desbloqueoJugador) / total;
+
+    if (porcentaje === 0) return 0;
     if (porcentaje === 1) return 1;
     if (porcentaje >= 0.5) return 0.5;
     return 0.25;
@@ -735,8 +776,18 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
 
   const renderInsignias = (mapaTipo, tipo) => {
     return Object.entries(mapaTipo).map(([clave, asset]) => {
-      const nivel = calcularNivelDesbloqueo(clave, tipo);
-      const jugadorLaTiene = jugador?.progreso?.[tipo]?.[clave] === true;
+      const nivel = calcularNivelDesbloqueo(clave, tipo, asset);
+      if (nivel === 0) return null;
+
+      let jugadorLaTiene = false;
+      if (tipo === "xecretos") {
+        jugadorLaTiene = !!jugadorXecretos?.[clave];
+      } else if (tipo === "xperiencias") {
+        jugadorLaTiene = !!xtopProgreso?.[asset];
+      } else if (tipo === "checklist") {
+        jugadorLaTiene = !!jugadorChecklist?.[asset];
+      }
+
       const esReciente =
         typeof insigniaReciente === "string"
           ? (tipo === "xecretos" ? insigniaReciente === clave : insigniaReciente === asset)
