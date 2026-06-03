@@ -2,6 +2,7 @@ import { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import XafariContext from "../components/XafariContext";
+import { FACE_OFFSETS } from "../components/AvatarRender";
 import SoundMenu from "../components/SoundMenu";
 
 // Las 10 casas (mismas de la base de datos)
@@ -17,13 +18,31 @@ const GENERO_OPTIONS = ["Femenino", "Masculino", "Otro"];
 function AvatarFaceOnly({ avatarData }) {
   const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
   const idx = avatarData?.faceOptions || 0;
+  const offset = FACE_OFFSETS[idx + 1] || { x: 0, y: 0 };
   return (
-    <img
-      src={faceOptions[idx]}
-      alt="avatar"
-      draggable={false}
-      className="absolute left-1/2 top-1/2 w-[78%] -translate-x-1/2 -translate-y-1/2 object-contain"
-    />
+    <div className="absolute inset-0 flex items-center justify-center">
+      <img
+        src={faceOptions[idx]}
+        alt="avatar"
+        draggable={false}
+        className="absolute left-1/2 top-1/2 w-[78%] object-contain"
+        style={{
+          transform: `translate(-50%, -50%) translate(${offset.x}%, ${offset.y}%)`
+        }}
+      />
+      {avatarData?.expressionOptions !== undefined && avatarData?.expressionOptions !== null && avatarData?.expressionOptions > 0 && (
+        <img
+          src={`/avatares/expresiones/expresion (${avatarData.expressionOptions}).png`}
+          alt="expression"
+          draggable={false}
+          className="absolute left-1/2 top-1/2 w-[78%] object-contain"
+          style={{
+            zIndex: 1,
+            transform: `translate(-50%, -50%) translate(${offset.x}%, ${offset.y}%) scale(0.5) translateY(14%)`,
+          }}
+        />
+      )}
+    </div>
   );
 }
 
@@ -175,13 +194,30 @@ export default function Perfil() {
           />
           {/* Cara encima */}
           {baseUser?.avatar && (
-            <img
-              src={`/avatares/cara (${(baseUser.avatar.faceOptions ?? 0) + 1}).png`}
-              alt="avatar"
-              draggable={false}
-              className="absolute inset-0 w-full h-full object-contain"
-              style={{ zIndex: 10 }}
-            />
+            <>
+              <img
+                src={`/avatares/cara (${(baseUser.avatar.faceOptions ?? 0) + 1}).png`}
+                alt="avatar"
+                draggable={false}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{
+                  zIndex: 10,
+                  transform: `translate(${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.y || 0}%)`
+                }}
+              />
+              {baseUser.avatar.expressionOptions !== undefined && baseUser.avatar.expressionOptions !== null && baseUser.avatar.expressionOptions > 0 && (
+                <img
+                  src={`/avatares/expresiones/expresion (${baseUser.avatar.expressionOptions}).png`}
+                  alt="expression"
+                  draggable={false}
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{
+                    zIndex: 11,
+                    transform: `translate(${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(baseUser.avatar.faceOptions ?? 0) + 1]?.y || 0}%) scale(0.5) translateY(14%)`
+                  }}
+                />
+              )}
+            </>
           )}
         </button>
         <p className="mb-6 text-xs font-medium text-[#5b4636]">

@@ -2,9 +2,11 @@ import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
+import { getFaceStyle, getExpressionStyle } from "../components/AvatarRender";
 
 const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
 const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
+const expressionOptions = [null, ...Array.from({ length: 14 }, (_, i) => `/avatares/expresiones/expresion (${i + 1}).png`)];
 
 // ── Calcula edad completa ─────────────────────────────────────────────────────
 function calcularEdad(birthdateStr) {
@@ -36,6 +38,7 @@ export default function AvatarSelection() {
   const bodyImg = bodyOptions[bodyForzado];
 
   const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, false, user?.avatar?.faceOptions);
+  const [expressionIndex, expressionImg, setExpression, expressionList] = useSelection(expressionOptions, false, user?.avatar?.expressionOptions);
   const [activeTab, setActiveTab] = useState("face");
 
   useEffect(() => {
@@ -45,10 +48,11 @@ export default function AvatarSelection() {
         ...oldUser.avatar,
         bodyOptions: bodyForzado,
         faceOptions: faceIndex,
+        expressionOptions: expressionIndex,
       },
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bodyForzado, faceIndex]);
+  }, [bodyForzado, faceIndex, expressionIndex]);
 
   const handleSaveAvatar = useCallback(() => {
     if (!token) return navigate("/bienvenida");
@@ -88,6 +92,7 @@ export default function AvatarSelection() {
   const tabs = [
     // Cuerpo quitado — bloqueado por edad
     { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
+    { key: "expression", label: t("expression"), set: setExpression, list: expressionList, current: expressionIndex },
   ];
 
   const zoomedKeys = {
@@ -139,14 +144,24 @@ export default function AvatarSelection() {
             className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyForzado === 0 ? "scale-[0.85] translate-y-[4%]" : "scale-100"
               }`}
           />
-          <img
-            src={faceImg}
-            alt="face"
-            className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyForzado === 0
-              ? "scale-[0.5] -translate-y-[5%]"
-              : "scale-[0.7] -translate-y-[20%] -translate-x-[-5%]"
-              }`}
-          />
+          <div
+            className="absolute w-full h-full"
+            style={getFaceStyle(faceIndex, bodyForzado === 0)}
+          >
+            <img
+              src={faceImg}
+              alt="face"
+              className="w-full h-full object-contain"
+            />
+            {expressionImg && (
+              <img
+                src={expressionImg}
+                alt="expression"
+                className="absolute object-contain"
+                style={getExpressionStyle(faceIndex)}
+              />
+            )}
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-4">
@@ -171,7 +186,7 @@ export default function AvatarSelection() {
             .map((tab) => {
               const scrollRef = useRef();
               const [showArrow, setShowArrow] = useState(false);
-              const zoom = tab.key === "face" ? { scale: "", translateY: "" } : { scale: "scale-[1.2]" };
+              const zoom = (tab.key === "face" || tab.key === "expression") ? { scale: "", translateY: "" } : { scale: "scale-[1.2]" };
 
               useEffect(() => {
                 const el = scrollRef.current;

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import XafariContext from "./XafariContext";
+import { FACE_OFFSETS } from "./AvatarRender";
 
 // ─── Idiomas ──────────────────────────────────────────────────────────────────
 const LANGS = [
@@ -25,6 +26,7 @@ function AvatarFaceOnly({ avatarData }) {
   const bodyOptions = ["/avatares/cuerpoNiñoIcono.png", "/avatares/cuerpoAdultoIcono.png"];
   const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
   const isChild = avatarData.bodyOptions === 0;
+  const offset = FACE_OFFSETS[(avatarData.faceOptions || 0) + 1] || { x: 0, y: 0 };
 
   return (
     // Contenedor con overflow hidden — recortamos para mostrar sólo cara+cuello
@@ -50,9 +52,22 @@ function AvatarFaceOnly({ avatarData }) {
         style={{
           width: isChild ? "90%" : "80%",
           top: isChild ? "-22%" : "-18%",
-          transform: "translateX(-50%)",
+          transform: `translateX(-50%) translate(${offset.x}%, ${offset.y}%)`,
         }}
       />
+      {avatarData.expressionOptions !== undefined && avatarData.expressionOptions !== null && avatarData.expressionOptions > 0 && (
+        <img
+          src={`/avatares/expresiones/expresion (${avatarData.expressionOptions}).png`}
+          alt="expression"
+          className="absolute left-1/2 object-contain"
+          style={{
+            width: isChild ? "90%" : "80%",
+            top: isChild ? "-22%" : "-18%",
+            transform: `translateX(-50%) translate(${offset.x}%, ${offset.y}%) scale(0.5) translateY(14%)`,
+            zIndex: 11,
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -210,12 +225,28 @@ export default function ModalAjustes({ onClose }) {
               />
               {/* Cara del avatar encima */}
               {user?.avatar && (
-                <img
-                  src={`/avatares/cara (${(user.avatar.faceOptions ?? 0) + 1}).png`}
-                  alt="Avatar"
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{ zIndex: 10 }}
-                />
+                <>
+                  <img
+                    src={`/avatares/cara (${(user.avatar.faceOptions ?? 0) + 1}).png`}
+                    alt="Avatar"
+                    className="absolute inset-0 w-full h-full object-contain"
+                    style={{
+                      zIndex: 10,
+                      transform: `translate(${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.y || 0}%)`
+                    }}
+                  />
+                  {user.avatar.expressionOptions !== undefined && user.avatar.expressionOptions !== null && user.avatar.expressionOptions > 0 && (
+                    <img
+                      src={`/avatares/expresiones/expresion (${user.avatar.expressionOptions}).png`}
+                      alt="Expression"
+                      className="absolute inset-0 w-full h-full object-contain"
+                      style={{
+                        zIndex: 11,
+                        transform: `translate(${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.x || 0}%, ${FACE_OFFSETS[(user.avatar.faceOptions ?? 0) + 1]?.y || 0}%) scale(0.5) translateY(14%)`
+                      }}
+                    />
+                  )}
+                </>
               )}
             </button>
           </div>

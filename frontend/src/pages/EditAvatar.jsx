@@ -2,9 +2,11 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
+import { getFaceStyle, getExpressionStyle } from "../components/AvatarRender";
 
 const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
 const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
+const expressionOptions = [null, ...Array.from({ length: 14 }, (_, i) => `/avatares/expresiones/expresion (${i + 1}).png`)];
 
 // ─── Calcula edad en años completos ──────────────────────────────────────────
 function calcularEdad(birthdateStr) {
@@ -45,6 +47,7 @@ export default function AvatarSelection() {
   const bodyForzado = (edad !== null && edad >= 16) ? 1 : 0;
 
   const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, avatar.faceOptions ?? 0);
+  const [expressionIndex, expressionImg, setExpression, expressionList] = useSelection(expressionOptions, avatar.expressionOptions ?? 0);
   const [activeTab, setActiveTab] = useState("face");
 
   // Imagen de cuerpo siempre bloqueada por edad
@@ -54,6 +57,7 @@ export default function AvatarSelection() {
     const newAvatar = {
       bodyOptions: bodyForzado,   // siempre el determinado por edad
       faceOptions: faceIndex,
+      expressionOptions: expressionIndex,
     };
 
     const rawUser = localStorage.getItem("user");
@@ -99,9 +103,10 @@ export default function AvatarSelection() {
     }
   };
 
-  // Solo tab de cara — cuerpo está bloqueado por edad
+  // Solo tab de cara y expresion — cuerpo está bloqueado por edad
   const tabs = [
     { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
+    { key: "expression", label: t("expression"), set: setExpression, list: expressionList, current: expressionIndex },
   ];
 
   return (
@@ -138,18 +143,27 @@ export default function AvatarSelection() {
               bodyForzado === 0 ? "scale-[0.85] translate-y-[5%]" : "scale-100"
             }`}
           />
-          <img
-            src={faceImg}
-            alt="face"
-            className={`absolute w-full h-full object-contain transition-all duration-300 ${
-              bodyForzado === 0
-                ? "scale-[0.5] -translate-y-[5%]"
-                : "scale-[0.7] -translate-y-[20%] -translate-x-[-5%]"
-            }`}
-          />
+          <div
+            className="absolute w-full h-full"
+            style={getFaceStyle(faceIndex, bodyForzado === 0)}
+          >
+            <img
+              src={faceImg}
+              alt="face"
+              className="w-full h-full object-contain"
+            />
+            {expressionImg && (
+              <img
+                src={expressionImg}
+                alt="expression"
+                className="absolute object-contain"
+                style={getExpressionStyle(faceIndex)}
+              />
+            )}
+          </div>
         </div>
 
-        {/* Solo tab de cara — sin selector de cuerpo */}
+        {/* Solo tab de cara y expresion — sin selector de cuerpo */}
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {tabs.map((tab) => (
             <button
