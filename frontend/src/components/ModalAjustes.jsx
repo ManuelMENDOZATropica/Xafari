@@ -169,19 +169,19 @@ export default function ModalAjustes({ onClose }) {
     // ── Capa café: ocupa exactamente el espacio del contenedor ──────────────
     <motion.div className="absolute inset-0 bg-[#7b5226] font-apercu overflow-hidden rounded-3xl">
 
-      {/* ── Panel crema: anclado 12px adentro, sin scroll en ningún eje ─── */}
-      <div className="absolute inset-3 rounded-2xl bg-[#f4ead9] overflow-hidden">
-        <div className="flex h-full flex-col justify-between px-5 pb-5 pt-5">
+      {/* ── Panel crema: con scroll vertical si desborda ─── */}
+      <div className="absolute inset-3 rounded-2xl bg-[#f4ead9] overflow-y-auto">
+        <div className="flex min-h-full flex-col justify-between px-4 pb-4 pt-4">
 
           {/* ── Grupo superior: título + idioma ──────────────────────────── */}
           <div>
           {/* Título centrado */}
-          <h1 className="mb-3 text-center text-xl font-extrabold text-[#345230]">
+          <h1 className="mb-2 text-center text-xl font-extrabold text-[#345230]">
             {t("settingsTitle") || "Ajustes"}
           </h1>
 
           {/* ── Idioma (con rótulo) + avatar ─────────────────────────────── */}
-          <div className="mb-5 flex items-start justify-between">
+          <div className="mb-3 flex items-start justify-between">
             <div>
               <h2 className="mb-2 text-lg font-bold text-[#345230]">
                 {t("settingsLanguageTitle") || "Idioma"}
@@ -215,7 +215,7 @@ export default function ModalAjustes({ onClose }) {
               onClick={irAPerfil}
               aria-label={t("editProfile") || "Editar perfil"}
               className="relative flex-shrink-0 bg-transparent transition-transform active:scale-95"
-              style={{ width: "163px", height: "163px" }}
+              style={{ width: "130px", height: "130px" }}
             >
               {/* Marco elipse debajo */}
               <img
@@ -255,7 +255,7 @@ export default function ModalAjustes({ onClose }) {
           {/* ── Grupo medio: personaliza tu experiencia ──────────────────── */}
           <div>
           {/* ── Personaliza tu experiencia ────────────────────────────────── */}
-          <h2 className="mb-3 text-lg font-bold text-[#345230]">
+          <h2 className="mb-2 text-base font-bold text-[#345230]">
             {t("settingsPersonalizeTitle") || "Personaliza tu experiencia"}
           </h2>
 
@@ -263,7 +263,7 @@ export default function ModalAjustes({ onClose }) {
           <p className="mb-1 text-sm font-semibold text-[#345230]">
             {t("settingsVolumeLabel") || "Volumen"}
           </p>
-          <div className="mb-4 flex items-center gap-3">
+          <div className="mb-3 flex items-center gap-3">
             <img src="/iconos/iconoSonidoSettings.png" alt="Volumen" className="h-11 w-11 shrink-0 object-contain" />
             <input
               type="range"
@@ -278,10 +278,20 @@ export default function ModalAjustes({ onClose }) {
           </div>
 
           {/* ── Toggles ───────────────────────────────────────────────────── */}
-          <div className="mb-4 grid grid-cols-2 gap-y-3">
+          <div className="mb-3 grid grid-cols-2 gap-y-2">
             <Toggle
               on={hapticos}
-              onClick={() => persistir("ajuste_hapticos", !hapticos, setHapticos)}
+              onClick={() => {
+                const nuevoValor = !hapticos;
+                persistir("ajuste_hapticos", nuevoValor, setHapticos);
+                if (typeof navigator !== "undefined" && navigator.vibrate) {
+                  if (nuevoValor) {
+                    navigator.vibrate([80, 50, 80]);
+                  } else {
+                    navigator.vibrate(80);
+                  }
+                }
+              }}
               label={t("settingsHapticsLabel") || "Hápticos"}
             />
             {/* Música: controla SOLO la música de fondo */}
