@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import XafariContext from "../components/XafariContext";
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { setUser, setToken } = useContext(XafariContext);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -41,6 +43,9 @@ export default function Login() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+
+      setToken(data.token);
+      setUser(data.user);
 
       navigate("/welcome-animation-login", { state: data.user });
 
