@@ -743,12 +743,16 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
     }
 
     const desbloqueoJugador = jugadorTiene ? 1 : 0;
-    const porcentaje = (desbloqueosFamilia + desbloqueoJugador) / total;
+    return (desbloqueosFamilia + desbloqueoJugador) / total;
+  };
 
-    if (porcentaje === 0) return 0;
-    if (porcentaje === 1) return 1;
-    if (porcentaje >= 0.5) return 0.5;
-    return 0.25;
+  const getBadgeOpacity = (porcentaje) => {
+    if (porcentaje <= 0) return 0;
+    if (porcentaje >= 1) return 1.0;
+    // p = 0.2 -> opacity = 0.7
+    // p = 1.0 -> opacity = 1.0
+    // formula: opacity = 0.375 * p + 0.625
+    return Number((0.375 * porcentaje + 0.625).toFixed(3));
   };
 
   const checkAndReset = useCallback((ref) => {
@@ -776,8 +780,8 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
 
   const renderInsignias = (mapaTipo, tipo) => {
     return Object.entries(mapaTipo).map(([clave, asset]) => {
-      const nivel = calcularNivelDesbloqueo(clave, tipo, asset);
-      if (nivel === 0) return null;
+      const porcentaje = calcularNivelDesbloqueo(clave, tipo, asset);
+      if (porcentaje === 0) return null;
 
       let jugadorLaTiene = false;
       if (tipo === "xecretos") {
@@ -794,6 +798,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
           : (insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave);
       const debeAnimar = jugadorLaTiene && esReciente;
       const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
+      const opacityVal = getBadgeOpacity(porcentaje);
 
       if (tipo === "xecretos") {
         const pos = guardianPositions[clave];
@@ -811,7 +816,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
             }}
             initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
             animate={{
-              opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel],
+              opacity: opacityVal,
               scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
               rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
             }}
@@ -836,7 +841,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
             }}
             initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
             animate={{
-              opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel],
+              opacity: opacityVal,
               scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
               rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
             }}
@@ -853,7 +858,7 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
           src={`${basePath}${asset}.png`}
           className="absolute inset-0 w-full h-full object-contain pointer-events-none"
           initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
-          animate={{ opacity: { 1: 1, 0.5: 0.8, 0.25: 0.6 }[nivel], scale: 1 }}
+          animate={{ opacity: opacityVal, scale: 1 }}
           transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
         />
       );
@@ -901,13 +906,14 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
             return (
               <div
                 key={m.id}
-                className="absolute z-40"
+                className="absolute"
                 style={{
                   left: `${(pos.x / CANVAS_WIDTH) * 100}%`,
                   top: `${(pos.y / CANVAS_HEIGHT) * 100}%`,
                   width: `${(90 / CANVAS_WIDTH) * 200}%`,
                   height: `${(130 / CANVAS_HEIGHT) * 200}%`,
                   transform: "translate(-50%, -100%)",
+                  zIndex: pos.y,
                 }}
               >
                 <AvatarRender
@@ -920,17 +926,18 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
 
           {typeof window !== "undefined" && (
             <div
-              className="absolute z-[999]"
+              className="absolute"
               style={{
                 left: `${(1270 / CANVAS_WIDTH) * 100}%`,
                 top: `${(3110 / CANVAS_HEIGHT) * 100}%`,
                 width: `${(90 / CANVAS_WIDTH) * 200}%`,
                 height: `${(130 / CANVAS_HEIGHT) * 200}%`,
                 transform: "translate(-50%, -100%) scale(1.1)",
+                zIndex: 3200,
               }}
             >
               <AvatarRender
-                avatarData={jugador?.avatarData}
+                avatarData={jugador?.avatar || jugador?.avatarData}
                 className="w-full h-full"
               />
             </div>
