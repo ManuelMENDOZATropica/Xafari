@@ -11,8 +11,8 @@ export default function ModalMapa({ onClose, initialFilter = "xperiencias", from
       {/* Mapa — ocupa todo el espacio disponible */}
       <div className="flex-1 relative overflow-hidden p-3">
         <img
-          src="/mapa/placeholderMapa.png"
-          alt="Mapa del lugar"
+          src="/mapa/placeholderMapa.webp"
+          alt={t("mapAlt")}
           className="w-full h-full object-cover rounded-2xl"
         />
         {/* Botón volver — solo cuando venimos desde Xelfies */}

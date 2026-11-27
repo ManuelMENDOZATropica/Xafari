@@ -33,7 +33,39 @@
     "dayPlaceholder": "Día",
     "monthPlaceholder": "Mes",
     "yearPlaceholder": "Año",
-    "acceptTermsPrefix": "Acepto los",
-    "acceptTermsLink": "términos y condiciones"
+    "acceptTermsPrefix": "Estoy de acuerdo y acepto los",
+    "acceptTermsLink": "términos y condiciones",
+    "casaLabel": "Casa {{name}}",
+    "months": [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ],
+    "acceptPrivacyPrefix": "y el",
+    "acceptPrivacyLink": "aviso de privacidad",
+    "parentalConsent": "Soy menor de 18 años y mi madre, padre o tutor leyó el aviso de privacidad y autoriza mi registro.",
+    "pwd": {
+      "tooShort": "Débil — mínimo {{min}} caracteres",
+      "weak": "Débil — combina letras y números",
+      "medium": "Media — agrega un símbolo (!@#$…) para hacerla fuerte",
+      "strong": "Fuerte ✔",
+      "match": "Las contraseñas coinciden ✔"
+    },
+    "errors": {
+      "invalidEmail": "Ingresa un correo válido (ej.: nombre@dominio.com)",
+      "invalidDate": "Esa fecha no existe. Revisa el día, el mes y el año.",
+      "emailTaken": "Ya existe una cuenta con ese correo. Inicia sesión o usa otro.",
+      "parentalConsent": "Para registrar a menores de 18 años se necesita la autorización de su madre, padre o tutor.",
+      "generic": "Ocurrió un error al registrarte. Intenta de nuevo."
+    }
   }
 }

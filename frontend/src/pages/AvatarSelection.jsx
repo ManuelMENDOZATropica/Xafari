@@ -2,10 +2,11 @@ import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
-import { getFaceStyle } from "../components/AvatarRender";
+import { getFaceStyle } from "@/data/avatar";
+import { api } from "@/lib/api";
 
-const bodyOptions = ["/avatares/cuerpoNiño.png", "/avatares/cuerpoAdulto.png"];
-const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara (${i + 1}).png`);
+const bodyOptions = ["/avatares/cuerpoNino.webp", "/avatares/cuerpoAdulto.webp"];
+const faceOptions = Array.from({ length: 23 }, (_, i) => `/avatares/cara-${i + 1}.webp`);
 
 // ── Calcula edad completa ─────────────────────────────────────────────────────
 function calcularEdad(birthdateStr) {
@@ -19,11 +20,93 @@ function calcularEdad(birthdateStr) {
   return edad;
 }
 
-function useSelection(options, _isObject = false, initialIndex = 0) {
+function useSelection(options, initialIndex = 0) {
   const [index, setIndex] = useState(initialIndex || 0);
   const set = (i) => setIndex(i);
   const value = options[index];
   return [index, value, set, options];
+}
+
+/* Tira de opciones (antes eran hooks dentro de .map) */
+function OptionStrip({ tab, playWardrobeSound, t }) {
+    const scrollRef = useRef();
+    const [showArrow, setShowArrow] = useState(false);
+    const zoom = (tab.key === "face") ? { scale: "", translateY: "" } : { scale: "scale-[1.2]" };
+
+    useEffect(() => {
+      const el = scrollRef.current;
+      const checkScroll = () => {
+        if (!el) return;
+        setShowArrow(
+          el.scrollWidth > el.clientWidth &&
+          el.scrollLeft + el.clientWidth < el.scrollWidth - 10
+        );
+      };
+      checkScroll();
+      el?.addEventListener("scroll", checkScroll);
+      return () => el?.removeEventListener("scroll", checkScroll);
+    }, [tab.list]);
+
+    return (
+      <div className="relative w-full px-2">
+        <div
+          ref={scrollRef}
+          className={`flex items-center gap-4 pr-6 scroll-smooth ${tab.list.length <= 3 ? "justify-center overflow-x-hidden" : "overflow-x-auto"
+            }`}
+        >
+          {tab.list.map((opt, i) => {
+            const isCurrent = i === tab.current;
+            const handleSelect = () => {
+              if (typeof playWardrobeSound === "function") {
+                playWardrobeSound();
+              }
+              tab.set(i);
+            };
+
+            return (
+              <div key={i} className="flex-shrink-0">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleSelect}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleSelect();
+                    }
+                  }}
+                  data-skip-sound-click="true"
+                  aria-pressed={isCurrent}
+                  className={`flex items-center justify-center border-2 cursor-pointer overflow-hidden ${isCurrent
+                    ? "border-green-600"
+                    : "border-transparent"
+                    }`}
+                  style={{ width: "130px", height: "100px" }}
+                >
+                  {opt ? (
+                    <img
+                      src={tab.icons ? tab.icons[i] : opt}
+                      alt={t("faceOption", { n: i + 1 })}
+                      style={{ width: "130px", height: "130px", objectFit: "contain", flexShrink: 0 }}
+                      className={`transform ${tab.icons ? "" : (zoom.scale || "")} ${tab.icons ? "" : (zoom.translateY || "")}`}
+                    />
+                  ) : (
+                    <span className="text-xl font-bold text-gray-400">
+                      ×
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {showArrow && (
+          <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-green-600 text-2xl animate-bounce-right">
+            →
+          </div>
+        )}
+      </div>
+    );
 }
 
 export default function AvatarSelection() {
@@ -36,8 +119,9 @@ export default function AvatarSelection() {
   const bodyForzado = (edad !== null && edad >= 16) ? 1 : 0;
   const bodyImg = bodyOptions[bodyForzado];
 
-  const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, false, user?.avatar?.faceOptions);
+  const [faceIndex, faceImg, setFace, faceList] = useSelection(faceOptions, user?.avatar?.faceOptions);
   const [activeTab, setActiveTab] = useState("face");
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     setUser((oldUser) => ({
@@ -55,56 +139,30 @@ export default function AvatarSelection() {
     if (!token) return navigate("/bienvenida");
 
     (async () => {
+      setSaveError("");
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || "/api"}/user`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(user),
-        });
-
-        if (!response.ok) {
-          console.error("❌ Error al actualizar en backend:", response.status);
-          alert("No se pudo guardar el avatar.");
-          return;
-        }
-
-        const data = await response.json().catch(() => ({}));
-        if (data.user) {
-          setUser((prev) => ({ ...prev, ...data.user }));
-          console.log("✅ Avatar actualizado en backend:", data.user.avatar);
-        }
-
+        // Solo el avatar (CONTRATO-API §2: PUT /user acepta campos de perfil).
+        const data = await api.put("/user", { avatar: user.avatar });
+        if (data?.user) setUser((prev) => ({ ...prev, ...data.user }));
         navigate("/bienvenida");
       } catch (err) {
-        console.error("🔥 Error al guardar en backend:", err);
-        alert("Error al guardar el avatar.");
+        console.error("No se pudo guardar el avatar:", err);
+        setSaveError(t("avatarSaveError"));
       }
     })();
-  }, [token, user, navigate, setUser]);
+  }, [token, user, navigate, setUser, t]);
 
   const tabs = [
     // Cuerpo quitado — bloqueado por edad
     { key: "face", label: t("face"), set: setFace, list: faceList, current: faceIndex },
   ];
 
-  const zoomedKeys = {
-    eyes: { scale: "scale-[4]", translateY: "-translate-y-[-85%]" },
-    hair: { scale: "scale-[1.5]", translateY: "-translate-y-[-35%]" },
-    glasses: { scale: "scale-[2.5]", translateY: "-translate-y-[-60%]" },
-    headAccessory: { scale: "scale-[2.3]", translateY: "-translate-y-[-80%]" },
-    shoes: { scale: "scale-[2.5]", translateY: "translate-y-[-85%]" },
-    clothing: { scale: "scale-[1.8]", translateY: "translate-y-[-18%]" },
-  };
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img
-        src="/img/fondoPrincipal.jpg"
-        alt="Fondo"
+        src="/img/fondoPrincipal.webp"
+        alt=""
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
@@ -114,7 +172,7 @@ export default function AvatarSelection() {
           className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
           aria-label={t("back")}
         >
-          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
+          <img src="/iconos/icon_regresar.svg" alt="" className="w-6 h-6" />
         </button>
       </div>
 
@@ -136,7 +194,7 @@ export default function AvatarSelection() {
         <div className="relative w-[90vw] max-w-[300px] h-[120vw] max-h-[480px] flex items-center justify-center mb-6 mx-auto">
           <img
             src={bodyImg}
-            alt="body"
+            alt=""
             className={`absolute w-full h-full object-contain transition-all duration-300 ${bodyForzado === 0 ? "scale-[0.85] translate-y-[4%]" : "scale-100"
               }`}
           />
@@ -146,7 +204,7 @@ export default function AvatarSelection() {
           >
             <img
               src={faceImg}
-              alt="face"
+              alt=""
               className="w-full h-full object-contain"
             />
 
@@ -172,86 +230,9 @@ export default function AvatarSelection() {
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-1 shadow-md mb-2 max-h-[40vh] overflow-y-auto">
           {tabs
             .filter((tab) => tab.key === activeTab)
-            .map((tab) => {
-              const scrollRef = useRef();
-              const [showArrow, setShowArrow] = useState(false);
-              const zoom = (tab.key === "face") ? { scale: "", translateY: "" } : { scale: "scale-[1.2]" };
-
-              useEffect(() => {
-                const el = scrollRef.current;
-                const checkScroll = () => {
-                  if (!el) return;
-                  setShowArrow(
-                    el.scrollWidth > el.clientWidth &&
-                    el.scrollLeft + el.clientWidth < el.scrollWidth - 10
-                  );
-                };
-                checkScroll();
-                el?.addEventListener("scroll", checkScroll);
-                return () => el?.removeEventListener("scroll", checkScroll);
-              }, [tab.list]);
-
-              return (
-                <div key={tab.key} className="relative w-full px-2">
-                  <div
-                    ref={scrollRef}
-                    className={`flex items-center gap-4 pr-6 scroll-smooth ${tab.list.length <= 3 ? "justify-center overflow-x-hidden" : "overflow-x-auto"
-                      }`}
-                  >
-                    {tab.list.map((opt, i) => {
-                      const isCurrent = i === tab.current;
-                      const handleSelect = () => {
-                        if (typeof playWardrobeSound === "function") {
-                          playWardrobeSound();
-                        }
-                        tab.set(i);
-                      };
-
-                      return (
-                        <div key={i} className="flex-shrink-0">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            onClick={handleSelect}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter" || event.key === " ") {
-                                event.preventDefault();
-                                handleSelect();
-                              }
-                            }}
-                            data-skip-sound-click="true"
-                            aria-pressed={isCurrent}
-                            className={`flex items-center justify-center border-2 cursor-pointer overflow-hidden ${isCurrent
-                              ? "border-green-600"
-                              : "border-transparent"
-                              }`}
-                            style={{ width: "130px", height: "100px" }}
-                          >
-                            {opt ? (
-                              <img
-                                src={tab.icons ? tab.icons[i] : opt}
-                                alt={`${tab.key}_${i}`}
-                                style={{ width: "130px", height: "130px", objectFit: "contain", flexShrink: 0 }}
-                                className={`transform ${tab.icons ? "" : (zoom.scale || "")} ${tab.icons ? "" : (zoom.translateY || "")}`}
-                              />
-                            ) : (
-                              <span className="text-xl font-bold text-gray-400">
-                                ×
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {showArrow && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-green-600 text-2xl animate-bounce-right">
-                      →
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            .map((tab) => (
+              <OptionStrip key={tab.key} tab={tab} playWardrobeSound={playWardrobeSound} t={t} />
+            ))}
         </div>
 
         <div style={{
@@ -264,8 +245,17 @@ export default function AvatarSelection() {
           paddingBottom: "calc(env(safe-area-inset-bottom) + 40px)",
           paddingTop: "16px",
           zIndex: 50,
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "8px",
         }}>
+          {saveError && (
+            <p role="alert" style={{ backgroundColor: "rgba(156,62,50,0.92)", color: "#fff", borderRadius: 12, padding: "8px 14px", fontSize: 13 }}>
+              {saveError}
+            </p>
+          )}
           <button
+            type="button"
             onClick={handleSaveAvatar}
             style={{
               width: "200px",

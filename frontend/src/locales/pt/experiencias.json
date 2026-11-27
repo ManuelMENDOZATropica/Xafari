@@ -3,58 +3,40 @@
   "logrado": "Concluído",
   "blocked": "Bloqueado",
   "next_unlocked": "Você desbloqueou a próxima",
-
   "t_experiencia_caletas": "Explore as enseadas do hotel de caiaque ou paddle board e mergulhe na beleza da paisagem a cada remada.",
   "q_caletas": "De que cor são os caiaques e as pranchas de paddle?",
-
   "t_experiencia_cielo_flamingos": "Deixe-se levar no Salão Flamingo! Dance como nunca, vibre com a melhor música e conquiste a pista com seus melhores passos.",
   "q_cielo_flamingos": "Nos fundos há nichos com esculturas de flamingos. Quantas são?",
-
   "t_experiencia_agua_muluk": "Deixe-se envolver pela calma no Muluk Family Spa. Desfrute de um ambiente natural, aromas e sons.",
   "q_muluk": "Quantas piscinas há no Muluk?",
-
   "t_experiencia_vida_maquinitas": "Escape para o Bar Las Maquinitas! Curta boa música, um ambiente vibrante e momentos que viram lembranças.",
   "q_vida_juegos": "O que você pode encontrar na área de jogos?",
-
   "t_experiencia_espiral_teatro": "Surpreenda-se com um dos espetáculos do Teatro del Río! Viva um momento mágico no restaurante.",
   "q_espiral_lamparas": "Que forma têm as lâmpadas penduradas?",
-
   "t_experiencia_tierra_alberca": "Mergulhe na piscina infinita e deixe que a tranquilidade do horizonte te envolva. Relaxe e aproveite uma vista que mistura céu e mar.",
   "q_tierra_logo": "Que imagem você encontra no fundo do azulejo da piscina?",
-
   "t_experiencia_eclipse_luna": "Descubra a magia da Lunateca junto com os pequenos! Mergulhe em um mundo de jogos, risadas e aventuras.",
   "q_eclipse_luna": "Que animal está na Lua?",
-
   "t_experiencia_eclipse_xiquit": "Explore todos os papéis no Xiquit Inn: o hotel feito para e por crianças! Resolva todos os desafios e torne-se o Gerente do Hotel.",
   "q_eclipse_xiquit": "Uma família de ______ foi responsável pela bagunça nos quartos",
-
   "t_experiencia_sol_infinity": "Entre na incrível Infinity Room e deixe que as estrelas te envolvam! Uma experiência imersiva de outro mundo.",
   "q_sol_mensaje": "Qual é a mensagem da experiência?",
-
   "t_experiencia_sol_jaguar": "Deixe-se levar pelo ritmo na Paxanguería! Mergulhe em um ambiente cheio de luzes e música.",
   "q_sol_jaguar": "Qual é a máscara do animal guardião que está acima do DJ?",
-
   "t_experiencia_fuego_piscina": "Eleve os sentidos no Rooftop Fuego, onde céu e mar se encontram. Um oásis exclusivo para adultos.",
   "q_fuego_piscina": "Aqui você encontra uma das ____ mais icônicas do Hotel Xcaret México",
-
   "t_experiencia_canal_patin": "Suba no patins e desafie outro jogador para uma corrida! Mostre sua velocidade e sinta a emoção.",
   "q_canal_patin": "Qual é a pista mais desafiadora?",
-
   "t_experiencia_vida_tobogan": "Aventure-se no Kamikaze, o toboágua mais alto, e sinta a adrenalina ao máximo! Teste sua coragem lá do alto.",
   "q_vida_tobogan": "Em qual andar está o toboágua mais alto?",
-
   "t_experiencia_ixla_xpiral": "Chegue ao topo da Xpiral e aproveite uma vista de tirar o fôlego! Do ponto mais alto, contemple uma paisagem paradisíaca.",
   "q_ixla_xpiral": "Quantos anjos há na Capela?",
-
   "t_experiencia_viento_poolpo": "Ouse conquistar a parede do Pool'po! Coloque sua força à prova e alcance o topo com um sorriso de vitória.",
   "q_viento_poolpo": "Quantas rochas há na parede de escalada?",
-
   "t_experiencia_cielo_xupes": "Tome uns drinks no Xupes, o clube adulto mais vibrante do hotel! E quando a festa acabar... finalize com tacos da Pava Jarla.",
   "q_cielo_xupes": "Quantas máscaras de lutadores há na Pava Jarla?",
-
   "t_experiencia_cielo_xorbeteria": "Saboreie um delicioso sorvete na 'Xorbetería'.",
   "q_cielo_xorbeteria": "Cite um dos animais pintados no mural do teto.",
-
   "options": {
     "q_caletas": {
       "A": "Verdes e brancas",
@@ -142,7 +124,6 @@
       "C": "Axolote"
     }
   },
-
   "copy": {
     "kayak": "Kraaak-kaaa! Você conseguiu, o Amuleto do Remador é seu! Todo grande buscador sabe remar por ilhas e rios.",
     "vinil": "Kraaak-kaaa! Você conseguiu, o Amuleto do Dançarino é seu! Todo grande buscador sabe dançar para se comunicar sem palavras.",
@@ -160,5 +141,58 @@
     "xpiral": "Kraaak-kaaa! Você conseguiu, o Amuleto do Conquistador é seu! Todo grande buscador sabe chegar tão alto quanto o céu.",
     "poolpo": "Kraaak-kaaa! Você conseguiu, o Amuleto do Escalador é seu! Todo grande buscador sabe desviar dos obstáculos para alcançar o topo.",
     "drink": "Dados pendentes"
+  },
+  "xpPlaces": {
+    "kayak": "Enseadas do hotel de caiaque ou paddle board",
+    "vinil": "Salão Flamingo",
+    "caracola": "Muluk Family Spa",
+    "tv": "Bar Las Maquinitas",
+    "teatro": "Teatro del Río",
+    "salvavidas": "Piscina infinita",
+    "conejo": "Lunateca",
+    "camion": "Xiquit Inn",
+    "estrella": "Infinity Room",
+    "mascarajaguar": "Paxanguería",
+    "piscina": "Rooftop Fuego",
+    "patin": "Patín",
+    "tobogan": "Kamikaze, o tobogã mais alto",
+    "xpiral": "Xpiral",
+    "poolpo": "Pool’po",
+    "drink": "Xupes e Pava Jarla",
+    "xorbeteria": "La Xorbeteria"
+  },
+  "xelfiePlaces": {
+    "Xelfie cascada Caletas": {
+      "title": "Xelfie cachoeira Caletas",
+      "desc": "Faça pose diante da impressionante cachoeira natural de Caletas, cercada pela selva tropical."
+    },
+    "Puente 1": {
+      "title": "Ponte 1",
+      "desc": "Registre o momento na primeira ponte suspensa, com vista para o rio e a vegetação."
+    },
+    "Puente 2": {
+      "title": "Ponte 2",
+      "desc": "A segunda ponte oferece uma perspectiva única do coração do resort."
+    },
+    "Puente 3": {
+      "title": "Ponte 3",
+      "desc": "Da terceira ponte você vê toda a paisagem do parque aquático."
+    },
+    "Islote cascada": {
+      "title": "Ilhota da cachoeira",
+      "desc": "Um cantinho secreto cercado de água onde a natureza oferece o cenário perfeito."
+    },
+    "Diamante Xerro": {
+      "title": "Diamante Xerro",
+      "desc": "O ponto mais exclusivo do resort. Uma vista que poucas pessoas conseguem registrar."
+    },
+    "Super zoom": {
+      "title": "Super zoom",
+      "desc": "O lugar ideal para fotos de longo alcance com os melhores enquadramentos naturais."
+    },
+    "Alberca diamante 2": {
+      "title": "Piscina diamante 2",
+      "desc": "Ao lado da segunda piscina diamante, a água cristalina e o sol criam a foto perfeita."
+    }
   }
 }

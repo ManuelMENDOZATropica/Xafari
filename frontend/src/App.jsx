@@ -1,330 +1,358 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import Welcome from "./pages/Welcome";
-import RegisterStep1 from "./pages/RegisterStep1";
-import RegisterStep2 from "./pages/RegisterStep2";
-import Register from "./pages/Register";
-import WelcomeAnimation from "./pages/WelcomeAnimation";
-import AvatarSelection from "./pages/AvatarSelection";
-import TreeOfLife from "./pages/TreeOfLife";
-import BienvenidaGuacamaya from "./pages/BienvenidaGuacamaya";
-import TutorialArbol from "./pages/TutorialArbol";
-import Intro from "./pages/Intro";
-import IntroMaya from "./pages/IntroMaya";
-import LogIn from "./pages/LogIn";
-import EditAvatar from "./pages/EditAvatar";
-import WelcomeAnimationLogin from "./pages/WelcomeAnimationLogin";
-import MinimalQr from "./components/minimalQr";
-import XecretoRegister from "./components/XecretoRegister";
-import XecretoDeepLink from "./pages/XecretoDeepLink";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import XafariContext from "./components/XafariContext";
 import PrivateRoute from "./components/PrivateRoute";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import SyncStatus from "./components/SyncStatus";
 import useSoundController from "./hooks/useSoundController";
-import PrivacyNotice from "./pages/PrivacyNotice";
-import TermsConditions from "./pages/TermsConditions";
-import Perfil from "./pages/Perfil";
+import { api, ApiError, getStoredToken, storeToken, setUnauthorizedHandler } from "./lib/api";
+import * as progressQueue from "./lib/progressQueue";
+import { markSessionExpired, saveReturnTo } from "./lib/returnTo";
+import Welcome from "./pages/Welcome";
+
+// ── Code-splitting por ruta: la portada (Welcome) va en el bundle inicial ──
+const Register = lazy(() => import("./pages/Register"));
+const WelcomeAnimation = lazy(() => import("./pages/WelcomeAnimation"));
+const AvatarSelection = lazy(() => import("./pages/AvatarSelection"));
+const TreeOfLife = lazy(() => import("./pages/TreeOfLife"));
+const BienvenidaGuacamaya = lazy(() => import("./pages/BienvenidaGuacamaya"));
+const TutorialArbol = lazy(() => import("./pages/TutorialArbol"));
+const Intro = lazy(() => import("./pages/Intro"));
+const IntroMaya = lazy(() => import("./pages/IntroMaya"));
+const LogIn = lazy(() => import("./pages/LogIn"));
+const WelcomeAnimationLogin = lazy(() => import("./pages/WelcomeAnimationLogin"));
+const XecretoRegister = lazy(() => import("./components/XecretoRegister"));
+const QrActivity = lazy(() => import("./pages/QrActivity"));
+const PrivacyNotice = lazy(() => import("./pages/PrivacyNotice"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const Perfil = lazy(() => import("./pages/Perfil"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const IS_DEV = import.meta.env.DEV;
+
+const EMPTY_USER = {
+  name: null,
+  lastname: null,
+  email: null,
+  avatar: { bodyOptions: 0, faceOptions: 0 },
+};
+
+function readStoredUser() {
+  try {
+    const raw = JSON.parse(localStorage.getItem("user") || "null");
+    return raw && typeof raw === "object" ? raw : EMPTY_USER;
+  } catch {
+    localStorage.removeItem("user");
+    return EMPTY_USER;
+  }
+}
+
+// Respuesta (letra) de cada Xperiencia, para pintar el progreso que viene de BD.
+const XPERIENCIA_ANSWERS = {
+  kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
+  conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
+  patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
+};
+
+const EMPTY_PROGRESS = {
+  xperiencias: {},
+  xecretos: {},
+  checklist: {},
+  xelfies: {},
+  calXperiencias: {},
+  calChecklist: {},
+};
+
+function progressFromUser(dbUser) {
+  const next = {
+    xperiencias: {},
+    xecretos: {},
+    checklist: {},
+    xelfies: {},
+    calXperiencias: {},
+    calChecklist: {},
+  };
+  (dbUser.activities || []).forEach((act) => {
+    if (!act.userActivity?.completedAt) return;
+    if (act.type === "Xperiencia") next.xperiencias[act.name] = XPERIENCIA_ANSWERS[act.name] || "a";
+    else if (act.type === "Xecreto") next.xecretos[act.name] = true;
+    else if (act.type === "Event") next.checklist[act.name] = true;
+    else if (act.type === "Xelfie") next.xelfies[act.name] = true;
+  });
+  (dbUser.preferredActivities || []).forEach((pref) => {
+    const rating = pref.userPreference?.rating;
+    if (!rating) return;
+    if (pref.type === "Xperiencia") next.calXperiencias[pref.name] = rating;
+    else if (pref.type === "Event") next.calChecklist[pref.name] = rating;
+  });
+  return next;
+}
+
+function markCompleted(progress, activity) {
+  const { name, type } = activity;
+  if (type === "Xperiencia") return { ...progress, xperiencias: { ...progress.xperiencias, [name]: XPERIENCIA_ANSWERS[name] || "a" } };
+  if (type === "Xecreto") return { ...progress, xecretos: { ...progress.xecretos, [name]: true } };
+  if (type === "Event") return { ...progress, checklist: { ...progress.checklist, [name]: true } };
+  if (type === "Xelfie") return { ...progress, xelfies: { ...progress.xelfies, [name]: true } };
+  return progress;
+}
 
 function App() {
   const location = useLocation();
-  const [user, setUser] = useState({
-    name: null,
-    lastname: null,
-    email: null,
-    avatar: {
-      bodyOptions: 0,
-      hairOptions: 0,
-      clothingOptions: 0,
-      shoeOptions: 0,
-      eyesOptions: 0,
-      glassesAccessoryOptions: 0,
-      headAccessoryOptions: 0,
-      bodyAccessoryOptions: 0,
-    },
-  });
-  const [token, setToken] = useState(() => {
-    try {
-      const stored = localStorage.getItem("token");
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch (_) {
-          return stored;
-        }
-      }
-    } catch (_e) {}
-    return null;
-  });
-  const [activitiesMap, setActivitiesMap] = useState({});
+  const navigate = useNavigate();
 
-  // ── Progreso en React state — fuente de verdad: BD ───────────────────────
-  const [progresoXperiencias, setProgresoXperiencias] = useState({});
-  const [xecretos, setXecretos] = useState({});
-  const [progresoChecklist, setProgresoChecklist] = useState({});
-  const [progresoXelfies, setProgresoXelfies] = useState({});
-  const [calificacionesXperiencias, setCalificacionesXperiencias] = useState({});
-  const [calificacionesChecklist, setCalificacionesChecklist] = useState({});
+  const [user, setUser] = useState(readStoredUser);
+  const [token, setTokenState] = useState(getStoredToken);
+  const [activities, setActivities] = useState(null); // null = aún no cargan
+  const [progress, setProgress] = useState(EMPTY_PROGRESS);
+  const [progressReady, setProgressReady] = useState(false);
   const [familyTree, setFamilyTree] = useState(null);
-  const [soundSetting, setSoundSetting] = useState(() => {
-    if (typeof window === "undefined") {
-      return "full";
-    }
+  const [pendingCount, setPendingCount] = useState(0);
 
-    return localStorage.getItem("soundSetting") || "full";
-  });
-
+  const [soundSetting, setSoundSetting] = useState(() => localStorage.getItem("soundSetting") || "full");
   const [musicEnabled, setMusicEnabled] = useState(() => {
     const v = localStorage.getItem("ajuste_musica");
-    // default true: music ON unless the user has explicitly turned it off
     return v === null ? true : v === "true";
   });
 
   const { triggerClickFeedback, playWardrobeSound, playSuccessSound, playErrorSound } =
     useSoundController(soundSetting, musicEnabled);
 
-  useEffect(() => {
-    try {
-      const rawUser = JSON.parse(localStorage.getItem("user") || null);
-
-      if (rawUser) {
-        setUser(() => rawUser);
-      }
-    } catch (_e) {
-      localStorage.removeItem("user");
-    }
+  const setToken = useCallback((next) => {
+    storeToken(next || null);
+    setTokenState(next || null);
   }, []);
 
-  // Fetch all activities on start (with retry for slow backend startup)
-  useEffect(() => {
-    let attempts = 0;
-    const MAX_ATTEMPTS = 5;
+  const logout = useCallback(() => {
+    storeToken(null);
+    try {
+      localStorage.removeItem("user");
+    } catch {
+      /* sin almacenamiento */
+    }
+    setTokenState(null);
+    setUser(EMPTY_USER);
+    setFamilyTree(null);
+  }, []);
 
-    const fetchActivities = async () => {
+  // Inicia sesión con la respuesta de /login o /users (registro).
+  const startSession = useCallback((newToken, newUser) => {
+    setToken(newToken);
+    setUser((prev) => ({ ...prev, ...newUser, avatar: newUser?.avatar || prev.avatar || EMPTY_USER.avatar }));
+  }, [setToken]);
+
+  // ── 401 en cualquier llamada → cerrar sesión y mandar a /login conservando el origen ──
+  const locationRef = useRef(location);
+  locationRef.current = location;
+  useEffect(
+    () =>
+      setUnauthorizedHandler(() => {
+        const { pathname, search } = locationRef.current;
+        const from = `${pathname}${search}`;
+        // Primero la navegación: así PrivateRoute no pisa el aviso de sesión expirada.
+        if (pathname !== "/login") {
+          saveReturnTo(from);
+          markSessionExpired();
+          navigate("/login", { replace: true, state: { from, expired: true } });
+        }
+        logout();
+      }),
+    [logout, navigate]
+  );
+
+  // ── Catálogo de actividades (público), con reintentos si el backend tarda en despertar ──
+  useEffect(() => {
+    let cancelled = false;
+    let timer = null;
+    let attempts = 0;
+    const load = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || "/api";
-        const res = await fetch(`${apiUrl}/activities`);
-        if (res.ok) {
-          const data = await res.json();
-          const map = {};
-          data.forEach((act) => {
-            map[act.name] = { id: act.id, type: act.type };
-          });
-          setActivitiesMap(map);
-        } else if (attempts < MAX_ATTEMPTS) {
-          attempts++;
-          setTimeout(fetchActivities, 2000 * attempts);
-        }
+        const data = await api.get("/activities", { auth: false });
+        if (!cancelled) setActivities(Array.isArray(data) ? data : data?.activities || []);
       } catch (err) {
-        if (attempts < MAX_ATTEMPTS) {
-          attempts++;
-          setTimeout(fetchActivities, 2000 * attempts);
-        } else {
-          console.warn("Backend no disponible para cargar actividades.");
-        }
+        attempts += 1;
+        if (!cancelled && attempts < 6) timer = setTimeout(load, 2000 * attempts);
+        else if (!cancelled) console.warn("Backend no disponible para cargar actividades.", err);
       }
     };
-    fetchActivities();
+    load();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, []);
 
-  // ── Sync progreso desde BD cuando hay sesión ───────────────────────────
-  const syncUserProgress = useCallback(async (userId = user?.id, userToken = token) => {
-    console.log("App.jsx: syncUserProgress started. userId:", userId, "userToken:", userToken ? "exists" : "null");
-    if (!userToken || !userId) return;
+  const activitiesByName = useMemo(() => {
+    const map = {};
+    (activities || []).forEach((a) => {
+      map[a.name] = { id: a.id, type: a.type, name: a.name };
+    });
+    return map;
+  }, [activities]);
 
+  const activitiesById = useMemo(() => {
+    const map = {};
+    (activities || []).forEach((a) => {
+      map[a.id] = { id: a.id, type: a.type, name: a.name };
+    });
+    return map;
+  }, [activities]);
+
+  // ── Progreso del usuario desde BD (GET /user) ─────────────────────────────
+  const syncUserProgress = useCallback(async () => {
+    if (!getStoredToken()) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      const res = await fetch(`${apiUrl}/users/${userId}?t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${userToken}` },
-      });
-      console.log("App.jsx: syncUserProgress fetch response status:", res.status);
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 404) {
-          console.warn("Sesión inválida o usuario no encontrado. Limpiando sesión local.");
-          setUser({
-            name: null,
-            lastname: null,
-            email: null,
-            avatar: {
-              bodyOptions: 0,
-              hairOptions: 0,
-              clothingOptions: 0,
-              shoeOptions: 0,
-              eyesOptions: 0,
-              glassesAccessoryOptions: 0,
-              headAccessoryOptions: 0,
-              bodyAccessoryOptions: 0,
-            },
-          });
-          setToken(null);
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-        }
-        return;
-      }
-
-      const data = await res.json();
+      const data = await api.get("/user");
       const dbUser = data.user || data;
       setUser((old) => ({ ...old, ...dbUser }));
+      setProgress(progressFromUser(dbUser));
+      setProgressReady(true);
 
-      const dbActivities = dbUser.activities || [];
-      const dbPreferences = dbUser.preferredActivities || [];
-
-      const answersMap = {
-        kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
-        conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
-        patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
-      };
-
-      const newXperiencias = {};
-      const newXecretos = {};
-      const newChecklist = {};
-      const newXelfies = {};
-
-      dbActivities.forEach((act) => {
-        if (!(act.userActivity && act.userActivity.completedAt)) return;
-        if (act.type === "Xperiencia") newXperiencias[act.name] = answersMap[act.name] || "a";
-        else if (act.type === "Xecreto")  newXecretos[act.name] = true;
-        else if (act.type === "Event")    newChecklist[act.name] = true;
-        else if (act.type === "Xelfie")   newXelfies[act.name] = true;
-      });
-
-      const newCalXperiencias = {};
-      const newCalChecklist = {};
-      dbPreferences.forEach((pref) => {
-        const rating = pref.userPreference?.rating;
-        if (!rating) return;
-        if (pref.type === "Xperiencia") newCalXperiencias[pref.name] = rating;
-        else if (pref.type === "Event") newCalChecklist[pref.name] = rating;
-      });
-
-      setProgresoXperiencias(newXperiencias);
-      setXecretos(newXecretos);
-      setProgresoChecklist(newChecklist);
-      setProgresoXelfies(newXelfies);
-      setCalificacionesXperiencias(newCalXperiencias);
-      setCalificacionesChecklist(newCalChecklist);
-
-      // Fetch family tree if user belongs to one
       if (dbUser.familyTreeId) {
         try {
-          const fRes = await fetch(`${apiUrl}/family-trees/${dbUser.familyTreeId}?t=${Date.now()}`, {
-            headers: { Authorization: `Bearer ${userToken}` },
-          });
-          if (fRes.ok) {
-            const fData = await fRes.json();
-            setFamilyTree(fData.familyTree || fData);
-          }
-        } catch (_) {}
+          const ft = await api.get(`/family-trees/${dbUser.familyTreeId}`);
+          setFamilyTree(ft.familyTree || ft);
+        } catch (err) {
+          if (err instanceof ApiError && err.status === 403) setFamilyTree(null);
+        }
       } else {
         setFamilyTree(null);
       }
     } catch (err) {
-      console.error("Error syncing user progress:", err);
+      // 401 ya lo maneja el cliente; sin red se queda con lo que hay.
+      if (!(err instanceof ApiError && err.status === 401)) console.warn("No se pudo sincronizar el progreso:", err);
+      setProgressReady(true);
     }
-  }, [token, user?.id]);
+  }, []);
 
+  // Un solo sync por sesión (el login ya no lo dispara por su cuenta).
   useEffect(() => {
-    console.log("App.jsx: syncUserProgress useEffect triggered. token:", token ? "exists" : "null", "user?.id:", user?.id);
     if (!token) {
-      setProgresoXperiencias({});
-      setXecretos({});
-      setProgresoChecklist({});
-      setProgresoXelfies({});
-      setCalificacionesXperiencias({});
-      setCalificacionesChecklist({});
+      setProgress(EMPTY_PROGRESS);
+      setProgressReady(false);
       return;
     }
-    if (user?.id) {
-      syncUserProgress();
+    setProgressReady(false);
+    syncUserProgress();
+  }, [token, syncUserProgress]);
+
+  // ── Cola de progreso pendiente ────────────────────────────────────────────
+  const userId = user?.id;
+  useEffect(() => {
+    const update = () => setPendingCount(userId ? progressQueue.pendingFor(userId).length : 0);
+    update();
+    return progressQueue.subscribe(update);
+  }, [userId]);
+
+  const activitiesByIdRef = useRef(activitiesById);
+  activitiesByIdRef.current = activitiesById;
+
+  const flushPending = useCallback(async () => {
+    if (!userId || !getStoredToken()) return;
+    const { done, rejected } = await progressQueue.flush(userId);
+    if (done.length || rejected.length) {
+      // El servidor es la fuente de verdad: refresca para quitar lo rechazado.
+      if (rejected.length) syncUserProgress();
+      else
+        done.forEach((item) => {
+          const act = activitiesByIdRef.current[item.activityId];
+          if (act) setProgress((p) => markCompleted(p, act));
+        });
     }
-  }, [token, user?.id, syncUserProgress]);
-
-  const answersMap = {
-    kayak: "a", vinil: "b", caracola: "c", tv: "b", teatro: "a", salvavidas: "c",
-    conejo: "a", camion: "b", estrella: "a", mascarajaguar: "b", piscina: "b",
-    patin: "a", tobogan: "a", xpiral: "a", poolpo: "a", drink: "a", xorbeteria: "a",
-  };
-
-  const registerActivityCompleted = async (activityName) => {
-    const activity = activitiesMap[activityName];
-
-    // 1. Actualizar state inmediatamente (UI reactiva sin esperar backend)
-    if (activity) {
-      if (activity.type === "Xperiencia") {
-        setProgresoXperiencias((prev) => ({ ...prev, [activityName]: answersMap[activityName] || "a" }));
-      } else if (activity.type === "Xecreto") {
-        setXecretos((prev) => ({ ...prev, [activityName]: true }));
-      } else if (activity.type === "Event") {
-        setProgresoChecklist((prev) => ({ ...prev, [activityName]: true }));
-      } else if (activity.type === "Xelfie") {
-        setProgresoXelfies((prev) => ({ ...prev, [activityName]: true }));
-      }
-    }
-
-    // 2. Persistir en BD
-    if (!token || !user?.id || !activity) return;
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      await fetch(`${apiUrl}/user-activities`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ userId: user.id, activityId: activity.id }),
-      });
-    } catch (err) {
-      console.error("Error registering activity on backend:", err);
-    }
-  };
-
-  const saveActivityRating = async (activityName, rating) => {
-    const activity = activitiesMap[activityName];
-
-    // 1. Actualizar state inmediatamente
-    if (activity) {
-      if (activity.type === "Xperiencia") {
-        setCalificacionesXperiencias((prev) => ({ ...prev, [activityName]: rating }));
-      } else if (activity.type === "Event") {
-        setCalificacionesChecklist((prev) => ({ ...prev, [activityName]: rating }));
-      }
-    }
-
-    // 2. Persistir en BD
-    if (!token || !user?.id || !activity) return;
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL || "/api";
-      await fetch(`${apiUrl}/user-preferences`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ userId: user.id, activityId: activity.id, rating, comment: "Calificación desde la App" }),
-      });
-    } catch (err) {
-      console.error("Error saving rating on backend:", err);
-    }
-  };
+  }, [userId, syncUserProgress]);
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(user));
+    if (!token || !userId) return;
+    flushPending();
+    const onOnline = () => flushPending();
+    const onVisible = () => document.visibilityState === "visible" && flushPending();
+    window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onVisible);
+    const interval = setInterval(() => {
+      if (progressQueue.pendingFor(userId).length) flushPending();
+    }, 30000);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
+      clearInterval(interval);
+    };
+  }, [token, userId, flushPending]);
+
+  /**
+   * Registra una actividad completada (POST /user-activities {activityId, code?, answer?}).
+   * Devuelve {ok, already?, queued?, status?, error?}. Solo actualiza la UI si el
+   * servidor confirmó; si no hay red la encola y la marca como pendiente.
+   */
+  const registerActivityCompleted = useCallback(
+    async (activityName, { code, answer, activityId, queue = true } = {}) => {
+      const activity = activityId ? activitiesById[activityId] : activitiesByName[activityName];
+      if (!activity) return { ok: false, error: "activity_not_found" };
+      if (!getStoredToken() || !userId) return { ok: false, status: 401, error: "no_session" };
+
+      const payload = { activityId: activity.id, code, answer };
+      try {
+        const data = await api.post("/user-activities", progressQueue.buildBody(payload));
+        setProgress((p) => markCompleted(p, activity));
+        return { ok: true, activity, data };
+      } catch (err) {
+        if (err instanceof ApiError && err.retryable && !queue) {
+          return { ok: false, activity, network: true, error: "network_error" };
+        }
+        if (err instanceof ApiError && err.retryable) {
+          progressQueue.enqueue(userId, { ...payload, name: activity.name });
+          setProgress((p) => markCompleted(p, activity));
+          return { ok: false, queued: true, activity, error: "network_error" };
+        }
+        return {
+          ok: false,
+          activity,
+          status: err.status,
+          error: err.code || err.message,
+          retryAfter: err.data?.retryAfter,
+        };
+      }
+    },
+    [activitiesById, activitiesByName, userId]
+  );
+
+  const saveActivityRating = useCallback(
+    async (activityName, rating) => {
+      const activity = activitiesByName[activityName];
+      if (!activity) return;
+      setProgress((p) =>
+        activity.type === "Xperiencia"
+          ? { ...p, calXperiencias: { ...p.calXperiencias, [activityName]: rating } }
+          : activity.type === "Event"
+            ? { ...p, calChecklist: { ...p.calChecklist, [activityName]: rating } }
+            : p
+      );
+      if (!getStoredToken()) return;
+      try {
+        await api.post("/user-preferences", { activityId: activity.id, rating });
+      } catch (err) {
+        console.warn("No se pudo guardar la calificación:", err);
+      }
+    },
+    [activitiesByName]
+  );
+
+  useEffect(() => {
+    try {
+      // Solo lo necesario para pintar la UI al recargar; el progreso vive en el servidor.
+      if (user?.id) {
+        const { id, name, lastname, casa, avatar, birthdate, pronouns, familyTreeId } = user;
+        localStorage.setItem("user", JSON.stringify({ id, name, lastname, casa, avatar, birthdate, pronouns, familyTreeId }));
+      }
+    } catch {
+      /* sin almacenamiento */
+    }
   }, [user]);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
     localStorage.setItem("soundSetting", soundSetting);
   }, [soundSetting]);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
     localStorage.setItem("ajuste_musica", String(musicEnabled));
   }, [musicEnabled]);
 
@@ -334,17 +362,22 @@ function App() {
       setUser,
       token,
       setToken,
-      activitiesMap,
+      startSession,
+      logout,
+      activitiesMap: activitiesByName,
+      activitiesById,
+      activitiesReady: activities !== null,
       registerActivityCompleted,
       saveActivityRating,
       syncUserProgress,
-      // Progreso — desde BD, sin localStorage
-      progresoXperiencias,
-      xecretos,
-      progresoChecklist,
-      progresoXelfies,
-      calificacionesXperiencias,
-      calificacionesChecklist,
+      progressReady,
+      pendingCount,
+      progresoXperiencias: progress.xperiencias,
+      xecretos: progress.xecretos,
+      progresoChecklist: progress.checklist,
+      progresoXelfies: progress.xelfies,
+      calificacionesXperiencias: progress.calXperiencias,
+      calificacionesChecklist: progress.calChecklist,
       familyTree,
       setFamilyTree,
       soundSetting,
@@ -359,14 +392,18 @@ function App() {
     [
       user,
       token,
-      activitiesMap,
+      setToken,
+      startSession,
+      logout,
+      activitiesByName,
+      activitiesById,
+      activities,
+      registerActivityCompleted,
+      saveActivityRating,
       syncUserProgress,
-      progresoXperiencias,
-      xecretos,
-      progresoChecklist,
-      progresoXelfies,
-      calificacionesXperiencias,
-      calificacionesChecklist,
+      progressReady,
+      pendingCount,
+      progress,
       familyTree,
       soundSetting,
       musicEnabled,
@@ -377,54 +414,56 @@ function App() {
     ]
   );
 
+  const guard = (el) => <PrivateRoute>{el}</PrivateRoute>;
+
   return (
     <XafariContext.Provider value={contextValue}>
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          {/* ── Públicas — siempre accesibles ── */}
-          <Route path="/" element={<Welcome showSplashInitial={true} />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/privacy" element={<PrivacyNotice />} />
-          <Route path="/terms" element={<TermsConditions />} />
+      <Suspense fallback={<div className="h-full w-full bg-[#233C15]" aria-busy="true" />}>
+        <SyncStatus />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            {/* ── Públicas ── */}
+            <Route path="/" element={<Welcome showSplashInitial={true} />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/privacy" element={<PrivacyNotice />} />
+            <Route path="/terms" element={<TermsConditions />} />
 
-          {/* ── Flujo de registro — sin token aún ── */}
-          <Route path="/welcome" element={<Welcome showSplashInitial={false} />} />
-          <Route path="/intro" element={<Intro />} />
-          <Route path="/intro-maya" element={<IntroMaya />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register-step1" element={<RegisterStep1 />} />
-          <Route path="/register-step2" element={<RegisterStep2 />} />
+            {/* ── Flujo de registro — sin token aún ── */}
+            <Route path="/welcome" element={<Welcome showSplashInitial={false} />} />
+            <Route path="/intro" element={<Intro />} />
+            <Route path="/intro-maya" element={<IntroMaya />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/register-step1" element={<Navigate to="/register" replace />} />
 
-          {/* ── Protegidas — requieren sesión iniciada ── */}
-          <Route path="/create-avatar" element={<PrivateRoute><AvatarSelection /></PrivateRoute>} />
-          <Route path="/bienvenida" element={<PrivateRoute><BienvenidaGuacamaya /></PrivateRoute>} />
-          <Route path="/tutorial" element={<PrivateRoute><TutorialArbol /></PrivateRoute>} />
-          <Route path="/treeoflife" element={<PrivateRoute><TreeOfLife /></PrivateRoute>} />
-          <Route path="/edit-avatar" element={<PrivateRoute><EditAvatar /></PrivateRoute>} />
-          <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
-          <Route path="/minimalqr" element={<PrivateRoute><MinimalQr /></PrivateRoute>} />
-          <Route
-            path="/welcome-animation-login"
-            element={<PrivateRoute><WelcomeAnimationLogin /></PrivateRoute>}
-          />
-          <Route path="/welcome-animation" element={<PrivateRoute><WelcomeAnimation /></PrivateRoute>} />
-          <Route
-            path="/debug-scan"
-            element={
-              <PrivateRoute>
-                <div className="fixed inset-0 z-50 bg-black">
-                  <XecretoRegister onClose={() => window.history.back()} />
-                </div>
-              </PrivateRoute>
-            }
-          />
-          {/* ── Deep link QR xecretos — ruta que abre el QR nativo del teléfono ── */}
-          <Route
-            path="/xecreto/:id"
-            element={<PrivateRoute><XecretoDeepLink /></PrivateRoute>}
-          />
-        </Routes>
-      </AnimatePresence>
+            {/* ── Protegidas ── */}
+            <Route path="/create-avatar" element={guard(<AvatarSelection />)} />
+            <Route path="/bienvenida" element={guard(<BienvenidaGuacamaya />)} />
+            <Route path="/tutorial" element={guard(<TutorialArbol />)} />
+            <Route path="/treeoflife" element={guard(<TreeOfLife />)} />
+            <Route path="/perfil" element={guard(<Perfil />)} />
+            <Route path="/welcome-animation-login" element={guard(<WelcomeAnimationLogin />)} />
+            <Route path="/welcome-animation" element={guard(<WelcomeAnimation />)} />
+
+            {/* ── QR de actividades: /q/<activityId>?k=<code> (ver CONTRATO-API §4) ── */}
+            <Route path="/q/:activityId" element={guard(<QrActivity />)} />
+            {/* QR viejos (/xecreto/xecreto1): ya no traen código; se explica y se manda al árbol */}
+            <Route path="/xecreto/:legacyKey" element={guard(<QrActivity legacy />)} />
+
+            {IS_DEV && (
+              <Route
+                path="/debug-scan"
+                element={guard(
+                  <div className="fixed inset-0 z-50 bg-black">
+                    <XecretoRegister onClose={() => window.history.back()} />
+                  </div>
+                )}
+              />
+            )}
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AnimatePresence>
+      </Suspense>
     </XafariContext.Provider>
   );
 }

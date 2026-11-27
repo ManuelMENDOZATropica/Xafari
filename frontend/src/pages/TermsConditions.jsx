@@ -3,32 +3,32 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function TermsConditions() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const accountItems = useMemo(
     () => t("terms.accountList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
+    [t]
   );
   const playItems = useMemo(
     () => t("terms.playList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
+    [t]
   );
   const conductItems = useMemo(
     () => t("terms.conductList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
+    [t]
   );
   const dataItems = useMemo(
     () => t("terms.dataList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
+    [t]
   );
 
   return (
     <div className="relative min-h-screen overflow-hidden font-apercu text-gray-800">
       <div className="absolute inset-0">
         <img
-          src="/img/fondoArbolDeLaVida.png"
-          alt="Fondo Xafari"
+          src="/arbol/fondoArbol.webp"
+          alt=""
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-white/85 backdrop-blur-sm" />

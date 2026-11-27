@@ -7,6 +7,7 @@ import XperienciasXtop from "@/components/XperienciasXtop";
 import Xelfies from "@/components/xelfies";
 import XecretosCards from "@/components/XecretosCards";
 import SoundMenu from "@/components/SoundMenu";
+import { takeReturnTo } from "@/lib/returnTo";
 
 export default function TutorialArbol() {
   const { t } = useTranslation();
@@ -17,7 +18,8 @@ export default function TutorialArbol() {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      navigate("/treeoflife");
+      // Si llegó por un QR sin sesión, al terminar el onboarding vuelve a ese QR.
+      navigate(takeReturnTo("/treeoflife"));
     }
   };
 
@@ -61,8 +63,8 @@ export default function TutorialArbol() {
             style={{ position: "absolute", inset: 0, zIndex: 55, pointerEvents: "none" }}
           >
             <img
-              src="/arbol/Arbol de la vida 1.png"
-              alt="Árbol de la vida"
+              src="/arbol/arbol.webp"
+              alt=""
               style={{
                 position: "absolute",
                 top: "10%",
@@ -561,7 +563,7 @@ export default function TutorialArbol() {
                 marginLeft: step === 3 ? "10%" : undefined,
               }}>
                 <img
-                  src={`/img/tuto${step + 1}.png`}
+                  src={`/img/tuto${step + 1}.webp`}
                   alt="Guacamaya"
                   style={{
                     width: "100%",

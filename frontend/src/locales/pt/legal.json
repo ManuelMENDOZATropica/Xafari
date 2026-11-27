@@ -1,28 +1,80 @@
 {
   "privacy": {
-    "title": "Aviso de Privacidade, Cookies e Uso de Dados",
-    "updated": "Última atualização: Abril de 2024",
-    "intro": "Na Xafari valorizamos a sua confiança. Este aviso explica quais informações coletamos, como as utilizamos e quais opções você tem para manter o controle.",
-    "privacyTitle": "Privacidade e proteção de dados",
-    "privacyList": [
-      "Coletamos apenas os dados necessários para criar sua conta e personalizar a experiência no Xafari.",
-      "Seu progresso e suas configurações são armazenados com segurança e criptografia.",
-      "Você pode solicitar alterações ou a exclusão das suas informações entrando em contato com nossa equipe de suporte."
+    "title": "Aviso de privacidade",
+    "updated": "Última atualização: [PENDENTE: data de publicação desta versão]",
+    "intro": "Este aviso explica quais dados pessoais o Xafari coleta, para que são usados, onde ficam armazenados e como você pode exercer seus direitos, conforme a Lei Federal de Proteção de Dados Pessoais em Posse de Particulares do México (LFPDPPP).",
+    "pendingNote": "Os textos marcados como [PENDENTE] devem ser completados pelo responsável e sua área jurídica antes da publicação.",
+    "sections": [
+      {
+        "title": "Responsável",
+        "items": [
+          "Responsável pelo tratamento: [PENDENTE: razão social].",
+          "Endereço: [PENDENTE: endereço completo do responsável].",
+          "Contato da área de privacidade: [PENDENTE: e-mail e, se houver, telefone]."
+        ]
+      },
+      {
+        "title": "Dados que coletamos",
+        "items": [
+          "No cadastro: nome, sobrenome, e-mail, senha, data de nascimento e a casa (hotel) onde você está hospedado.",
+          "Se você adicionar ao perfil: pronomes ou gênero e número da reserva.",
+          "Enquanto você joga: seu avatar, as atividades que conclui (xecretos, Xperiências, Xelfies e checklist), suas avaliações e, se entrar em uma, sua família no jogo.",
+          "A câmera é usada apenas para ler códigos QR no seu celular; não guardamos nem enviamos imagens."
+        ]
+      },
+      {
+        "title": "Menores de idade",
+        "items": [
+          "Se você tem menos de 18 anos, sua mãe, pai ou responsável deve ler este aviso e autorizar seu cadastro; será pedido que você confirme isso ao criar a conta.",
+          "[PENDENTE: idade mínima e mecanismo de verificação do consentimento definidos pela área jurídica]."
+        ]
+      },
+      {
+        "title": "Finalidades",
+        "items": [
+          "Necessárias: criar e administrar sua conta, salvar seu progresso, mostrar sua árvore, o pódio e o modo família, e dar suporte.",
+          "No pódio público aparecem seu primeiro nome, sua casa, seu avatar e seus pontos; no modo família, os membros da sua família veem seu nome, avatar, casa e progresso.",
+          "[PENDENTE: finalidades secundárias (por exemplo, estatísticas ou comunicações) e como recusá-las]."
+        ]
+      },
+      {
+        "title": "O que fica no seu celular",
+        "items": [
+          "O Xafari não usa cookies. Usa o armazenamento local do navegador (localStorage) para guardar sua sessão, dados básicos do perfil, idioma, ajustes de som e o progresso ainda não enviado quando não há conexão.",
+          "Ao sair, a sessão e os dados do perfil são apagados desse celular. Você também pode apagá-los nas configurações do navegador."
+        ]
+      },
+      {
+        "title": "Onde ficam os dados e transferências",
+        "items": [
+          "O app é hospedado pela Vercel Inc. e o servidor e o banco de dados pela Render Services, Inc., ambos nos Estados Unidos, que atuam como operadores em nome do responsável.",
+          "[PENDENTE: confirmar provedores e localização dos servidores, e se há transferências a terceiros (por exemplo, empresas do grupo) e sua finalidade]."
+        ]
+      },
+      {
+        "title": "Segurança",
+        "items": [
+          "A conexão com o servidor usa HTTPS e as senhas são guardadas com um algoritmo de hash, não em texto legível.",
+          "Só você pode ver e alterar os dados da sua conta com a sessão iniciada."
+        ]
+      },
+      {
+        "title": "Seus direitos (ARCO) e revogação do consentimento",
+        "items": [
+          "Você pode acessar, retificar, cancelar ou se opor ao uso dos seus dados, e revogar seu consentimento.",
+          "Meio para enviar sua solicitação: [PENDENTE: e-mail ou formulário].",
+          "Prazos e requisitos de resposta: [PENDENTE: conforme a LFPDPPP]."
+        ]
+      },
+      {
+        "title": "Mudanças neste aviso",
+        "items": [
+          "[PENDENTE: como as mudanças neste aviso de privacidade serão comunicadas]."
+        ]
+      }
     ],
-    "cookiesTitle": "Uso de cookies",
-    "cookiesList": [
-      "Utilizamos cookies essenciais para lembrar sua sessão e suas preferências de idioma e som.",
-      "Esses cookies não são compartilhados com terceiros nem utilizados para fins publicitários.",
-      "Você pode desativar os cookies no navegador, mas algumas funcionalidades podem deixar de funcionar corretamente."
-    ],
-    "dataUseTitle": "Como utilizamos seus dados",
-    "dataUseList": [
-      "Personalizar a experiência do jogo e mostrar conteúdo de acordo com o seu progresso.",
-      "Melhorar o desempenho da plataforma e detectar possíveis problemas técnicos.",
-      "Enviar comunicações importantes sobre atualizações do serviço ou questões de segurança."
-    ],
-    "contactTitle": "Precisa de ajuda?",
-    "contactDescription": "Se tiver dúvidas sobre este aviso ou desejar exercer seus direitos de privacidade, escreva para privacidade@xafari.com."
+    "contactTitle": "Dúvidas sobre sua privacidade?",
+    "contactDescription": "Escreva para [PENDENTE: e-mail da área de privacidade]."
   },
   "terms": {
     "title": "Termos e condições do Xafari",

@@ -1,38 +1,17 @@
 import { useContext, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
 import XecretoRegister from "./XecretoRegister";
+import { GUARDIANES } from "@/data/guardianes";
+import { api } from "@/lib/api";
 
-// Mapa de nombre de actividad → nombre visible del guardián
-const GUARDIAN_NAMES = {
-  xecreto1:  "Mono",
-  xecreto2:  "Rana",
-  xecreto3:  "Jaguar",
-  xecreto4:  "Guacamaya",
-  xecreto5:  "Serpiente",
-  xecreto6:  "Venado",
-  xecreto7:  "Búho",
-  xecreto8:  "Mariposa",
-  xecreto9:  "Flamenco",
-  xecreto10: "Coatí",
-};
-
-// Imagen del árbol por guardián
-const GUARDIAN_IMG = {
-  xecreto1:  "/arbol/guardianes/Mono Casa Vida.png",
-  xecreto2:  "/arbol/guardianes/Rana Casa Agua.png",
-  xecreto3:  "/arbol/guardianes/Jaguar Casa Sol.png",
-  xecreto4:  "/arbol/guardianes/Guacamaya Casa Fuego.png",
-  xecreto5:  "/arbol/guardianes/Serpiente Casa Espiral.png",
-  xecreto6:  "/arbol/guardianes/Venado Casa Tierra.png",
-  xecreto7:  "/arbol/guardianes/Búho Casa Eclipse.png",
-  xecreto8:  "/arbol/guardianes/Mariposa Casa Viento.png",
-  xecreto9:  "/arbol/guardianes/Flamenco Casa Sol.png",
-  xecreto10: "/arbol/guardianes/Coatí Casa Luna.png.png",
-};
+const GUARDIAN_NAMES = Object.fromEntries(Object.entries(GUARDIANES).map(([k, v]) => [k, v.guardian]));
+const GUARDIAN_IMG = Object.fromEntries(Object.entries(GUARDIANES).map(([k, v]) => [k, v.img]));
 
 export default function XecretosCards({ onClose }) {
-  const { xecretos, registerActivityCompleted } = useContext(XafariContext);
+  const { t } = useTranslation();
+  const { xecretos } = useContext(XafariContext);
   const [xecretosList, setXecretosList] = useState(() =>
     Object.entries(GUARDIAN_NAMES).map(([key, name]) => ({
       key,
@@ -46,9 +25,11 @@ export default function XecretosCards({ onClose }) {
 
   // Fetch xecretos desde la BD
   useEffect(() => {
-    fetch("/api/xecretos")
-      .then((r) => r.json())
+    const controller = new AbortController();
+    api
+      .get("/xecretos", { auth: false, signal: controller.signal })
       .then((data) => {
+        if (!Array.isArray(data)) return;
         // data es array de { id, activity: { name, description, location } }
         const ordenados = Object.keys(GUARDIAN_NAMES).map((key) => {
           const found = data.find((x) => x.activity?.name === key);
@@ -62,12 +43,12 @@ export default function XecretosCards({ onClose }) {
         setXecretosList(ordenados);
       })
       .catch(() => {
-        // Fallback con datos hardcoded si la API falla
-        setXecretosList(
-          Object.entries(GUARDIAN_NAMES).map(([key, name]) => ({ key, name, description: "", location: "" }))
-        );
+        /* sin API se queda la lista base (nombres de guardianes) */
       })
-      .finally(() => setLoadingList(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadingList(false);
+      });
+    return () => controller.abort();
   }, []);
 
   return (
@@ -83,7 +64,7 @@ export default function XecretosCards({ onClose }) {
               </div>
             ) : (
               <div className="grid gap-3">
-                {xecretosList.map((xecreto, idx) => {
+                {xecretosList.map((xecreto) => {
                   const completado = !!xecretos[xecreto.key];
 
                   return (
@@ -101,15 +82,15 @@ export default function XecretosCards({ onClose }) {
                               className="text-sm font-bold leading-tight mb-1"
                               style={{ color: "#3D1A00" }}
                             >
-                              Guardián {xecreto.name}
+                              {t("qr.guardian", { name: xecreto.name })}
                             </h2>
                             {xecreto.description ? (
                               <p className="text-xs leading-relaxed" style={{ color: "#3D1A00" }}>
                                 {xecreto.description}
                               </p>
                             ) : (
-                              <p className="text-xs leading-relaxed opacity-50 italic" style={{ color: "#3D1A00" }}>
-                                Encuéntralo escondido en el resort…
+                              <p className="text-xs leading-relaxed" style={{ color: "#5a3a18" }}>
+                                {t("xecretoHidden")}
                               </p>
                             )}
                           </div>
@@ -120,14 +101,14 @@ export default function XecretosCards({ onClose }) {
                             <div className="relative w-[34px] h-[34px]">
                               <img
                                 src="/iconos/checkXperiencias.png"
-                                alt="Pendiente"
+                                alt=""
                                 className="w-full h-full object-contain"
                               />
                               {completado && (
                                 <div className="absolute" style={{ inset: "10%" }}>
                                   <motion.img
                                     src="/iconos/correctXperiencias.png"
-                                    alt="Completado"
+                                    alt={t("completed")}
                                     className="w-full h-full object-contain"
                                     initial={{ opacity: 0, scale: 0.4 }}
                                     animate={{ opacity: 1, scale: 1 }}
@@ -140,7 +121,7 @@ export default function XecretosCards({ onClose }) {
                             {/* Insignia del guardián — doble tamaño */}
                             <img
                               src={GUARDIAN_IMG[xecreto.key]}
-                              alt={xecreto.name}
+                              alt=""
                               className="w-24 h-24 object-contain"
                               style={{ opacity: completado ? 1 : 0.35 }}
                             />
@@ -152,6 +133,7 @@ export default function XecretosCards({ onClose }) {
                         {!completado && (
                           <div className="px-4 pb-4">
                             <button
+                              type="button"
                               onClick={() => setShowScanner(true)}
                               className="flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[11px] font-bold transition-all active:scale-95"
                               style={{
@@ -160,13 +142,13 @@ export default function XecretosCards({ onClose }) {
                                 border: "1.5px solid rgba(61,26,0,0.15)",
                               }}
                             >
-                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <rect x="3" y="3" width="7" height="7" rx="1" />
                                 <rect x="14" y="3" width="7" height="7" rx="1" />
                                 <rect x="3" y="14" width="7" height="7" rx="1" />
                                 <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
                               </svg>
-                              Escanear guardián
+                              {t("scanGuardian")}
                             </button>
                           </div>
                         )}

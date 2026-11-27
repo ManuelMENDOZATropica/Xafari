@@ -70,7 +70,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: "Volume CT", sans-serif;
+  font-family: "Volume TC", sans-serif;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
@@ -97,121 +97,60 @@ button:focus-visible {
 }
 
 
+/* Fuentes en woff2 (convertidas de OTF con fonttools). Solo los pesos que usa la app:
+   400, 400 italic, 500, 700 (también cubre 600) y 900 (también cubre 800). */
 @font-face {
   font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Thin.otf") format("opentype");
-  font-weight: 100;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Thin Italic.otf") format("opentype");
-  font-weight: 100;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Extra Light.otf") format("opentype");
-  font-weight: 200;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Extra Light Italic.otf") format("opentype");
-  font-weight: 200;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Light.otf") format("opentype");
-  font-weight: 300;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Light Italic.otf") format("opentype");
-  font-weight: 300;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Regular.otf") format("opentype");
+  src: url("/fonts/apercu-pro-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Italic.otf") format("opentype");
-  font-weight: 400;
-  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Medium.otf") format("opentype");
+  src: url("/fonts/apercu-pro-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/apercu-pro-medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Medium Italic.otf") format("opentype");
-  font-weight: 500;
-  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Bold.otf") format("opentype");
+  src: url("/fonts/apercu-pro-bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Bold Italic.otf") format("opentype");
-  font-weight: 700;
-  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Black.otf") format("opentype");
+  src: url("/fonts/apercu-pro-black.woff2") format("woff2");
   font-weight: 900;
   font-style: normal;
-}
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Black Italic.otf") format("opentype");
-  font-weight: 900;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Apercu Pro";
-  src: url("/fonts/Apercu Pro Regular.otf") format("opentype");
-  font-weight: 400;
-  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Volume TC";
-  src: url("/fonts/VolumeTC-RusticSolid.otf") format("opentype");
+  src: url("/fonts/volumetc-rusticsolid.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
-}
-
-@font-face {
-  font-family: "Volume TC";
-  src: url("/fonts/VolumeTC-RusticSolidItalic.otf") format("opentype");
-  font-weight: 700;
-  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Volume TC Sans";
-  src: url("/fonts/VolumeTCSans-RusticSolid.otf") format("opentype");
+  src: url("/fonts/volumetcsans-rusticsolid.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }

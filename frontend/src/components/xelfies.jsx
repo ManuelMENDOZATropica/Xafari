@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import XafariContext from "./XafariContext";
+import { useTranslation } from "react-i18next";
 import QRScannerModal from "./QRScannerModal";
 
 const XELFIES = [
@@ -54,8 +55,10 @@ const XELFIES = [
   },
 ];
 
-export default function Xelfies({ onClose, onOpenMapa }) {
+export default function Xelfies({ onOpenMapa }) {
+  const { t } = useTranslation();
   const { registerActivityCompleted, progresoXelfies } = useContext(XafariContext);
+  const [errorXelfie, setErrorXelfie] = useState(null);
 
   const [completados, setCompletados] = useState(() => ({ ...progresoXelfies }));
 
@@ -63,10 +66,16 @@ export default function Xelfies({ onClose, onOpenMapa }) {
     setCompletados({ ...progresoXelfies });
   }, [progresoXelfies]);
 
-  const handleCompletar = (xelfie) => {
+  const handleCompletar = async (xelfie) => {
     if (completados[xelfie.activityName]) return;
+    setErrorXelfie(null);
     setCompletados((prev) => ({ ...prev, [xelfie.activityName]: true }));
-    registerActivityCompleted(xelfie.activityName);
+    const res = await registerActivityCompleted(xelfie.activityName);
+    if (!res.ok && !res.queued) {
+      // No se guardó: se revierte para no mostrar un avance falso.
+      setCompletados((prev) => ({ ...prev, [xelfie.activityName]: false }));
+      setErrorXelfie(xelfie.activityName);
+    }
   };
 
   const [scannerXelfie, setScannerXelfie] = useState(null); // xelfie que se está escaneando
@@ -93,7 +102,7 @@ export default function Xelfies({ onClose, onOpenMapa }) {
           {/* Lista de tarjetas — igual padding que XperienciasXtop */}
           <div className="flex-1 overflow-y-auto px-3 pb-[75px] pt-3">
             <div className="grid gap-3">
-              {XELFIES.map((xelfie, idx) => {
+              {XELFIES.map((xelfie) => {
                 const completado = !!completados[xelfie.activityName];
 
                 return (
@@ -110,21 +119,21 @@ export default function Xelfies({ onClose, onOpenMapa }) {
                           className="flex-1 pr-3 text-sm font-bold leading-tight"
                           style={{ color: "#3D1A00" }}
                         >
-                          {xelfie.lugar}
+                          {t(`xelfiePlaces.${xelfie.activityName}.title`, { defaultValue: xelfie.lugar })}
                         </h2>
 
                         {/* Checkbox — mismo icono que Xperiencias */}
                         <div className="relative flex-shrink-0 w-[34px] h-[34px]">
                           <img
                             src="/iconos/checkXperiencias.png"
-                            alt="Pendiente"
+                            alt=""
                             className="w-full h-full object-contain"
                           />
                           {completado && (
                             <div className="absolute" style={{ inset: "10%" }}>
                               <motion.img
                                 src="/iconos/correctXperiencias.png"
-                                alt="Completado"
+                                alt={t("completed")}
                                 className="w-full h-full object-contain"
                                 initial={{ opacity: 0, scale: 0.4 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -140,7 +149,7 @@ export default function Xelfies({ onClose, onOpenMapa }) {
                         className="text-xs px-4 pb-3 leading-relaxed"
                         style={{ color: "#3D1A00" }}
                       >
-                        {xelfie.descripcion}
+                        {t(`xelfiePlaces.${xelfie.activityName}.desc`, { defaultValue: xelfie.descripcion })}
                       </p>
 
                       {/* Botones */}
@@ -156,11 +165,11 @@ export default function Xelfies({ onClose, onOpenMapa }) {
                             border: "1.5px solid rgba(61,26,0,0.15)",
                           }}
                         >
-                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
-                          Ver en mapa
+                          {t("seeOnMap")}
                         </button>
 
                         {/* Tomar Xelfie */}
@@ -176,15 +185,18 @@ export default function Xelfies({ onClose, onOpenMapa }) {
                             border: "1.5px solid rgba(61,26,0,0.15)",
                           }}
                         >
-                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <rect x="3" y="3" width="7" height="7" rx="1" />
                             <rect x="14" y="3" width="7" height="7" rx="1" />
                             <rect x="3" y="14" width="7" height="7" rx="1" />
                             <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
                           </svg>
-                          {completado ? "¡Escaneado!" : "Escanear QR"}
+                          {completado ? t("xelfieScanned") : t("xelfieScan")}
                         </button>
                       </div>
+                      {errorXelfie === xelfie.activityName && (
+                        <p role="alert" className="px-4 pb-3 text-xs font-semibold text-red-800">{t("qr.errorBody")}</p>
+                      )}
                     </div>
                   </div>
                 );

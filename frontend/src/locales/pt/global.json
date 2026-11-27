@@ -10,7 +10,28 @@
   "discover_guardian": "Descubra o guardião",
   "menu": "Menu",
   "next": "Próximo",
-  "profile": "Perfil",
+  "profile": {
+    "editing": "Editando perfil…",
+    "tapToEdit": "Toque no seu avatar para editar",
+    "name": "Nome",
+    "lastname": "Sobrenome",
+    "birthdate": "Data de nascimento",
+    "gender": "Gênero",
+    "house": "Casa",
+    "select": "Selecione…",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "saving": "Salvando…",
+    "genders": {
+      "female": "Feminino",
+      "male": "Masculino",
+      "other": "Outro"
+    },
+    "errors": {
+      "nameRequired": "Escreva seu nome.",
+      "save": "Não foi possível salvar seu perfil. Tente novamente."
+    }
+  },
   "soundMenu": "Som",
   "soundFull": "Com som",
   "soundMedium": "Som médio",
@@ -60,5 +81,128 @@
   "tutorial": {
     "arbol": "Esta é a árvore da vida!",
     "tap": "Toque para continuar"
-  }
+  },
+  "loading": "Carregando…",
+  "logout": "Sair",
+  "editProfile": "Editar perfil",
+  "completed": "Concluído",
+  "xelfies": "Xelfies",
+  "xperiencias": "Xperiências",
+  "seeOnMap": "Ver no mapa",
+  "xelfieScan": "Escanear QR",
+  "xelfieScanned": "Escaneado!",
+  "xelfieConfirm": "Confirmar Xelfie",
+  "rateStars_one": "Avaliar com {{count}} estrela",
+  "rateStars_other": "Avaliar com {{count}} estrelas",
+  "faceOption": "Rosto {{n}}",
+  "avatarSaveError": "Não foi possível salvar seu avatar. Verifique sua conexão e tente novamente.",
+  "errors": {
+    "network": "Sem conexão. Verifique sua internet e tente novamente."
+  },
+  "loginErrors": {
+    "invalid": "E-mail ou senha incorretos.",
+    "tooMany": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+    "generic": "Não foi possível entrar. Tente novamente.",
+    "expired": "Sua sessão terminou. Entre novamente para continuar."
+  },
+  "sync": {
+    "saving_one": "Salvando {{count}} avanço…",
+    "saving_other": "Salvando {{count}} avanços…",
+    "offline_one": "Sem conexão: {{count}} avanço será salvo quando o sinal voltar",
+    "offline_other": "Sem conexão: {{count}} avanços serão salvos quando o sinal voltar"
+  },
+  "notFound": {
+    "title": "Esta página não existe",
+    "body": "O link pode estar incompleto ou ter mudado.",
+    "cta": "Voltar ao Xafari"
+  },
+  "qr": {
+    "validating": "Validando código…",
+    "guardian": "Guardião {{name}}",
+    "successGuardian": "Você descobriu o Guardião {{name}}!",
+    "successTitle": "Atividade registrada!",
+    "successBody": "Já está salva na sua Árvore da Vida.",
+    "already": "Você já tinha descoberto este xecreto.",
+    "queuedTitle": "Sem conexão",
+    "queuedBody": "Salvamos no seu celular e enviaremos assim que o sinal voltar.",
+    "invalidTitle": "Código inválido",
+    "invalidBody": "Este QR não é válido. Escaneie a placa de novo ou peça ajuda à equipe.",
+    "unknownTitle": "QR não reconhecido",
+    "unknownBody": "Este código não corresponde a nenhuma atividade do Xafari.",
+    "cooldownTitle": "Aguarde um momento",
+    "cooldownBody": "Você tentou há pouco. Tente novamente em alguns minutos.",
+    "needsAnswerTitle": "Responda à pergunta",
+    "needsAnswerBody": "Esta Xperiência é concluída respondendo à pergunta no app.",
+    "legacyTitle": "Este QR é de uma versão anterior",
+    "legacyBody": "Ele não pode mais ser usado. Procure a placa nova ou peça ajuda à equipe.",
+    "errorTitle": "Não foi possível registrar seu avanço",
+    "errorBody": "Houve um problema ao salvar. Verifique sua conexão e tente novamente.",
+    "retry": "Tentar novamente",
+    "goTree": "Ir para minha árvore",
+    "openXperiencias": "Abrir Xperiências",
+    "returning": "Voltando para a árvore…"
+  },
+  "scanner": {
+    "notXafari": "Este QR não é do Xafari.",
+    "notXecreto": "Este QR não é de um xecreto.",
+    "cameraUnavailable": "Câmera indisponível",
+    "cameraHint": "Permita o acesso à câmera nas configurações do navegador.",
+    "revealed": "Xecreto revelado!",
+    "newGuardian": "Você descobriu um novo guardião na sua Árvore da Vida.",
+    "how": "Como?"
+  },
+  "family": {
+    "title": "Modo Família",
+    "create": "Criar família",
+    "joinTitle": "Entrar em uma família",
+    "myFamily": "Minha família",
+    "intro": "Crie uma família ou entre em uma existente para compartilhar sua árvore Xafari.",
+    "scanToJoin": "Escanear QR para entrar",
+    "nameLabel": "Nome da família",
+    "namePlaceholder": "Ex.: Família Silva",
+    "maxMembers": "Máximo de {{count}} membros",
+    "creating": "Criando…",
+    "pointCamera": "Aponte a câmera para o QR de um familiar",
+    "joining": "Entrando…",
+    "membersCount": "{{count}} / {{max}} membros",
+    "leave": "Sair da família",
+    "admin": "admin",
+    "new": "Novo!",
+    "shareQr": "Compartilhe este QR para que entrem",
+    "inviteExpires": "O QR expira em 24 horas e é renovado automaticamente.",
+    "addMember": "Adicionar membro",
+    "errors": {
+      "nameRequired": "Dê um nome à sua família.",
+      "invalidInvite": "Este QR de família é inválido ou expirou. Peça um novo.",
+      "alreadyMember": "A família está cheia ou você já pertence a uma.",
+      "full": "A família já tem o número máximo de membros.",
+      "notFamilyQr": "Este QR não é de uma família Xafari.",
+      "generic": "Algo deu errado. Tente novamente."
+    }
+  },
+  "tree": {
+    "solo": "Solo",
+    "family": "Família",
+    "familyError": "Erro ao carregar a árvore da família"
+  },
+  "nav": {
+    "tree": "Árvore",
+    "map": "Mapa",
+    "podium": "Pódio",
+    "settings": "Ajustes"
+  },
+  "leaderboard": {
+    "loading": "Carregando pódio…",
+    "error": "Não foi possível carregar o pódio.",
+    "empty": "Sem resultados para este período",
+    "all": "Todos",
+    "period": {
+      "hoy": "Hoje",
+      "mes": "Mês",
+      "siempre": "Sempre"
+    }
+  },
+  "xecretoHidden": "Encontre-o escondido no resort…",
+  "scanGuardian": "Escanear guardião",
+  "mapAlt": "Mapa do local"
 }

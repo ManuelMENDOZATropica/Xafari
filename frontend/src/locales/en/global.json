@@ -10,7 +10,28 @@
   "discover_guardian": "Discover the guardian",
   "menu": "Menu",
   "next": "Next",
-  "profile": "Profile",
+  "profile": {
+    "editing": "Editing profile…",
+    "tapToEdit": "Tap your avatar to edit",
+    "name": "First name",
+    "lastname": "Last name",
+    "birthdate": "Date of birth",
+    "gender": "Gender",
+    "house": "House",
+    "select": "Select…",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "genders": {
+      "female": "Female",
+      "male": "Male",
+      "other": "Other"
+    },
+    "errors": {
+      "nameRequired": "Enter your name.",
+      "save": "We couldn't save your profile. Please try again."
+    }
+  },
   "soundMenu": "Sound",
   "soundFull": "Full sound",
   "soundMedium": "Medium sound",
@@ -60,5 +81,128 @@
   "tutorial": {
     "arbol": "This is the tree of life!",
     "tap": "Tap to continue"
-  }
+  },
+  "loading": "Loading…",
+  "logout": "Log out",
+  "editProfile": "Edit profile",
+  "completed": "Completed",
+  "xelfies": "Xelfies",
+  "xperiencias": "Xperiences",
+  "seeOnMap": "See on map",
+  "xelfieScan": "Scan QR",
+  "xelfieScanned": "Scanned!",
+  "xelfieConfirm": "Confirm Xelfie",
+  "rateStars_one": "Rate {{count}} star",
+  "rateStars_other": "Rate {{count}} stars",
+  "faceOption": "Face {{n}}",
+  "avatarSaveError": "We couldn't save your avatar. Check your connection and try again.",
+  "errors": {
+    "network": "No connection. Check your internet and try again."
+  },
+  "loginErrors": {
+    "invalid": "Wrong email or password.",
+    "tooMany": "Too many attempts. Wait a few minutes and try again.",
+    "generic": "We couldn't log you in. Please try again.",
+    "expired": "Your session ended. Log in again to continue."
+  },
+  "sync": {
+    "saving_one": "Saving {{count}} update…",
+    "saving_other": "Saving {{count}} updates…",
+    "offline_one": "Offline: {{count}} update will be saved when you're back online",
+    "offline_other": "Offline: {{count}} updates will be saved when you're back online"
+  },
+  "notFound": {
+    "title": "This page doesn't exist",
+    "body": "The link may be incomplete or may have changed.",
+    "cta": "Back to Xafari"
+  },
+  "qr": {
+    "validating": "Checking code…",
+    "guardian": "{{name}} Guardian",
+    "successGuardian": "You found the {{name}} Guardian!",
+    "successTitle": "Activity saved!",
+    "successBody": "It's now in your Tree of Life.",
+    "already": "You had already found this xecret.",
+    "queuedTitle": "No connection",
+    "queuedBody": "We saved it on your phone and will send it as soon as you're back online.",
+    "invalidTitle": "Invalid code",
+    "invalidBody": "This QR code isn't valid. Scan the sign again or ask the staff for help.",
+    "unknownTitle": "QR not recognized",
+    "unknownBody": "This code doesn't match any Xafari activity.",
+    "cooldownTitle": "Wait a moment",
+    "cooldownBody": "You tried recently. Try again in a few minutes.",
+    "needsAnswerTitle": "Answer the question",
+    "needsAnswerBody": "This Xperience is completed by answering its question in the app.",
+    "legacyTitle": "This QR is from an older version",
+    "legacyBody": "It can no longer be used. Look for the new sign or ask the staff for help.",
+    "errorTitle": "We couldn't save your progress",
+    "errorBody": "Something went wrong while saving. Check your connection and try again.",
+    "retry": "Try again",
+    "goTree": "Go to my tree",
+    "openXperiencias": "Open Xperiences",
+    "returning": "Going back to the tree…"
+  },
+  "scanner": {
+    "notXafari": "This QR isn't from Xafari.",
+    "notXecreto": "This QR isn't a xecret.",
+    "cameraUnavailable": "Camera unavailable",
+    "cameraHint": "Allow camera access in your browser settings.",
+    "revealed": "Xecret revealed!",
+    "newGuardian": "You found a new guardian for your Tree of Life.",
+    "how": "How?"
+  },
+  "family": {
+    "title": "Family mode",
+    "create": "Create family",
+    "joinTitle": "Join a family",
+    "myFamily": "My family",
+    "intro": "Create a family or join one to share your Xafari tree.",
+    "scanToJoin": "Scan QR to join",
+    "nameLabel": "Family name",
+    "namePlaceholder": "E.g., The Smith family",
+    "maxMembers": "Up to {{count}} members",
+    "creating": "Creating…",
+    "pointCamera": "Point your camera at a family member's QR",
+    "joining": "Joining…",
+    "membersCount": "{{count}} / {{max}} members",
+    "leave": "Leave family",
+    "admin": "admin",
+    "new": "New!",
+    "shareQr": "Share this QR so others can join",
+    "inviteExpires": "The QR expires in 24 hours and renews automatically.",
+    "addMember": "Add member",
+    "errors": {
+      "nameRequired": "Give your family a name.",
+      "invalidInvite": "This family QR is invalid or expired. Ask for a new one.",
+      "alreadyMember": "The family is full or you already belong to one.",
+      "full": "This family already has the maximum number of members.",
+      "notFamilyQr": "This QR isn't a Xafari family.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "tree": {
+    "solo": "Solo",
+    "family": "Family",
+    "familyError": "Couldn't load the family tree"
+  },
+  "nav": {
+    "tree": "Tree",
+    "map": "Map",
+    "podium": "Podium",
+    "settings": "Settings"
+  },
+  "leaderboard": {
+    "loading": "Loading leaderboard…",
+    "error": "We couldn't load the leaderboard.",
+    "empty": "No results for this period",
+    "all": "All",
+    "period": {
+      "hoy": "Today",
+      "mes": "Month",
+      "siempre": "All time"
+    }
+  },
+  "xecretoHidden": "Find it hidden somewhere in the resort…",
+  "scanGuardian": "Scan guardian",
+  "mapAlt": "Map of the area"
 }

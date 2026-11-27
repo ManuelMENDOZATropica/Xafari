@@ -2,21 +2,21 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import XafariContext from "./XafariContext";
+import { api } from "@/lib/api";
 
 // Casas del juego
-const CASAS = [
-  { key: "todos", label: "Todos" },
-  { key: "viento",  label: "Casa Viento" },
-  { key: "tierra",  label: "Casa Tierra" },
-  { key: "espiral", label: "Casa Espiral" },
-  { key: "agua",    label: "Casa Agua" },
-  { key: "fuego",   label: "Casa Fuego" },
-  { key: "cielo",   label: "Casa Cielo" },
-  { key: "eclipse", label: "Casa Eclipse" },
-  { key: "luna",    label: "Casa Luna" },
-  { key: "sol",     label: "Casa Sol" },
-  { key: "vida",    label: "Casa Vida" },
-];
+const CASAS = ["todos", "viento", "tierra", "espiral", "agua", "fuego", "cielo", "eclipse", "luna", "sol", "vida"];
+// La UI dice "siempre"; el contrato usa "total".
+const PERIODO_API = { hoy: "hoy", mes: "mes", siempre: "total" };
+
+function Stat({ valor, etiqueta }) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center rounded-xl bg-[#e7d6ba] px-1 py-2">
+      <span className="text-2xl font-extrabold leading-none text-[#3d1a00]">{valor ?? 0}</span>
+      <span className="mt-1 text-[10px] font-medium text-[#5a3a18]">{etiqueta}</span>
+    </div>
+  );
+}
 
 // Icono real de cada Casa desde /iconos/
 function CasaGlyph({ casaKey, className = "h-5 w-5" }) {
@@ -26,7 +26,7 @@ function CasaGlyph({ casaKey, className = "h-5 w-5" }) {
   return (
     <img
       src={src}
-      alt={casaKey}
+      alt=""
       className={className}
       style={{ objectFit: "contain" }}
     />
@@ -35,44 +35,31 @@ function CasaGlyph({ casaKey, className = "h-5 w-5" }) {
 
 export default function PodiumModal({ periodo = "siempre" }) {
   const { t } = useTranslation();
-  const { user, token, progresoXperiencias, xecretos } = useContext(XafariContext);
+  const { token, xecretos, progresoXperiencias, progresoXelfies } = useContext(XafariContext);
 
   const [jugadores, setJugadores] = useState([]);
   const [filtro,    setFiltro]    = useState("todos");
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState(null);
 
-  // ── Fetch leaderboard desde el backend ──────────────────────────────────────
+  // ── Leaderboard (sin ids: la fila propia viene con esYo) ───────────────────
   useEffect(() => {
-    let cancelled = false;
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const base = import.meta.env.VITE_API_URL || "/api";
-        const res  = await fetch(`${base}/leaderboard?periodo=${periodo}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        // Marcar al usuario actual
-        const enriched = data.map((j) => ({
-          ...j,
-          esUsuario: user?.id && j.id === user.id,
-        }));
-
-        if (!cancelled) setJugadores(enriched);
-      } catch (err) {
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
+    api
+      .get(`/leaderboard?periodo=${PERIODO_API[periodo] || "total"}`, { signal: controller.signal })
+      .then((data) => setJugadores(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        if (controller.signal.aborted) return;
         console.error("[PodiumModal] fetch error:", err);
-        if (!cancelled) setError("No se pudo cargar el podio.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetchData();
-    return () => { cancelled = true; };
-  }, [periodo, token, user?.id, user?.name, xecretos]);
+        setError(t("leaderboard.error"));
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [periodo, token, xecretos, progresoXperiencias, progresoXelfies, t]);
 
   // ── Filtro por casa ──────────────────────────────────────────────────────────
   const listaFiltrada = useMemo(() => {
@@ -82,25 +69,18 @@ export default function PodiumModal({ periodo = "siempre" }) {
     return base.map((j, i) => ({ ...j, rank: i + 1 }));
   }, [jugadores, filtro]);
 
-  const Stat = ({ valor, etiqueta }) => (
-    <div className="flex flex-1 flex-col items-center justify-center rounded-xl bg-[#e7d6ba] px-1 py-2">
-      <span className="text-2xl font-extrabold leading-none text-[#3d1a00]">{valor}</span>
-      <span className="mt-1 text-[10px] font-medium text-[#6b4a25]">{etiqueta}</span>
-    </div>
-  );
-
   return (
     <motion.div className="flex h-full w-full flex-col overflow-hidden bg-[#7b5226] font-apercu">
 
       {/* Estado de carga / error */}
       {loading && (
         <div className="flex flex-1 items-center justify-center">
-          <span className="text-[#f4ead9]/70 text-sm animate-pulse">Cargando podio…</span>
+          <span role="status" className="text-[#f4ead9] text-sm animate-pulse">{t("leaderboard.loading")}</span>
         </div>
       )}
       {!loading && error && (
         <div className="flex flex-1 items-center justify-center px-4">
-          <span className="text-[#f4ead9]/70 text-sm text-center">{error}</span>
+          <span role="alert" className="text-[#f4ead9] text-sm text-center">{error}</span>
         </div>
       )}
 
@@ -111,20 +91,23 @@ export default function PodiumModal({ periodo = "siempre" }) {
             <div
               key={idx}
               className={`relative flex items-center gap-3 rounded-2xl bg-[#f4ead9] px-4 py-3 shadow-md ${
-                j.esUsuario ? "ring-2 ring-[#c9982f]" : ""
+                j.esYo ? "ring-2 ring-[#c9982f]" : ""
               }`}
             >
               <div className="min-w-0 flex-1">
                 {/* Nombre + glifo de casa */}
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="truncate text-base font-bold text-[#3d1a00]">{j.nombre}</span>
+                  <span className="truncate text-base font-bold text-[#3d1a00]">
+                    {j.nombre}
+                    {j.esYo && <span className="ml-1 text-xs font-semibold">({t("youLabel")})</span>}
+                  </span>
                   <CasaGlyph casaKey={j.casa} />
                 </div>
                 {/* Cajas de stats */}
                 <div className="flex items-stretch gap-2 pr-12">
-                  <Stat valor={j.xperiencias} etiqueta={t("xperiencesLabel") || "Xperiencias"} />
-                  <Stat valor={j.xelfies}     etiqueta={t("xelfies")        || "Xelfies"}      />
-                  <Stat valor={j.xecretos}    etiqueta={t("secretsLabel")   || "Xecretos"}     />
+                  <Stat valor={j.xperiencias} etiqueta={t("xperiencesLabel")} />
+                  <Stat valor={j.xelfies} etiqueta={t("xelfies")} />
+                  <Stat valor={j.xecretos} etiqueta={t("secretsLabel")} />
                 </div>
               </div>
 
@@ -136,8 +119,8 @@ export default function PodiumModal({ periodo = "siempre" }) {
           ))}
 
           {listaFiltrada.length === 0 && (
-            <p className="mt-8 text-center text-sm text-[#f4ead9]/80">
-              Sin resultados para este período
+            <p className="mt-8 text-center text-sm text-[#f4ead9]">
+              {t("leaderboard.empty")}
             </p>
           )}
         </div>
@@ -147,12 +130,13 @@ export default function PodiumModal({ periodo = "siempre" }) {
       <div className="flex-shrink-0 overflow-x-auto bg-[#7b5226] px-3 py-2">
         <div className="flex w-max items-center gap-2">
           {CASAS.map((casa) => {
-            const activo = filtro === casa.key;
+            const activo = filtro === casa;
             return (
               <button
-                key={casa.key}
+                key={casa}
                 type="button"
-                onClick={() => setFiltro(casa.key)}
+                aria-pressed={activo}
+                onClick={() => setFiltro(casa)}
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all"
                 style={{
                   backgroundColor: activo ? "rgba(242,232,218,1)" : "#5e3d1c",
@@ -160,15 +144,8 @@ export default function PodiumModal({ periodo = "siempre" }) {
                   border: "none",
                 }}
               >
-                {casa.label}
-                {casa.key !== "todos" && (
-                  <CasaGlyph
-                    casaKey={casa.key}
-                    className="h-4 w-4"
-                    color={activo ? "#3D1A00" : "#f4ead9"}
-                    bg={activo ? "#f2e8da" : "#5e3d1c"}
-                  />
-                )}
+                {casa === "todos" ? t("leaderboard.all") : t("registerFlow.casaLabel", { name: casa.charAt(0).toUpperCase() + casa.slice(1) })}
+                {casa !== "todos" && <CasaGlyph casaKey={casa} className="h-4 w-4" />}
               </button>
             );
           })}

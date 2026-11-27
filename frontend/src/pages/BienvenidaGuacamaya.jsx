@@ -29,7 +29,7 @@ export default function BienvenidaGuacamaya() {
           justifyContent: "center",
         }}>
           <motion.img
-            src="/maya/5.png"
+            src="/maya/5.webp"
             alt="Guacamaya"
             initial={{ opacity: 0, scale: 0.92, scaleX: -1 }}
             animate={{ opacity: 1, scale: 1, scaleX: -1 }}
@@ -54,7 +54,7 @@ export default function BienvenidaGuacamaya() {
           flexShrink: 0,
         }}>
           <img
-            src="/intro/contenedorTextoIntro.png"
+            src="/intro/contenedorTextoIntro.webp"
             alt=""
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }}
             draggable={false}

@@ -64,3 +64,11 @@ Backend y frontend deben cumplir esto. Si algo no cuadra, se ajusta AQUÍ primer
 - Logros de usuario: `GET /user-achievements` (propios); otorgar/editar/quitar solo admin en `/user-achievements/:userId[/:achievementId]`.
 - `user-xelfies`: `POST {xelfieId, xelfieUrl}`, `PUT|DELETE /user-xelfies/:xelfieId`.
 - `user-preferences`: `POST {activityId, rating 1–5, comment?, isFavorite?}` hace upsert (201 creada / 200 actualizada); `PUT|DELETE /user-preferences/:id` solo las propias.
+
+## 9. Notas del frontend (27 nov)
+- **Registro de menores:** si la fecha de nacimiento da < 18 años, el front exige una casilla de consentimiento del padre/madre/tutor y envía `parentalConsent: true` en `POST /users`. **Pendiente backend:** aceptarlo (hoy se ignora sin error), guardarlo con fecha (p. ej. `parentalConsentAt`) y rechazar con `400 {error:"parental_consent_required"}` si falta para menores. El front ya muestra ese error si el mensaje contiene `parental`.
+- `birthdate` se envía como `YYYY-MM-DD` (validada en el front: días por mes, no futura).
+- `POST /user-activities`: Xperiencias mandan siempre `answer` (también las incorrectas, para que el servidor aplique el cooldown); Xecretos mandan `code` (del QR). Sin red, el front encola en `localStorage` (`xafari:pendingActivities`, por usuario) y reintenta al volver la conexión; 4xx se descarta y se re-sincroniza con `GET /user`.
+- El front usa `GET /user` (no `/users/:id`) para el progreso y `GET /family-trees/:id` para la familia.
+- QR de familia: el canvas codifica el `inviteToken` tal cual; el escáner también acepta una URL con `?invite=<token>`.
+- Leaderboard: el front manda `periodo=hoy|mes|total` y marca la fila con `esYo`.

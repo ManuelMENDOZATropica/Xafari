@@ -4,24 +4,24 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function IntroMaya() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
 
   const steps = useMemo(
     () => [
       {
-        image: "/maya/saltando.png",
+        image: "/maya/saltando.webp",
         alt: t("introMaya.slide1Alt"),
         text: t("introMaya.slide1Text"),
       },
       {
-        image: "/maya/curiosa.png",
+        image: "/maya/curiosa.webp",
         alt: t("introMaya.slide2Alt"),
         text: t("introMaya.slide2Text"),
       },
     ],
-    [t, i18n.language]
+    [t]
   );
 
   // Auto-avance: slide 0 → slide 1 a los 4 segundos
@@ -81,7 +81,7 @@ export default function IntroMaya() {
           }}
         >
           <img
-            src="/intro/contenedorTextoIntro.png"
+            src="/intro/contenedorTextoIntro.webp"
             alt=""
             style={{
               position: "absolute",

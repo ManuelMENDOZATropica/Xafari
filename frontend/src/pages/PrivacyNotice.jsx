@@ -5,22 +5,14 @@ import { motion } from "framer-motion";
 import CloseIcon from "@/components/CloseIcon";
 
 export default function PrivacyNotice({ onClose }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const handleClose = onClose ?? (() => navigate(-1));
 
-  const privacyItems = useMemo(
-    () => t("privacy.privacyList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
-  );
-  const cookiesItems = useMemo(
-    () => t("privacy.cookiesList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
-  );
-  const dataUseItems = useMemo(
-    () => t("privacy.dataUseList", { returnObjects: true }) ?? [],
-    [t, i18n.language]
-  );
+  const sections = useMemo(() => {
+    const value = t("privacy.sections", { returnObjects: true });
+    return Array.isArray(value) ? value : [];
+  }, [t]);
 
   return (
     <motion.div
@@ -61,14 +53,13 @@ export default function PrivacyNotice({ onClose }) {
           {t("privacy.intro")}
         </p>
 
-        {/* Sección: Privacidad */}
-        <Section title={t("privacy.privacyTitle")} items={privacyItems} />
+        <p role="note" style={{ fontSize: "13px", lineHeight: "1.5", color: "#233C15", fontWeight: 600 }}>
+          {t("privacy.pendingNote")}
+        </p>
 
-        {/* Sección: Cookies */}
-        <Section title={t("privacy.cookiesTitle")} items={cookiesItems} />
-
-        {/* Sección: Uso de datos */}
-        <Section title={t("privacy.dataUseTitle")} items={dataUseItems} />
+        {sections.map((section) => (
+          <Section key={section.title} title={section.title} items={section.items || []} />
+        ))}
 
         {/* Contacto */}
         <div
@@ -111,7 +102,7 @@ export default function PrivacyNotice({ onClose }) {
         {/* Fecha actualización */}
         <p
           className="text-center"
-          style={{ fontSize: "11px", color: "#233C15", opacity: 0.45, letterSpacing: "0.08em", textTransform: "uppercase" }}
+          style={{ fontSize: "11px", color: "#233C15", letterSpacing: "0.08em", textTransform: "uppercase" }}
         >
           {t("privacy.updated")}
         </p>
@@ -132,7 +123,6 @@ function Section({ title, items }) {
           letterSpacing: "0.12em",
           borderBottom: "1.5px solid #233C15",
           paddingBottom: "8px",
-          opacity: 0.6,
         }}
       >
         {title}
@@ -145,6 +135,7 @@ function Section({ title, items }) {
             style={{ fontSize: "15px", lineHeight: "1.6", color: "#233C15" }}
           >
             <span
+              aria-hidden="true"
               className="shrink-0 mt-1"
               style={{
                 width: "6px",

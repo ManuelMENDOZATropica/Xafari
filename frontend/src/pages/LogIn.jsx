@@ -1,12 +1,16 @@
 import { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
+import { api, ApiError } from "@/lib/api";
+import { takeReturnTo, takeSessionExpired } from "@/lib/returnTo";
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser, setToken, syncUserProgress } = useContext(XafariContext);
+  const location = useLocation();
+  const { startSession } = useContext(XafariContext);
+  const [sessionExpired] = useState(() => takeSessionExpired() || Boolean(location.state?.expired));
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,49 +26,37 @@ export default function Login() {
 
   const isFormValid = formData.email && formData.password;
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e?.preventDefault();
+    if (!isFormValid || loading) return;
     setLoading(true);
     setLoginError("");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || "/api"}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Login fallido");
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      setToken(data.token);
-      setUser(data.user);
-
-      // Sincronizar progreso del usuario antes de navegar para que esté disponible en TreeOfLife
-      await syncUserProgress(data.user.id, data.token);
-
-      navigate("/welcome-animation-login", { state: data.user });
-
+      const data = await api.post(
+        "/login",
+        { email: formData.email.trim(), password: formData.password },
+        { auth: false }
+      );
+      // Un solo sync: lo dispara App al cambiar el token.
+      startSession(data.token, data.user);
+      const back = takeReturnTo();
+      if (back) navigate(back, { replace: true });
+      else navigate("/welcome-animation-login", { replace: true });
     } catch (error) {
-      setLoginError(error.message || "Error al iniciar sesión");
+      if (error instanceof ApiError && error.status === 401) setLoginError(t("loginErrors.invalid"));
+      else if (error instanceof ApiError && error.status === 429) setLoginError(t("loginErrors.tooMany"));
+      else if (error instanceof ApiError && error.network) setLoginError(t("errors.network"));
+      else setLoginError(t("loginErrors.generic"));
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
     <div className="relative min-h-screen w-screen overflow-hidden font-apercu">
       <img
-        src="/img/fondoPrincipal.jpg"
-        alt="Fondo Login"
+        src="/img/fondoPrincipal.webp"
+        alt=""
         className="absolute inset-0 w-full h-full object-cover object-bottom z-0"
       />
 
@@ -74,7 +66,7 @@ export default function Login() {
           className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow border border-gray-300 hover:bg-white transition-all active:scale-95"
           aria-label={t("back")}
         >
-          <img src="/iconos/icon_regresar.svg" alt={t("back")} className="w-6 h-6" />
+          <img src="/iconos/icon_regresar.svg" alt="" className="w-6 h-6" />
         </button>
       </div>
 
@@ -86,13 +78,24 @@ export default function Login() {
             </h1>
           </div>
 
-          <div className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md flex flex-col gap-4">
+          {sessionExpired && (
+            <p role="status" className="w-full max-w-sm rounded-xl bg-white/90 px-4 py-2 text-center text-sm font-semibold text-gray-800">
+              {t("loginErrors.expired")}
+            </p>
+          )}
+          <form
+            onSubmit={handleLogin}
+            noValidate
+            className="w-full max-w-sm bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md flex flex-col gap-4"
+          >
             <div>
-              <label className="block text-black text-sm font-semibold mb-1">
+              <label htmlFor="login-email" className="block text-black text-sm font-semibold mb-1">
                 {t("email")}
               </label>
               <input
+                id="login-email"
                 type="email"
+                autoComplete="email"
                 name="email"
                 placeholder={t("email")}
                 value={formData.email}
@@ -102,11 +105,13 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-black text-sm font-semibold mb-1">
+              <label htmlFor="login-password" className="block text-black text-sm font-semibold mb-1">
                 {t("password")}
               </label>
               <input
+                id="login-password"
                 type="password"
+                autoComplete="current-password"
                 name="password"
                 placeholder={t("password")}
                 value={formData.password}
@@ -116,8 +121,8 @@ export default function Login() {
             </div>
 
             <button
+              type="submit"
               disabled={!isFormValid || loading}
-              onClick={handleLogin}
               className={`w-full py-3 rounded-full text-white text-lg font-semibold shadow-md transition-all ${
                 isFormValid && !loading
                   ? "bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105"
@@ -128,12 +133,12 @@ export default function Login() {
             </button>
 
             {loginError && (
-              <div style={{
+              <div role="alert" style={{
                 display: "flex", alignItems: "flex-start", gap: "8px",
                 backgroundColor: "rgba(156,62,50,0.85)", borderRadius: "12px",
                 padding: "10px 14px",
               }}>
-                <span style={{ fontSize: "16px", flexShrink: 0 }}>⚠️</span>
+                <span aria-hidden="true" style={{ fontSize: "16px", flexShrink: 0 }}>⚠️</span>
                 <p style={{ fontSize: "13px", color: "#fff", margin: 0, lineHeight: "1.4" }}>
                   {loginError}
                 </p>
@@ -145,13 +150,14 @@ export default function Login() {
                 {t("noAccount")}
               </p>
               <button
-                onClick={() => navigate("/register-step1")}
+                type="button"
+                onClick={() => navigate("/register")}
                 className="px-6 py-2 bg-emerald-600/10 text-emerald-700 rounded-full border border-emerald-600/20 backdrop-blur-md hover:bg-emerald-600/20 transition-all font-semibold uppercase tracking-widest text-[10px]"
               >
                 {t("registerHere")}
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
