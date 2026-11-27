@@ -1,25 +1,13 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
+
+const fields = [
+  body("rating").optional({ values: "null" }).isInt({ min: 1, max: 5 }).withMessage("Rating must be between 1 and 5").toInt(),
+  body("comment").optional({ values: "null" }).isString().isLength({ max: 1000 }),
+  body("isFavorite").optional().isBoolean().toBoolean(),
+];
 
 exports.createUserPreferenceValidation = [
-  body("userId").isUUID().withMessage("Valid user ID is required"),
   body("activityId").isUUID().withMessage("Valid activity ID is required"),
-  body("comment").isString().notEmpty().withMessage("Comment is required"),
-  body("rating").isInt({ min: 0, max: 5 }).withMessage("Ratinng is not valid"),
+  ...fields,
 ];
-
-exports.updateUserPreferenceValidation = [
-  param("id").notEmpty().withMessage("Valid user preference ID is required"),
-  body("comment")
-    .optional()
-    .isString()
-    .notEmpty()
-    .withMessage("Comment is required"),
-  body("rating")
-    .optional()
-    .isInt({ min: 0, max: 5 })
-    .withMessage("Ratinng is not valid"),
-];
-
-exports.userPreferenceParamValidation = [
-  param("id").notEmpty().withMessage("Valid user Preference ID is required"),
-];
+exports.updateUserPreferenceValidation = fields;

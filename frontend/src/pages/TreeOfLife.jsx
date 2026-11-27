@@ -1,13 +1,12 @@
 import { Component, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import LanguageToggle from "@/components/LanguageToggle";
+import i18next from "@/i18n";
 import XafariContext from "@/components/XafariContext";
 
 import XecretosCards from "@/components/XecretosCards";
 import XperienciasXtop from "@/components/XperienciasXtop";
-import ChecklistGastro from "@/components/ChecklistGastro";
 import PodiumModal from "@/components/PodiumModal";
 import TreeCanvasIndividual from "@/components/TreeCanvasIndividual";
 import TreeCanvasFamilia from "@/components/TreeCanvasFamilia";
@@ -36,15 +35,15 @@ class FamiliaErrorBoundary extends Component {
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", height: "100%", gap: 12, opacity: 0.6,
         }}>
-          <span style={{ fontSize: 32 }}>🌳</span>
+          <span aria-hidden="true" style={{ fontSize: 32 }}>🌳</span>
           <p style={{ fontSize: 13, color: "#3D1A00", fontFamily: "sans-serif" }}>
-            Error al cargar el árbol familiar
+            {i18next.t("tree.familyError")}
           </p>
           <button
             onClick={() => this.setState({ hasError: false })}
             style={{ fontSize: 12, color: "#3D1A00", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
           >
-            Reintentar
+            {i18next.t("qr.retry")}
           </button>
         </div>
       );
@@ -124,45 +123,15 @@ const IndividualIcon = (props) => (
   </svg>
 );
 
-const SUPPORTED_LANGUAGES = ["es", "en", "pt"];
-
-const LANGUAGE_FLAGS = {
-  es: "🇲🇽",
-  en: "🇺🇸",
-  pt: "🇧🇷",
-};
-
-const SOUND_OPTIONS = [
-  { value: "full", labelKey: "soundFull" },
-  { value: "medium", labelKey: "soundMedium" },
-  { value: "vibrate", labelKey: "soundVibrate" },
-  { value: "off", labelKey: "soundOff" },
-];
-
-const SOUND_ICONS = {
-  full: (
-    <img src="/iconos/icon_volumen3.svg" alt="Full Volume" className="h-6 w-6 object-contain" />
-  ),
-  medium: (
-    <img src="/iconos/icon_volumen2.svg" alt="Medium Volume" className="h-6 w-6 object-contain" />
-  ),
-  vibrate: (
-    <img src="/iconos/icon_volumen1.svg" alt="Vibrate" className="h-6 w-6 object-contain" />
-  ),
-  off: (
-    <img src="/iconos/icon_volumen0.png" alt="Muted" className="h-6 w-6 object-contain" />
-  ),
-};
-
 export default function TreeOfLife() {
-  const { t, i18n } = useTranslation();
-  const { soundSetting, setSoundSetting, triggerClickFeedback, token,
-          xecretos, progresoXperiencias: respuestasCorrectas, progresoChecklist: checklistProgreso } =
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { xecretos, progresoXperiencias: respuestasCorrectas, progresoChecklist: checklistProgreso } =
     useContext(XafariContext);
 
   const [modoFamilia, setModoFamilia] = useState(false);
   const [showFamiliaModal, setShowFamiliaModal] = useState(false);
-  const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
   const [showXecretoModal, setShowXecretoModal] = useState(false);
   const [showXperienciasModal, setShowXperienciasModal] = useState(false);
@@ -176,25 +145,24 @@ export default function TreeOfLife() {
 
   // Ocultar botón Solo/Familia cuando cualquier modal está abierto
   const anyModalOpen = showPodiumModal || showXecretoModal || showXperienciasModal ||
-    showXelfiesModal || showMapaModal || showSettingsModal || showChecklistModal;
+    showXelfiesModal || showMapaModal || showSettingsModal;
 
-  const [insigniaReciente, setInsigniaReciente] = useState(null);
-  const [checklistReciente, setChecklistReciente] = useState(null);
-  const [guardianReciente, setGuardianReciente] = useState(null);
-
-  const currentLanguage = i18n.language?.split("-")[0] ?? "es";
-
+  // Insignia recién ganada (p. ej. al volver de /q/...) o modal a abrir al llegar.
+  const [insigniaReciente, setInsigniaReciente] = useState(() => location.state?.insigniaReciente || null);
+  const [showXperienciasFromState] = useState(() => location.state?.open === "xperiencias");
 
   useEffect(() => {
-    if (insigniaReciente || checklistReciente || guardianReciente) {
-      const timeout = setTimeout(() => {
-        setInsigniaReciente(null);
-        setChecklistReciente(null);
-        setGuardianReciente(null);
-      }, 4000);   // 4s para que la animación sea visible
-      return () => clearTimeout(timeout);
-    }
-  }, [insigniaReciente, checklistReciente, guardianReciente]);
+    if (showXperienciasFromState) setShowXperienciasModal(true);
+    // Limpia el state del historial para que recargar no repita la animación.
+    if (location.state) navigate(location.pathname, { replace: true, state: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al montar
+  }, []);
+
+  useEffect(() => {
+    if (!insigniaReciente) return undefined;
+    const timeout = setTimeout(() => setInsigniaReciente(null), 4000); // 4 s para que la animación sea visible
+    return () => clearTimeout(timeout);
+  }, [insigniaReciente]);
 
 
   const xtopNombres = [
@@ -205,10 +173,8 @@ export default function TreeOfLife() {
 
   // Derived from context (BD) — reactive
   const xtopProgreso = {};
-  const xperienciasProgreso = {};
-  Object.entries(respuestasCorrectas).forEach(([k]) => {
+  Object.keys(respuestasCorrectas).forEach((k) => {
     if (xtopNombres.includes(k)) xtopProgreso[k] = true;
-    else if (k.startsWith("x")) xperienciasProgreso[k] = true;
   });
 
 
@@ -274,17 +240,6 @@ export default function TreeOfLife() {
     setShowSettingsModal(true);
   };
 
-  const handleSoundSelect = (value) => {
-    setSoundSetting(value);
-    if (typeof triggerClickFeedback === "function") {
-      triggerClickFeedback(value);
-    }
-  };
-
-  const handleLanguageSelect = (lang) => {
-    i18n.changeLanguage(lang);
-  };
-
   const handleCloseSettingsModal = () => {
     setShowSettingsModal(false);
   };
@@ -292,7 +247,7 @@ export default function TreeOfLife() {
   // El submenu (Xperiencias/Xelfies/Xecretos) ya NO se cierra al abrir sus modales.
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/arbol/fondoArbol.png')] bg-cover bg-center flex flex-col">
+    <div className="relative h-screen w-screen overflow-hidden font-apercu bg-[url('/arbol/fondoArbol.webp')] bg-cover bg-center flex flex-col">
 
       <div className="absolute inset-0 pb-[calc(2vh+210px)] pt-14 w-full flex items-center justify-center z-10 pointer-events-none">
         <div className="w-full h-full pointer-events-auto">
@@ -307,9 +262,7 @@ export default function TreeOfLife() {
             <TreeCanvasIndividual
               key="canvas-individual"
               xecretos={xecretos}
-              respuestasCorrectas={respuestasCorrectas}
               checklistProgreso={checklistProgreso}
-              xperienciasProgreso={xperienciasProgreso}
               xtopProgreso={xtopProgreso}
               insigniaReciente={insigniaReciente}
             />
@@ -329,18 +282,19 @@ export default function TreeOfLife() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
               onClick={() => setShowFamiliaModal(true)}
+              aria-label={t("family.title")}
               className="flex items-center gap-1.5 px-3 py-2 rounded-full shadow-md active:scale-95 transition-all"
               style={{ backgroundColor: "#3D1A00" }}
             >
               {/* QR icon */}
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2}>
+              <svg aria-hidden="true" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2}>
                 <rect x="3" y="3" width="7" height="7" rx="1" />
                 <rect x="14" y="3" width="7" height="7" rx="1" />
                 <rect x="3" y="14" width="7" height="7" rx="1" />
                 <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
               </svg>
               {/* + icon */}
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2.5}>
+              <svg aria-hidden="true" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#F2E8DA" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
             </motion.button>
@@ -357,10 +311,10 @@ export default function TreeOfLife() {
           className="absolute top-4 left-4 z-40 flex items-center bg-[#80A850] rounded-full px-1.5 py-1.5 shadow-md gap-0 font-volume"
         >
           <span className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200 ${!modoFamilia ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"}`}>
-            Solo
+            {t("tree.solo")}
           </span>
           <span className={`flex items-center justify-center px-5 py-1.5 rounded-full text-sm font-volume transition-all duration-200 ${modoFamilia ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"}`}>
-            Familia
+            {t("tree.family")}
           </span>
         </button>
       )}
@@ -377,7 +331,7 @@ export default function TreeOfLife() {
                 podioPerido === p ? "bg-[#C9DCB5] text-[#233C15] shadow-sm" : "bg-transparent text-white"
               }`}
             >
-              {p.charAt(0).toUpperCase() + p.slice(1)}
+              {t(`leaderboard.period.${p}`)}
             </button>
           ))}
         </div>
@@ -398,19 +352,19 @@ export default function TreeOfLife() {
                   {[
                     {
                       key: "xperiencias",
-                      label: "Xperiencias",
+                      label: t("xperiencesLabel"),
                       icon: "/iconos/xperiencias.png",
                       onClick: handleOpenXperiencias,
                     },
                     {
                       key: "xelfies",
-                      label: "Xelfies",
+                      label: t("xelfies"),
                       icon: "/iconos/xelfies.png",
                       onClick: handleOpenXelfies,
                     },
                     {
                       key: "xecretos",
-                      label: "Xecretos",
+                      label: t("secretsLabel"),
                       icon: "/iconos/xecretos.png",
                       onClick: handleOpenXecretos,
                     },
@@ -428,7 +382,7 @@ export default function TreeOfLife() {
                     >
                       <img
                         src={icon}
-                        alt={label}
+                        alt=""
                         className="object-contain"
                         style={{ width: "34px", height: "34px" }}
                       />
@@ -449,28 +403,28 @@ export default function TreeOfLife() {
             {[
               {
                 key: "arbol",
-                label: "Árbol",
+                label: t("nav.tree"),
                 icon: "/iconos/icono arbol.png",
                 active: showArbolMenu,
                 onClick: handleToggleArbolMenu,
               },
               {
                 key: "mapa",
-                label: "Mapa",
+                label: t("nav.map"),
                 icon: "/iconos/icono Mapa.png",
                 active: showMapaModal,
                 onClick: handleOpenMapa,
               },
               {
                 key: "podio",
-                label: "Podio",
+                label: t("nav.podium"),
                 icon: "/iconos/icono Podio.png",
                 active: showPodiumModal,
                 onClick: handleOpenPodio,
               },
               {
                 key: "ajustes",
-                label: "Ajustes",
+                label: t("nav.settings"),
                 icon: "/iconos/icono Ajustes.png",
                 active: showSettingsModal,
                 onClick: handleOpenSettings,
@@ -486,7 +440,7 @@ export default function TreeOfLife() {
                 <div className="flex flex-1 items-center justify-center w-full">
                   <img
                     src={icon}
-                    alt={label}
+                    alt=""
                     className="w-full object-contain"
                     style={{ maxHeight: "85%" }}
                   />
@@ -577,32 +531,6 @@ export default function TreeOfLife() {
                 />
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showChecklistModal && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <ChecklistGastro
-              onClose={() => {
-                const prev = checklistProgreso;
-                const nuevos = JSON.parse(
-                  localStorage.getItem("progresoChecklistGastro") || "{}"
-                );
-                const nueva = Object.keys(nuevos).find(
-                  (k) => nuevos[k] && !prev[k]
-                );
-                setChecklistProgreso(nuevos);
-                setChecklistReciente(nueva || null);
-                setShowChecklistModal(false);
-              }}
-            />
           </motion.div>
         )}
       </AnimatePresence>

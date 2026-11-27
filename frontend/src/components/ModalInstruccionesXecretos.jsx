@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "./CloseIcon";
 
-import pistaImg from "/instruccionesXecretos/pista.png";
-import escaneaImg from "/instruccionesXecretos/escanea.png";
-import descubreImg from "/instruccionesXecretos/descubre.png";
+import pistaImg from "/instruccionesXecretos/pista.webp";
+import escaneaImg from "/instruccionesXecretos/escanea.webp";
+import descubreImg from "/instruccionesXecretos/descubre.webp";
 
 const slides = [
   { src: pistaImg, labelKey: "lee_hint" },

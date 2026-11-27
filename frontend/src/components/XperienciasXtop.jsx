@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import XafariContext from "./XafariContext";
 import CloseIcon from "./CloseIcon";
@@ -198,23 +197,23 @@ const xperiencias = [
 ];
 
 const xtopInsigniaPaths = {
-  camion: "/arbol/xtop/Insignia Xiquit inn.png",
-  caracola: "/arbol/xtop/Insignia Muluk spa.png",
-  conejo: "/arbol/xtop/Insignia Lunateca.png",
-  drink: "/arbol/xtop/Insignia Pava Jarla.png",
-  estrella: "/arbol/xtop/Insignias Dixtrito 1317.png",
-  kayak: "/arbol/xtop/Insignia Kayak.png",
-  mascarajaguar: "/arbol/xtop/Insignia Paxanguería.png",
-  patin: "/arbol/xtop/Insignia Patín.png",
-  piscina: "/arbol/xtop/Insignia Rooftop Fuego.png",
-  poolpo: "/arbol/xtop/Insignia pool poh.png",
-  salvavidas: "/arbol/xtop/Insignia infinity pool.png",
-  teatro: "/arbol/xtop/Insignia Teatro del Río.png",
-  tobogan: "/arbol/xtop/Insignia Tobogan Arboloco.png",
-  tv: "/arbol/xtop/Insignia Bar las maquinitas.png",
-  vinil: "/arbol/xtop/Insignia Vinil.png",
-  xorbeteria: "/arbol/xtop/Insignias Xoberte.png",
-  xpiral: "/arbol/xtop/Insignia Xpiral.png",
+  camion: "/arbol/xtop/camion.webp",
+  caracola: "/arbol/xtop/caracola.webp",
+  conejo: "/arbol/xtop/conejo.webp",
+  drink: "/arbol/xtop/drink.webp",
+  estrella: "/arbol/xtop/estrella.webp",
+  kayak: "/arbol/xtop/kayak.webp",
+  mascarajaguar: "/arbol/xtop/mascarajaguar.webp",
+  patin: "/arbol/xtop/patin.webp",
+  piscina: "/arbol/xtop/piscina.webp",
+  poolpo: "/arbol/xtop/poolpo.webp",
+  salvavidas: "/arbol/xtop/salvavidas.webp",
+  teatro: "/arbol/xtop/teatro.webp",
+  tobogan: "/arbol/xtop/tobogan.webp",
+  tv: "/arbol/xtop/tv.webp",
+  vinil: "/arbol/xtop/vinil.webp",
+  xorbeteria: "/arbol/xtop/xorbeteria.webp",
+  xpiral: "/arbol/xtop/xpiral.webp",
 };
 
 export default function XperienciasXtop({ onClose }) {
@@ -226,7 +225,7 @@ export default function XperienciasXtop({ onClose }) {
   } = useContext(XafariContext);
 
   // Shuffled options for each question, generated once on mount
-  const [shuffledOptions, setShuffledOptions] = useState(() => {
+  const [shuffledOptions] = useState(() => {
     return xperiencias.map((xp) => {
       const optionsCopy = [...xp.opciones];
       for (let i = optionsCopy.length - 1; i > 0; i--) {
@@ -250,18 +249,19 @@ export default function XperienciasXtop({ onClose }) {
     setRatings({ ...calificacionesXperiencias });
   }, [calificacionesXperiencias]);
 
-  const [bloqueados, setBloqueados] = useState(() => {
-    const saved = localStorage.getItem("tiemposBloqueoXperiencias");
-    return saved ? JSON.parse(saved) : {};
-  });
   const [respuestaReciente, setRespuestaReciente] = useState(null);
 
   const [tiempos, setTiempos] = useState(() => {
     const initial = {};
     const now = new Date();
     const saved = localStorage.getItem("tiemposBloqueoXperiencias");
-    if (saved) {
-      const bloqueos = JSON.parse(saved);
+    let bloqueos = null;
+    try {
+      bloqueos = saved ? JSON.parse(saved) : null;
+    } catch {
+      bloqueos = null;
+    }
+    if (bloqueos) {
       for (const key in bloqueos) {
         const unlockTime = new Date(bloqueos[key]);
         const diff = Math.floor((unlockTime - now) / 1000);
@@ -287,42 +287,62 @@ export default function XperienciasXtop({ onClose }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleRespuesta = (idx, opcion) => {
+  const timers = useRef([]);
+  useEffect(() => {
+    const list = timers.current;
+    return () => list.forEach(clearTimeout);
+  }, []);
+  const [enviando, setEnviando] = useState(null);
+  const [aviso, setAviso] = useState(null); // {idx, text}
+
+  const bloquear = (clave, segundos) => {
+    const unlockTime = new Date(Date.now() + segundos * 1000);
+    // Solo UX: el servidor aplica el cooldown real (429 / wrong_answer con retryAfter).
+    let guardados = {};
+    try {
+      guardados = JSON.parse(localStorage.getItem("tiemposBloqueoXperiencias") || "{}");
+    } catch {
+      guardados = {};
+    }
+    localStorage.setItem(
+      "tiemposBloqueoXperiencias",
+      JSON.stringify({ ...guardados, [clave]: unlockTime.toISOString() })
+    );
+    setTiempos((prev) => ({ ...prev, [clave]: segundos }));
+  };
+
+  const handleRespuesta = async (idx, opcion) => {
     const clave = xperiencias[idx].insignia;
     const yaCorrecta = respuestas[clave];
     const estaBloqueado = tiempos[clave] > 0;
-    if (yaCorrecta || estaBloqueado) return;
+    if (yaCorrecta || estaBloqueado || enviando !== null) return;
 
-    const esCorrecta = opcion === xperiencias[idx].respuestaCorrecta;
+    // Toda respuesta va al servidor: él valida y aplica el cooldown (CONTRATO-API §4).
+    // Una respuesta que ya sabemos incorrecta no se encola si no hay red.
+    const localCorrect = opcion === xperiencias[idx].respuestaCorrecta;
+    setEnviando(idx);
+    setAviso(null);
+    const res = await registerActivityCompleted(clave, { answer: opcion, queue: localCorrect });
+    setEnviando(null);
 
-    if (esCorrecta) {
-      if (typeof playSuccessSound === "function") {
-        playSuccessSound();
-      }
-      const nuevo = { ...respuestas, [clave]: opcion };
-      setRespuestas(nuevo);
-      registerActivityCompleted(clave);
+    if (res.ok || res.queued) {
+      playSuccessSound?.();
+      setRespuestas((prev) => ({ ...prev, [clave]: opcion }));
       setShowCopy(idx);
       setRespuestaReciente(clave);
-      setTimeout(() => {
-        setShowCopy(null);
-        setRespuestaReciente(null);
-        onClose(clave);   // ← pasa la clave para animar la insignia en el árbol
-      }, 2000);
-    } else {
-      if (typeof playErrorSound === "function") {
-        playErrorSound();
-      }
-      const now = new Date();
-      const unlockTime = new Date(now.getTime() + 180000);
-      const actualizado = { ...bloqueados, [clave]: unlockTime.toISOString() };
-      const tiemposActuales = { ...tiempos, [clave]: 180 };
-      setBloqueados(actualizado);
-      setTiempos(tiemposActuales);
-      localStorage.setItem(
-        "tiemposBloqueoXperiencias",
-        JSON.stringify(actualizado)
+      if (res.queued) setAviso({ idx, text: t("qr.queuedBody") });
+      timers.current.push(
+        setTimeout(() => {
+          setShowCopy(null);
+          setRespuestaReciente(null);
+          onClose(clave); // pasa la clave para animar la insignia en el árbol
+        }, 2000)
       );
+    } else if (res.status === 429 || res.error === "wrong_answer" || (!localCorrect && res.network)) {
+      playErrorSound?.();
+      bloquear(clave, Number(res.retryAfter) || 180);
+    } else {
+      setAviso({ idx, text: t("qr.errorBody") });
     }
   };
 
@@ -331,13 +351,6 @@ export default function XperienciasXtop({ onClose }) {
     setRatings(actualizado);
     saveActivityRating(clave, valor);
   };
-
-  const total = xperiencias.length;
-  const respondidas = xperiencias.filter(
-    (xp) => respuestas[xp.insignia] === xp.respuestaCorrecta
-  ).length;
-
-  const progreso = Math.round((respondidas / total) * 100);
 
   return (
   <div className="w-full h-full">
@@ -361,7 +374,7 @@ export default function XperienciasXtop({ onClose }) {
                   {/* Blocked overlay */}
                   {(estaBloqueado || estaBloqueadaPorOrden) && (
                     <div className="absolute inset-0 z-20 bg-[#5a3a18]/80 backdrop-blur-sm flex flex-col items-center justify-center text-white font-semibold text-center rounded-2xl px-4">
-                      <div className="text-xl mb-1">🔒</div>
+                      <div aria-hidden="true" className="text-xl mb-1">🔒</div>
                       {estaBloqueado && (
                         <div className="text-sm">{t("retry_in")} {minutos}:{segundos.toString().padStart(2, "00")}</div>
                       )}
@@ -373,13 +386,13 @@ export default function XperienciasXtop({ onClose }) {
                     {/* Header row: title + checkbox */}
                     <div className="flex items-start justify-between px-4 pt-4 pb-1">
                       <h2 className="flex-1 pr-3 text-sm font-bold leading-tight" style={{ color: "#3D1A00" }}>
-                        {xp.lugar}
+                        {t(`xpPlaces.${xp.insignia}`, { defaultValue: xp.lugar })}
                       </h2>
                       <div className="relative flex-shrink-0 w-[34px] h-[34px]">
                         {/* Checkbox base — siempre visible */}
                         <img
                           src="/iconos/checkXperiencias.png"
-                          alt="Pendiente"
+                          alt=""
                           className="w-full h-full object-contain"
                         />
                         {/* Palomita — aparece encima al contestar bien */}
@@ -387,7 +400,7 @@ export default function XperienciasXtop({ onClose }) {
                           <div className="absolute" style={{ inset: "10%" }}>
                             <motion.img
                               src="/iconos/correctXperiencias.png"
-                              alt="Completado"
+                              alt={t("completed")}
                               className="w-full h-full object-contain"
                               initial={{ opacity: 0, scale: 0.4 }}
                               animate={{ opacity: 1, scale: 1 }}
@@ -450,7 +463,7 @@ export default function XperienciasXtop({ onClose }) {
                         {/* Insignia — inline, siempre a la misma altura que los botones, subida 5% */}
                         <motion.img
                           src={xtopInsigniaPaths[xp.insignia]}
-                          alt="insignia"
+                          alt=""
                           className="flex-shrink-0 w-14 h-14 object-contain pointer-events-none"
                           style={{ marginTop: "-5%" }}
                           initial={{ opacity: 0.25, scale: 0.85 }}
@@ -464,16 +477,25 @@ export default function XperienciasXtop({ onClose }) {
                         />
                       </div>
 
+                      {enviando === idx && (
+                        <p role="status" className="mt-2 text-xs font-semibold" style={{ color: "#3D1A00" }}>{t("loading")}</p>
+                      )}
+                      {aviso?.idx === idx && (
+                        <p role="alert" className="mt-2 text-xs font-semibold text-red-800">{aviso.text}</p>
+                      )}
+
                       {/* Estrellas — debajo de los botones; insignia no se desplaza */}
                       {yaRespondida && (
                         <div className="mt-2 flex gap-1">
                           {[1, 2, 3, 4, 5].map((star) => (
-                            <span
+                            <button
+                              type="button"
                               key={star}
-                              role="button"
+                              aria-label={t("rateStars", { count: star })}
+                              aria-pressed={ratings[xp.insignia] >= star}
                               onClick={() => handleSetRating(xp.insignia, star)}
-                              className={`text-lg cursor-pointer transition-transform ${ratings[xp.insignia] >= star ? "text-yellow-400" : "text-[#3D1A00]/30"}`}
-                            >★</span>
+                              className={`text-lg cursor-pointer transition-transform bg-transparent border-none p-0 ${ratings[xp.insignia] >= star ? "text-yellow-500" : "text-[#3D1A00]/40"}`}
+                            >★</button>
                           ))}
                         </div>
                       )}

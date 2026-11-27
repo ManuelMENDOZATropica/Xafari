@@ -5,100 +5,111 @@ const {
   DatabaseError: SequelizeDatabaseError,
   ConnectionError,
 } = require("sequelize");
-const logger = require("./logger");
 
-class ValidationError extends Error {
+class HttpError extends Error {
+  constructor(status, message, details) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = status;
+    this.statusCode = status;
+    if (details) this.details = details;
+  }
+}
+
+class ValidationError extends HttpError {
   constructor(message = "Validation failed", details = []) {
-    super(message);
-    this.name = "ValidationError";
-    this.statusCode = 400;
-    this.status = 400;
-    this.details = details;
+    super(400, message, details);
   }
 }
-
-class AuthenticationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "AuthenticationError";
-    this.statusCode = 401;
-    this.status = 401;
+class BadRequestError extends HttpError {
+  constructor(message = "Bad Request", details) {
+    super(400, message, details);
   }
 }
-
-class ResourceNotFoundError extends Error {
+class AuthenticationError extends HttpError {
+  constructor(message = "No autorizado") {
+    super(401, message);
+  }
+}
+class ForbiddenError extends HttpError {
+  constructor(message = "Prohibido") {
+    super(403, message);
+  }
+}
+class ResourceNotFoundError extends HttpError {
   constructor(message = "Not Found") {
-    super(message);
-    this.name = "ResourceNotFoundError";
-    this.statusCode = 404;
-    this.status = 404;
+    super(404, message);
+  }
+}
+class ResourceConflictError extends HttpError {
+  constructor(message = "Conflict") {
+    super(409, message);
+  }
+}
+class TooManyRequestsError extends HttpError {
+  constructor(message = "Too many requests", extra = {}) {
+    super(429, message);
+    this.extra = extra;
+  }
+}
+class DatabaseError extends HttpError {
+  constructor(message = "Internal server error") {
+    super(500, message);
   }
 }
 
-class BadRequestError extends Error {
-  constructor(message = "Bad Request") {
-    super(message);
-    this.name = "BadRequestError";
-    this.statusCode = 400;
-    this.status = 400;
-  }
-}
+/**
+ * Convierte cualquier error (Sequelize, body-parser, propio) en un HttpError.
+ * Nunca expone mensajes internos de la base de datos.
+ */
+function handleSequelizeError(error, resource = "Record") {
+  if (error instanceof HttpError) return error;
 
-class ResourceConflictError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ResourceConflictError";
-    this.statusCode = 409;
-    this.status = 409;
-  }
-}
-
-class DatabaseError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "DatabaseError";
-    this.statusCode = 500;
-    this.status = 500;
-  }
-}
-
-function handleSequelizeError(error, resource) {
-  if (
-    error.statusCode ||
-    error.status ||
-    error.name === "ResourceNotFoundError" ||
-    error.name === "ValidationError" ||
-    error.name === "AuthenticationError" ||
-    error.name === "BadRequestError" ||
-    error.name === "ResourceConflictError" ||
-    error.name === "DatabaseError"
-  ) {
-    return error;
-  }
-
-  logger.error(error);
   if (error instanceof UniqueConstraintError) {
-    // Violación de restricción única
-    return new ValidationError(`${resource || "Record"} already exists`);
-  } else if (error instanceof ForeignKeyConstraintError) {
-    // Violación de clave foránea
-    return new ValidationError("Invalid reference on database");
-  } else if (error instanceof SequelizeDatabaseError) {
-    // Errores de base de datos
-    return new DatabaseError("Database Error");
-  } else if (error instanceof ConnectionError) {
-    // Errores de conexión
-    return new DatabaseError("Database Connection error");
-  } else {
-    return new DatabaseError("Internal server error");
+    return new ResourceConflictError(`${resource} already exists`);
   }
+  if (error instanceof SequelizeValidationError) {
+    const details = (error.errors || []).map((e) => ({
+      field: e.path,
+      issue: e.message,
+    }));
+    return new ValidationError(details[0]?.issue || "Validation failed", details);
+  }
+  if (error instanceof ForeignKeyConstraintError) {
+    return new BadRequestError("Invalid reference");
+  }
+  if (error instanceof ConnectionError) {
+    return new DatabaseError("Database unavailable");
+  }
+  if (error instanceof SequelizeDatabaseError) {
+    // p. ej. "invalid input syntax for type uuid" en Postgres
+    if (/invalid input syntax|invalid input value/i.test(error.message || "")) {
+      return new BadRequestError("Invalid value");
+    }
+    return new DatabaseError();
+  }
+  // body-parser: JSON malformado o payload enorme
+  if (error && error.type === "entity.parse.failed") {
+    return new BadRequestError("Invalid JSON");
+  }
+  if (error && error.type === "entity.too.large") {
+    return new HttpError(413, "Payload too large");
+  }
+  if (error && Number.isInteger(error.status) && error.status < 500) {
+    return new HttpError(error.status, error.expose ? error.message : "Bad Request");
+  }
+  return new DatabaseError();
 }
 
 module.exports = {
+  HttpError,
   ValidationError,
+  BadRequestError,
   AuthenticationError,
+  ForbiddenError,
   ResourceNotFoundError,
   ResourceConflictError,
-  BadRequestError,
+  TooManyRequestsError,
+  DatabaseError,
   handleSequelizeError,
 };

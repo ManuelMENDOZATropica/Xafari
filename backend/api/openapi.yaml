@@ -1,458 +1,534 @@
 openapi: 3.0.3
 info:
-  title: Xafari REST API
-  version: 1.0.0
-  description: API for Xafari, a scavenger hunt game at Hotel Xcaret México.
-
+  title: Xafari API
+  version: 2.0.0
+  description: |
+    API de Xafari. Ver docs/CONTRATO-API.md.
+    Todas las rutas requieren `Authorization: Bearer <jwt>` salvo:
+    POST /login, POST /users, GET /health, GET del catálogo
+    (/houses, /activities, /xecretos, /xelfies, /xperiencias, /events, /achievements) y GET /leaderboard.
+    Errores: `{error, details?}`. 400 validación (incluye ids no-UUID), 401, 403, 404, 409, 429, 500.
 servers:
-  - url: https://api.xafari.mx/v1
+  - url: http://localhost:3000
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  parameters:
+    Id: { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        details: { type: array, items: { type: string } }
+        retryAfter: { type: integer, description: "Solo en 429 cooldown y 400 wrong_answer" }
+    Avatar:
+      type: object
+      additionalProperties: true
+    UserActivity:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        activityId: { type: string, format: uuid }
+        startedAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+    ActivityWithProgress:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        type: { type: string, enum: [Xperiencia, Xecreto, Xelfie, Event] }
+        location: { type: string }
+        houseId: { type: string, format: uuid, nullable: true }
+        userActivity:
+          type: object
+          properties:
+            id: { type: string }
+            startedAt: { type: string, format: date-time }
+            completedAt: { type: string, format: date-time, nullable: true }
+    User:
+      type: object
+      description: Solo del propio usuario. Nunca incluye password ni tokenVersion.
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        lastname: { type: string }
+        email: { type: string }
+        birthdate: { type: string, format: date-time }
+        reservationNumber: { type: string }
+        pronouns: { type: string }
+        casa: { type: string }
+        role: { type: string, enum: [user, admin] }
+        avatar: { $ref: "#/components/schemas/Avatar" }
+        familyTreeId: { type: string, format: uuid, nullable: true }
+        familyTree: { $ref: "#/components/schemas/FamilyTree" }
+        activities: { type: array, items: { $ref: "#/components/schemas/ActivityWithProgress" } }
+        preferredActivities: { type: array, items: { type: object } }
+        achievements: { type: array, items: { type: object } }
+    UserResponse:
+      type: object
+      description: "`user` y, por compatibilidad, los mismos campos en la raíz."
+      properties:
+        token: { type: string, description: "Solo en login y registro" }
+        user: { $ref: "#/components/schemas/User" }
+    Member:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        casa: { type: string }
+        avatar: { $ref: "#/components/schemas/Avatar" }
+        activities: { type: array, items: { $ref: "#/components/schemas/ActivityWithProgress" } }
+    FamilyTree:
+      type: object
+      nullable: true
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        adminId: { type: string, format: uuid }
+        members: { type: array, items: { type: string, format: uuid } }
+        users: { type: array, items: { $ref: "#/components/schemas/Member" } }
+    Activity:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: string }
+        location: { type: string }
+        type: { type: string, enum: [Xperiencia, Xecreto, Xelfie, Event] }
+        isActive: { type: boolean }
+        minAge: { type: integer, nullable: true }
+        maxAge: { type: integer, nullable: true }
+        houseId: { type: string, format: uuid, nullable: true }
+    ActivityInput:
+      type: object
+      required: [name, description, location]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        location: { type: string }
+        isActive: { type: boolean }
+        minAge: { type: integer, nullable: true }
+        maxAge: { type: integer, nullable: true }
+        houseId: { type: string, format: uuid, nullable: true }
+    Subtype:
+      allOf:
+        - $ref: "#/components/schemas/Activity"
+        - type: object
+          description: "id = id del subtipo; activityId = id de la actividad"
+          properties:
+            activityId: { type: string, format: uuid }
+            activity: { $ref: "#/components/schemas/Activity" }
+    House:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        animal: { type: string }
+        element: { type: string }
+    Achievement:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: string }
+        type: { type: string, enum: [Amuleto, Follaje] }
+        imageUrl: { type: string }
+        activityId: { type: string, format: uuid }
+        houseId: { type: string, format: uuid }
+    LeaderboardRow:
+      type: object
+      properties:
+        nombre: { type: string }
+        casa: { type: string }
+        avatar: { $ref: "#/components/schemas/Avatar" }
+        puntos: { type: integer }
+        xperiencias: { type: integer }
+        xecretos: { type: integer }
+        xelfies: { type: integer }
+        esYo: { type: boolean, description: "Solo si viene token y la fila es del usuario" }
 
 paths:
-  /users/{id}:
+  /health:
     get:
-      summary: Get user profile
-      tags:
-        - users
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Basic user info
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+      security: []
+      summary: Estado del servicio
+      responses: { "200": { description: OK } }
 
-  /users:
+  /login:
     post:
-      summary: Create a new user
-      tags:
-        - users
+      security: []
+      summary: Login (email sin distinguir mayúsculas). Rate limit por IP+email.
       requestBody:
-        description: New user payload
         required: true
         content:
           application/json:
-            schema:  
-              $ref: "#/components/schemas/UserCreation"
+            schema:
+              type: object
+              required: [email, password]
+              properties: { email: { type: string }, password: { type: string } }
       responses:
-        '200':
-          description: Basic user info
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '500':
-          $ref: '#/components/responses/InternalError'
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
 
-  /houses:
-    get:
-      summary: retrieve a list of /houses
-      tags: 
-        - houses
-      responses:
-        "200":
-          description: House information
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/House"
-
-
-  /xelfies:
-    get:
-      summary: List available Xelfie points
-      tags:
-        - xelfies
-      responses:
-        '200':
-          description: List of Xelfies
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Xelfie'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
+  /users:
     post:
-      summary: add a new xelfie activity 
-      tags:
-        - xelfies 
+      security: []
+      summary: Registro
       requestBody:
-        description:  new xelfie payload
-        required: true 
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, birthdate]
+              properties:
+                name: { type: string }
+                lastname: { type: string }
+                email: { type: string }
+                password: { type: string, minLength: 8 }
+                birthdate: { type: string, format: date-time }
+                reservationNumber: { type: string }
+                pronouns: { type: string }
+                casa: { type: string }
+                avatar: { $ref: "#/components/schemas/Avatar" }
+                parentalConsent:
+                  type: boolean
+                  description: "Obligatorio y `true` si la edad (hoy en America/Cancun) es < 18; si falta → 400 parental_consent_required. Se guarda como users.parentalConsentAt (fecha del servidor, nunca se devuelve). En mayores se ignora."
+      responses:
+        "201": { description: Creado, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
+  /users/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      summary: Usuario con progreso (solo el propio; admin cualquiera)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } }
+        "403": { $ref: "#/components/responses/Error" }
+    put:
+      summary: Editar perfil propio (igual que PUT /user)
+      responses: { "200": { description: OK }, "403": { $ref: "#/components/responses/Error" } }
+    delete:
+      summary: Borrar la cuenta (propia; admin cualquiera)
+      responses: { "200": { description: OK }, "403": { $ref: "#/components/responses/Error" } }
+
+  /user:
+    get:
+      summary: Usuario del token con progreso
+      responses: { "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } } }
+    put:
+      summary: Editar perfil propio
+      description: Solo name, lastname, pronouns, avatar, birthdate, reservationNumber. El resto se ignora.
+      requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                name: 
-                  type: string
-                description:
-                  type: string  
-                location:
-                  type: string
-                isActive:
-                  type: boolean
-                minAge:
-                  type: integer
-                maxAge:
-                  type: integer
-  
+                name: { type: string }
+                lastname: { type: string }
+                pronouns: { type: string }
+                avatar: { $ref: "#/components/schemas/Avatar" }
+                birthdate: { type: string, format: date-time }
+                reservationNumber: { type: string }
+      responses: { "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } } }
+    delete:
+      summary: Borrar la cuenta propia
+      responses: { "200": { description: OK } }
 
-  /user-xelfies/{userId}:
-    get:
-      summary: Get user's Xelfies
-      tags:
-        - users
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
+  /user/password:
+    put:
+      summary: Cambiar contraseña. Invalida los tokens anteriores.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string }
+                newPassword: { type: string, minLength: 8 }
       responses:
-        '200':
-          description: User's Xelfies with status
+        "200": { description: Token nuevo, content: { application/json: { schema: { type: object, properties: { token: { type: string } } } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+
+  /user-activities:
+    get:
+      summary: Actividades del usuario del token
+      responses: { "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/UserActivity" } } } } } }
+    post:
+      summary: Completar actividad
+      description: |
+        userId sale del token. Xecreto exige `code` (HMAC del QR). Xperiencia con respuesta
+        configurada exige `answer`; si falla → 400 wrong_answer y 429 cooldown durante
+        XPERIENCIA_COOLDOWN_SECONDS. Si ya estaba completada → 200 (idempotente).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [activityId]
+              properties:
+                activityId: { type: string, format: uuid }
+                code: { type: string }
+                answer: { type: string }
+      responses:
+        "201": { description: Completada, content: { application/json: { schema: { type: object, properties: { userActivity: { $ref: "#/components/schemas/UserActivity" } } } } } }
+        "200": { description: Ya estaba completada }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { description: "invalid_code", content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "404": { $ref: "#/components/responses/Error" }
+        "429": { description: "cooldown", content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /user-activities/{activityId}:
+    get:
+      parameters: [{ name: activityId, in: path, required: true, schema: { type: string, format: uuid } }]
+      summary: Progreso propio en una actividad
+      responses: { "200": { description: OK }, "404": { $ref: "#/components/responses/Error" } }
+
+  /user-preferences:
+    get:
+      summary: Calificaciones propias
+      responses: { "200": { description: OK } }
+    post:
+      summary: Calificar actividad (upsert por usuario+actividad)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [activityId]
+              properties:
+                activityId: { type: string, format: uuid }
+                rating: { type: integer, minimum: 1, maximum: 5 }
+                comment: { type: string }
+                isFavorite: { type: boolean }
+      responses: { "201": { description: Creada }, "200": { description: Actualizada } }
+  /user-preferences/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    put: { summary: Editar calificación propia, responses: { "200": { description: OK }, "404": { $ref: "#/components/responses/Error" } } }
+    delete: { summary: Borrar calificación propia, responses: { "200": { description: OK }, "404": { $ref: "#/components/responses/Error" } } }
+
+  /user-xelfies:
+    get: { summary: Xelfies propias, responses: { "200": { description: OK } } }
+    post:
+      summary: Guardar xelfie (completa su actividad)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [xelfieId, xelfieUrl]
+              properties: { xelfieId: { type: string, format: uuid }, xelfieUrl: { type: string, format: uri } }
+      responses: { "201": { description: Creada }, "409": { $ref: "#/components/responses/Error" } }
+  /user-xelfies/{xelfieId}:
+    parameters: [{ name: xelfieId, in: path, required: true, schema: { type: string, format: uuid } }]
+    put: { summary: Cambiar URL, responses: { "200": { description: OK } } }
+    delete: { summary: Borrar, responses: { "200": { description: OK } } }
+
+  /user-achievements:
+    get: { summary: Logros propios, responses: { "200": { description: OK } } }
+  /user-achievements/{userId}:
+    post:
+      summary: Otorgar logro (admin)
+      parameters: [{ name: userId, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [achievementId]
+              properties: { achievementId: { type: string, format: uuid }, amount: { type: integer, minimum: 1 } }
+      responses: { "201": { description: OK }, "403": { $ref: "#/components/responses/Error" }, "409": { $ref: "#/components/responses/Error" } }
+  /user-achievements/{userId}/{achievementId}:
+    parameters:
+      - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+      - { name: achievementId, in: path, required: true, schema: { type: string, format: uuid } }
+    put: { summary: Cambiar amount (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Quitar logro (admin), responses: { "200": { description: OK } } }
+
+  /family-trees:
+    post:
+      summary: Crear familia (el usuario del token queda como admin)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string } } } } }
+      responses: { "201": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/FamilyTree" } } } }, "409": { $ref: "#/components/responses/Error" } }
+  /family-trees/join:
+    post:
+      summary: Unirse con una invitación firmada (máx. 6)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [inviteToken], properties: { inviteToken: { type: string } } } } }
+      responses: { "200": { description: OK }, "403": { description: invalid_invite }, "409": { description: Familia llena } }
+  /family-trees/leave:
+    post:
+      summary: Salir de la familia (si era admin se reasigna; si queda vacía se borra)
+      responses: { "200": { description: OK }, "400": { $ref: "#/components/responses/Error" } }
+  /family-trees/{familyId}:
+    parameters: [{ name: familyId, in: path, required: true, schema: { type: string, format: uuid } }]
+    get:
+      summary: Ver familia (solo miembros)
+      responses: { "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/FamilyTree" } } } }, "403": { $ref: "#/components/responses/Error" } }
+    put:
+      summary: Renombrar (solo admin del árbol)
+      requestBody: { content: { application/json: { schema: { type: object, properties: { name: { type: string } } } } } }
+      responses: { "200": { description: OK }, "403": { $ref: "#/components/responses/Error" } }
+    delete:
+      summary: Borrar familia (solo admin del árbol)
+      responses: { "200": { description: OK }, "403": { $ref: "#/components/responses/Error" } }
+  /family-trees/{familyId}/invite:
+    post:
+      parameters: [{ name: familyId, in: path, required: true, schema: { type: string, format: uuid } }]
+      summary: Crear invitación (24 h) para el QR de la familia (solo miembros)
+      responses:
+        "200":
+          description: OK
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserXelfie'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+              schema: { type: object, properties: { inviteToken: { type: string }, expiresAt: { type: string, format: date-time } } }
+
+  /leaderboard:
+    get:
+      security: []
+      summary: Podio (máx. 50). Días/meses en America/Cancun. Sin ids.
+      parameters:
+        - { name: periodo, in: query, schema: { type: string, enum: [hoy, mes, total, siempre], default: total } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/LeaderboardRow" } } } } }
+
+  /activities:
+    get:
+      security: []
+      summary: Todas las actividades
+      responses: { "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Activity" } } } } } }
+  /activities/{id}:
+    get:
+      security: []
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      summary: Una actividad
+      responses: { "200": { description: OK } }
+
+  /houses:
+    get: { security: [], summary: Casas, responses: { "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/House" } } } } } } }
+    post: { summary: Crear (admin), responses: { "201": { description: OK }, "403": { $ref: "#/components/responses/Error" } } }
+  /houses/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Casa, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }
+
+  /xelfies:
+    get: { security: [], summary: Xelfies, responses: { "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Subtype" } } } } } } }
+    post:
+      summary: Crear (admin)
+      requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/ActivityInput" } } } }
+      responses: { "201": { description: OK } }
+  /xelfies/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Xelfie, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }
 
   /xperiencias:
-    get:
-      summary: List available Xperiencias
-      tags:
-        - xperiencias
-      responses:
-        '200':
-          description: List of Xperiencias
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Xperiencia'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /user-activities/{userId}:
-    get:
-      summary: Get activity log for user
-      tags:
-        - users
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Activity log
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserActivity'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /achievements:
-    get:
-      summary: List achievements
-      tags:
-        - achievements
-      parameters:
-        - in: query
-          name: type
-          schema:
-            type: string
-            enum: [amulet, foliage]
-      responses:
-        '200':
-          description: List of achievements
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Achievement'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /user-achievements/{userId}:
-    get:
-      summary: Get user achievements
-      tags:
-        - achievements
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Achievements earned by user
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAchievement'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+    get: { security: [], summary: "Xperiencias (sin correctAnswer; hasAnswer indica si el servidor valida)", responses: { "200": { description: OK } } }
+    post:
+      summary: Crear (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ActivityInput"
+                - type: object
+                  properties: { isValidable: { type: boolean }, correctAnswer: { type: string } }
+      responses: { "201": { description: OK } }
+  /xperiencias/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Xperiencia, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }
 
   /xecretos:
-    get:
-      summary: List Xecreto clues
-      tags:
-        - xecretos
+    get: { security: [], summary: "Xecretos con pistas (sin correctAnswer)", responses: { "200": { description: OK } } }
+    post:
+      summary: Crear (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ActivityInput"
+                - type: object
+                  properties:
+                    clues:
+                      type: array
+                      items: { type: object, properties: { text: { type: string }, correctAnswer: { type: string } } }
+      responses: { "201": { description: OK } }
+  /xecretos/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Xecreto, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }
+  /xecretos/{id}/check:
+    post:
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      summary: Validar la respuesta de una pista
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [clueId, answer], properties: { clueId: { type: string, format: uuid }, answer: { type: string } } }
       responses:
-        '200':
-          description: All Xecretos with status info
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Xecreto'
-        '500':
-          $ref: '#/components/responses/InternalError'
+        "200": { description: OK, content: { application/json: { schema: { type: object, properties: { correct: { type: boolean } } } } } }
 
   /events:
     get:
-      summary: List active events
-      tags:
-        - events
-      responses:
-        '200':
-          description: Events currently happening or upcoming
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
-        '500':
-          $ref: '#/components/responses/InternalError'
+      security: []
+      summary: Eventos (checklist). ?activos=true → solo los vigentes ahora.
+      parameters: [{ name: activos, in: query, schema: { type: boolean } }]
+      responses: { "200": { description: OK } }
+    post:
+      summary: Crear (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ActivityInput"
+                - type: object
+                  required: [startDate, endDate]
+                  properties: { startDate: { type: string, format: date-time }, endDate: { type: string, format: date-time } }
+      responses: { "201": { description: OK } }
+  /events/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Evento, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }
 
-  /family-trees/{familyId}:
-    get:
-      summary: Get family tree info and member progress
-      tags:
-        - users
-      parameters:
-        - in: path
-          name: familyId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Family tree and status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FamilyTree'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id: { type: string }
-        name: { type: string }
-        avatarUrl: { type: string }
-        roomNumber: { type: string }
-
-    UserCreation:
-      type: object
-      properties:
-        name:
-          type: string
-        lastname:
-          type: string
-        email:
-          type: string
-          format: email
-        password:
-          type: string  
-          format: password
-        birthdate:
-          type: string
-          format: Date
-        reservationNumber:
-          type: string     
-        pronouns: 
-          type: string
-        avatar:
-          type: object
-    House:
-      type: object
-      properties:
-        id: {type: string}
-        name: {type: string}
-        animal: {type: string}
-        element: {type: string}
-        
-    Xelfie:
-      type: object
-      properties:
-        id: { type: string }
-        house: { type: string }
-        coordinates: { type: string }
-
-    UserXelfie:
-      type: object
-      properties:
-        xelfieId: { type: string }
-        takenAt: { type: string, format: date-time }
-        downloadable: { type: boolean }
-
-    Xperiencia:
-      type: object
-      properties:
-        id: { type: string }
-        name: { type: string }
-        category: { type: string }
-        validable: { type: boolean }
-
-    UserActivity:
-      type: object
-      properties:
-        activityId: { type: string }
-        type: { type: string }
-        metadata: { type: object }
-        timestamp: { type: string, format: date-time }
-
-    Achievement:
-      type: object
-      properties:
-        id: { type: string }
-        title: { type: string }
-        type: { type: string }
-        iconUrl: { type: string }
-        house: { type: string }
-
-    UserAchievement:
-      type: object
-      properties:
-        achievementId: { type: string }
-        earnedAt: { type: string, format: date-time }
-
-    Xecreto:
-      type: object
-      properties:
-        id: { type: string }
-        house: { type: string }
-        clueStage: { type: integer }
-        found: { type: boolean }
-
-    Event:
-      type: object
-      properties:
-        id: { type: string }
-        title: { type: string }
-        startDate: { type: string, format: date-time }
-        endDate: { type: string, format: date-time }
-
-    FamilyTree:
-      type: object
-      properties:
-        id: { type: string }
-        adminId: { type: string }
-        members:
-          type: array
-          items:
-            type: object
-            properties:
-              userId: { type: string }
-              progress: { type: object }
-
-  responses:
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error: { type: string, example: 'Not Found' }
-              message: { type: string, example: 'The requested resource was not found.' }
-
-    InternalError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error: { type: string, example: 'Internal Server Error' }
-              message: { type: string, example: 'Something went wrong on our end.' }
-
-    Unauthorized:
-      description: Authentication required
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error: { type: string, example: 'Unauthorized' }
-              message: { type: string, example: 'You must be logged in to access this resource.' }
-
-    Forbidden:
-      description: Insufficient permissions
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error: { type: string, example: 'Forbidden' }
-              message: { type: string, example: 'You are not allowed to perform this action.' }
-
-    ValidationError:
-      description: Invalid input data
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error: { type: string, example: 'Validation Error' }
-              message: { type: string, example: 'One or more fields failed validation.' }
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field: { type: string }
-                    issue: { type: string }
+  /achievements:
+    get: { security: [], summary: Logros, responses: { "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Achievement" } } } } } } }
+    post: { summary: Crear (admin), responses: { "201": { description: OK } } }
+  /achievements/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get: { security: [], summary: Logro, responses: { "200": { description: OK } } }
+    put: { summary: Editar (admin), responses: { "200": { description: OK } } }
+    delete: { summary: Borrar (admin), responses: { "200": { description: OK } } }

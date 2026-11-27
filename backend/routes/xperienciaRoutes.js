@@ -1,49 +1,19 @@
-const express = require("express");
-const {
-  xperienciaIdParam,
-  createXperienciaValidation,
-  updateXperienciaValidation,
-} = require("../validation/xperiencia.validation");
-const {
-  createActivityValidation,
-  updateActivityValidation,
-} = require("../validation/activity.validation");
-const { validateRequest } = require("../middleware/validateRequest");
-const router = express.Router();
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/xperienciaService");
+const { toXperienciaDTO } = require("../dto/xperiencia.dto");
+const a = require("../validation/activity.validation");
+const v = require("../validation/xperiencia.validation");
 
-const xperienciaController = require("../controllers/xperienciaController");
+const controller = makeController({
+  service,
+  toDTO: toXperienciaDTO,
+  key: "xperiencia",
+  label: "Xperiencia",
+  fields: [...["name", "description", "location", "isActive", "minAge", "maxAge", "houseId"], "isValidable", "correctAnswer"],
+});
 
-router.get("/", xperienciaController.getAllXperiencias);
-
-router.get(
-  "/:id",
-  xperienciaIdParam,
-  validateRequest,
-  xperienciaController.getXperiencia
-);
-
-router.post(
-  "/",
-  createXperienciaValidation,
-  createActivityValidation,
-  validateRequest,
-  xperienciaController.createXperiencia
-);
-
-router.post(
-  "/:id",
-  xperienciaIdParam,
-  updateActivityValidation,
-  updateXperienciaValidation,
-  validateRequest,
-  xperienciaController.updateXperiencia
-);
-
-router.delete(
-  "/:id",
-  xperienciaIdParam,
-  validateRequest,
-  xperienciaController.deleteXperiencia
-);
-
-module.exports = router;
+module.exports = catalogRouter(controller, {
+  createValidation: [...a.createActivityValidation, ...v.createXperienciaValidation],
+  updateValidation: [...a.updateActivityValidation, ...v.updateXperienciaValidation],
+});

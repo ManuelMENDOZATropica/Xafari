@@ -1,50 +1,25 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 
-exports.createActivityValidation = [
-  body("name").isString().withMessage("Name is required"),
-  body("description").isString().withMessage("Description is required"),
-  body("location").isString().withMessage("Location is required"),
-  body("isActive").optional().isBoolean().withMessage("isActive is required"),
-  body("minAge")
-    .optional({ checkFalsy: true })
-    .isInt({ min: 0 })
-    .withMessage("Age limits are not valid")
-    .custom((value, { req }) => {
-      const maxAge = req.body.maxAge;
-      if (value !== null && maxAge !== null && Number(value) > Number(maxAge)) {
-        throw new Error("Age limits are not valid");
-      }
-      return true;
-    })
-    .withMessage("Age limits are not valid"),
-  body("maxAge")
-    .optional({ checkFalsy: true })
-    .isInt()
-    .withMessage("Age limits are not valid"),
-];
+function ageRange(value, { req }) {
+  const { minAge, maxAge } = req.body;
+  if (minAge != null && maxAge != null && Number(minAge) > Number(maxAge)) {
+    throw new Error("Age limits are not valid");
+  }
+  return true;
+}
 
-exports.updateActivityValidation = [
-  body("name").optional().isString().withMessage("Name is required"),
-  body("description")
-    .optional()
-    .isString()
-    .withMessage("Description is required"),
-  body("location").optional().isString().withMessage("Location is required"),
-  body("isActive").optional().isBoolean().withMessage("isActive is required"),
-  body("minAge")
-    .optional({ checkFalsy: true })
-    .isInt({ min: 0 })
-    .withMessage("Age limits are not valid")
-    .custom((value, { req }) => {
-      const maxAge = req.body.maxAge;
-      if (value !== null && maxAge !== null && Number(value) > Number(maxAge)) {
-        throw new Error("Age limits are not valid");
-      }
-      return true;
-    })
-    .withMessage("Age limits are not valid"),
-  body("maxAge")
-    .optional({ checkFalsy: true })
-    .isInt()
-    .withMessage("Age limits are not valid"),
-];
+const common = (required) => {
+  const f = (name) => (required ? body(name) : body(name).optional());
+  return [
+    f("name").isString().trim().notEmpty().withMessage("Name is required"),
+    f("description").isString().withMessage("Description is required"),
+    f("location").isString().trim().notEmpty().withMessage("Location is required"),
+    body("isActive").optional().isBoolean().withMessage("isActive must be boolean").toBoolean(),
+    body("minAge").optional({ values: "null" }).isInt({ min: 0 }).withMessage("Age limits are not valid").toInt().custom(ageRange),
+    body("maxAge").optional({ values: "null" }).isInt({ min: 1 }).withMessage("Age limits are not valid").toInt().custom(ageRange),
+    body("houseId").optional({ values: "null" }).isUUID().withMessage("Valid house ID is required"),
+  ];
+};
+
+exports.createActivityValidation = common(true);
+exports.updateActivityValidation = common(false);

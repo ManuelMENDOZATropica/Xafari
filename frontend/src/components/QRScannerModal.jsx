@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function QRScannerModal({ onClose, onConfirm }) {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const [cameraError, setCameraError] = useState(false);
@@ -63,14 +65,14 @@ export default function QRScannerModal({ onClose, onConfirm }) {
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "rgba(242,232,218,1)" }}>
-            <svg className="w-16 h-16 opacity-30" fill="none" viewBox="0 0 24 24" stroke="#7b4a1a" strokeWidth={1.5}>
+            <svg aria-hidden="true" className="w-16 h-16 opacity-30" fill="none" viewBox="0 0 24 24" stroke="#7b4a1a" strokeWidth={1.5}>
               <rect x="3" y="3" width="7" height="7" rx="1" />
               <rect x="14" y="3" width="7" height="7" rx="1" />
               <rect x="3" y="14" width="7" height="7" rx="1" />
               <path strokeLinecap="round" d="M14 14h3M17 14v3M14 17h3M17 17v3" />
             </svg>
-            <span className="text-xs font-medium opacity-40" style={{ color: "#7b4a1a" }}>
-              Cámara no disponible
+            <span className="text-xs font-medium" style={{ color: "#5a3410" }}>
+              {t("scanner.cameraUnavailable")}
             </span>
           </div>
         )}
@@ -108,22 +110,26 @@ export default function QRScannerModal({ onClose, onConfirm }) {
       >
         {/* X — Cancelar */}
         <button
+          type="button"
+          aria-label={t("close")}
           onClick={() => stopAndCall(onClose)}
           className="flex-1 flex items-center justify-center py-3 rounded-full active:scale-95 transition-all"
           style={{ backgroundColor: "#b03030" }}
         >
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.5}>
+          <svg aria-hidden="true" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         {/* Cámara — Confirmar */}
         <button
+          type="button"
+          aria-label={t("xelfieConfirm")}
           onClick={() => stopAndCall(onConfirm)}
           className="flex-1 flex items-center justify-center py-3 rounded-full active:scale-95 transition-all"
           style={{ backgroundColor: "#2d7a2d" }}
         >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
+          <svg aria-hidden="true" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>

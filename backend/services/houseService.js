@@ -1,49 +1,28 @@
-const House = require("../models/house");
-
-const { Activity, Achievement } = require("../models");
+const database = require("../config/database");
+const { House, Activity, Achievement } = require("../models");
 const { ResourceNotFoundError } = require("../utils/errors");
 
-exports.createHouse = async ({ name, element, animal }) => {
-  const house = await House.create({
-    name,
-    element,
-    animal,
+const include = [
+  { model: Activity, attributes: ["id", "name", "type", "location"] },
+  { model: Achievement, attributes: ["id", "name", "type", "imageUrl"] },
+];
+
+exports.get = (id, transaction) => House.findByPk(id, { include, transaction });
+exports.list = () => House.findAll({ include, order: [["name", "ASC"]] });
+exports.create = (data) => House.create(data);
+
+exports.update = (id, data) =>
+  database.transaction(async (transaction) => {
+    const house = await House.findByPk(id, { transaction });
+    if (!house) throw new ResourceNotFoundError("House not found");
+    await house.update(data, { transaction });
+    return exports.get(id, transaction);
   });
 
-  return house;
-};
-
-exports.getHouse = async (id) => {
-  const house = await House.findByPk(id, {
-    include: [Activity, Achievement],
+exports.remove = (id) =>
+  database.transaction(async (transaction) => {
+    const house = await House.findByPk(id, { transaction });
+    if (!house) throw new ResourceNotFoundError("House not found");
+    await house.destroy({ transaction });
+    return house;
   });
-
-  return house;
-};
-
-exports.getAllHouses = async () => {
-  const houses = await House.findAll({
-    include: [Activity, Achievement],
-  });
-
-  return houses;
-};
-
-exports.deleteHouse = async (id) => {
-  const house = await this.getHouse(id);
-
-  if (house == null) throw new ResourceNotFoundError("House not found");
-
-  const destroyed = await house.destroy();
-
-  return destroyed;
-};
-
-exports.updateHouse = async (id, newData) => {
-  const house = await this.getHouse(id);
-
-  if (house == null) throw new ResourceNotFoundError("House not found");
-  const updated = await house.update(newData);
-
-  return updated;
-};

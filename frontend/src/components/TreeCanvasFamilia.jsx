@@ -1,15 +1,22 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import AvatarRender from "@/components/AvatarRender";
 import { motion } from "framer-motion";
-import { useRef, useEffect, useState, useCallback, useMemo, useContext } from "react";
+import { useRef, useEffect, useCallback, useMemo, useContext } from "react";
 import XafariContext from "@/components/XafariContext";
+import {
+  TREE_CANVAS_WIDTH as CANVAS_WIDTH,
+  TREE_CANVAS_HEIGHT as CANVAS_HEIGHT,
+  guardianPositions,
+  xtopPositions,
+  checklistPositions,
+  centerOf,
+} from "@/data/arbol";
 
 // ─── constantes del canvas ────────────────────────────────────────────────────
-const CANVAS_WIDTH  = 2450;
-const CANVAS_HEIGHT = 4200;
 const INITIAL_SCALE = 0.17;
 const MIN_SCALE     = 0.15;
 const MAX_SCALE     = 0.40;
+const FOCUS_SCALE   = 0.38;
 
 function calcInitialPos() {
   // iOS Safari puede devolver 0 o valores raros antes del layout — usamos fallbacks seguros
@@ -24,6 +31,7 @@ function calcInitialPos() {
   };
 }
 
+// Posición (px del canvas) de cada familiar, por orden de llegada (máx. 6)
 const positionsById = {
   1: { x: 1450, y: 3000 },
   2: { x: 1100, y: 3000 },
@@ -32,6 +40,14 @@ const positionsById = {
   5: { x: 1350, y: 3100 },
   6: { x: 1200, y: 3100 },
 };
+
+// Tipos de insignia → posiciones. Las llaves son activity.name en la BD
+// (xecreto1…10, camion…xpiral, acai…tostada), igual que el progreso.
+const TIPOS = [
+  { tipo: "xecretos", positions: guardianPositions },
+  { tipo: "xperiencias", positions: xtopPositions },
+  { tipo: "checklist", positions: checklistPositions },
+];
 
 function parseUserProgress(userObj) {
   const dbActivities = userObj?.activities || [];
@@ -54,423 +70,104 @@ function parseUserProgress(userObj) {
 
   return { xecretos, checklist, xperiencias };
 }
-const mapa = {
-  xecreto1: "mono",
-  xecreto2: "rana",
-  xecreto3: "jaguar",
-  xecreto4: "guacamaya",
-  xecreto5: "serpiente",
-  xecreto6: "venado",
-  xecreto7: "buho",
-  xecreto8: "mariposa",
-  xecreto9: "flamenco",
-  xecreto10: "coati",
+
+const getBadgeOpacity = (porcentaje) => {
+  if (porcentaje <= 0) return 0;
+  if (porcentaje >= 1) return 1.0;
+  // p = 0.2 → 0.7 · p = 1.0 → 1.0
+  return Number((0.375 * porcentaje + 0.625).toFixed(3));
 };
 
-const mapaXperiencias = {
-  x1: "acai",
-  x2: "carne",
-  x3: "ceviche",
-  x4: "coctel",
-  x5: "corunda",
-  x6: "espada",
-  x7: "mezcal",
-  x8: "mimosa",
-  x9: "nogada",
-  x10: "ostion",
-  x11: "paleta",
-  x12: "palomitas",
-  x13: "panucho",
-  x14: "quesadillas",
-  x15: "quesos",
-  x16: "ramen",
-  x17: "ravioli",
-  x18: "sushi",
-  x19: "torta",
-  x20: "tostada",
-};
-
-const mapaXtop = {
-  xtop1: "camion",
-  xtop2: "caracola",
-  xtop3: "conejo",
-  xtop4: "drink",
-  xtop5: "estrella",
-  xtop6: "kayak",
-  xtop7: "mascarajaguar",
-  xtop8: "patin",
-  xtop9: "piscina",
-  xtop10: "poolpo",
-  xtop11: "salvavidas",
-  xtop12: "teatro",
-  xtop13: "tobogan",
-  xtop14: "tv",
-  xtop15: "vinil",
-  xtop16: "xpiral",
-  xtop17: "xorbeteria",
-};
-
-const guardianPositions = {
-  xecreto1: {
-    src: "/arbol/guardianes/Mono Casa Vida.png",
-    left: "29.175%",
-    top: "32.726%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto10: {
-    src: "/arbol/guardianes/Coatí Casa Luna.png.png",
-    left: "47.659%",
-    top: "39.774%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto2: {
-    src: "/arbol/guardianes/Rana Casa Agua.png",
-    left: "32.912%",
-    top: "66.250%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto3: {
-    src: "/arbol/guardianes/Jaguar Casa Sol.png",
-    left: "65.720%",
-    top: "44.476%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto4: {
-    src: "/arbol/guardianes/Guacamaya Casa Fuego.png",
-    left: "47.013%",
-    top: "27.833%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto5: {
-    src: "/arbol/guardianes/Serpiente Casa Espiral.png",
-    left: "29.498%",
-    top: "54.286%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto6: {
-    src: "/arbol/guardianes/Venado Casa Tierra.png",
-    left: "63.377%",
-    top: "53.012%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto7: {
-    src: "/arbol/guardianes/Búho Casa Eclipse.png",
-    left: "60.427%",
-    top: "66.262%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto8: {
-    src: "/arbol/guardianes/Mariposa Casa Viento.png",
-    left: "65.720%",
-    top: "32.321%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-  xecreto9: {
-    src: "/arbol/guardianes/Flamenco Casa Sol.png",
-    left: "27.882%",
-    top: "43.179%",
-    width: "11.429%",
-    height: "6.667%",
-  },
-};
-
-const xtopPositions = {
-  camion: {
-    src: "/arbol/xtop/Insignia Xiquit inn.png",
-    left: "48.093%",
-    top: "19.242%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  caracola: {
-    src: "/arbol/xtop/Insignia Muluk spa.png",
-    left: "39.392%",
-    top: "46.450%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  conejo: {
-    src: "/arbol/xtop/Insignia Lunateca.png",
-    left: "48.633%",
-    top: "47.008%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  drink: {
-    src: "/arbol/xtop/Insignia Pava Jarla.png",
-    left: "54.170%",
-    top: "56.015%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  estrella: {
-    src: "/arbol/xtop/Insignias Dixtrito 1317.png",
-    left: "71.862%",
-    top: "63.754%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  kayak: {
-    src: "/arbol/xtop/Insignia Kayak.png",
-    left: "74.846%",
-    top: "55.319%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  mascarajaguar: {
-    src: "/arbol/xtop/Insignia Paxanguería.png",
-    left: "45.428%",
-    top: "61.447%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  patin: {
-    src: "/arbol/xtop/Insignia Patín.png",
-    left: "36.994%",
-    top: "27.381%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  piscina: {
-    src: "/arbol/xtop/Insignia Rooftop Fuego.png",
-    left: "20.276%",
-    top: "58.901%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  poolpo: {
-    src: "/arbol/xtop/Insignia pool poh.png",
-    left: "58.460%",
-    top: "26.929%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  salvavidas: {
-    src: "/arbol/xtop/Insignia infinity pool.png",
-    left: "81.087%",
-    top: "60.651%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  teatro: {
-    src: "/arbol/xtop/Insignia Teatro del Río.png",
-    left: "18.794%",
-    top: "53.513%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  tobogan: {
-    src: "/arbol/xtop/Insignia Tobogan Arboloco.png",
-    left: "44.931%",
-    top: "54.546%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  tv: {
-    src: "/arbol/xtop/Insignia Bar las maquinitas.png",
-    left: "20.377%",
-    top: "65.085%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  vinil: {
-    src: "/arbol/xtop/Insignia Vinil.png",
-    left: "11.227%",
-    top: "64.279%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  xorbeteria: {
-    src: "/arbol/xtop/Insignias Xoberte.png",
-    left: "44.391%",
-    top: "69.284%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-  xpiral: {
-    src: "/arbol/xtop/Insignia Xpiral.png",
-    left: "84.045%",
-    top: "50.691%",
-    width: "9.143%",
-    height: "5.333%",
-  },
-};
+// insigniaReciente puede llegar como "camion" o como { clave, tipo }
+const recienteKey = (r) => (typeof r === "string" ? r : r?.clave ?? null);
 
 export default function TreeCanvasFamilia({ insigniaReciente }) {
-  const initialPos = useRef(calcInitialPos());
+  const initialPos = useRef(null);
+  if (initialPos.current === null) initialPos.current = calcInitialPos();
   const transformRef = useRef(null);
 
-  // Programmatic Zoom on new insignia
-  useEffect(() => {
-    if (!insigniaReciente) return;
-
-    let key = null;
-    if (typeof insigniaReciente === "string") {
-      key = insigniaReciente;
-    } else if (insigniaReciente.clave) {
-      key = insigniaReciente.clave;
-    }
-
-    if (!key) return;
-
-    let resolvedKey = key;
-    if (mapaXtop[key]) {
-      resolvedKey = mapaXtop[key];
-    }
-
-    let pos = null;
-    if (guardianPositions[resolvedKey]) {
-      pos = guardianPositions[resolvedKey];
-    } else if (xtopPositions[resolvedKey]) {
-      pos = xtopPositions[resolvedKey];
-    }
-
-    if (pos && transformRef.current) {
-      const leftVal = parseFloat(pos.left);
-      const topVal = parseFloat(pos.top);
-      const wVal = parseFloat(pos.width);
-      const hVal = parseFloat(pos.height);
-
-      const cx_pct = leftVal + wVal / 2;
-      const cy_pct = topVal + hVal / 2;
-
-      const targetX = (cx_pct / 100) * CANVAS_WIDTH;
-      const targetY = (cy_pct / 100) * CANVAS_HEIGHT;
-
-      const zoomScale = 0.38;
-
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const posX = vw / 2 - targetX * zoomScale;
-      const posY = vh / 2 - targetY * zoomScale;
-
-      // Vibrar el teléfono física si la API está disponible (patrón doble premium)
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate([150, 100, 150]);
-      }
-
-      transformRef.current.setTransform(posX, posY, zoomScale, 1200, "easeOut");
-
-      const timer = setTimeout(() => {
-        if (transformRef.current) {
-          const initial = calcInitialPos();
-          transformRef.current.setTransform(initial.x, initial.y, INITIAL_SCALE, 1000, "easeOut");
-        }
-      }, 2800);
-
-      return () => clearTimeout(timer);
-    }
-  }, [insigniaReciente]);
-
-  const [jugador, setJugador] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user") || "{}");
-    } catch (_) {
-      return {};
-    }
-  });
-
-  useEffect(() => {
-    const handleStorage = () => {
-      try {
-        const updated = JSON.parse(localStorage.getItem("user") || "{}");
-        setJugador(updated);
-      } catch (_) {}
-    };
-
-    window.addEventListener("storage", handleStorage);
-    handleStorage();
-
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-
   const {
+    user: jugador,
     familyTree,
     xecretos: jugadorXecretos,
-    progresoXperiencias: jugadorRespuestasCorrectas,
+    progresoXperiencias: jugadorXperiencias,
     progresoChecklist: jugadorChecklist,
   } = useContext(XafariContext);
 
-  const xtopNombres = [
-    "camion", "caracola", "conejo", "drink", "estrella", "kayak",
-    "mascarajaguar", "patin", "piscina", "poolpo", "salvavidas",
-    "teatro", "tobogan", "tv", "vinil", "xpiral", "xorbeteria",
-  ];
+  const reciente = recienteKey(insigniaReciente);
 
-  const xtopProgreso = useMemo(() => {
-    const map = {};
-    Object.entries(jugadorRespuestasCorrectas || {}).forEach(([k]) => {
-      if (xtopNombres.includes(k)) map[k] = true;
-    });
-    return map;
-  }, [jugadorRespuestasCorrectas]);
+  // Zoom programático a la insignia recién ganada
+  useEffect(() => {
+    if (!reciente) return;
+    const pos =
+      guardianPositions[reciente] || xtopPositions[reciente] || checklistPositions[reciente];
+    if (!pos || !transformRef.current) return;
+
+    const { x: targetX, y: targetY } = centerOf(pos);
+    const posX = window.innerWidth / 2 - targetX * FOCUS_SCALE;
+    const posY = window.innerHeight / 2 - targetY * FOCUS_SCALE;
+
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate([150, 100, 150]);
+    }
+
+    transformRef.current.setTransform(posX, posY, FOCUS_SCALE, 1200, "easeOut");
+
+    const timer = setTimeout(() => {
+      if (transformRef.current) {
+        const initial = calcInitialPos();
+        transformRef.current.setTransform(initial.x, initial.y, INITIAL_SCALE, 1000, "easeOut");
+      }
+    }, 2800);
+
+    return () => clearTimeout(timer);
+  }, [reciente]);
+
+  // Progreso del jugador por tipo (llaves = activity.name)
+  const progresoJugador = useMemo(
+    () => ({
+      xecretos: jugadorXecretos || {},
+      xperiencias: jugadorXperiencias || {},
+      checklist: jugadorChecklist || {},
+    }),
+    [jugadorXecretos, jugadorXperiencias, jugadorChecklist]
+  );
 
   const familyMembers = useMemo(() => {
     if (!familyTree || !familyTree.users) return [];
-    
-    // Filtrar al jugador actual para no duplicarlo
-    const otherUsers = familyTree.users.filter((u) => u.id !== jugador?.id);
-    
-    return otherUsers.map((u, index) => {
-      return {
-        id: String(u.id),
+
+    // Sin el jugador actual para no duplicarlo
+    return familyTree.users
+      .filter((u) => !u.esYo && (u.id == null || u.id !== jugador?.id))
+      .slice(0, 6)
+      .map((u, index) => ({
+        id: String(u.id ?? `familiar-${index}`),
         nombre: u.name,
         avatarData: u.avatar || {},
         progreso: parseUserProgress(u),
-        posId: index + 1 // Asigna posición (1 a 6) en positionsById
-      };
-    });
+        posId: index + 1,
+      }));
   }, [familyTree, jugador?.id]);
 
-  const calcularNivelDesbloqueo = (clave, tipo, asset) => {
+  // Insignias visibles con su porcentaje de desbloqueo familiar
+  const insignias = useMemo(() => {
     const total = familyMembers.length + 1;
-    let desbloqueosFamilia = 0;
-
-    familyMembers.forEach((m) => {
-      if (tipo === "xecretos" && m.progreso?.xecretos?.[clave]) {
-        desbloqueosFamilia++;
-      } else if (tipo === "xperiencias" && m.progreso?.xperiencias?.[clave]) {
-        desbloqueosFamilia++;
-      } else if (tipo === "checklist" && m.progreso?.checklist?.[clave]) {
-        desbloqueosFamilia++;
+    const out = [];
+    for (const { tipo, positions } of TIPOS) {
+      for (const [nombre, pos] of Object.entries(positions)) {
+        const jugadorLaTiene = !!progresoJugador[tipo][nombre];
+        const deFamilia = familyMembers.filter((m) => m.progreso?.[tipo]?.[nombre]).length;
+        const porcentaje = (deFamilia + (jugadorLaTiene ? 1 : 0)) / total;
+        if (porcentaje === 0) continue;
+        out.push({ tipo, nombre, pos, jugadorLaTiene, opacity: getBadgeOpacity(porcentaje) });
       }
-    });
-
-    let jugadorTiene = false;
-    if (tipo === "xecretos") {
-      jugadorTiene = !!jugadorXecretos?.[clave];
-    } else if (tipo === "xperiencias") {
-      jugadorTiene = !!xtopProgreso?.[asset];
-    } else if (tipo === "checklist") {
-      jugadorTiene = !!jugadorChecklist?.[asset];
     }
-
-    const desbloqueoJugador = jugadorTiene ? 1 : 0;
-    return (desbloqueosFamilia + desbloqueoJugador) / total;
-  };
-
-  const getBadgeOpacity = (porcentaje) => {
-    if (porcentaje <= 0) return 0;
-    if (porcentaje >= 1) return 1.0;
-    // p = 0.2 -> opacity = 0.7
-    // p = 1.0 -> opacity = 1.0
-    // formula: opacity = 0.375 * p + 0.625
-    return Number((0.375 * porcentaje + 0.625).toFixed(3));
-  };
+    return out;
+  }, [familyMembers, progresoJugador]);
 
   const checkAndReset = useCallback((ref) => {
     try {
-      // En iOS Safari, ref.state puede llegar undefined — guardamos con optional chaining
+      // En iOS Safari, ref.state puede llegar undefined
       const scale = ref?.state?.scale ?? INITIAL_SCALE;
       const posX  = ref?.state?.positionX ?? 0;
       const posY  = ref?.state?.positionY ?? 0;
@@ -486,97 +183,10 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
         const { x, y } = initialPos.current;
         ref?.setTransform?.(x, y, INITIAL_SCALE, 380, "easeOut");
       }
-    } catch (_) {
+    } catch {
       // silenciar errores de iOS Safari en callbacks de touch
     }
   }, []);
-
-  const renderInsignias = (mapaTipo, tipo) => {
-    return Object.entries(mapaTipo).map(([clave, asset]) => {
-      const porcentaje = calcularNivelDesbloqueo(clave, tipo, asset);
-      if (porcentaje === 0) return null;
-
-      let jugadorLaTiene = false;
-      if (tipo === "xecretos") {
-        jugadorLaTiene = !!jugadorXecretos?.[clave];
-      } else if (tipo === "xperiencias") {
-        jugadorLaTiene = !!xtopProgreso?.[asset];
-      } else if (tipo === "checklist") {
-        jugadorLaTiene = !!jugadorChecklist?.[asset];
-      }
-
-      const esReciente =
-        typeof insigniaReciente === "string"
-          ? (tipo === "xecretos" ? insigniaReciente === clave : insigniaReciente === asset)
-          : (insigniaReciente?.tipo === tipo && insigniaReciente.clave === clave);
-      const debeAnimar = jugadorLaTiene && esReciente;
-      const key = esReciente ? `reciente-${tipo}-${clave}` : `${tipo}-${clave}`;
-      const opacityVal = getBadgeOpacity(porcentaje);
-
-      if (tipo === "xecretos") {
-        const pos = guardianPositions[clave];
-        if (!pos) return null;
-        return (
-          <motion.img
-            key={key}
-            src={pos.src}
-            className="absolute object-contain pointer-events-none"
-            style={{
-              left: pos.left,
-              top: pos.top,
-              width: pos.width,
-              height: pos.height,
-            }}
-            initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
-            animate={{
-              opacity: opacityVal,
-              scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
-              rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
-            }}
-            transition={{ duration: debeAnimar ? 1.2 : 0.6, ease: "easeInOut", delay: debeAnimar ? 1.0 : 0 }}
-          />
-        );
-      }
-
-      if (tipo === "xperiencias") {
-        const pos = xtopPositions[asset];
-        if (!pos) return null;
-        return (
-          <motion.img
-            key={key}
-            src={pos.src}
-            className="absolute object-contain pointer-events-none"
-            style={{
-              left: pos.left,
-              top: pos.top,
-              width: pos.width,
-              height: pos.height,
-            }}
-            initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
-            animate={{
-              opacity: opacityVal,
-              scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
-              rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
-            }}
-            transition={{ duration: debeAnimar ? 1.2 : 0.6, ease: "easeInOut", delay: debeAnimar ? 1.0 : 0 }}
-          />
-        );
-      }
-
-      const basePath = "/arbol/checklist/";
-
-      return (
-        <motion.img
-          key={key}
-          src={`${basePath}${asset}.png`}
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-          initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
-          animate={{ opacity: opacityVal, scale: 1 }}
-          transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
-        />
-      );
-    });
-  };
 
   return (
     <TransformWrapper
@@ -608,8 +218,10 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
           className="relative"
         >
           <img
-            src="/arbol/Arbol de la vida 1.png"
+            src="/arbol/arbol.webp"
             alt=""
+            decoding="async"
+            draggable={false}
             className="w-full h-full object-contain"
           />
 
@@ -629,36 +241,71 @@ export default function TreeCanvasFamilia({ insigniaReciente }) {
                   zIndex: pos.y,
                 }}
               >
-                <AvatarRender
-                  avatarData={m.avatarData}
-                  className="w-full h-full"
-                />
+                <AvatarRender avatarData={m.avatarData} className="w-full h-full" />
               </div>
             );
           })}
 
-          {typeof window !== "undefined" && (
-            <div
-              className="absolute"
-              style={{
-                left: `${(1270 / CANVAS_WIDTH) * 100}%`,
-                top: `${(3110 / CANVAS_HEIGHT) * 100}%`,
-                width: `${(90 / CANVAS_WIDTH) * 200}%`,
-                height: `${(130 / CANVAS_HEIGHT) * 200}%`,
-                transform: "translate(-50%, -100%) scale(1.1)",
-                zIndex: 3200,
-              }}
-            >
-              <AvatarRender
-                avatarData={jugador?.avatar || jugador?.avatarData}
-                className="w-full h-full"
-              />
-            </div>
-          )}
+          <div
+            className="absolute"
+            style={{
+              left: `${(1270 / CANVAS_WIDTH) * 100}%`,
+              top: `${(3110 / CANVAS_HEIGHT) * 100}%`,
+              width: `${(90 / CANVAS_WIDTH) * 200}%`,
+              height: `${(130 / CANVAS_HEIGHT) * 200}%`,
+              transform: "translate(-50%, -100%) scale(1.1)",
+              zIndex: 3200,
+            }}
+          >
+            <AvatarRender
+              avatarData={jugador?.avatar || jugador?.avatarData}
+              className="w-full h-full"
+            />
+          </div>
 
-          {renderInsignias(mapa, "xecretos")}
-          {renderInsignias(mapaXtop, "xperiencias")}
-          {renderInsignias(mapaXperiencias, "checklist")}
+          {insignias.map(({ tipo, nombre, pos, jugadorLaTiene, opacity }) => {
+            const esReciente =
+              reciente === nombre &&
+              (typeof insigniaReciente === "string" || !insigniaReciente?.tipo || insigniaReciente.tipo === tipo);
+            const debeAnimar = jugadorLaTiene && esReciente;
+            const style = { left: pos.left, top: pos.top, width: pos.width, height: pos.height };
+
+            if (tipo === "checklist") {
+              return (
+                <motion.img
+                  key={`${esReciente ? "reciente-" : ""}${tipo}-${nombre}`}
+                  src={pos.src}
+                  alt=""
+                  decoding="async"
+                  draggable={false}
+                  className="absolute object-contain pointer-events-none"
+                  style={style}
+                  initial={{ opacity: 0, scale: debeAnimar ? 1.5 : 1 }}
+                  animate={{ opacity, scale: 1 }}
+                  transition={{ duration: debeAnimar ? 1 : 0.6, ease: "easeOut" }}
+                />
+              );
+            }
+
+            return (
+              <motion.img
+                key={`${esReciente ? "reciente-" : ""}${tipo}-${nombre}`}
+                src={pos.src}
+                alt=""
+                decoding="async"
+                draggable={false}
+                className="absolute object-contain pointer-events-none"
+                style={style}
+                initial={{ opacity: 0, scale: debeAnimar ? 0.8 : 1, rotate: 0 }}
+                animate={{
+                  opacity,
+                  scale: debeAnimar ? [0.8, 1.3, 0.95, 1.05, 1] : 1,
+                  rotate: debeAnimar ? [0, -8, 8, -6, 6, -3, 3, 0] : 0,
+                }}
+                transition={{ duration: debeAnimar ? 1.2 : 0.6, ease: "easeInOut", delay: debeAnimar ? 1.0 : 0 }}
+              />
+            );
+          })}
         </div>
       </TransformComponent>
     </TransformWrapper>

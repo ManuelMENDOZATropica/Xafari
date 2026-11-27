@@ -1,11 +1,12 @@
 exports.toFamilyTreeDTO = (tree) => {
-  const { toUserDTO } = require("./user.dto");
+  const { toMemberDTO } = require("./user.dto");
+  const users = tree.users ? tree.users.map((u) => toMemberDTO(u)) : [];
   return {
     id: tree.id,
-    adminId: tree.admin || tree.adminId,
-    admin: tree.admin || tree.adminId,
     name: tree.name,
-    members: tree.users ? tree.users.map((m) => m.id) : [],
-    users: tree.users ? tree.users.map((u) => toUserDTO(u)) : [],
+    adminId: tree.admin,
+    admin: tree.admin,
+    members: users.map((u) => u.id),
+    users,
   };
 };

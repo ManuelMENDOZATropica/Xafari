@@ -146,3 +146,6 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node,dotenv
+
+# QR generados con secretos (no publicar)
+qrcodes/

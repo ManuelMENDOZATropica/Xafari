@@ -60,10 +60,8 @@ Achievement.belongsToMany(User, {
 
 FamilyTree.hasMany(User);
 User.belongsTo(FamilyTree, {
-  foreignKey: {
-    name: "familyTreeId",
-    allowNull: false,
-  },
+  foreignKey: { name: "familyTreeId", allowNull: true },
+  onDelete: "SET NULL",
 });
 
 // one xelfie belongs to one activity only
@@ -114,20 +112,16 @@ Achievement.belongsTo(Activity);
 
 House.hasMany(Achievement);
 Achievement.belongsTo(House, {
-  foreignKey: {
-    name: "houseId",
-    allowNull: false,
-  },
+  foreignKey: { name: "houseId", allowNull: true },
+  onDelete: "SET NULL",
 });
 
 // one house have plenty activities and one achievement belongs to a single house
 
 House.hasMany(Activity);
 Activity.belongsTo(House, {
-  foreignKey: {
-    name: "houseId",
-    allowNull: false,
-  },
+  foreignKey: { name: "houseId", allowNull: true },
+  onDelete: "SET NULL",
 });
 
 module.exports = {

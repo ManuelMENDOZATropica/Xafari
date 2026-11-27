@@ -1,13 +1,14 @@
 /**
- * seed.js — Script de seed idempotente.
- * Solo inserta datos si las tablas están vacías.
- * Seguro para correr en cada deploy.
+ * seed.js — Catálogo base (casas y actividades). Atómico e idempotente:
+ * corre en una transacción y hace upsert por nombre, así que se puede correr
+ * en cada arranque y completa lo que falte (p. ej. filas de `events` o la
+ * respuesta de cada Xperiencia) sin duplicar ni tocar el progreso de usuarios.
+ *
+ * Uso: `npm run seed` (también lo llama server.js al arrancar).
  */
-
-require("dotenv").config();
-const { v4: uuidv4 } = require("uuid");
 const database = require("../config/database");
 const logger = require("../utils/logger");
+const { House, Activity, Xperiencia, Xecreto, Xelfie, Event } = require("../models");
 
 // ── Datos de casas ─────────────────────────────────────────────────────────
 const HOUSES = [
@@ -25,23 +26,23 @@ const HOUSES = [
 
 // ── Actividades: Xperiencias ───────────────────────────────────────────────
 const XPERIENCIAS = [
-  { name: "kayak",          element: "viento",  location: "Caletas"            },
-  { name: "vinil",          element: "cielo",   location: "Salón Flamingo"     },
-  { name: "caracola",       element: "agua",    location: "Muluk Family Spa"   },
-  { name: "tv",             element: "vida",    location: "Bar Las Maquinitas" },
-  { name: "teatro",         element: "espiral", location: "Teatro del Río"     },
-  { name: "salvavidas",     element: "tierra",  location: "Alberca infinita"   },
-  { name: "conejo",         element: "luna",    location: "Lunateca"           },
-  { name: "camion",         element: "eclipse", location: "Xiquit Inn"         },
-  { name: "estrella",       element: "sol",     location: "Infinity Room"      },
-  { name: "mascarajaguar",  element: "sol",     location: "Paxanguería"        },
-  { name: "piscina",        element: "fuego",   location: "Rooftop Fuego"      },
-  { name: "patin",          element: "tierra",  location: "Patín"              },
-  { name: "tobogan",        element: "vida",    location: "Kamikaze"           },
-  { name: "xpiral",         element: "espiral", location: "Xpiral"             },
-  { name: "poolpo",         element: "viento",  location: "Pool'po"            },
-  { name: "drink",          element: "cielo",   location: "Xupes y Pava Jarla" },
-  { name: "xorbeteria",     element: "cielo",   location: "La Xorbeteria"      },
+  { name: "kayak",          element: "viento",  location: "Caletas", answer: "a" },
+  { name: "vinil",          element: "cielo",   location: "Salón Flamingo", answer: "b" },
+  { name: "caracola",       element: "agua",    location: "Muluk Family Spa", answer: "c" },
+  { name: "tv",             element: "vida",    location: "Bar Las Maquinitas", answer: "b" },
+  { name: "teatro",         element: "espiral", location: "Teatro del Río", answer: "a" },
+  { name: "salvavidas",     element: "tierra",  location: "Alberca infinita", answer: "c" },
+  { name: "conejo",         element: "luna",    location: "Lunateca", answer: "a" },
+  { name: "camion",         element: "eclipse", location: "Xiquit Inn", answer: "b" },
+  { name: "estrella",       element: "sol",     location: "Infinity Room", answer: "a" },
+  { name: "mascarajaguar",  element: "sol",     location: "Paxanguería", answer: "b" },
+  { name: "piscina",        element: "fuego",   location: "Rooftop Fuego", answer: "b" },
+  { name: "patin",          element: "tierra",  location: "Patín", answer: "a" },
+  { name: "tobogan",        element: "vida",    location: "Kamikaze", answer: "a" },
+  { name: "xpiral",         element: "espiral", location: "Xpiral", answer: "a" },
+  { name: "poolpo",         element: "viento",  location: "Pool'po", answer: "a" },
+  { name: "drink",          element: "cielo",   location: "Xupes y Pava Jarla", answer: "a" },
+  { name: "xorbeteria",     element: "cielo",   location: "La Xorbeteria", answer: "a" },
 ];
 
 // ── Actividades: Xecretos ──────────────────────────────────────────────────
@@ -78,85 +79,89 @@ const XELFIE_SPOTS = [
   { name: "Alberca diamante 2",     location: "Alberca diamante 2" },
 ];
 
-async function seed() {
-  const qi = database.getQueryInterface();
-  const now = new Date();
 
-  // ── 1. Casas ───────────────────────────────────────────────────────────
-  const existingHouses = await database.query(
-    "SELECT COUNT(*) as count FROM houses",
-    { type: database.QueryTypes.SELECT }
-  );
-  const houseCount = Number(existingHouses[0]?.count ?? existingHouses[0]?.["COUNT(*)"] ?? 0);
+// Ventana de los eventos del checklist gastronómico: siempre vigentes.
+const EVENT_START = new Date("2025-01-01T05:00:00.000Z");
+const EVENT_END = new Date("2099-12-31T05:00:00.000Z");
 
-  if (houseCount === 0) {
-    logger.info("Seeding houses...");
-    const houseRows = HOUSES.map((h) => ({
-      id: uuidv4(), ...h, createdAt: now, updatedAt: now,
-    }));
-    await qi.bulkInsert("houses", houseRows);
-    logger.info(`  ✅ ${houseRows.length} casas insertadas.`);
-  } else {
-    logger.info(`  ⏭  Houses ya tienen ${houseCount} registros — se omite.`);
+async function upsertActivity(spec, houseId, transaction) {
+  const [activity, created] = await Activity.findOrCreate({
+    where: { name: spec.name },
+    defaults: {
+      name: spec.name,
+      description: spec.description,
+      location: spec.location,
+      type: spec.type,
+      isActive: true,
+      houseId,
+    },
+    transaction,
+  });
+  if (!created && !activity.houseId && houseId) {
+    await activity.update({ houseId }, { transaction });
   }
-
-  // ── 2. Actividades ─────────────────────────────────────────────────────
-  const existingActs = await database.query(
-    "SELECT COUNT(*) as count FROM activities",
-    { type: database.QueryTypes.SELECT }
-  );
-  const actCount = Number(existingActs[0]?.count ?? existingActs[0]?.["COUNT(*)"] ?? 0);
-
-  if (actCount === 0) {
-    logger.info("Seeding activities...");
-
-    // Leer mapa de casas
-    const houses = await database.query(
-      "SELECT id, element FROM houses",
-      { type: database.QueryTypes.SELECT }
-    );
-    const houseMap = {};
-    houses.forEach((h) => { houseMap[h.element.toLowerCase()] = h.id; });
-    const defaultId = houses[0]?.id ?? null;
-
-    const activities = [];
-    const xperiencias = [];
-    const xecretos = [];
-    const xelfieActivities = [];
-    const xelfieRecords = [];
-
-    XPERIENCIAS.forEach((item) => {
-      const actId = uuidv4();
-      activities.push({ id: actId, name: item.name, description: `Xperiencia amuleto ${item.name}`, location: item.location, type: "Xperiencia", isActive: true, houseId: houseMap[item.element] || defaultId, createdAt: now, updatedAt: now });
-      xperiencias.push({ id: uuidv4(), qrCode: `qr-${item.name}`, isValidable: true, activityId: actId, createdAt: now, updatedAt: now });
-    });
-
-    XECRETOS.forEach((item) => {
-      const actId = uuidv4();
-      activities.push({ id: actId, name: item.name, description: `Xecreto Placa Secreta ${item.name}`, location: item.location, type: "Xecreto", isActive: true, houseId: houseMap[item.element] || defaultId, createdAt: now, updatedAt: now });
-      xecretos.push({ id: uuidv4(), activityId: actId, createdAt: now, updatedAt: now });
-    });
-
-    GASTRO.forEach((item) => {
-      const actId = uuidv4();
-      activities.push({ id: actId, name: item.name, description: `Checklist Gastro ${item.name}`, location: item.location, type: "Event", isActive: true, houseId: houseMap[item.element] || defaultId, createdAt: now, updatedAt: now });
-    });
-
-    XELFIE_SPOTS.forEach((item) => {
-      const actId = uuidv4();
-      xelfieActivities.push({ id: actId, name: item.name, description: item.name, location: item.location, type: "Xelfie", isActive: true, houseId: defaultId, createdAt: now, updatedAt: now });
-      xelfieRecords.push({ id: uuidv4(), activityId: actId, createdAt: now, updatedAt: now });
-    });
-
-    await qi.bulkInsert("activities", [...activities, ...xelfieActivities]);
-    await qi.bulkInsert("xperiencia", xperiencias);
-    await qi.bulkInsert("xecretos", xecretos);
-    await qi.bulkInsert("xelfies", xelfieRecords);
-
-    logger.info(`  ✅ ${activities.length + xelfieActivities.length} actividades insertadas.`);
-  } else {
-    logger.info(`  ⏭  Activities ya tienen ${actCount} registros — se omite.`);
-  }
+  return activity;
 }
 
-module.exports = { seed };
+async function ensureChild(Model, activityId, defaults, transaction, fix) {
+  const [row, created] = await Model.findOrCreate({
+    where: { activityId },
+    defaults: { activityId, ...defaults },
+    transaction,
+  });
+  if (!created && fix) await fix(row);
+  return created;
+}
+
+async function seed() {
+  const stats = { houses: 0, activities: 0, children: 0 };
+
+  await database.transaction(async (transaction) => {
+    for (const h of HOUSES) {
+      const [, created] = await House.findOrCreate({ where: { name: h.name }, defaults: h, transaction });
+      if (created) stats.houses++;
+    }
+    const houses = await House.findAll({ attributes: ["id", "element"], transaction });
+    const houseMap = Object.fromEntries(houses.map((h) => [h.element.toLowerCase(), h.id]));
+    const defaultHouse = houseMap.viento || (houses[0] && houses[0].id) || null;
+    const houseFor = (el) => (el && houseMap[el]) || defaultHouse;
+
+    const count = async (fn) => { if (await fn()) stats.children++; };
+
+    for (const x of XPERIENCIAS) {
+      const a = await upsertActivity({ name: x.name, description: `Xperiencia amuleto ${x.name}`, location: x.location, type: "Xperiencia" }, houseFor(x.element), transaction);
+      await count(() => ensureChild(Xperiencia, a.id, { isValidable: true, correctAnswer: x.answer }, transaction, async (row) => {
+        if (!row.correctAnswer) await row.update({ correctAnswer: x.answer }, { transaction });
+      }));
+    }
+    for (const x of XECRETOS) {
+      const a = await upsertActivity({ name: x.name, description: `Xecreto Placa Secreta ${x.name}`, location: x.location, type: "Xecreto" }, houseFor(x.element), transaction);
+      await count(() => ensureChild(Xecreto, a.id, {}, transaction));
+    }
+    for (const g of GASTRO) {
+      const a = await upsertActivity({ name: g.name, description: `Checklist Gastro ${g.name}`, location: g.location, type: "Event" }, houseFor(g.element), transaction);
+      await count(() => ensureChild(Event, a.id, { startDate: EVENT_START, endDate: EVENT_END }, transaction));
+    }
+    for (const x of XELFIE_SPOTS) {
+      const a = await upsertActivity({ name: x.name, description: x.name, location: x.location, type: "Xelfie" }, defaultHouse, transaction);
+      await count(() => ensureChild(Xelfie, a.id, {}, transaction));
+    }
+    stats.activities = await Activity.count({ transaction });
+  });
+
+  logger.info(`Seed: ${stats.houses} casas nuevas, ${stats.children} filas de tipo nuevas, ${stats.activities} actividades en total.`);
+  return stats;
+}
+
+module.exports = { seed, XPERIENCIAS, XECRETOS, GASTRO, XELFIE_SPOTS };
+
+if (require.main === module) {
+  // En SQLite crea las tablas si faltan; en Postgres corre antes `npm run migrate`.
+  (database.getDialect() === "sqlite" ? database.sync() : Promise.resolve())
+    .then(() => seed())
+    .then(() => database.close())
+    .catch((err) => {
+      logger.error(err);
+      process.exit(1);
+    });
+}

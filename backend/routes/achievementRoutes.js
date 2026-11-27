@@ -1,41 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const achievementController = require("../controllers/achievementController");
-const {
-  createAchievementValidation,
-  achievementIdParam,
-  updateAchievementValidation,
-} = require("../validation/achievement.validation");
-const { validateRequest } = require("../middleware/validateRequest");
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/achievementService");
+const { toAchievementDTO } = require("../dto/achievement.dto");
+const v = require("../validation/achievement.validation");
 
-router.get("/", achievementController.getAllAchievements);
-router.post(
-  "/",
-  createAchievementValidation,
-  validateRequest,
-  achievementController.createAchievement
-);
+const controller = makeController({
+  service,
+  toDTO: toAchievementDTO,
+  key: "achievement",
+  label: "Achievement",
+  fields: ["name", "description", "type", "imageUrl", "activityId", "houseId"],
+});
 
-router.get(
-  "/:id",
-  achievementIdParam,
-  validateRequest,
-  achievementController.getAchievement
-);
-
-router.delete(
-  "/:id",
-  achievementIdParam,
-  validateRequest,
-  achievementController.deleteAchievement
-);
-
-router.post(
-  "/:id",
-  achievementIdParam,
-  updateAchievementValidation,
-  validateRequest,
-  achievementController.updateAchievement
-);
-
-module.exports = router;
+module.exports = catalogRouter(controller, {
+  createValidation: v.createAchievementValidation,
+  updateValidation: v.updateAchievementValidation,
+});

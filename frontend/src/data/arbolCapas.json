@@ -1,0 +1,217 @@
+{
+  "_nota": "Generado por scripts/optimize-images.mjs. Posiciones en % del canvas del árbol (2450×4200).",
+  "checklist": {
+    "acai": {
+      "src": "/arbol/checklist/acai.webp",
+      "left": 28.2828,
+      "top": 69.0909,
+      "width": 5.2121,
+      "height": 2.8519
+    },
+    "carne": {
+      "src": "/arbol/checklist/carne.webp",
+      "left": 26.3434,
+      "top": 72.6498,
+      "width": 6.2626,
+      "height": 2.3569
+    },
+    "ceviche": {
+      "src": "/arbol/checklist/ceviche.webp",
+      "left": 63.0303,
+      "top": 60.8418,
+      "width": 6.303,
+      "height": 3.4646
+    },
+    "coctel": {
+      "src": "/arbol/checklist/coctel.webp",
+      "left": 66.0202,
+      "top": 41.5623,
+      "width": 6.8283,
+      "height": 4.3603
+    },
+    "corunda": {
+      "src": "/arbol/checklist/corunda.webp",
+      "left": 81.2121,
+      "top": 57.8721,
+      "width": 6.0202,
+      "height": 3.5825
+    },
+    "espada": {
+      "src": "/arbol/checklist/espada.webp",
+      "left": 37.1313,
+      "top": 43.1886,
+      "width": 4.4444,
+      "height": 5.1616
+    },
+    "mezcal": {
+      "src": "/arbol/checklist/mezcal.webp",
+      "left": 43.7576,
+      "top": 47.5253,
+      "width": 3.2323,
+      "height": 2.9697
+    },
+    "mimosa": {
+      "src": "/arbol/checklist/mimosa.webp",
+      "left": 63.9596,
+      "top": 27.8687,
+      "width": 4.4444,
+      "height": 5.4209
+    },
+    "nogada": {
+      "src": "/arbol/checklist/nogada.webp",
+      "left": 47.1111,
+      "top": 37.367,
+      "width": 6.9495,
+      "height": 3.5354
+    },
+    "ostion": {
+      "src": "/arbol/checklist/ostion.webp",
+      "left": 67.8788,
+      "top": 38.7811,
+      "width": 4.404,
+      "height": 1.9798
+    },
+    "paleta": {
+      "src": "/arbol/checklist/paleta.webp",
+      "left": 58.5455,
+      "top": 46.2054,
+      "width": 4.0808,
+      "height": 4.3838
+    },
+    "palomitas": {
+      "src": "/arbol/checklist/palomitas.webp",
+      "left": 41.8586,
+      "top": 57.9663,
+      "width": 4.7273,
+      "height": 3.7003
+    },
+    "panucho": {
+      "src": "/arbol/checklist/panucho.webp",
+      "left": 77.9394,
+      "top": 63.6229,
+      "width": 5.0101,
+      "height": 2.7104
+    },
+    "quesadillas": {
+      "src": "/arbol/checklist/quesadillas.webp",
+      "left": 65.9394,
+      "top": 63.5758,
+      "width": 5.899,
+      "height": 3.7475
+    },
+    "quesos": {
+      "src": "/arbol/checklist/quesos.webp",
+      "left": 34.4646,
+      "top": 60.7946,
+      "width": 6.101,
+      "height": 3.2525
+    },
+    "ramen": {
+      "src": "/arbol/checklist/ramen.webp",
+      "left": 49.8182,
+      "top": 25.2054,
+      "width": 6.3434,
+      "height": 3.8889
+    },
+    "ravioli": {
+      "src": "/arbol/checklist/ravioli.webp",
+      "left": 38.6263,
+      "top": 53.8653,
+      "width": 6.5051,
+      "height": 3.4646
+    },
+    "sushi": {
+      "src": "/arbol/checklist/sushi.webp",
+      "left": 61.6162,
+      "top": 53.7003,
+      "width": 4.1616,
+      "height": 2.3569
+    },
+    "torta": {
+      "src": "/arbol/checklist/torta.webp",
+      "left": 24,
+      "top": 55.6801,
+      "width": 5.4545,
+      "height": 2.6633
+    },
+    "tostada": {
+      "src": "/arbol/checklist/tostada.webp",
+      "left": 73.697,
+      "top": 50.1886,
+      "width": 6.9495,
+      "height": 3.5589
+    }
+  },
+  "flores": {
+    "flores_1": {
+      "src": "/arbol/flores/flores_1.webp",
+      "left": 42.9091,
+      "top": 46.9832,
+      "width": 5.899,
+      "height": 3.4411
+    },
+    "flores_10": {
+      "src": "/arbol/flores/flores_10.webp",
+      "left": 75.6364,
+      "top": 44.4141,
+      "width": 7.1919,
+      "height": 4.101
+    },
+    "flores_2": {
+      "src": "/arbol/flores/flores_2.webp",
+      "left": 54.7071,
+      "top": 47.1953,
+      "width": 6.0202,
+      "height": 3.3939
+    },
+    "flores_3": {
+      "src": "/arbol/flores/flores_3.webp",
+      "left": 30.2222,
+      "top": 56.4579,
+      "width": 6.9899,
+      "height": 3.9125
+    },
+    "flores_4": {
+      "src": "/arbol/flores/flores_4.webp",
+      "left": 36.3232,
+      "top": 34.963,
+      "width": 6.0202,
+      "height": 3.4646
+    },
+    "flores_5": {
+      "src": "/arbol/flores/flores_5.webp",
+      "left": 67.9192,
+      "top": 57.165,
+      "width": 6.101,
+      "height": 3.6296
+    },
+    "flores_6": {
+      "src": "/arbol/flores/flores_6.webp",
+      "left": 61.1717,
+      "top": 35.5993,
+      "width": 5.7374,
+      "height": 3.2525
+    },
+    "flores_7": {
+      "src": "/arbol/flores/flores_7.webp",
+      "left": 24.5657,
+      "top": 46.8418,
+      "width": 6.7475,
+      "height": 3.8889
+    },
+    "flores_8": {
+      "src": "/arbol/flores/flores_8.webp",
+      "left": 48.7273,
+      "top": 28.835,
+      "width": 6.8283,
+      "height": 3.8889
+    },
+    "flores_9": {
+      "src": "/arbol/flores/flores_9.webp",
+      "left": 18.0606,
+      "top": 42.5758,
+      "width": 6.5455,
+      "height": 3.771
+    }
+  }
+}

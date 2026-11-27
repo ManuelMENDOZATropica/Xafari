@@ -1,34 +1,12 @@
-const express = require("express");
-const router = express.Router();
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/xelfieService");
+const { toXelfieDTO } = require("../dto/xelfie.dto");
+const a = require("../validation/activity.validation");
 
-const xelfieController = require("../controllers/xelfieController");
-const { xelfieIdParam } = require("../validation/xelfie.validation");
-const { validateRequest } = require("../middleware/validateRequest");
-const {
-  createActivityValidation,
-  updateActivityValidation,
-} = require("../validation/activity.validation");
+const controller = makeController({ service, toDTO: toXelfieDTO, key: "xelfie", label: "Xelfie", fields: ["name", "description", "location", "isActive", "minAge", "maxAge", "houseId"] });
 
-router.get("/", xelfieController.getAllXelfies);
-router.get("/:id", xelfieIdParam, xelfieController.getXelfie);
-router.post(
-  "/",
-  createActivityValidation,
-  validateRequest,
-  xelfieController.createXelfie
-);
-router.post(
-  "/:id",
-  xelfieIdParam,
-  updateActivityValidation,
-  validateRequest,
-  xelfieController.updateXelfie
-);
-router.delete(
-  "/:id",
-  xelfieIdParam,
-  validateRequest,
-  xelfieController.deleteXelfie
-);
-
-module.exports = router;
+module.exports = catalogRouter(controller, {
+  createValidation: a.createActivityValidation,
+  updateValidation: a.updateActivityValidation,
+});

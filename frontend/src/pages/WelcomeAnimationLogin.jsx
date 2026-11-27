@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import XafariContext from "@/components/XafariContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -7,8 +8,8 @@ export default function WelcomeToAvatarTransition() {
   const navigate = useNavigate();
   const [animateWing, setAnimateWing] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const fullName = `${user.name || t("defaultExplorerName")} ${user.lastname || ""}`.trim();
+  const { user } = useContext(XafariContext);
+  const fullName = `${user?.name || t("defaultExplorerName")} ${user?.lastname || ""}`.trim();
 
   useEffect(() => {
     const showWingTimeout = setTimeout(() => {
@@ -28,7 +29,7 @@ export default function WelcomeToAvatarTransition() {
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-white font-apercu">
       <img
-        src="/img/V03-CERRITOS.jpg"
+        src="/img/fondoPrincipal.webp"
         alt={t("welcomeAvatarBackgroundAlt")}
         className="absolute inset-0 z-0 h-full w-full object-cover object-bottom"
       />
@@ -49,7 +50,7 @@ export default function WelcomeToAvatarTransition() {
 
       {animateWing && (
         <img
-          src="/img/ala-maya.png"
+          src="/intro/alaMaya.webp"
           alt={t("welcomeMayaWingAlt")}
           className="absolute bottom-0 left-0 z-50 h-full w-full object-cover animate-slide-wing-up-exit"
         />

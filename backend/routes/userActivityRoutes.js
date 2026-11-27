@@ -1,51 +1,45 @@
+// Progreso del usuario del token. El userId del body se ignora.
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const service = require("../services/userActivityService");
+const { toUserActivityDTO } = require("../dto/activity.dto");
+const { completeActivityValidation } = require("../validation/userActivity.validation");
+const { uuidParam } = require("../validation/common.validation");
+const { validateRequest, asyncHandler } = require("../middleware/validateRequest");
+const { ResourceNotFoundError } = require("../utils/errors");
 
-const userActivityController = require("../controllers/userActivityController");
-const {
-  createUserActivityValidation,
-  userActivityIdParam,
-  updateUserActivityValidation,
-} = require("../validation/userActivity.validation");
-const { validateRequest } = require("../middleware/validateRequest");
-const { userIdParam } = require("../validation/user.validation");
+const router = express.Router();
 
-router.get("/:id", userIdParam, userActivityController.getUserActivity);
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const rows = await service.listForUser(req.user.id);
+    res.status(200).json(rows.map(toUserActivityDTO));
+  })
+);
+
+router.get(
+  "/:activityId",
+  uuidParam("activityId"),
+  validateRequest,
+  asyncHandler(async (req, res) => {
+    const ua = await service.getForUser(req.user.id, req.params.activityId);
+    if (!ua) throw new ResourceNotFoundError("UserActivity not found");
+    res.status(200).json({ userActivity: toUserActivityDTO(ua) });
+  })
+);
 
 router.post(
   "/",
-  (req, res, next) => {
-    if (req.params.userId && !req.body.userId) {
-      req.body.userId = req.params.userId;
-    }
-    next();
-  },
-  createUserActivityValidation,
+  completeActivityValidation,
   validateRequest,
-  userActivityController.addUserActivity
-);
-
-router.put(
-  "/:id",
-  userActivityIdParam,
-  updateUserActivityValidation,
-  validateRequest,
-  userActivityController.updateUserActivity
-);
-
-router.post(
-  "/:id",
-  userActivityIdParam,
-  updateUserActivityValidation,
-  validateRequest,
-  userActivityController.updateUserActivity
-);
-
-router.delete(
-  "/:id",
-  userActivityIdParam,
-  validateRequest,
-  userActivityController.deleteUserActivity
+  asyncHandler(async (req, res) => {
+    const { userActivity, created } = await service.complete(req.user.id, {
+      activityId: req.body.activityId,
+      code: req.body.code,
+      answer: req.body.answer,
+    });
+    res.status(created ? 201 : 200).json({ userActivity: toUserActivityDTO(userActivity) });
+  })
 );
 
 module.exports = router;

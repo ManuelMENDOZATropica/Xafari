@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SoundMenu from "@/components/SoundMenu";
@@ -17,7 +17,6 @@ const Intro = () => {
   const [fade, setFade] = useState(true);
   const [exitFade, setExitFade] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
-  const [countdown, setCountdown] = useState(5);
 
   const [torchPos, setTorchPos] = useState({ x: 0, y: 0 });
 
@@ -33,46 +32,32 @@ const Intro = () => {
     if (showTutorial) setShowTutorial(false);
   };
 
+  const exitTimeout = useRef(null);
+  useEffect(() => () => clearTimeout(exitTimeout.current), []);
+
   const repeatIntro = () => {
-    if (countdownInterval.current) clearInterval(countdownInterval.current);
+    clearTimeout(countdownInterval.current);
     setExitFade(false);
     setIndex(0);
     setFade(true);
     setShowTutorial(false);
-    setCountdown(5);
   };
 
-  const finishIntro = () => {
-    if (countdownInterval.current) clearInterval(countdownInterval.current);
+  const finishIntro = useCallback(() => {
+    clearTimeout(countdownInterval.current);
     setExitFade(true);
-    setTimeout(() => navigate("/intro-maya"), 500);
-  };
-
-  // Saltar: skip the whole intro
-  const skipIntro = () => {
-    if (countdownInterval.current) clearInterval(countdownInterval.current);
-    clearTimeout(fadeOutTimeout.current);
-    clearTimeout(nextImageTimeout.current);
-    finishIntro();
-  };
+    clearTimeout(exitTimeout.current);
+    exitTimeout.current = setTimeout(() => navigate("/intro-maya"), 500);
+  }, [navigate]);
 
   useEffect(() => {
-    if (exitFade || showTutorial) return;
+    if (exitFade || showTutorial) return undefined;
 
     const isLast = index === baseNames.length - 1;
 
     if (isLast) {
-      setCountdown(5);
-      countdownInterval.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownInterval.current);
-            finishIntro();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      // Última imagen: 5 s y pasa sola a la siguiente pantalla.
+      countdownInterval.current = setTimeout(finishIntro, 5000);
     } else {
       fadeOutTimeout.current = setTimeout(() => setFade(false), 5000);
       nextImageTimeout.current = setTimeout(() => {
@@ -88,9 +73,9 @@ const Intro = () => {
     return () => {
       clearTimeout(fadeOutTimeout.current);
       clearTimeout(nextImageTimeout.current);
-      if (countdownInterval.current) clearInterval(countdownInterval.current);
+      clearTimeout(countdownInterval.current);
     };
-  }, [index, exitFade, navigate, showTutorial]);
+  }, [index, exitFade, showTutorial, finishIntro]);
 
   // Center torch on mount
   useEffect(() => {
@@ -152,7 +137,7 @@ const Intro = () => {
     >
       {/* ── Background image ───────────────────────────────────────── */}
       <img
-        src={`/intro/${currentName}.jpg`}
+        src={`/intro/caverna-${safeIndex + 1}.webp`}
         alt={`intro-${currentName}`}
         style={{
           position: "absolute",
@@ -213,7 +198,7 @@ const Intro = () => {
       >
         {/* Imagen de fondo del contenedor */}
         <img
-          src="/intro/contenedorTextoIntro.png"
+          src="/intro/contenedorTextoIntro.webp"
           alt=""
           style={{
             position: "absolute",

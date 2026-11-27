@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+*.sqlite
+coverage
+tests
+qrcodes
+.git
+.DS_Store

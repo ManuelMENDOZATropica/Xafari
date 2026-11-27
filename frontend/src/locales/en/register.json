@@ -33,7 +33,39 @@
     "dayPlaceholder": "Day",
     "monthPlaceholder": "Month",
     "yearPlaceholder": "Year",
-    "acceptTermsPrefix": "I agree and accept the",
-    "acceptTermsLink": "terms and conditions"
+    "acceptTermsPrefix": "I agree to the",
+    "acceptTermsLink": "terms and conditions",
+    "casaLabel": "House {{name}}",
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "acceptPrivacyPrefix": "and the",
+    "acceptPrivacyLink": "privacy notice",
+    "parentalConsent": "I'm under 18 and my parent or guardian has read the privacy notice and authorizes my registration.",
+    "pwd": {
+      "tooShort": "Weak — at least {{min}} characters",
+      "weak": "Weak — mix letters and numbers",
+      "medium": "Medium — add a symbol (!@#$…) to make it strong",
+      "strong": "Strong ✔",
+      "match": "Passwords match ✔"
+    },
+    "errors": {
+      "invalidEmail": "Enter a valid email (e.g., name@domain.com)",
+      "invalidDate": "That date doesn't exist. Check the day, month and year.",
+      "emailTaken": "An account with that email already exists. Log in or use another one.",
+      "parentalConsent": "Users under 18 need authorization from a parent or guardian.",
+      "generic": "Something went wrong while signing up. Please try again."
+    }
   }
 }

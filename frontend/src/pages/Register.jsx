@@ -1,10 +1,11 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useId, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import XafariContext from "../components/XafariContext";
 import { useTranslation } from "react-i18next";
 import SoundMenu from "../components/SoundMenu";
 import CloseIcon from "@/components/CloseIcon";
 import DateDropdown from "@/components/DateDropdown";
+import { api, ApiError } from "@/lib/api";
 
 
 const INPUT_OVERLAY_STYLE = {
@@ -25,15 +26,36 @@ const INPUT_OVERLAY_STYLE = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
-];
-const DAY_OPTIONS = Array.from({ length: 31 }, (_, i) => ({
-  value: String(i + 1),
-  label: String(i + 1).padStart(2, "0"),
-}));
-const MONTH_OPTIONS = MONTHS.map((m, i) => ({ value: String(i + 1), label: m }));
+const PASSWORD_MIN = 8; // igual que el backend
+const ADULT_AGE = 18;
+
+/** Días del mes; con año desconocido febrero admite 29. */
+function daysInMonth(month, year) {
+  if (!month) return 31;
+  return new Date(Number(year) || 2000, Number(month), 0).getDate();
+}
+
+/** Valida y arma la fecha (YYYY-MM-DD) o devuelve null si no existe o es futura. */
+function buildBirthdate({ day, month, year }) {
+  const d = Number(day);
+  const m = Number(month);
+  const y = Number(year);
+  if (!d || !m || !y || d > daysInMonth(m, y)) return null;
+  const date = new Date(Date.UTC(y, m - 1, d));
+  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) return null;
+  if (date.getTime() > Date.now()) return null;
+  return `${String(y).padStart(4, "0")}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+function ageFrom(isoDate) {
+  if (!isoDate) return null;
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const now = new Date();
+  let age = now.getFullYear() - y;
+  if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age -= 1;
+  return age;
+}
+
 const currentYear = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: 100 }, (_, i) => ({
   value: String(currentYear - i),
@@ -45,10 +67,6 @@ const CASAS = [
   "Viento", "Tierra", "Espiral", "Agua", "Fuego",
   "Cielo", "Eclipse", "Luna", "Sol", "Vida",
 ];
-const CASA_OPTIONS = CASAS.map((c) => ({
-  value: c.toLowerCase(),
-  label: `Casa ${c}`,
-}));
 
 /* ── Textfield image wrapper (fuera del componente para evitar remount) ── */
 function TextfieldWrapper({ children }) {
@@ -65,10 +83,59 @@ function TextfieldWrapper({ children }) {
   );
 }
 
+/* ── Casilla accesible (role=checkbox) con el estilo de Figma ── */
+function ConsentCheckbox({ checked, onToggle, label }) {
+  const labelId = useId();
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "10px", width: "260px" }}>
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={checked}
+        aria-labelledby={labelId}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        style={{
+          width: "30px",
+          height: "30px",
+          flexShrink: 0,
+          border: "2px solid #7F5C34",
+          borderRadius: "3px",
+          backgroundColor: "#F7F3EA",
+          boxShadow: "2px 2px 2px rgba(0,0,0,0.25)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        {checked && <CloseIcon size={18} color="#7F5C34" />}
+      </button>
+      <span
+        id={labelId}
+        style={{
+          color: "#F7F3EA",
+          fontSize: "13px",
+          fontFamily: "'Apercu Pro', sans-serif",
+          fontWeight: 400,
+          lineHeight: "1.35",
+          textAlign: "left",
+          flex: 1,
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export default function Register() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser, setToken } = useContext(XafariContext);
+  const { startSession } = useContext(XafariContext);
 
   const [step, setStep] = useState(0);
   const [serverError, setServerError] = useState("");
@@ -86,7 +153,29 @@ export default function Register() {
     year: "",
     casa: "",
     acceptTerms: false,
+    parentalConsent: false,
   });
+
+  const monthOptions = useMemo(
+    () => (t("registerFlow.months", { returnObjects: true }) || []).map((m, i) => ({ value: String(i + 1), label: m })),
+    [t]
+  );
+  const dayOptions = useMemo(
+    () =>
+      Array.from({ length: daysInMonth(formData.month, formData.year) }, (_, i) => ({
+        value: String(i + 1),
+        label: String(i + 1).padStart(2, "0"),
+      })),
+    [formData.month, formData.year]
+  );
+  const casaOptions = useMemo(
+    () => CASAS.map((c) => ({ value: c.toLowerCase(), label: t("registerFlow.casaLabel", { name: c }) })),
+    [t]
+  );
+  const birthdate = buildBirthdate(formData);
+  const age = ageFrom(birthdate);
+  const isMinor = age !== null && age < ADULT_AGE;
+  const dateIncomplete = !formData.day || !formData.month || !formData.year;
 
   const steps = useMemo(
     () => [
@@ -95,16 +184,23 @@ export default function Register() {
       { title: t("registerFlow.step3Title"), titleSize: "40px" },
       { title: t("registerFlow.step4Title"), titleSize: "40px" },
     ],
-    [t, i18n.language]
+    [t]
   );
 
   const handleChange = (key, value) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [key]: value };
+      // Si el día ya no existe en el mes/año elegido (31 de febrero), se limpia.
+      if ((key === "month" || key === "year") && Number(next.day) > daysInMonth(next.month, next.year)) {
+        next.day = "";
+      }
+      return next;
+    });
   };
 
   // ── Fuerza de contraseña ───────────────────────────────────────────────────────
   const getPasswordStrength = (pwd) => {
-    if (!pwd || pwd.length < 8) return "weak";
+    if (!pwd || pwd.length < PASSWORD_MIN) return "weak";
     const hasLetter = /[A-Za-z]/.test(pwd);
     const hasDigit = /\d/.test(pwd);
     const hasSpecial = /[@$!%*?&#^()_+\-={}|]/.test(pwd);
@@ -120,13 +216,13 @@ export default function Register() {
     if (step === 1) {
       return (
         EMAIL_REGEX.test(formData.email.trim()) &&
-        pwdStrength !== "weak" &&
+        formData.password.length >= PASSWORD_MIN &&
         pwdMatch
       );
     }
-    if (step === 2) return formData.day && formData.month && formData.year && formData.acceptTerms;
+    if (step === 2) return Boolean(birthdate) && formData.acceptTerms && (!isMinor || formData.parentalConsent);
     return Boolean(formData.casa);
-  }, [formData, step, pwdStrength, pwdMatch]);
+  }, [formData, step, pwdMatch, birthdate, isMinor]);
 
   const goNext = async () => {
     if (!canContinue || loading) return;
@@ -136,7 +232,11 @@ export default function Register() {
     }
 
     // ── Último step: registrar en backend ──────────────────────────────────
-    const birthdate = `${formData.year.padStart(4, "0")}-${formData.month.padStart(2, "0")}-${formData.day.padStart(2, "0")}`;
+    if (!birthdate) {
+      setStep(2);
+      setServerError(t("registerFlow.errors.invalidDate"));
+      return;
+    }
     setServerError("");
     setLoading(true);
 
@@ -146,56 +246,34 @@ export default function Register() {
         lastname: formData.lastName.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        birthdate: new Date(birthdate).toISOString(),
-        reservationNumber: formData.roomNumber || "",
+        birthdate,
         casa: formData.casa,
         avatar: { bodyOptions: 0, faceOptions: 0 },
       };
+      if (isMinor) body.parentalConsent = true;
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "/api"}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        const errorMsg = data?.error || "Ocurrió un error al registrarse.";
-        setServerError(errorMsg);
-        setLoading(false);
-
-        // Regresar al paso donde está el error
-        const errorLower = errorMsg.toLowerCase();
-        if (errorLower.includes("already exists") || errorLower.includes("ya existe") || errorLower.includes("email")) {
-          setStep(1); // paso del email
-        } else if (errorLower.includes("birthdate") || errorLower.includes("fecha") || errorLower.includes("date")) {
-          setStep(2); // paso de la fecha
-        }
-        // Para otros errores se queda en el paso actual (casa)
-        return;
-      }
-
-      // Persistir token y usuario en contexto
-      const userFromServer = data.user || data;
-      setToken(data.token);
-      setUser((prev) => ({
-        ...prev,
-        ...userFromServer,
-        name: userFromServer.name,
-        lastname: userFromServer.lastname,
-        email: userFromServer.email,
-        birthdate: userFromServer.birthdate,
-        casa: userFromServer.casa,
-        avatar: userFromServer.avatar || { bodyOptions: 0, faceOptions: 0 },
-      }));
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(userFromServer));
-
+      const data = await api.post("/users", body, { auth: false });
+      startSession(data.token, data.user || data);
       navigate("/create-avatar");
     } catch (err) {
-      console.error(err);
-      setServerError("Error de conexión. Intenta de nuevo.");
+      const status = err instanceof ApiError ? err.status : 0;
+      const msg = (err?.code || err?.message || "").toLowerCase();
+      if (err instanceof ApiError && err.network) {
+        setServerError(t("errors.network"));
+      } else if (status === 409 || msg.includes("exist") || msg.includes("email")) {
+        setServerError(t("registerFlow.errors.emailTaken"));
+        setStep(1);
+      } else if (msg.includes("parental")) {
+        setServerError(t("registerFlow.errors.parentalConsent"));
+        setStep(2);
+      } else if (msg.includes("birthdate") || msg.includes("fecha")) {
+        setServerError(t("registerFlow.errors.invalidDate"));
+        setStep(2);
+      } else if (status === 429) {
+        setServerError(t("loginErrors.tooMany"));
+      } else {
+        setServerError(t("registerFlow.errors.generic"));
+      }
     } finally {
       setLoading(false);
     }
@@ -207,6 +285,12 @@ export default function Register() {
     navigate("/terms");
   };
 
+  const handlePrivacyClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate("/privacy");
+  };
+
   /* ── Step renders ─────────────────────────────────────────────── */
   const renderFields = () => {
     /* — Step 0: Nombre & Apellido — */
@@ -216,7 +300,9 @@ export default function Register() {
           <TextfieldWrapper>
             <input
               type="text"
-              placeholder="Nombre"
+              placeholder={t("registerFlow.firstNamePlaceholder")}
+              aria-label={t("firstName")}
+              autoComplete="given-name"
               value={formData.firstName}
               onChange={(e) => handleChange("firstName", e.target.value)}
               style={INPUT_OVERLAY_STYLE}
@@ -225,7 +311,9 @@ export default function Register() {
           <TextfieldWrapper>
             <input
               type="text"
-              placeholder="Apellido"
+              placeholder={t("registerFlow.lastNamePlaceholder")}
+              aria-label={t("lastName")}
+              autoComplete="family-name"
               value={formData.lastName}
               onChange={(e) => handleChange("lastName", e.target.value)}
               style={INPUT_OVERLAY_STYLE}
@@ -241,12 +329,12 @@ export default function Register() {
 
       // Colores y ancho de la barra de fuerza
       const getStrengthLabel = () => {
-        if (!formData.password || formData.password.length < 8) return "Débil — mín. 8 caracteres";
+        if (!formData.password || formData.password.length < PASSWORD_MIN) return t("registerFlow.pwd.tooShort", { min: PASSWORD_MIN });
         const hasLetter = /[A-Za-z]/.test(formData.password);
         const hasDigit = /\d/.test(formData.password);
-        if (!hasLetter || !hasDigit) return "Débil — combina letras y números";
-        if (pwdStrength === "medium") return "Media — agrega un símbolo (!@#$...) para hacerla fuerte";
-        return "Fuerte ✔";
+        if (!hasLetter || !hasDigit) return t("registerFlow.pwd.weak");
+        if (pwdStrength === "medium") return t("registerFlow.pwd.medium");
+        return t("registerFlow.pwd.strong");
       };
       const strengthMeta = {
         weak:   { color: "#c0392b", w: "30%"  },
@@ -259,7 +347,8 @@ export default function Register() {
         <button
           type="button"
           onClick={toggle}
-          aria-label={visible ? "Ocultar" : "Mostrar"}
+          aria-label={visible ? t("hidePassword") : t("showPassword")}
+          aria-pressed={visible}
           style={{
             position: "absolute",
             right: "10px",
@@ -275,13 +364,13 @@ export default function Register() {
         >
           {visible ? (
             // ojo abierto
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
             </svg>
           ) : (
             // ojo cerrado
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
               <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
               <line x1="1" y1="1" x2="23" y2="23" />
@@ -296,7 +385,9 @@ export default function Register() {
           <TextfieldWrapper>
             <input
               type="email"
-              placeholder="Correo electrónico"
+              placeholder={t("registerFlow.emailPlaceholder")}
+              aria-label={t("email")}
+              autoComplete="email"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
               style={INPUT_OVERLAY_STYLE}
@@ -304,7 +395,7 @@ export default function Register() {
           </TextfieldWrapper>
           {emailInvalid && (
             <p style={{ marginTop: "-10px", fontSize: "12px", color: "#9C3E32", fontFamily: "'Apercu Pro', sans-serif", fontWeight: 500 }}>
-              Ingresa un correo válido (ej: nombre@dominio.com)
+              {t("registerFlow.errors.invalidEmail")}
             </p>
           )}
 
@@ -313,7 +404,8 @@ export default function Register() {
             <TextfieldWrapper>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Contraseña"
+                placeholder={t("password")}
+                aria-label={t("password")}
                 value={formData.password}
                 onChange={(e) => handleChange("password", e.target.value)}
                 style={{ ...INPUT_OVERLAY_STYLE, paddingRight: "36px" }}
@@ -340,7 +432,8 @@ export default function Register() {
             <TextfieldWrapper>
               <input
                 type={showConfirm ? "text" : "password"}
-                placeholder="Confirmar contraseña"
+                placeholder={t("confirmPassword")}
+                aria-label={t("confirmPassword")}
                 value={formData.confirmPassword}
                 onChange={(e) => handleChange("confirmPassword", e.target.value)}
                 style={{ ...INPUT_OVERLAY_STYLE, paddingRight: "36px" }}
@@ -354,7 +447,7 @@ export default function Register() {
           {formData.confirmPassword.length > 0 && (
             <p style={{ marginTop: "-8px", fontSize: "11px", fontFamily: "'Apercu Pro', sans-serif", fontWeight: 600,
               color: pwdMatch ? "#27ae60" : "#c0392b" }}>
-              {pwdMatch ? "Las contraseñas coinciden ✔" : "Las contraseñas no coinciden"}
+              {pwdMatch ? t("registerFlow.pwd.match") : t("passwordsDoNotMatch")}
             </p>
           )}
         </div>
@@ -369,21 +462,21 @@ export default function Register() {
           <DateDropdown
             value={formData.day}
             onChange={(v) => handleChange("day", v)}
-            options={DAY_OPTIONS}
+            options={dayOptions}
             triggerImg="/iconos/textfieldDia.png"
             vacioImg="/iconos/textfieldDiaVacio.png"
             width={100}
-            placeholder="Día"
+            placeholder={t("registerFlow.dayPlaceholder")}
             fontSize={17}
           />
           <DateDropdown
             value={formData.month}
             onChange={(v) => handleChange("month", v)}
-            options={MONTH_OPTIONS}
+            options={monthOptions}
             triggerImg="/iconos/textfieldMes.png"
             vacioImg="/iconos/textfieldMesVacio.png"
             width={113}
-            placeholder="Mes"
+            placeholder={t("registerFlow.monthPlaceholder")}
             fontSize={15}
           />
           <DateDropdown
@@ -393,11 +486,15 @@ export default function Register() {
             triggerImg="/iconos/textfieldAnio.png"
             vacioImg="/iconos/textfieldAnioVacio.png"
             width={97}
-            placeholder="Año"
+            placeholder={t("registerFlow.yearPlaceholder")}
             fontSize={15}
           />
         </div>
-
+        {!dateIncomplete && !birthdate && (
+          <p role="alert" style={{ marginTop: "-12px", fontSize: "13px", color: "#F7F3EA", fontWeight: 600 }}>
+            {t("registerFlow.errors.invalidDate")}
+          </p>
+        )}
       </div>
     );
 
@@ -407,11 +504,11 @@ export default function Register() {
         <DateDropdown
           value={formData.casa}
           onChange={(v) => handleChange("casa", v)}
-          options={CASA_OPTIONS}
+          options={casaOptions}
           triggerImg="/iconos/textfieldMes.png"
           vacioImg="/iconos/textfieldMesVacio.png"
           width={152}
-          placeholder={t("registerFlow.casaPlaceholder") || "Selecciona tu casa"}
+          placeholder={t("registerFlow.casaPlaceholder")}
           fontSize={15}
         />
       </div>
@@ -505,76 +602,60 @@ export default function Register() {
         {/* Espaciador */}
         <div style={{ flex: 1 }} />
 
-        {/* Checkbox términos — centrado, solo step 2, arriba del botón */}
+        {/* Casillas — solo step 2, arriba del botón */}
         {step === 2 && (
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "16px",
-          }}>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "230px",
-            }}>
-              {/* Caja checkbox — CloseIcon del proyecto al activar */}
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleChange("acceptTerms", !formData.acceptTerms);
-                }}
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  flexShrink: 0,
-                  border: "2px solid #7F5C34",
-                  borderRadius: "3px",
-                  backgroundColor: "#F7F3EA",
-                  boxShadow: "2px 2px 2px rgba(0,0,0,0.25)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                }}
-              >
-                {formData.acceptTerms && (
-                  <CloseIcon size={18} color="#7F5C34" />
-                )}
-              </div>
-              {/* Texto — left-align, 13px, 2 líneas */}
-              <span style={{
-                color: "#F7F3EA",
-                fontSize: "13px",
-                fontFamily: "'Apercu Pro', sans-serif",
-                fontWeight: 400,
-                lineHeight: "1.35",
-                textAlign: "left",
-                flex: 1,
-              }}>
-                Estoy de acuerdo y acepto los{" "}
-                <button
-                  type="button"
-                  onClick={handleTermsClick}
-                  style={{
-                    color: "#F7F3EA",
-                    textDecoration: "underline",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "13px",
-                    fontFamily: "'Apercu Pro', sans-serif",
-                    padding: 0,
-                  }}
-                >
-                  términos y condiciones
-                </button>
-              </span>
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+            {isMinor && (
+              <ConsentCheckbox
+                checked={formData.parentalConsent}
+                onToggle={() => handleChange("parentalConsent", !formData.parentalConsent)}
+                label={t("registerFlow.parentalConsent")}
+              />
+            )}
+            <ConsentCheckbox
+              checked={formData.acceptTerms}
+              onToggle={() => handleChange("acceptTerms", !formData.acceptTerms)}
+              label={
+                <>
+                  {t("registerFlow.acceptTermsPrefix")}{" "}
+                  <button
+                    type="button"
+                    onClick={handleTermsClick}
+                    style={{
+                      color: "#F7F3EA",
+                      textDecoration: "underline",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                      fontFamily: "'Apercu Pro', sans-serif",
+                      padding: 0,
+                    }}
+                  >
+                    {t("registerFlow.acceptTermsLink")}
+                  </button>{" "}
+                  {t("registerFlow.acceptPrivacyPrefix")}{" "}
+                  <button
+                    type="button"
+                    onClick={handlePrivacyClick}
+                    style={{
+                      color: "#F7F3EA",
+                      textDecoration: "underline",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                      fontFamily: "'Apercu Pro', sans-serif",
+                      padding: 0,
+                    }}
+                  >
+                    {t("registerFlow.acceptPrivacyLink")}
+                  </button>
+                </>
+              }
+            />
           </div>
         )}
-
-
 
         {/* Botón Siguiente */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", paddingBottom: "96px" }}>
@@ -587,7 +668,7 @@ export default function Register() {
             {loading ? "..." : t("next")}
           </button>
           {serverError && (
-            <div style={{
+            <div role="alert" style={{
               display: "flex",
               alignItems: "flex-start",
               gap: "8px",
@@ -597,7 +678,7 @@ export default function Register() {
               maxWidth: "280px",
               backdropFilter: "blur(4px)",
             }}>
-              <span style={{ fontSize: "16px", flexShrink: 0, marginTop: "1px" }}>⚠️</span>
+              <span aria-hidden="true" style={{ fontSize: "16px", flexShrink: 0, marginTop: "1px" }}>⚠️</span>
               <p style={{
                 fontSize: "13px",
                 color: "#fff",

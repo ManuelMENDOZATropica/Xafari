@@ -1,34 +1,29 @@
-const express = require("express");
-const router = express.Router();
-const eventController = require("../controllers/eventController");
-const {
-  eventIdParam,
-  createEventValidation,
-  updateEventValidation,
-} = require("../validation/event.validation");
-const { validateRequest } = require("../middleware/validateRequest");
-const {
-  createActivityValidation,
-  updateActivityValidation,
-} = require("../validation/activity.validation");
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/eventService");
+const { toEventDTO } = require("../dto/event.dto");
+const a = require("../validation/activity.validation");
+const v = require("../validation/event.validation");
 
-//router.get("/", eventController.getAllEvents);
-router.get("/:id", eventIdParam, validateRequest, eventController.getEvent);
-router.post(
-  "/",
-  createActivityValidation,
-  createEventValidation,
-  validateRequest,
-  eventController.createEvent
-);
-router.post(
-  "/:id",
-  eventIdParam,
-  updateActivityValidation,
-  updateEventValidation,
-  validateRequest,
-  eventController.updateEvent
-);
-router.delete("/:id", eventIdParam, eventController.deleteEvent);
+const controller = makeController({
+  service,
+  toDTO: toEventDTO,
+  key: "event",
+  label: "Event",
+  fields: [...["name", "description", "location", "isActive", "minAge", "maxAge", "houseId"], "startDate", "endDate"],
+});
 
-module.exports = router;
+// GET /events?activos=true → solo los vigentes ahora
+const list = controller.list;
+controller.list = async (req, res) => {
+  if (req.query.activos === "true" || req.query.active === "true") {
+    const rows = await service.listActive();
+    return res.status(200).json(rows.map(toEventDTO));
+  }
+  return list(req, res);
+};
+
+module.exports = catalogRouter(controller, {
+  createValidation: [...a.createActivityValidation, ...v.createEventValidation],
+  updateValidation: [...a.updateActivityValidation, ...v.updateEventValidation],
+});

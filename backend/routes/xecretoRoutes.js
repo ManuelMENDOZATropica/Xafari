@@ -1,40 +1,35 @@
-const express = require("express");
-const router = express.Router();
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/xecretoService");
+const { toXecretoDTO } = require("../dto/xecreto.dto");
+const a = require("../validation/activity.validation");
+const v = require("../validation/xecreto.validation");
+const { uuidParam } = require("../validation/common.validation");
+const { validateRequest, asyncHandler } = require("../middleware/validateRequest");
 
-const xecretoController = require("../controllers/xecretoController");
+const controller = makeController({
+  service,
+  toDTO: toXecretoDTO,
+  key: "xecreto",
+  label: "Xecreto",
+  fields: [...["name", "description", "location", "isActive", "minAge", "maxAge", "houseId"], "clues"],
+});
 
-const { validateRequest } = require("../middleware/validateRequest");
-const {
-  xecretoIdParam,
-  createXecretoValidation,
-  updateXecretoValidation,
-} = require("../validation/xecreto.validation");
+const router = catalogRouter(controller, {
+  createValidation: [...a.createActivityValidation, ...v.createXecretoValidation],
+  updateValidation: [...a.updateActivityValidation, ...v.updateXecretoValidation],
+});
 
-router.get("/", xecretoController.getAllXecretos);
-router.get(
-  "/:id",
-  xecretoIdParam,
-  validateRequest,
-  xecretoController.getXecreto
-);
+// POST /xecretos/:id/check {clueId, answer} → {correct} (requiere sesión)
 router.post(
-  "/",
-  createXecretoValidation,
+  "/:id/check",
+  uuidParam("id"),
+  v.checkAnswerValidation,
   validateRequest,
-  xecretoController.createXecreto
-);
-router.post(
-  "/:id",
-  xecretoIdParam,
-  updateXecretoValidation,
-  validateRequest,
-  xecretoController.updateXecreto
-);
-router.delete(
-  "/:id",
-  xecretoIdParam,
-  validateRequest,
-  xecretoController.deleteXecreto
+  asyncHandler(async (req, res) => {
+    const correct = await service.checkAnswer(req.params.id, req.body.clueId, req.body.answer);
+    res.status(200).json({ correct });
+  })
 );
 
 module.exports = router;

@@ -1,41 +1,12 @@
-const express = require("express");
-const router = express.Router();
+const catalogRouter = require("./catalogRouter");
+const makeController = require("../controllers/catalogController");
+const service = require("../services/houseService");
+const { toHouseDTO } = require("../dto/house.dto");
+const v = require("../validation/house.validation");
 
-const houseController = require("../controllers/houseController");
-const {
-  houseIdParam,
-  updateHouseValidation,
-  createHouseValidation,
-} = require("../validation/house.validation");
-const { validateRequest } = require("../middleware/validateRequest");
+const controller = makeController({ service, toDTO: toHouseDTO, key: "house", label: "House", fields: ["name", "animal", "element"] });
 
-router.get("/", houseController.getAllHouses);
-router.get("/:id", houseIdParam, validateRequest, houseController.getHouse);
-router.post(
-  "/",
-  createHouseValidation,
-  validateRequest,
-  houseController.createHouse
-);
-router.put(
-  "/:id",
-  houseIdParam,
-  updateHouseValidation,
-  validateRequest,
-  houseController.updateHouse
-);
-router.post(
-  "/:id",
-  houseIdParam,
-  updateHouseValidation,
-  validateRequest,
-  houseController.updateHouse
-);
-router.delete(
-  "/:id",
-  houseIdParam,
-  validateRequest,
-  houseController.deleteHouse
-);
-
-module.exports = router;
+module.exports = catalogRouter(controller, {
+  createValidation: v.createHouseValidation,
+  updateValidation: v.updateHouseValidation,
+});

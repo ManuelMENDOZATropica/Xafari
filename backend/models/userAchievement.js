@@ -1,4 +1,4 @@
-const { DataTypes, DATE } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const database = require("../config/database");
 
 const userAchievement = database.define("userAchievement", {

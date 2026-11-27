@@ -1,20 +1,20 @@
-import { Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import XafariContext from "./XafariContext";
+import { saveReturnTo } from "@/lib/returnTo";
 
 /**
- * PrivateRoute — redirige a '/' si no hay sesión activa (token).
- * Úsalo para envolver cualquier ruta que requiera autenticación.
+ * PrivateRoute — sin sesión manda a /login y guarda la ruta de origen
+ * (p. ej. un QR /q/...) para volver a ella después del login o del registro.
  */
 function PrivateRoute({ children }) {
-  const token = (() => {
-    try {
-      return localStorage.getItem("token");
-    } catch {
-      return null;
-    }
-  })();
+  const { token } = useContext(XafariContext);
+  const location = useLocation();
 
   if (!token) {
-    return <Navigate to="/" replace />;
+    const from = `${location.pathname}${location.search}`;
+    saveReturnTo(from);
+    return <Navigate to="/login" replace state={{ from }} />;
   }
 
   return children;

@@ -1,8 +1,7 @@
-require("dotenv").config();
 const { Sequelize } = require("sequelize");
+const { NODE_ENV } = require("./env");
 
-const env = process.env.NODE_ENV || "development";
-const config = require("./config")[env];
+const config = require("./config")[NODE_ENV] || require("./config").development;
 
 let database;
 if (config.url) {

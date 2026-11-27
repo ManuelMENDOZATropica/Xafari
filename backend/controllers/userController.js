@@ -1,176 +1,88 @@
 const userService = require("../services/userService");
-const User = require("../models/user");
-const {
-  handleSequelizeError,
-  ResourceNotFoundError,
-} = require("../utils/errors");
 const { toUserDTO } = require("../dto/user.dto");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const { signSession } = require("../utils/tokens");
+const { pick } = require("../middleware/validateRequest");
+const { AuthenticationError, ResourceNotFoundError, BadRequestError } = require("../utils/errors");
+const env = require("../config/env");
+const { ageOn } = require("../utils/time");
 
-const JWT_SECRET = process.env.JWT_SECRET || "xafari-dev-secret-change-in-prod";
-const BCRYPT_ROUNDS = 10;
+const ADULT_AGE = 18;
 
-function signToken(userId) {
-  return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "7d" });
+// Campos que el usuario puede editar de su perfil. email, password, casa y role NO.
+const PROFILE_FIELDS = ["name", "lastname", "pronouns", "avatar", "birthdate", "reservationNumber"];
+
+function serializeAvatar(data) {
+  if (data.avatar !== undefined && data.avatar !== null && typeof data.avatar === "object") {
+    data.avatar = JSON.stringify(data.avatar);
+  }
+  return data;
 }
 
-exports.createUser = async (req, res, next) => {
-  const {
-    name,
-    lastname,
-    email,
-    password,
-    birthdate,
-    reservationNumber,
-    pronouns,
-    casa,
-    avatar,
-  } = req.body;
+function respondUser(res, status, user, extra = {}) {
+  const dto = toUserDTO(user);
+  // `...dto` se conserva por compatibilidad con el front actual (lee data.user || data).
+  res.status(status).json({ ...extra, user: dto, ...dto });
+}
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
-    const user = await userService.createUser({
-      name,
-      lastname,
-      email,
-      password: hashedPassword,
-      birthdate,
-      reservationNumber,
-      pronouns,
-      casa,
-      avatar: avatar ? JSON.stringify(avatar) : null,
-    });
-
-    const userDTO = toUserDTO(user);
-    res.status(200).json({
-      token: signToken(user.id),
-      user: userDTO,
-      ...userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
+exports.createUser = async (req, res) => {
+  const data = serializeAvatar(
+    pick(req.body, ["name", "lastname", "email", "password", "birthdate", "reservationNumber", "pronouns", "casa", "avatar"])
+  );
+  // Menores de edad: exigen consentimiento parental (se guarda la fecha del servidor).
+  if (ageOn(data.birthdate, env.TIMEZONE) < ADULT_AGE) {
+    if (req.body.parentalConsent !== true) throw new BadRequestError("parental_consent_required");
+    data.parentalConsentAt = new Date();
   }
+  const user = await userService.createUser(data);
+  respondUser(res, 201, user, { token: signSession(user) });
 };
 
-exports.getUser = async (req, res, next) => {
-  const id = req.params.id;
-  try {
-    const user = await userService.getUser(id);
-
-    if (!user) return next(new ResourceNotFoundError("User not found"));
-
-    const userDTO = toUserDTO(user);
-    res.status(200).json({
-      user: userDTO,
-      ...userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
-  }
-};
-
-exports.deleteUser = async (req, res, next) => {
-  const id = req.params.id;
-  try {
-    const user = await userService.deleteUser(id);
-
-    if (!user) return next(new ResourceNotFoundError("User not found"));
-
-    const userDTO = toUserDTO(user);
-    res.status(200).json({
-      user: userDTO,
-      ...userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
-  }
-};
-
-exports.updateUser = async (req, res, next) => {
-  const id = req.params.id;
-  try {
-    const newUserData = {};
-    if (req.body.name !== undefined) newUserData.name = req.body.name;
-    if (req.body.lastname !== undefined) newUserData.lastname = req.body.lastname;
-    if (req.body.email !== undefined) newUserData.email = req.body.email;
-    if (req.body.password !== undefined) newUserData.password = req.body.password;
-    if (req.body.birthdate !== undefined) newUserData.birthdate = req.body.birthdate;
-    if (req.body.reservationNumber !== undefined) newUserData.reservationNumber = req.body.reservationNumber;
-    if (req.body.pronouns !== undefined) newUserData.pronouns = req.body.pronouns;
-    if (req.body.casa !== undefined) newUserData.casa = req.body.casa;
-    if (req.body.avatar !== undefined) {
-      newUserData.avatar = typeof req.body.avatar === "object"
-        ? JSON.stringify(req.body.avatar)
-        : req.body.avatar;
-    }
-
-    const newUser = await userService.updateUser(id, newUserData);
-
-    if (!newUser) return next(new ResourceNotFoundError("User not found"));
-
-    const userDTO = toUserDTO(newUser);
-    res.status(200).json({
-      user: userDTO,
-      ...userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
-  }
-};
-
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.scope("withPassword").findOne({ where: { email } });
-    if (!user) {
-      return res.status(401).json({ error: "Credenciales inválidas" });
+  const candidates = await userService.findByEmail(email, { withPassword: true });
+  // Con cuentas antiguas duplicadas por mayúsculas, vale la que coincida la contraseña.
+  for (const user of candidates) {
+    // eslint-disable-next-line no-await-in-loop
+    if (await user.checkPassword(password)) {
+      return respondUser(res, 200, user, { token: signSession(user) });
     }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Credenciales inválidas" });
-    }
-
-    const userDTO = toUserDTO(user);
-    res.status(200).json({
-      token: signToken(user.id),
-      user: userDTO,
-      ...userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
   }
+  throw new AuthenticationError("Credenciales inválidas");
 };
 
-exports.updateCurrentUser = async (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ error: "No autorizado" });
-  }
+async function sendFullUser(res, id) {
+  const user = await userService.getUserWithProgress(id);
+  if (!user) throw new ResourceNotFoundError("User not found");
+  respondUser(res, 200, user);
+}
 
-  try {
-    const newUserData = {};
-    if (req.body.name !== undefined) newUserData.name = req.body.name;
-    if (req.body.lastname !== undefined) newUserData.lastname = req.body.lastname;
-    if (req.body.email !== undefined) newUserData.email = req.body.email;
-    if (req.body.password !== undefined) newUserData.password = req.body.password;
-    if (req.body.birthdate !== undefined) newUserData.birthdate = req.body.birthdate;
-    if (req.body.reservationNumber !== undefined) newUserData.reservationNumber = req.body.reservationNumber;
-    if (req.body.pronouns !== undefined) newUserData.pronouns = req.body.pronouns;
-    if (req.body.casa !== undefined) newUserData.casa = req.body.casa;
-    if (req.body.avatar !== undefined) {
-      newUserData.avatar = typeof req.body.avatar === "object"
-        ? JSON.stringify(req.body.avatar)
-        : req.body.avatar;
-    }
+// GET /users/:id (solo el propio o admin) y GET /user
+exports.getUser = (req, res) => sendFullUser(res, req.params.id);
+exports.getCurrentUser = (req, res) => sendFullUser(res, req.user.id);
 
-    const updatedUser = await userService.updateUser(req.user.id, newUserData);
-    const userDTO = toUserDTO(updatedUser);
-    res.status(200).json({
-      ...userDTO,
-      user: userDTO
-    });
-  } catch (err) {
-    next(handleSequelizeError(err, "User"));
-  }
+// PUT /user y PUT /users/:id (solo el propio)
+exports.updateProfile = async (req, res) => {
+  const id = req.params.id || req.user.id;
+  const data = serializeAvatar(pick(req.body, PROFILE_FIELDS));
+  if (data.name === null) delete data.name;
+  if (data.birthdate === null) delete data.birthdate;
+  await userService.updateProfile(id, data);
+  await sendFullUser(res, id);
+};
+
+// PUT /user/password
+exports.changePassword = async (req, res) => {
+  const user = await userService.changePassword(
+    req.user.id,
+    req.body.currentPassword,
+    req.body.newPassword
+  );
+  res.status(200).json({ token: signSession(user) });
+};
+
+// DELETE /users/:id y DELETE /user
+exports.deleteUser = async (req, res) => {
+  const id = req.params.id || req.user.id;
+  const user = await userService.deleteUser(id);
+  res.status(200).json({ id: user.id, deleted: true });
 };

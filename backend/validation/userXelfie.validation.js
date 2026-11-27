@@ -1,18 +1,6 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 
-exports.createUserXelfieValidation = [
-  param("userId").notEmpty().withMessage("Valid user ID is required"),
-  body("xelfieId").isUUID().withMessage("Valid xelfie ID is required"),
-  body("xelfieUrl").isURL().withMessage("Valid image url is required"),
-];
+const url = body("xelfieUrl").isURL({ protocols: ["https", "http"], require_protocol: true }).withMessage("Valid image url is required");
 
-exports.updateUserXelfieValidation = [
-  body("xelfieUrl")
-    .optional()
-    .isURL()
-    .withMessage("Valid image url is required"),
-];
-
-exports.userXelfieParamValidation = [
-  param("id").notEmpty().withMessage("Valid user xelfie ID is required"),
-];
+exports.createUserXelfieValidation = [body("xelfieId").isUUID().withMessage("Valid xelfie ID is required"), url];
+exports.updateUserXelfieValidation = [url];

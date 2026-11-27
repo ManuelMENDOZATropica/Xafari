@@ -1,55 +1,20 @@
-const Activity = require("../models/activity");
-const EventModel = require("../models/event");
-const { ResourceNotFoundError } = require("../utils/errors");
+const { Op } = require("sequelize");
+const { Event, Activity } = require("../models");
+const make = require("./activitySubtypeService");
 
-exports.createEvent = async ({ startDate, endDate, ...activityParams }) => {
-  const event = await EventModel.create(
-    {
-      startDate,
-      endDate,
-      activity: activityParams,
-    },
-    {
-      include: [Activity],
-    }
-  );
+const service = make({
+  Model: Event,
+  type: "Event",
+  label: "Event",
+  subFields: ["startDate", "endDate"],
+});
 
-  return event;
-};
-
-exports.getEvent = async (id) => {
-  let event = await EventModel.findByPk(id, {
-    include: [Activity],
+/** Eventos vigentes ahora (fechas guardadas como instantes UTC). */
+service.listActive = (now = new Date()) =>
+  Event.findAll({
+    where: { startDate: { [Op.lte]: now }, endDate: { [Op.gte]: now } },
+    include: [{ model: Activity, where: { isActive: true } }],
+    order: [["startDate", "ASC"]],
   });
 
-  return event;
-};
-
-exports.getAllEvents = async () => {
-  const events = await EventModel.findAll({
-    include: [Activity],
-  });
-
-  return events;
-};
-
-exports.deleteEvent = async (id) => {
-  const event = await this.getEvent(id);
-
-  if (event == null) throw new ResourceNotFoundError("Event not found");
-
-  const destroyed = await event.destroy();
-  return destroyed;
-};
-
-exports.updateEvent = async (id, newData) => {
-  const event = await this.getEvent(id);
-
-  if (event == null) throw new ResourceNotFoundError("Event not found");
-
-  const updated = await event.update(newData);
-  if (updated != null) {
-    await event.activity.update(newData);
-  }
-  return updated;
-};
+module.exports = service;
