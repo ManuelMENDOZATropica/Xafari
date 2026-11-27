@@ -1,31 +1,52 @@
-const app = require("./app");
+const env = require("./config/env");
 const logger = require("./utils/logger");
-const database = require("./config/database");
-const { seed } = require("./scripts/seed");
 
-const PORT = process.env.PORT || 3000;
+process.on("unhandledRejection", (reason) => {
+  logger.error(`unhandledRejection: ${reason && (reason.stack || reason)}`);
+});
+process.on("uncaughtException", (err) => {
+  logger.error(`uncaughtException: ${err && (err.stack || err)}`);
+  process.exit(1);
+});
 
-const startServer = () => {
-  app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+async function start() {
+  env.assertProductionSecrets();
+
+  const database = require("./config/database");
+  require("./models");
+  const { seed } = require("./scripts/seed");
+  const app = require("./app");
+
+  await database.authenticate();
+  logger.info(`DB conectada (${database.getDialect()}).`);
+
+  if (database.getDialect() === "postgres") {
+    // Postgres (producción): el esquema lo manejan las migraciones, nunca sync({alter}).
+    const { runMigrations } = require("./migrations/umzug");
+    const done = await runMigrations(database);
+    logger.info(`Migraciones aplicadas: ${done.map((m) => m.name).join(", ") || "ninguna pendiente"}`);
+  } else {
+    // SQLite de desarrollo: crea tablas que falten (sin alter). Si cambian los
+    // modelos, borra database.sqlite.
+    await database.sync();
+  }
+
+  await seed();
+
+  const server = app.listen(env.PORT, () => {
+    logger.info(`Server running on port ${env.PORT} (${env.NODE_ENV})`);
   });
-};
 
-database
-  .authenticate()
-  .then(() => {
-    logger.info("Database connection established successfully.");
-    return database.sync({ alter: true });
-  })
-  .then(() => {
-    logger.info("Database synced.");
-    return seed(); // idempotente — solo inserta si las tablas están vacías
-  })
-  .then(() => {
-    logger.info("Seed completed.");
-    startServer();
-  })
-  .catch((err) => {
-    logger.error("Unable to connect/sync/seed the database:", err);
-    process.exit(1);
-  });
+  const shutdown = (signal) => {
+    logger.info(`${signal} recibido, cerrando…`);
+    server.close(() => database.close().finally(() => process.exit(0)));
+    setTimeout(() => process.exit(0), 10000).unref();
+  };
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+}
+
+start().catch((err) => {
+  logger.error(`No se pudo arrancar: ${err && (err.stack || err)}`);
+  process.exit(1);
+});

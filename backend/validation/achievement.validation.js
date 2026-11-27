@@ -1,44 +1,17 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 
-exports.createAchievementValidation = [
-  body("name").isString().notEmpty().withMessage("Name is required"),
-  body("description")
-    .isString()
-    .notEmpty()
-    .withMessage("Description is required"),
+const TYPES = ["Amuleto", "Follaje"];
+const v = (required) => {
+  const f = (name) => (required ? body(name) : body(name).optional());
+  return [
+    f("name").isString().trim().notEmpty().withMessage("Name is required"),
+    f("description").isString().notEmpty().withMessage("Description is required"),
+    f("type").isIn(TYPES).withMessage(`Type must be "Amuleto" or "Follaje"`),
+    f("imageUrl").isURL().withMessage("ImageUrl is not valid"),
+    f("activityId").isUUID().withMessage("Valid activity ID is required"),
+    f("houseId").isUUID().withMessage("Valid house ID is required"),
+  ];
+};
 
-  body("type")
-    .isString()
-    .notEmpty()
-    .isIn(["Amuleto", "Follaje"])
-    .withMessage(`Type must be "Amuleto" or "Follaje"`),
-  body("imageUrl").isURL().notEmpty().withMessage("ImageUrl is not valid"),
-  body("activityId").isUUID().withMessage("Valid activity ID is required"),
-  body("houseId").isUUID().withMessage("Valid house ID is required"),
-];
-
-exports.updateAchievementValidation = [
-  param("id").notEmpty().withMessage("Valid achievement ID is required"),
-  body("name").optional().isString().notEmpty().withMessage("Name is required"),
-  body("description")
-    .optional()
-    .isString()
-    .notEmpty()
-    .withMessage("Description is required"),
-
-  body("type")
-    .optional()
-    .isString()
-    .notEmpty()
-    .isIn(["Amuleto", "Follaje"])
-    .withMessage(`Type must be "Amuleto" or "Follaje"`),
-  body("imageUrl")
-    .optional()
-    .isURL()
-    .notEmpty()
-    .withMessage("ImageUrl is not valid"),
-];
-
-exports.achievementIdParam = [
-  param("id").notEmpty().withMessage("Valid achievement ID is required"),
-];
+exports.createAchievementValidation = v(true);
+exports.updateAchievementValidation = v(false);

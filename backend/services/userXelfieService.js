@@ -1,132 +1,44 @@
 const database = require("../config/database");
-const { UserXelfie } = require("../models");
+const { UserXelfie, Xelfie, UserActivity } = require("../models");
 const { ResourceNotFoundError } = require("../utils/errors");
-const userService = require("./userService");
-const xelfieService = require("./xelfieService");
-const UserActivityService = require("./userActivityService");
 
-exports.addXelfie = async (userId, xelfieId, xelfieUrl) => {
-  const transaction = await database.transaction();
+exports.listForUser = (userId) => UserXelfie.findAll({ where: { userId }, order: [["createdAt", "ASC"]] });
 
-  try {
-    const user = await userService.getUser(userId);
-    if (!user) throw new ResourceNotFoundError("User not found");
+/** Guarda la xelfie del usuario y marca su actividad como completada. */
+exports.add = (userId, xelfieId, xelfieUrl) =>
+  database.transaction(async (transaction) => {
+    const xelfie = await Xelfie.findByPk(xelfieId, { attributes: ["id", "activityId"], transaction });
+    if (!xelfie) throw new ResourceNotFoundError("Xelfie not found");
 
-    const xelfie = await xelfieService.getXelfie(xelfieId, transaction);
+    const userXelfie = await UserXelfie.create({ userId, xelfieId, xelfieUrl }, { transaction });
 
-    if (!xelfie) {
-      throw new ResourceNotFoundError("Xelfie not found");
-    }
-
-    const userXelfie = await UserXelfie.create(
-      {
-        userId: user.id,
-        xelfieId: xelfie.id,
-        xelfieUrl: xelfieUrl,
-      },
-      {
-        transaction,
-      }
-    );
-
-    if (!user.activities.find((a) => a.id == xelfie.activity.id)) {
-      await UserActivityService.addUserActivity(
-        user.id,
-        xelfie.activity.id,
-        transaction
-      );
-    }
-
-    await transaction.commit();
-
-    return userXelfie;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
-
-exports.deleteXelfie = async (userId, xelfieId) => {
-  const transaction = await database.transaction();
-
-  try {
-    const user = await userService.getUser(userId);
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    const xelfie = await xelfieService.getXelfie(xelfieId, transaction);
-
-    if (!xelfie) {
-      throw new ResourceNotFoundError("Xelfie not found");
-    }
-
-    const userXelfie = await UserXelfie.findOne(
-      {
-        where: {
-          userId: user.id,
-          xelfieId: xelfie.id,
-        },
-      },
-      {
-        transaction,
-      }
-    );
-
-    if (!userXelfie) throw new ResourceNotFoundError("UserXelfie not found");
-
-    const destroyed = await userXelfie.destroy({
+    const now = new Date();
+    const [ua, created] = await UserActivity.findOrCreate({
+      where: { userId, activityId: xelfie.activityId },
+      defaults: { startedAt: now, completedAt: now },
       transaction,
     });
-    await transaction.commit();
+    if (!created && !ua.completedAt) await ua.update({ completedAt: now }, { transaction });
 
-    return destroyed;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
+    return userXelfie;
+  });
 
-exports.updateUserXelfie = async (userId, xelfieId, newData) => {
-  const transaction = await database.transaction();
+async function findOwn(userId, xelfieId, transaction) {
+  const row = await UserXelfie.findOne({ where: { userId, xelfieId }, transaction });
+  if (!row) throw new ResourceNotFoundError("UserXelfie not found");
+  return row;
+}
 
-  try {
-    const user = await userService.getUser(userId, transaction);
+exports.update = (userId, xelfieId, xelfieUrl) =>
+  database.transaction(async (transaction) => {
+    const row = await findOwn(userId, xelfieId, transaction);
+    await row.update({ xelfieUrl }, { transaction });
+    return row;
+  });
 
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    const xelfie = await xelfieService.getXelfie(xelfieId, transaction);
-
-    if (!xelfie) {
-      throw new ResourceNotFoundError("Xelfie not found");
-    }
-
-    const userXelfie = await UserXelfie.findOne(
-      {
-        where: {
-          userId: user.id,
-          xelfieId: xelfie.id,
-        },
-      },
-      {
-        transaction,
-      }
-    );
-
-    if (!userXelfie) throw new ResourceNotFoundError("UserXelfie not found");
-
-    const updated = await userXelfie.update(
-      {
-        ...newData,
-      },
-      {
-        transaction,
-      }
-    );
-
-    await transaction.commit();
-
-    return updated;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
+exports.remove = (userId, xelfieId) =>
+  database.transaction(async (transaction) => {
+    const row = await findOwn(userId, xelfieId, transaction);
+    await row.destroy({ transaction });
+    return row;
+  });

@@ -1,24 +1,17 @@
-# Use the official Node.js 20 alpine image as base
 FROM node:20-alpine
 
-# Set the working directory inside the container
 WORKDIR /app
+ENV NODE_ENV=production \
+    PORT=3000
 
-# Copy package files first for caching
+# Dependencias primero (cache). Sin devDependencies (sqlite3, jest...).
 COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Install only production dependencies
-RUN npm ci --omit=dev
+COPY --chown=node:node . .
 
-# Copy the rest of the application files
-COPY . .
+# Sin root
+USER node
 
-# Expose the port the server listens on
 EXPOSE 3000
-
-# Set production environment variables
-ENV PORT=3000
-ENV NODE_ENV=production
-
-# Command to run the application
 CMD ["node", "server.js"]

@@ -16,6 +16,11 @@ const xperiencia = database.define("xperiencia", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  // Respuesta correcta de la trivia (a/b/c). Nunca se devuelve al cliente.
+  correctAnswer: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = xperiencia;

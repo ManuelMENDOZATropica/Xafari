@@ -1,101 +1,39 @@
 const database = require("../config/database");
-
-const userService = require("./userService");
 const { Activity, UserPreference } = require("../models");
 const { ResourceNotFoundError } = require("../utils/errors");
 
-exports.addPreference = async (
-  { userId, activityId, isFavorite, comment, rating },
-  trans
-) => {
-  const transaction = trans || (await database.transaction());
+exports.listForUser = (userId) => UserPreference.findAll({ where: { userId }, order: [["createdAt", "ASC"]] });
 
-  try {
-    const user = await userService.getUser(userId);
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    const activity = await Activity.findByPk(activityId, {
-      transaction,
-    });
-
-    if (!activity) {
-      throw new ResourceNotFoundError("Activity not found");
+/** Crea o actualiza la calificación del usuario para una actividad. */
+exports.upsert = (userId, activityId, data) =>
+  database.transaction(async (transaction) => {
+    const activity = await Activity.findByPk(activityId, { attributes: ["id"], transaction });
+    if (!activity) throw new ResourceNotFoundError("Activity not found");
+    const existing = await UserPreference.findOne({ where: { userId, activityId }, transaction });
+    if (existing) {
+      await existing.update(data, { transaction });
+      return { pref: existing, created: false };
     }
+    const pref = await UserPreference.create({ ...data, userId, activityId }, { transaction });
+    return { pref, created: true };
+  });
 
-    let userPreference = await UserPreference.findOne({
-      where: { userId: user.id, activityId: activity.id },
-      transaction,
-    });
+async function findOwn(userId, id, transaction) {
+  const pref = await UserPreference.findOne({ where: { id, userId }, transaction });
+  if (!pref) throw new ResourceNotFoundError("UserPreference not found");
+  return pref;
+}
 
-    if (userPreference) {
-      await userPreference.update(
-        { isFavorite, comment, rating },
-        { transaction }
-      );
-    } else {
-      userPreference = await UserPreference.create(
-        {
-          userId: user.id,
-          activityId: activity.id,
-          isFavorite,
-          comment,
-          rating,
-        },
-        { transaction }
-      );
-    }
+exports.update = (userId, id, data) =>
+  database.transaction(async (transaction) => {
+    const pref = await findOwn(userId, id, transaction);
+    await pref.update(data, { transaction });
+    return pref;
+  });
 
-    if (!trans) await transaction.commit();
-
-    return userPreference;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
-
-exports.deletePreference = async (id) => {
-  const transaction = await database.transaction();
-
-  try {
-    const userPreference = await UserPreference.findByPk(id, {
-      transaction,
-    });
-
-    if (!userPreference)
-      throw new ResourceNotFoundError("UserPreference not found");
-
-    const destroyed = await userPreference.destroy({
-      transaction,
-    });
-    await transaction.commit();
-
-    return destroyed;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
-
-exports.updatePreference = async (id, newData) => {
-  const transaction = await database.transaction();
-
-  try {
-    const userPreference = await UserPreference.findByPk(id, {
-      transaction,
-    });
-
-    if (!userPreference)
-      throw new ResourceNotFoundError("UserPreference not found");
-
-    const updated = await userPreference.update(newData, {
-      transaction,
-    });
-    await transaction.commit();
-
-    return updated;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
+exports.remove = (userId, id) =>
+  database.transaction(async (transaction) => {
+    const pref = await findOwn(userId, id, transaction);
+    await pref.destroy({ transaction });
+    return pref;
+  });

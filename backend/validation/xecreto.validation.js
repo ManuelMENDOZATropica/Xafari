@@ -1,26 +1,13 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 
 exports.createXecretoValidation = [
-  body("clues").optional().isArray(),
-  body("clues.*.text").isString().withMessage("Clue text is not valid"),
-  body("clues.*.correctAnswer")
-    .isString()
-    .withMessage("Clue correct answer is not valid"),
+  body("clues").optional().isArray({ max: 50 }),
+  body("clues.*.text").isString().notEmpty().withMessage("Clue text is not valid"),
+  body("clues.*.correctAnswer").isString().notEmpty().withMessage("Clue correct answer is not valid"),
 ];
+exports.updateXecretoValidation = exports.createXecretoValidation;
 
-exports.updateXecretoValidation = [
-  param("id").notEmpty().withMessage("Valid xecreto ID is required"),
-  body("clues").optional().isArray(),
-  body("clues.*.text")
-    .optional()
-    .isString()
-    .withMessage("Clue text is not valid"),
-  body("clues.*.correctAnswer")
-    .optional()
-    .isString()
-    .withMessage("Clue correct answer is not valid"),
-];
-
-exports.xecretoIdParam = [
-  param("id").notEmpty().withMessage("Valid xecreto ID is required"),
+exports.checkAnswerValidation = [
+  body("clueId").isUUID().withMessage("Valid clue ID is required"),
+  body("answer").isString().isLength({ max: 200 }).withMessage("Answer is required"),
 ];

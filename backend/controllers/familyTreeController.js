@@ -1,106 +1,42 @@
-const familyTreeService = require("../services/familyTreeService");
-const userService = require("../services/userService");
-const { ResourceNotFoundError, BadRequestError } = require("../utils/errors");
+const service = require("../services/familyTreeService");
 const { toFamilyTreeDTO } = require("../dto/familyTree.dto");
+const { signFamilyInvite, verifyFamilyInvite } = require("../utils/tokens");
+const { ResourceNotFoundError, ForbiddenError } = require("../utils/errors");
 
-exports.createFamilyTree = async (req, res, next) => {
-  const { adminId, name, members } = req.body;
-  try {
-    const admin = await userService.getUser(adminId);
-
-    if (!admin) return next(new ResourceNotFoundError("Admin not found"));
-
-    if (admin.familyTreeId != null)
-      return next(new BadRequestError("User already belongs to a family tree"));
-
-    const familyTree = await familyTreeService.createFamilyTree({
-      name,
-      admin,
-      members,
-    });
-
-    const familyTreeDTO = toFamilyTreeDTO(familyTree);
-    res.status(201).json({
-      familyTree: familyTreeDTO,
-      ...familyTreeDTO
-    });
-  } catch (err) {
-    next(err);
-  }
+const send = (res, status, tree) => {
+  const dto = toFamilyTreeDTO(tree);
+  res.status(status).json({ familyTree: dto, ...dto });
 };
 
-exports.getFamilyTree = async (req, res, next) => {
-  const { familyId } = req.params;
-  try {
-    const familyTree = await familyTreeService.getFamilyTree(familyId);
-    if (!familyTree) {
-      return next(new ResourceNotFoundError("FamilyTree not found"));
-    }
-    const familyTreeDTO = toFamilyTreeDTO(familyTree);
-    res.status(200).json({
-      familyTree: familyTreeDTO,
-      ...familyTreeDTO
-    });
-  } catch (err) {
-    next(err);
-  }
+exports.create = async (req, res) => send(res, 201, await service.create(req.user.id, req.body.name));
+
+exports.get = async (req, res) => {
+  service.assertMember(req.user, req.params.familyId);
+  const tree = await service.getWithMembers(req.params.familyId);
+  if (!tree) throw new ResourceNotFoundError("FamilyTree not found");
+  send(res, 200, tree);
 };
 
-exports.updateFamilyTree = async (req, res, next) => {
-  const { familyId } = req.params;
-  try {
-    const familyTree = await familyTreeService.updateFamilyTree(familyId, req.body);
-    if (!familyTree) {
-      return next(new ResourceNotFoundError("FamilyTree not found"));
-    }
-    const familyTreeDTO = toFamilyTreeDTO(familyTree);
-    res.status(200).json({
-      familyTree: familyTreeDTO,
-      ...familyTreeDTO
-    });
-  } catch (err) {
-    next(err);
-  }
+exports.invite = async (req, res) => {
+  if (req.user.familyTreeId !== req.params.familyId) throw new ForbiddenError("No perteneces a esta familia");
+  res.status(200).json(signFamilyInvite(req.params.familyId));
 };
 
-exports.deleteFamilyTree = async (req, res, next) => {
-  const { familyId } = req.params;
+exports.join = async (req, res) => {
+  let treeId;
   try {
-    const familyTree = await familyTreeService.deleteFamilyTree(familyId);
-    if (!familyTree) {
-      return next(new ResourceNotFoundError("FamilyTree not found"));
-    }
-    const familyTreeDTO = toFamilyTreeDTO(familyTree);
-    res.status(200).json({
-      message: "Family tree deleted successfully",
-      familyTree: familyTreeDTO,
-      ...familyTreeDTO
-    });
-  } catch (err) {
-    next(err);
+    treeId = verifyFamilyInvite(req.body.inviteToken);
+  } catch (_) {
+    throw new ForbiddenError("invalid_invite");
   }
+  send(res, 200, await service.join(req.user.id, treeId));
 };
 
-exports.joinFamilyTree = async (req, res, next) => {
-  const { familyId } = req.params;
-  const { userId } = req.body;
-  try {
-    if (!userId) return next(new BadRequestError("userId is required"));
-    const familyTree = await familyTreeService.joinFamilyTree(familyId, userId);
-    const dto = toFamilyTreeDTO(familyTree);
-    res.status(200).json({ familyTree: dto, ...dto });
-  } catch (err) {
-    next(err);
-  }
-};
+exports.leave = async (req, res) => res.status(200).json(await service.leave(req.user.id));
 
-exports.leaveFamilyTree = async (req, res, next) => {
-  const { userId } = req.body;
-  try {
-    if (!userId) return next(new BadRequestError("userId is required"));
-    const result = await familyTreeService.leaveFamilyTree(userId);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
-  }
+exports.rename = async (req, res) => send(res, 200, await service.rename(req.user, req.params.familyId, req.body.name));
+
+exports.remove = async (req, res) => {
+  const tree = await service.remove(req.user, req.params.familyId);
+  res.status(200).json({ message: "Family tree deleted successfully", id: tree.id });
 };

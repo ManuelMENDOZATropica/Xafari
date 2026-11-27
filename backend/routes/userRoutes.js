@@ -1,57 +1,19 @@
 const express = require("express");
-const router = express.Router();
-const rateLimit = require("express-rate-limit");
-
-const {
-  createUserValidation,
-  updateUserValidation,
-  userIdParam,
-} = require("../validation/user.validation");
-
 const userController = require("../controllers/userController");
+const { registerLimiter } = require("../middleware/rateLimits");
+const { requireSelf } = require("../middleware/authHandler");
+const { validateRequest, asyncHandler } = require("../middleware/validateRequest");
+const { createUserValidation, updateProfileValidation } = require("../validation/user.validation");
+const { uuidParam } = require("../validation/common.validation");
 
-const { validateRequest } = require("../middleware/validateRequest");
+const router = express.Router();
 
-const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 5,                   // máx 5 registros por IP por hora
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Demasiados intentos de registro. Intenta en 1 hora." },
-});
+// Registro (público)
+router.post("/", registerLimiter, createUserValidation, validateRequest, asyncHandler(userController.createUser));
 
-router.get("/:id", userIdParam, validateRequest, userController.getUser);
-
-router.post(
-  "/",
-  registerLimiter,
-  createUserValidation,
-  validateRequest,
-  userController.createUser
-);
-
-router.post(
-  "/:id",
-  updateUserValidation,
-  validateRequest,
-  userController.updateUser
-);
-
-router.put(
-  "/:id",
-  updateUserValidation,
-  validateRequest,
-  userController.updateUser
-);
-
-router.delete("/:id", userIdParam, validateRequest, userController.deleteUser);
-
-const userActivityRoutes = require("./userActivityRoutes");
-const userXelfieRoutes = require("./userXelfieRoutes");
-const userAchievementRoutes = require("./userAchievementRoutes");
-
-router.use("/:userId/activity", userActivityRoutes);
-router.use("/:userId/xelfie", userXelfieRoutes);
-router.use("/:userId/achievement", userAchievementRoutes);
+// Por id: solo el propio usuario (admin puede leer/borrar cualquiera)
+router.get("/:id", uuidParam("id"), validateRequest, requireSelf("id", { allowAdmin: true }), asyncHandler(userController.getUser));
+router.put("/:id", uuidParam("id"), requireSelf("id"), updateProfileValidation, validateRequest, asyncHandler(userController.updateProfile));
+router.delete("/:id", uuidParam("id"), validateRequest, requireSelf("id", { allowAdmin: true }), asyncHandler(userController.deleteUser));
 
 module.exports = router;

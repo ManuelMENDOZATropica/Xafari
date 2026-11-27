@@ -1,223 +1,131 @@
+const { Op } = require("sequelize");
 const database = require("../config/database");
+const { FamilyTree, User, Activity } = require("../models");
+const {
+  ResourceNotFoundError,
+  ResourceConflictError,
+  ForbiddenError,
+  BadRequestError,
+} = require("../utils/errors");
 
-const FamilyTree = require("../models/familyTree");
-const User = require("../models/user");
-const { ResourceNotFoundError, BadRequestError } = require("../utils/errors");
+const MAX_MEMBERS = 6;
+const MEMBER_ATTRIBUTES = ["id", "name", "casa", "avatar", "familyTreeId", "createdAt"];
 
-const Sequelize = require("sequelize");
-
-exports.createFamilyTree = async ({ name, admin, members }) => {
-  const transaction = await database.transaction();
-
-  try {
-    const familyTree = await FamilyTree.create(
+/** Árbol con sus miembros y el progreso de cada uno (sin datos sensibles). */
+exports.getWithMembers = (id, transaction) =>
+  FamilyTree.findByPk(id, {
+    include: [
       {
-        name,
-        admin: admin.id,
+        model: User,
+        attributes: MEMBER_ATTRIBUTES,
+        include: [
+          {
+            model: Activity,
+            as: "activities",
+            attributes: ["id", "name", "type", "location", "houseId"],
+            through: { attributes: ["id", "startedAt", "completedAt"] },
+          },
+        ],
       },
-      {
-        transaction,
-      }
-    );
-
-    const updatedAdmin = await admin.setFamilyTree(familyTree, {
-      transaction,
-    });
-
-    await updatedAdmin.reload({
-      include: [FamilyTree],
-      transaction,
-    });
-
-    if (members) {
-      const memberIds = members.filter((m) => m != admin.id);
-
-      const users = await User.findAll({
-        where: { id: memberIds, familyTreeId: null },
-        transaction,
-      });
-
-      if (users.length != members.filter((m) => m != admin.id).length) {
-        throw new BadRequestError(
-          "Some users not found or belong to other families"
-        );
-      }
-
-      if (users.length > 5) {
-        throw new BadRequestError("Family cannot exceed 6 members");
-      }
-
-      await User.update(
-        {
-          familyTreeId: familyTree.id,
-        },
-        {
-          where: { id: memberIds },
-          transaction,
-        }
-      );
-    }
-
-    await transaction.commit();
-
-    return await FamilyTree.findByPk(familyTree.id, {
-      include: [User],
-    });
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
-};
-
-exports.getFamilyTree = async (id, transaction) => {
-  const familyTree = await FamilyTree.findByPk(id, {
-    include: [User],
+    ],
+    order: [[User, "createdAt", "ASC"]],
     transaction,
   });
 
-  return familyTree;
-};
+/**
+ * Saca al usuario de su árbol y libera la administración que tenga:
+ * si era admin se reasigna al miembro más antiguo; si el árbol queda vacío, se borra.
+ * También limpia árboles "huérfanos" donde sigue como admin sin ser miembro (bug anterior).
+ */
+exports.removeMember = async (user, transaction) => {
+  const trees = await FamilyTree.findAll({
+    where: {
+      [Op.or]: [{ admin: user.id }, ...(user.familyTreeId ? [{ id: user.familyTreeId }] : [])],
+    },
+    transaction,
+    lock: transaction.LOCK.UPDATE,
+  });
 
-exports.deleteFamilyTree = async (id) => {
-  const familyTree = await this.getFamilyTree(id);
-
-  if (familyTree == null) throw new ResourceNotFoundError("FamilyTree not found");
-  const destroyed = await familyTree.destroy();
-  return destroyed;
-};
-
-exports.updateFamilyTree = async (id, newData) => {
-  const transaction = await database.transaction();
-
-  try {
-    const familyTree = await this.getFamilyTree(id, transaction);
-
-    if (!familyTree) {
-      throw new ResourceNotFoundError("FamilyTree not found");
-    }
-
-    // Update basic info
-    await familyTree.update(newData, { transaction });
-
-    if (newData.adminId && newData.adminId !== familyTree.admin) {
-      const newAdmin = await User.findByPk(newData.adminId, {
-        include: [FamilyTree],
-        transaction,
-      });
-
-      if (!newAdmin)
-        throw new ResourceNotFoundError("New admin user not found");
-      if (newAdmin.familyTreeId !== familyTree.id) {
-        throw new BadRequestError("New admin must be a family member");
-      }
-
-      await familyTree.update({ admin: newAdmin.id }, { transaction });
-    }
-
-    // Handle member updates if provided
-    if (newData.members) {
-      const enforcedMembers = [
-        ...new Set([
-          familyTree.admin, // Always include admin
-          ...newData.members, // Plus requested members
-        ]),
-      ];
-
-      if (enforcedMembers.length > 6) {
-        throw new BadRequestError("Family cannot exceed 6 members");
-      }
-
-      // Verify all members exist and are available
-      const existingUsers = await User.findAll({
-        where: {
-          id: enforcedMembers,
-          [Sequelize.Op.or]: [
-            { familyTreeId: null },
-            { familyTreeId: id }, // already in this family
-          ],
-        },
-        transaction,
-      });
-
-      if (existingUsers.length !== enforcedMembers.length) {
-        throw new BadRequestError(
-          "Some users not found or belong to other families"
-        );
-      }
-
-      const currentMemberIds = familyTree.users.map((u) => u.id);
-      const membersToAdd = enforcedMembers.filter(
-        (id) => !currentMemberIds.includes(id)
-      );
-      const membersToRemove = currentMemberIds.filter(
-        (id) => id !== familyTree.adminId && !enforcedMembers.includes(id)
-      );
-
-      if (membersToAdd.length > 0) {
-        await User.update(
-          { familyTreeId: id },
-          { where: { id: membersToAdd }, transaction }
-        );
-      }
-
-      if (membersToRemove.length > 0) {
-        await User.update(
-          { familyTreeId: null },
-          { where: { id: membersToRemove }, transaction }
-        );
-      }
-    }
-
-    const updatedFamily = await this.getFamilyTree(id, transaction);
-
-    await transaction.commit();
-
-    return updatedFamily;
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
+  if (user.familyTreeId) {
+    await User.update({ familyTreeId: null }, { where: { id: user.id }, transaction });
+    user.familyTreeId = null;
   }
-};
-exports.joinFamilyTree = async (familyId, userId) => {
-  const transaction = await database.transaction();
-  try {
-    const familyTree = await FamilyTree.findByPk(familyId, {
-      include: [User],
+
+  for (const tree of trees) {
+    if (tree.admin !== user.id) continue;
+    const next = await User.findOne({
+      where: { familyTreeId: tree.id, id: { [Op.ne]: user.id } },
+      order: [["createdAt", "ASC"]],
+      attributes: ["id"],
       transaction,
     });
-    if (!familyTree) throw new ResourceNotFoundError("FamilyTree not found");
-
-    const user = await User.findByPk(userId, { transaction });
-    if (!user) throw new ResourceNotFoundError("User not found");
-
-    // Leave current family if any
-    if (user.familyTreeId && user.familyTreeId !== familyId) {
-      await user.update({ familyTreeId: null }, { transaction });
-    }
-
-    if (user.familyTreeId === familyId) {
-      // Already a member — no-op
-      await transaction.commit();
-      return await FamilyTree.findByPk(familyId, { include: [User] });
-    }
-
-    if (familyTree.users.length >= 6) {
-      throw new BadRequestError("Family is full (max 6 members)");
-    }
-
-    await user.update({ familyTreeId: familyId }, { transaction });
-    await transaction.commit();
-    return await FamilyTree.findByPk(familyId, { include: [User] });
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
+    if (next) await tree.update({ admin: next.id }, { transaction });
+    else await tree.destroy({ transaction });
   }
 };
 
-exports.leaveFamilyTree = async (userId) => {
-  const user = await User.findByPk(userId);
-  if (!user) throw new ResourceNotFoundError("User not found");
-  if (!user.familyTreeId) throw new BadRequestError("User is not in a family");
-  await user.update({ familyTreeId: null });
-  return { message: "Left family successfully" };
+exports.create = (userId, name) =>
+  database.transaction(async (transaction) => {
+    const user = await User.findByPk(userId, { attributes: ["id", "familyTreeId"], transaction, lock: transaction.LOCK.UPDATE });
+    if (!user) throw new ResourceNotFoundError("User not found");
+    if (user.familyTreeId) throw new ResourceConflictError("User already belongs to a family tree");
+    // Libera administraciones colgadas de versiones anteriores.
+    await exports.removeMember(user, transaction);
+    const tree = await FamilyTree.create({ name, admin: user.id }, { transaction });
+    await User.update({ familyTreeId: tree.id }, { where: { id: user.id }, transaction });
+    return exports.getWithMembers(tree.id, transaction);
+  });
+
+exports.assertMember = (user, treeId) => {
+  if (user.role === "admin") return;
+  if (user.familyTreeId !== treeId) throw new ForbiddenError("No perteneces a esta familia");
 };
+
+exports.join = (userId, treeId) =>
+  database.transaction(async (transaction) => {
+    // Lock del árbol: serializa uniones simultáneas para respetar el máximo.
+    const tree = await FamilyTree.findByPk(treeId, { transaction, lock: transaction.LOCK.UPDATE });
+    if (!tree) throw new ResourceNotFoundError("FamilyTree not found");
+
+    const user = await User.findByPk(userId, { attributes: ["id", "familyTreeId"], transaction, lock: transaction.LOCK.UPDATE });
+    if (!user) throw new ResourceNotFoundError("User not found");
+    if (user.familyTreeId === tree.id) return exports.getWithMembers(tree.id, transaction);
+
+    const count = await User.count({ where: { familyTreeId: tree.id }, transaction });
+    if (count >= MAX_MEMBERS) throw new ResourceConflictError(`Family is full (max ${MAX_MEMBERS} members)`);
+
+    // Si estaba en otra familia, sale (con reasignación de admin).
+    await exports.removeMember(user, transaction);
+    await User.update({ familyTreeId: tree.id }, { where: { id: user.id }, transaction });
+    return exports.getWithMembers(tree.id, transaction);
+  });
+
+exports.leave = (userId) =>
+  database.transaction(async (transaction) => {
+    const user = await User.findByPk(userId, { attributes: ["id", "familyTreeId"], transaction, lock: transaction.LOCK.UPDATE });
+    if (!user) throw new ResourceNotFoundError("User not found");
+    if (!user.familyTreeId) throw new BadRequestError("User is not in a family");
+    await exports.removeMember(user, transaction);
+    return { message: "Left family successfully" };
+  });
+
+exports.rename = (user, treeId, name) =>
+  database.transaction(async (transaction) => {
+    const tree = await FamilyTree.findByPk(treeId, { transaction, lock: transaction.LOCK.UPDATE });
+    if (!tree) throw new ResourceNotFoundError("FamilyTree not found");
+    if (tree.admin !== user.id && user.role !== "admin") throw new ForbiddenError("Solo el admin de la familia");
+    await tree.update({ name }, { transaction });
+    return exports.getWithMembers(tree.id, transaction);
+  });
+
+exports.remove = (user, treeId) =>
+  database.transaction(async (transaction) => {
+    const tree = await FamilyTree.findByPk(treeId, { transaction, lock: transaction.LOCK.UPDATE });
+    if (!tree) throw new ResourceNotFoundError("FamilyTree not found");
+    if (tree.admin !== user.id && user.role !== "admin") throw new ForbiddenError("Solo el admin de la familia");
+    await User.update({ familyTreeId: null }, { where: { familyTreeId: tree.id }, transaction });
+    await tree.destroy({ transaction });
+    return tree;
+  });
+
+exports.MAX_MEMBERS = MAX_MEMBERS;
