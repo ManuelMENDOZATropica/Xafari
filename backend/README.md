@@ -48,6 +48,7 @@ En producción el server no arranca si falta `JWT_SECRET`, `QR_SECRET` o `DATABA
 - Para correrlas a mano: `DATABASE_URL=... npm run migrate`.
 - Migraciones en [`migrations/`](migrations):
   - `20261127-01-baseline.js`: esquema completo con `IF NOT EXISTS`. En una base que ya tenía las tablas (creadas por `sync`) no cambia nada.
+  - `20261127-03-parental-consent.js`: `users.parentalConsentAt` (consentimiento parental de menores en el registro).
   - `20261127-02-hardening.js`: borra los UNIQUE/FK duplicados que dejó `sync({alter})` (`users_email_key1`…), agrega `users.role` y `users.tokenVersion`, pasa `avatar` a `TEXT`, baja emails a minúsculas (si no chocan con otra cuenta), agrega `xperiencia.correctAnswer` y arregla árboles de familia con admin fuera del árbol.
 - Para cambios nuevos: crea `migrations/AAAAMMDD-NN-descripcion.js` con `up({context: queryInterface})` (Postgres) y ajusta el modelo.
 

@@ -2,7 +2,11 @@ const userService = require("../services/userService");
 const { toUserDTO } = require("../dto/user.dto");
 const { signSession } = require("../utils/tokens");
 const { pick } = require("../middleware/validateRequest");
-const { AuthenticationError, ResourceNotFoundError } = require("../utils/errors");
+const { AuthenticationError, ResourceNotFoundError, BadRequestError } = require("../utils/errors");
+const env = require("../config/env");
+const { ageOn } = require("../utils/time");
+
+const ADULT_AGE = 18;
 
 // Campos que el usuario puede editar de su perfil. email, password, casa y role NO.
 const PROFILE_FIELDS = ["name", "lastname", "pronouns", "avatar", "birthdate", "reservationNumber"];
@@ -24,6 +28,11 @@ exports.createUser = async (req, res) => {
   const data = serializeAvatar(
     pick(req.body, ["name", "lastname", "email", "password", "birthdate", "reservationNumber", "pronouns", "casa", "avatar"])
   );
+  // Menores de edad: exigen consentimiento parental (se guarda la fecha del servidor).
+  if (ageOn(data.birthdate, env.TIMEZONE) < ADULT_AGE) {
+    if (req.body.parentalConsent !== true) throw new BadRequestError("parental_consent_required");
+    data.parentalConsentAt = new Date();
+  }
   const user = await userService.createUser(data);
   respondUser(res, 201, user, { token: signSession(user) });
 };

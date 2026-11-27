@@ -27,6 +27,18 @@ function zonedMidnight(y, m, d, timeZone) {
   return new Date(guess.getTime() - offsetMs(guess, timeZone));
 }
 
+/** Edad cumplida (años) de una fecha de nacimiento en la fecha actual de la zona. */
+exports.ageOn = (birthdate, timeZone, now = new Date()) => {
+  const b = new Date(birthdate);
+  const by = b.getUTCFullYear();
+  const bm = b.getUTCMonth() + 1;
+  const bd = b.getUTCDate();
+  const t = partsInTZ(now, timeZone);
+  let age = t.y - by;
+  if (t.m < bm || (t.m === bm && t.d < bd)) age -= 1;
+  return age;
+};
+
 exports.periodRange = (periodo, timeZone, now = new Date()) => {
   const p = partsInTZ(now, timeZone);
   if (periodo === "hoy") {

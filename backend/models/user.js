@@ -68,6 +68,11 @@ const user = database.define(
       defaultValue: "user",
       validate: { isIn: [ROLES] },
     },
+    // Fecha (servidor) en que se aceptó el consentimiento parental al registrar a un menor.
+    parentalConsentAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     tokenVersion: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -110,6 +115,7 @@ user.prototype.toJSON = function () {
   const values = { ...this.get() };
   delete values.password;
   delete values.tokenVersion;
+  delete values.parentalConsentAt;
   return values;
 };
 

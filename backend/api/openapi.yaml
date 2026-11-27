@@ -204,6 +204,9 @@ paths:
                 pronouns: { type: string }
                 casa: { type: string }
                 avatar: { $ref: "#/components/schemas/Avatar" }
+                parentalConsent:
+                  type: boolean
+                  description: "Obligatorio y `true` si la edad (hoy en America/Cancun) es < 18; si falta → 400 parental_consent_required. Se guarda como users.parentalConsentAt (fecha del servidor, nunca se devuelve). En mayores se ignora."
       responses:
         "201": { description: Creado, content: { application/json: { schema: { $ref: "#/components/schemas/UserResponse" } } } }
         "400": { $ref: "#/components/responses/Error" }

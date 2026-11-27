@@ -22,6 +22,7 @@ exports.createUserValidation = [
     .withMessage(`Password must have at least ${PASSWORD_MIN} characters`),
   body("birthdate").isISO8601({ strict: true }).withMessage("Birthdate must be a valid ISO 8601 date").toDate(),
   body("casa").optional({ values: "null" }).isString().isLength({ max: 50 }),
+  body("parentalConsent").optional({ values: "null" }).isBoolean({ strict: true }).withMessage("parentalConsent must be boolean"),
   ...profileFields.filter((_, i) => i !== 0 && i !== 4),
 ];
 
